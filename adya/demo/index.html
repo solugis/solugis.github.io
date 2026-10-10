@@ -403,6 +403,27 @@ h3 .puce { vertical-align: 2px; }
 /* Les grilles ne s’élargissent jamais au-delà de l’écran : les tableaux larges défilent dans leur cadre */
 .corps > *, .section > *, .pli > * { min-width: 0; }
 .info-cache { margin: 0 0 12px; padding: 8px 12px; border-radius: 10px; background: var(--sauge-pale); color: var(--vert); font-size: 14px; }
+/* Situation des membres : « Ma situation », résumé, recherche et liste compacte */
+.ma-situation { margin: 0 0 12px; border-color: var(--vert); }
+.ma-situation h3 { margin: 0; font-size: 1rem; color: var(--vert); }
+.resume-membres { margin: 4px 0 12px; font-weight: 700; }
+.outils-membres { display: grid; gap: 10px; margin: 0 0 12px; }
+.outils-membres input[type=search] { width: 100%; font: inherit; padding: 11px 14px; border: 1px solid var(--ligne); border-radius: 12px; background: var(--carte); color: var(--texte); }
+.outils-membres .filtres { display: flex; flex-wrap: wrap; gap: 8px; }
+.outils-membres .filtre { font: inherit; font-size: 0.9rem; font-weight: 700; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); cursor: pointer; }
+.outils-membres .filtre.actif { background: var(--vert); border-color: var(--vert); color: var(--fond); }
+.outils-membres .tri { font-size: 0.9rem; color: var(--doux); display: flex; align-items: center; gap: 8px; }
+.outils-membres .tri select { font: inherit; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--ligne); background: var(--carte); color: var(--texte); }
+.lignes-membres { display: none; border: 1px solid var(--ligne); border-radius: var(--r); background: var(--carte); overflow: hidden; margin-bottom: 12px; }
+.lm + .lm { border-top: 1px solid var(--ligne); }
+.lm summary { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; list-style: none; }
+.lm summary::-webkit-details-marker { display: none; }
+.lm-nom { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.lm-val { font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lm dl { margin: 0; padding: 0 14px 12px; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 0.92rem; }
+.lm dt { color: var(--doux); }
+.lm dd { margin: 0; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+@media (max-width: 700px) { .lignes-membres { display: block; } }
 </style>
 </head>
 <body>
@@ -704,6 +725,7 @@ function installer() {
     finances: { montant: G.cotisation, jour: G.echeance },
     droits: { nouvelles: 'tous', agenda: 'tous', votes: 'tous', projets: 'tous' },
     reglagesVote: { modification: false, choixVisibles: false },
+    confidentialite: { situations: 'soi' },
     rappels: { actifs: false, heure: 8 }, charteVersions: [], journalVote: [], seuilCharte: '2/3', repriseLe: null
   };
   const maintenant = new Date();
@@ -1370,6 +1392,7 @@ function appliquer_(docs, moi, chemin, op, data) {
     const dr = n.droits || {}; r.droits = {};
     ['nouvelles', 'agenda', 'votes', 'projets'].forEach(function (k) { r.droits[k] = dr[k] === 'admin' ? 'admin' : 'tous'; });
     r.reglagesVote = { modification: !!(n.reglagesVote || {}).modification, choixVisibles: !!(n.reglagesVote || {}).choixVisibles };
+    r.confidentialite = { situations: (n.confidentialite || {}).situations === 'tous' ? 'tous' : 'soi' };   // situation détaillée de chaque membre
     const fi = n.finances || {};
     r.finances = { montant: Math.max(1, Math.round(+fi.montant || 10000)), jour: Math.min(28, Math.max(1, Math.round(+fi.jour || 15))) };
     const rp = n.rappels || {};
@@ -2798,12 +2821,12 @@ function messageErreur(e) {
 }
 function appliquerEtat(etat, deCache) {
   Object.keys(S).forEach(k => { delete S[k]; }); Object.assign(S, etat); S.charge = true;
-  if (!deCache) { ui.depuisCache = null; ui.cacheEchec = false; if (SESSION.jeton) lsSet('etat', { j: SESSION.jeton, le: Date.now(), s: etat }); }
+  if (!deCache) { ui.depuisCache = null; ui.cacheEchec = false; if (SESSION.jeton) { const g = { j: SESSION.jeton, le: Date.now(), s: etat }; lsSet('etat', g); versPorte({ adya: 'etat', g }); } }
   planifier();
 }
 /** À l'ouverture : la dernière situation reçue s'affiche tout de suite, puis se met à jour. */
 function etatGarde() { const g = lsGet('etat', null); return g && g.j === SESSION.jeton && g.s ? g : null; }
-function finSession(msg) { SESSION.jeton = null; lsSet('jeton', null); lsSet('etat', null); ui.depuisCache = null; Object.keys(S).forEach(k => { delete S[k]; }); ui.route = 'accueil'; if (msg) toast(msg); chargerListe(); planifier(); }
+function finSession(msg) { SESSION.jeton = null; lsSet('jeton', null); lsSet('etat', null); versPorte({ adya: 'session', jeton: null }); ui.depuisCache = null; Object.keys(S).forEach(k => { delete S[k]; }); ui.route = 'accueil'; if (msg) toast(msg); chargerListe(); planifier(); }
 let derniereOuverture = 0;
 /** Recharge les données ; « ouverture » compte une utilisation de l'application (au plus une par quart d'heure) pour les statistiques. */
 async function actualiser(ouverture) {
@@ -3236,17 +3259,13 @@ function vCotisations() {
     '<div class="indic principal"><span class="lib">Total des versements reçus</span><span class="expl">Cotisations et dons depuis le début, au ' + esc(finTxt) + '</span><span class="mt">' + F(res.totaux.totalRecu) + '</span></div>' +
     '<div class="indic"><span class="lib">Solde disponible en caisse</span><span class="expl">Au ' + esc(finTxt) + ', après entrées et sorties</span><span class="mt">' + F(res.totaux.solde) + '</span></div></div>';
   h += blocFonds(c, res, finTxt);
-  // Tableau des membres
+  // Situation des membres
   const L = res.lignes; const ids = c.tous.map(m => m.id).filter(id => L[id] && (!c.byId[id].parti || L[id].cumul > 0 || L[id].recu > 0));
-  const arrTxt = id => L[id].arr == null ? '<span class="doux">—</span>' : L[id].arr > 0 ? '<span class="neg">' + F(L[id].arr) + '</span>' : F(0);
-  h += '<div class="tableau-wrap membres"><table class="tab"><thead><tr><th>Membre</th><th>Reçu sur la période</th><th>Versé au capital au ' + esc(finTxt) + '</th><th>Arriérés au ' + esc(finTxt) + '</th><th>Part au ' + esc(finTxt) + '</th></tr></thead><tbody>' +
-    ids.map(id => '<tr><td><div class="ligne" style="flex-wrap:nowrap">' + avMembre(id, 'p') + '<span>' + esc(nomMembre(id)) + (c.byId[id].parti ? ' <span class="puce neutre">parti</span>' : '') + '</span></div></td><td>' + F(L[id].recu) + '</td><td>' + F(L[id].cumul) + '</td><td>' + arrTxt(id) + '</td><td>' + pct(L[id].part) + '</td></tr>').join('') +
-    '</tbody><tfoot><tr><td>Total</td><td>' + F(res.totaux.recuPeriode) + '</td><td>' + F(res.totaux.capital != null ? res.totaux.capital : res.totaux.totalRecu) + '</td><td>' + (res.totaux.arrieres == null ? '—' : F(res.totaux.arrieres)) + '</td><td>' + ((res.totaux.capital != null ? res.totaux.capital : res.totaux.totalRecu) > 0 ? '100,00 %' : 'Non calculable') + '</td></tr></tfoot></table></div>';
+  h += blocMembres(c, res, finTxt, ids);
   let dire = (officiel && !ui.voirLive ? officiel.libelle + ', bilan officiel publié le ' + fmtDate(officiel.publieLe) : 'Situation du ' + fmtDate(res.du) + ' au ' + finTxt + ', sans valeur de bilan officiel') + '. Cotisations reçues sur la période : ' + F(res.totaux.recuPeriode) + (res.totaux.attendu ? ', pour ' + F(res.totaux.attendu) + ' attendus' : '') + '. Total des cotisations reçues depuis le début : ' + F(res.totaux.totalRecu) + '. Solde disponible en caisse : ' + F(res.totaux.solde) + '.';
   if (res.totaux.arrieres) dire += ' Arriérés de l’ensemble des membres : ' + F(res.totaux.arrieres) + '.';
   if (c.moi && L[c.moi]) { const x = L[c.moi]; dire += ' Votre situation : ' + F(x.cumul) + ' versés au capital, soit une part de ' + pct(x.part) + (x.arr == null ? '.' : x.arr > 0 ? ', avec ' + F(x.arr) + ' d’arriérés.' : '. Vous êtes à jour.'); }
   h += '<div class="ligne">' + boutonLire('bilan', 'Résumé du bilan', false, 'Écouter le résumé') + '<span data-lz="bilan" data-dire="' + esc(dire) + '" hidden></span></div>';
-  h += '<div class="cartes-membres">' + ids.map(id => '<div class="cm"><div class="ligne">' + avMembre(id, 'p') + '<strong>' + esc(nomMembre(id)) + '</strong></div><dl><dt>Reçu sur la période</dt><dd>' + F(L[id].recu) + '</dd><dt>Versé au capital</dt><dd>' + F(L[id].cumul) + '</dd><dt>Arriérés</dt><dd>' + arrTxt(id) + '</dd><dt>Part</dt><dd>' + pct(L[id].part) + '</dd></dl></div>').join('') + '</div>';
   h += '<p class="doux petit">Part = sommes versées par le membre au fonds « ' + esc(nomFonds(c.P.capital)) + ' » ÷ total versé à ce fonds par tous, à la date de fin, × 100. Les autres fonds (solidarité, fonctionnement…) ne créent pas de part. Les sommes seulement attendues et les pénalités n’y entrent pas. Une part n’est pas une somme immédiatement retirable.' + (res.debutSuivi ? ' Suivi des retards depuis ' + esc(fmtMois(res.debutSuivi)) + '.' : ' Retards non calculés : date de début du suivi à renseigner.') + '</p>';
   if (c.isTres && pe.officiable && !ui.demo) h += panneauPublication(c, pe, officiel, live);
   h += '</section>';
@@ -3269,13 +3288,51 @@ function libEcriture(e) {
   if (e.type === 'annulation') return 'Correction : annulation d’une écriture';
   return 'Écriture';
 }
+/** Situation des cotisations de chaque membre. Chacun voit la sienne (« Ma situation ») et le résumé du groupe ;
+ *  la liste complète, avec recherche, filtres et tri, est réservée à l'administration et à la trésorerie,
+ *  sauf si le groupe a choisi de la montrer à tous (Administration › Droits). */
+function voitToutesSituations(c) { return !!(c.isTres || c.isOwner || ui.demo || ((c.cfg && c.cfg.confidentialite) || {}).situations === 'tous'); }
+const sansAccent = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+function blocMembres(c, res, finTxt, ids) {
+  const L = res.lignes;
+  const arrTxt = id => L[id].arr == null ? '<span class="doux">—</span>' : L[id].arr > 0 ? '<span class="neg">' + F(L[id].arr) + '</span>' : F(0);
+  const details = id => '<dl><dt>Reçu sur la période</dt><dd>' + F(L[id].recu) + '</dd><dt>Versé au capital</dt><dd>' + F(L[id].cumul) + '</dd><dt>Arriérés</dt><dd>' + arrTxt(id) + '</dd><dt>Part</dt><dd>' + pct(L[id].part) + '</dd></dl>';
+  const etat = id => L[id].arr > 0 ? '<span class="puce danger">' + F(L[id].arr) + ' à régulariser</span>' : L[id].arr === 0 ? '<span class="puce ok">À jour</span>' : '';
+  let h = '';
+  if (c.moi && L[c.moi]) h += '<div class="cm ma-situation"><h3>Ma situation</h3><div class="ligne">' + avMembre(c.moi, 'p') + '<strong>' + esc(nomMembre(c.moi)) + '</strong>' + etat(c.moi) + '</div>' + details(c.moi) + '</div>';
+  const actifs = ids.filter(id => !c.byId[id].parti), suivi = actifs.some(id => L[id].arr != null);
+  const retard = actifs.filter(id => L[id].arr > 0), totArr = retard.reduce((s, id) => s + L[id].arr, 0);
+  h += '<p class="resume-membres">' + actifs.length + ' membre' + (actifs.length > 1 ? 's' : '') + (suivi ? ' · ' + (actifs.length - retard.length) + ' à jour · <span class="' + (retard.length ? 'neg' : '') + '">' + retard.length + ' en retard' + (retard.length ? ' (' + F(totArr) + ' d’arriérés)' : '') + '</span>' : '') + '</p>';
+  if (!voitToutesSituations(c)) return h + '<p class="doux petit">La situation détaillée de chaque membre est visible par l’administration et ' + esc(T().le) + '.</p>';
+  // Liste complète : recherche, filtres, tri, affichage par 20
+  const q = sansAccent(ui.mbRech), fl = ui.mbFiltre || 'tous', tri = ui.mbTri || 'nom', max = ui.mbMax || 20, partis = ids.some(id => c.byId[id].parti);
+  let liste = ids.filter(id => (!q || sansAccent(nomMembre(id)).indexOf(q) >= 0) &&
+    (fl === 'tous' || (fl === 'retard' && L[id].arr > 0) || (fl === 'ajour' && L[id].arr === 0 && !c.byId[id].parti) || (fl === 'partis' && c.byId[id].parti)));
+  if (tri === 'arr') liste.sort((a, b) => (L[b].arr || 0) - (L[a].arr || 0));
+  else if (tri === 'part') liste.sort((a, b) => (L[b].part || 0) - (L[a].part || 0));
+  const vus = liste.slice(0, max);
+  if (ids.length > 12) {
+    const puce = (v, lib) => '<button type="button" class="filtre' + (fl === v ? ' actif' : '') + '" data-a="mb-filtre" data-v="' + v + '" aria-pressed="' + (fl === v) + '">' + lib + '</button>';
+    h += '<div class="outils-membres"><input type="search" id="mb-rech" placeholder="Rechercher un membre" autocomplete="off" value="' + esc(ui.mbRech || '') + '" aria-label="Rechercher un membre">' +
+      '<div class="filtres">' + puce('tous', 'Tous') + (suivi ? puce('retard', 'En retard (' + retard.length + ')') + puce('ajour', 'À jour') : '') + (partis ? puce('partis', 'Partis') : '') + '</div>' +
+      '<label class="tri">Trier par <select id="mb-tri" data-a-change="mbtri"><option value="nom"' + (tri === 'nom' ? ' selected' : '') + '>ordre de la liste</option><option value="arr"' + (tri === 'arr' ? ' selected' : '') + '>arriérés</option><option value="part"' + (tri === 'part' ? ' selected' : '') + '>part</option></select></label></div>';
+  }
+  if (!liste.length) return h + '<p class="doux petit">Aucun membre ne correspond.</p>';
+  h += '<div class="tableau-wrap membres"><table class="tab"><thead><tr><th>Membre</th><th>Reçu sur la période</th><th>Versé au capital au ' + esc(finTxt) + '</th><th>Arriérés au ' + esc(finTxt) + '</th><th>Part au ' + esc(finTxt) + '</th></tr></thead><tbody>' +
+    vus.map(id => '<tr><td><div class="ligne" style="flex-wrap:nowrap">' + avMembre(id, 'p') + '<span>' + esc(nomMembre(id)) + (c.byId[id].parti ? ' <span class="puce neutre">parti</span>' : '') + '</span></div></td><td>' + F(L[id].recu) + '</td><td>' + F(L[id].cumul) + '</td><td>' + arrTxt(id) + '</td><td>' + pct(L[id].part) + '</td></tr>').join('') +
+    '</tbody>' + (vus.length === ids.length ? '<tfoot><tr><td>Total</td><td>' + F(res.totaux.recuPeriode) + '</td><td>' + F(res.totaux.capital != null ? res.totaux.capital : res.totaux.totalRecu) + '</td><td>' + (res.totaux.arrieres == null ? '—' : F(res.totaux.arrieres)) + '</td><td>' + ((res.totaux.capital != null ? res.totaux.capital : res.totaux.totalRecu) > 0 ? '100,00 %' : 'Non calculable') + '</td></tr></tfoot>' : '') + '</table></div>';
+  h += '<div class="lignes-membres">' + vus.map(id => '<details class="lm" id="lm-' + esc(id) + '"><summary>' + avMembre(id, 'p') + '<span class="lm-nom">' + esc(nomMembre(id)) + (c.byId[id].parti ? ' <span class="puce neutre">parti</span>' : '') + '</span><span class="lm-val">' + (L[id].arr > 0 ? '<span class="neg">Dû : ' + F(L[id].arr) + '</span>' : 'Part ' + esc(pct(L[id].part))) + '</span></summary>' + details(id) + '</details>').join('') + '</div>';
+  if (liste.length > vus.length) h += '<div><button type="button" class="btn second" data-a="mb-plus">Afficher ' + (liste.length - vus.length > 20 ? 'les 20 suivants' : 'les ' + (liste.length - vus.length) + ' suivants') + ' (' + vus.length + ' sur ' + liste.length + ')</button></div>';
+  return h;
+}
 function vEcritures(c, pe) {
-  const v = c.L.versements.filter(x => x.date >= pe.du && x.date <= pe.au);
+  const tout = voitToutesSituations(c);
+  const v = c.L.versements.filter(x => x.date >= pe.du && x.date <= pe.au && (tout || x.membre === c.moi));
   const mv = c.L.mouvements.filter(x => x.date >= pe.du && x.date <= pe.au);
   const cor = c.L.annulations.slice().sort((a, b) => (b.saisiLe || '').localeCompare(a.saisiLe || ''));
   const affTxt = a => Object.keys(a || {}).sort().map(k => fmtMois(k) + ' (' + F(a[k]) + ')').join(', ');
   let h = '<section class="section"><h2>Détail des écritures</h2>';
-  h += '<details class="pli" id="d-vers"><summary>Versements de la période (' + v.length + ')</summary>' + (v.length ? '<div class="tableau-wrap" style="margin-top:10px"><table class="tab"><thead><tr><th>Encaissé le</th><th>Membre</th><th>Montant</th><th style="text-align:left">Affecté à</th></tr></thead><tbody>' + v.map(x => '<tr><td>' + esc(fmtDate(x.date)) + (x._p ? '<br><span class="attente">En attente</span>' : '') + '</td><td style="text-align:left">' + esc(nomMembre(x.membre)) + '</td><td>' + F(x.montant) + '</td><td style="text-align:left">' + esc(affTxt(x.affectations)) + ((c.isTres || c.isOwner) || x.membre === c.moi ? ' <button class="btn lien petit" data-a="voir-recu" data-k="' + esc(x._id) + '" data-m="' + esc(x.membre) + '">Reçu</button>' : '') + '</td></tr>').join('') + '</tbody></table></div>' : '<p class="doux petit">Aucun versement encaissé sur cette période.</p>') + '</details>';
+  h += '<details class="pli" id="d-vers"><summary>' + (tout ? 'Versements de la période' : 'Mes versements de la période') + ' (' + v.length + ')</summary>' + (v.length ? '<div class="tableau-wrap" style="margin-top:10px"><table class="tab"><thead><tr><th>Encaissé le</th><th>Membre</th><th>Montant</th><th style="text-align:left">Affecté à</th></tr></thead><tbody>' + v.map(x => '<tr><td>' + esc(fmtDate(x.date)) + (x._p ? '<br><span class="attente">En attente</span>' : '') + '</td><td style="text-align:left">' + esc(nomMembre(x.membre)) + '</td><td>' + F(x.montant) + '</td><td style="text-align:left">' + esc(affTxt(x.affectations)) + ((c.isTres || c.isOwner) || x.membre === c.moi ? ' <button class="btn lien petit" data-a="voir-recu" data-k="' + esc(x._id) + '" data-m="' + esc(x.membre) + '">Reçu</button>' : '') + '</td></tr>').join('') + '</tbody></table></div>' : '<p class="doux petit">Aucun versement encaissé sur cette période.</p>') + '</details>';
   h += '<details class="pli" id="d-mvt"><summary>Entrées et sorties de caisse (' + mv.length + ')</summary>' + (mv.length ? '<div class="carte" style="margin-top:10px"><ul class="liste">' + mv.map(x => '<li><div style="flex:1"><strong>' + esc(libEcriture(x)) + '</strong><div class="doux petit">' + esc(fmtDate(x.date)) + '</div></div><strong class="num" style="color:' + (x.sens === 'entree' ? 'var(--ok)' : 'var(--danger)') + '">' + (x.sens === 'entree' ? '+' : '−') + F(x.montant) + '</strong></li>').join('') + '</ul></div>' : '<p class="doux petit">Aucun mouvement de caisse sur cette période.</p>') + '</details>';
   h += '<details class="pli" id="d-cor"><summary>Journal des corrections (' + cor.length + ')</summary>' + (cor.length ? '<div class="carte" style="margin-top:10px"><ul class="liste">' + cor.map(a => { const cible = c.L.all.find(x => x._id === a.cible); return '<li><div><strong>Annulation le ' + esc(fmtDate(a.saisiLe)) + '</strong><div class="petit">' + esc(cible ? libEcriture(cible) + ' · ' + F(cible.montant) + ' · ' + fmtDate(cible.date) : 'Écriture ' + a.cible) + '</div><div class="doux petit">Motif : ' + esc(a.motif) + ' · par ' + esc(nomMembre(a.par)) + '</div></div></li>'; }).join('') + '</ul></div>' : '<p class="doux petit">Aucune correction enregistrée. Les corrections ne suppriment rien : elles sont ajoutées, datées et motivées.</p>') + '</details>';
   return h + '</section>';
@@ -3650,6 +3707,7 @@ function vAdmin(c) {
   h += '<div class="carte pile"><h3>Importer l’historique</h3><p class="petit doux">Remplissez les onglets « Import – Versements », « Import – Caisse », « Import – Soldes d’ouverture » et « Import – Anniversaires » du classeur, puis touchez « Importer ». Les lignes déjà importées sont ignorées ; chaque ligne reçoit son statut dans le classeur. La trésorerie doit être désignée avant d’importer des écritures.</p><div><button class="btn second" data-a="importer">Importer</button></div></div>';
   if (S.urlClasseur) h += '<p class="plat petit">Toutes les données sont dans le classeur Google Sheets « Adya – ' + esc(nomGroupe()) + ' – Données » (Registre financier, Bilans publiés, Journal). Une copie de sauvegarde est faite chaque dimanche. <a href="' + esc(S.urlClasseur) + '" target="_blank" rel="noopener">Ouvrir le classeur</a></p>';
   h += '<form class="form carte" data-f="droits" id="f-droits"><h3>Droits de publication</h3><p class="petit doux">Réglage à confirmer par ' + esc(G().le) + '.</p><div class="champs-2">' + [['nouvelles', 'Nouvelles'], ['agenda', 'Agenda'], ['votes', 'Ouverture des votes'], ['projets', 'Projets']].map(x => '<label class="champ"><span>' + x[1] + '</span><select id="dr-' + x[0] + '" name="' + x[0] + '"><option value="tous"' + ((dr[x[0]] || 'tous') === 'tous' ? ' selected' : '') + '>Tous les membres</option><option value="admin"' + (dr[x[0]] === 'admin' ? ' selected' : '') + '>Administrateurs seulement</option></select></label>').join('') + '</div>';
+  h += '<h3>Situation des cotisations</h3><div class="champs-2"><label class="champ"><span>Situation de chaque membre (versements, arriérés, part)</span><select id="cf-situations" name="situations"><option value="soi"' + (((cfg.confidentialite || {}).situations || 'soi') === 'soi' ? ' selected' : '') + '>Visible par le membre, l’administration et ' + esc(T().le) + '</option><option value="tous"' + ((cfg.confidentialite || {}).situations === 'tous' ? ' selected' : '') + '>Visible par tous les membres</option></select></label></div><p class="petit doux">Le point sur les arriérés et les totaux du groupe restent visibles par tous.</p>';
   h += '<h3>Votes</h3><label class="case"><input type="checkbox" id="rv-modif" name="modification"' + (rv.modification ? ' checked' : '') + '>Permettre de modifier son vote avant la clôture</label><label class="case"><input type="checkbox" id="rv-visibles" name="choixVisibles"' + (rv.choixVisibles ? ' checked' : '') + '>Afficher le choix de chaque membre</label><div class="champs-2"><label class="champ"><span>Seuil rappelé pour modifier la charte</span><select id="rv-seuil" name="seuilCharte">' + Object.keys(SEUILS).map(k => '<option value="' + k + '"' + ((cfg.seuilCharte || '2/3') === k ? ' selected' : '') + '>' + esc(SEUILS[k]) + '</option>').join('') + '</select></label></div><p class="petit doux">À aligner sur la charte ' + esc(G().du) + '.</p>';
   h += '<h3>Droit de vote</h3><p class="petit doux">Aucune suspension automatique. À n’utiliser que sur décision ' + esc(G().du) + '.</p><div class="champs-2"><label class="champ"><span>Membre</span><select id="dv-membre" name="dvMembre"><option value="">—</option>' + c.membres.map(m => '<option value="' + m.id + '">' + esc(m.nom) + (m.voteSuspendu ? ' (suspendu)' : '') + '</option>').join('') + '</select></label><label class="champ"><span>Droit de vote</span><select id="dv-etat" name="dvEtat"><option value="actif">Actif</option><option value="suspendu">Suspendu</option></select></label><label class="champ"><span>Motif et date de la décision</span><input id="dv-motif" name="dvMotif" maxlength="200"></label></div>';
   h += '<h3>Rappels automatiques par e-mail</h3><label class="case"><input type="checkbox" id="rp-actifs" name="rappelsActifs"' + (rp.actifs ? ' checked' : '') + '>Activer les rappels quotidiens (anniversaires, rendez-vous, votes bientôt clos, cotisation)</label><div class="champs-2"><label class="champ"><span>Heure d’envoi (heure GMT)</span><select id="rp-heure" name="rappelsHeure">' + [6, 7, 8, 9, 10, 12, 14, 17, 18, 19, 20, 21].map(x => '<option value="' + x + '"' + ((rp.heure || 8) === x ? ' selected' : '') + '>' + x + ' h</option>').join('') + '</select></label></div><p class="petit doux">À activer une fois les horaires décidés ' + G().en + '. Seuls les membres qui ont choisi les e-mails les reçoivent.</p><div><button class="btn second">Enregistrer les réglages</button></div></form>';
@@ -3688,6 +3746,8 @@ async function majConfig(fn, msg) {
   return ecrire('config/app', 'set', cfg, msg);
 }
 const A = {
+  'mb-filtre': el => { ui.mbFiltre = el.dataset.v; ui.mbMax = 20; planifier(); },
+  'mb-plus': () => { ui.mbMax = (ui.mbMax || 20) + 20; planifier(); },
   'demo-on': () => { DEMO = construireDemo(); ui.demo = true; oublierVisites(); naviguer('accueil'); },
   'demo-off': () => { ui.demo = false; ui.personne = null; oublierVisites(); planifier(); },
   aller: el => { if (el.dataset.t) { ui.famTab = el.dataset.t; lsSet('famTab', ui.famTab); } naviguer(el.dataset.v); ui.personne = null; },
@@ -3787,6 +3847,7 @@ const A = {
   }
 };
 const CH = {
+  mbtri: el => { ui.mbTri = el.value; ui.mbMax = 20; planifier(); },
   mois: el => { if (el.value) { ui.bilan.mois = el.value; ui.voirLive = false; planifier(); } },
   'annee-b': el => { ui.bilan.annee = +el.value; ui.voirLive = false; planifier(); },
   du: el => { if (el.value) { ui.bilan.du = el.value; planifier(); } },
@@ -3839,7 +3900,7 @@ const FORMS = {
     if (!o.membre) { toast('Choisissez votre nom.'); return; }
     try {
       const r = await appel('apiConnexion', o.membre, o.code);
-      SESSION.jeton = r.jeton; lsSet('jeton', r.jeton); ui.erreurChargement = null; ui.route = 'accueil';
+      SESSION.jeton = r.jeton; lsSet('jeton', r.jeton); versPorte({ adya: 'session', jeton: r.jeton }); ui.erreurChargement = null; ui.route = 'accueil';
       try { history.replaceState(null, '', '#accueil'); } catch (e) {}
       planifier(); await actualiser(true); toast('Bienvenue.');
     } catch (e) { toast(messageErreur(e)); const c = document.getElementById('cx-code'); if (c) c.value = ''; }
@@ -3938,6 +3999,7 @@ const FORMS = {
       cfg.droits = { nouvelles: o.nouvelles, agenda: o.agenda, votes: o.votes, projets: o.projets };
       cfg.reglagesVote = { modification: !!o.modification, choixVisibles: !!o.choixVisibles };
       cfg.seuilCharte = o.seuilCharte || '2/3';
+      cfg.confidentialite = { situations: o.situations === 'tous' ? 'tous' : 'soi' };
       cfg.rappels = { actifs: !!o.rappelsActifs, heure: +o.rappelsHeure || 8 };
       if (o.dvMembre) { cfg.membres[o.dvMembre].droitVote = o.dvEtat !== 'suspendu'; cfg.membres[o.dvMembre].motifVote = o.dvEtat === 'suspendu' ? (o.dvMotif || '') : ''; cfg.journalVote = (cfg.journalVote || []).concat([{ le: nowISO(), membre: o.dvMembre, etat: o.dvEtat, motif: o.dvMotif || '' }]); }
     }, 'Réglages enregistrés.');
@@ -4236,7 +4298,16 @@ window.addEventListener('message', e => {
   if (!ORIGINE_PORTE || e.origin !== ORIGINE_PORTE || !e.data || typeof e.data.adya !== 'string') return;
   const m = e.data;
   if (m.adya === 'porte-prete') { versPorte({ adya: 'bonjour' }); return; }
-  if (m.adya === 'porte') { ui.porte = { webauthn: !!m.webauthn, libelle: String(m.libelle || 'Face ID').slice(0, 40), actif: !!m.actif }; ui.porteEtat = null; planifier(); }
+  if (m.adya === 'porte') {
+    ui.porte = { webauthn: !!m.webauthn, libelle: String(m.libelle || 'Face ID').slice(0, 40), actif: !!m.actif }; ui.porteEtat = null;
+    // Sur iPhone, le stockage du cadre Google peut être effacé entre deux ouvertures : la page d'accueil garde la connexion.
+    if (!SESSION.jeton && typeof m.jeton === 'string' && m.jeton) {
+      SESSION.jeton = m.jeton; lsSet('jeton', m.jeton); ui.erreurListe = null;
+      const g = m.etat; if (g && g.j === m.jeton && g.s && !S.charge) { ui.depuisCache = g.le; appliquerEtat(g.s, true); }
+      actualiser(true);
+    } else if (SESSION.jeton && m.jeton !== SESSION.jeton) { versPorte({ adya: 'session', jeton: SESSION.jeton }); const g = etatGarde(); if (g) versPorte({ adya: 'etat', g }); }
+    planifier();
+  }
   else if (m.adya === 'faceid-cree') enregistrerFaceID(m);
   else if (m.adya === 'faceid-assertion') connexionFaceID(m);
   else if (m.adya === 'faceid-erreur') { defiConnexion = null; ui.porteEtat = null; if (m.message) toast(String(m.message).slice(0, 200)); planifier(); }
@@ -4249,7 +4320,7 @@ function synchroPorte() {
   if (etat === 'deconnecte') {
     if (defiConnexion !== 'attente' && (!defiConnexion || Date.now() - defiT > 240000)) {
       defiT = Date.now(); defiConnexion = 'attente';
-      appel('apiDefiFaceID', null).then(r => { defiConnexion = r.defi; if (!SESSION.jeton) versPorte({ adya: 'connexion', defi: r.defi }); }).catch(() => { defiConnexion = null; });
+      appelFiable('apiDefiFaceID', null).then(r => { defiConnexion = r.defi; if (!SESSION.jeton) versPorte({ adya: 'connexion', defi: r.defi }); }).catch(() => { defiConnexion = null; });
     }
   } else if (ui.porteEtat !== 'connecte') { defiConnexion = null; versPorte({ adya: 'connecte' }); }
   ui.porteEtat = etat;
@@ -4258,7 +4329,7 @@ async function connexionFaceID(m) {
   toast('Vérification de ' + ((ui.porte && ui.porte.libelle) || 'Face ID') + '…');
   try {
     const r = await appel('apiConnexionFaceID', { id: m.id, clientDataJSON: m.clientDataJSON, authenticatorData: m.authenticatorData, signature: m.signature });
-    SESSION.jeton = r.jeton; lsSet('jeton', r.jeton); ui.erreurChargement = null; ui.route = 'accueil'; defiConnexion = null;
+    SESSION.jeton = r.jeton; lsSet('jeton', r.jeton); versPorte({ adya: 'session', jeton: r.jeton }); ui.erreurChargement = null; ui.route = 'accueil'; defiConnexion = null;
     try { history.replaceState(null, '', '#accueil'); } catch (e) {}
     planifier(); await actualiser(true); toast('Bienvenue.');
   } catch (e) { defiConnexion = null; ui.porteEtat = null; toast(messageErreur(e)); planifier(); }
@@ -4480,7 +4551,7 @@ function brancher() {
     if (el.dataset && el.dataset.pj) { const fs = Array.from(el.files || []); const z = el.dataset.pj; el.value = ''; if (fs.length) ajouterPJ(z, fs); return; }
     const k = el.dataset && el.dataset.aChange; if (k && CH[k]) CH[k](el);
   });
-  document.addEventListener('input', e => { const el = e.target; if (el.dataset && el.dataset.aChange === 'tv') CH.tv(el); if (el.id === 'cad-zoom' && ui.cadrage) { ui.cadrage.zoom = +el.value; appliquerCadrage(); } });
+  document.addEventListener('input', e => { const el = e.target; if (el.id === 'mb-rech') { ui.mbRech = el.value; ui.mbMax = 20; planifier(); } if (el.dataset && el.dataset.aChange === 'tv') CH.tv(el); if (el.id === 'cad-zoom' && ui.cadrage) { ui.cadrage.zoom = +el.value; appliquerCadrage(); } });
   brancherCadrage();
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('visionneuse').hidden) fermerPhoto(); });
   document.getElementById('visionneuse').addEventListener('click', e => { if (e.target.id === 'visionneuse') fermerPhoto(); });
