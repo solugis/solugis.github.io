@@ -29,6 +29,13 @@
   .etiquette { justify-self: start; font-size: 13px; font-weight: 700; color: var(--doux); border: 1px solid var(--ligne); border-radius: 999px; padding: 2px 10px; }
   ul.points { padding-left: 20px; }
   ul.points li { margin: 6px 0; }
+  .contact { margin-top: 40px; background: var(--carte); border: 1px solid var(--ligne); border-radius: 18px; padding: 20px; display: grid; gap: 12px; }
+  .contact h2 { margin: 0; }
+  .contact p { margin: 0; color: var(--doux); }
+  .contact .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .contact .actions a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 12px; font-weight: 700; text-decoration: none; }
+  .contact .wa { background: #1f8f4e; color: #fff; }
+  .contact .tel { border: 2px solid var(--ligne); color: var(--texte); }
   footer { margin: 40px auto 0; padding: 18px 16px 40px; max-width: 980px; color: var(--doux); font-size: 14px; border-top: 1px solid var(--ligne); }
 </style>
 </head>
@@ -59,7 +66,16 @@
     <li>Pensées pour le téléphone et pour les réseaux mobiles d’ici.</li>
     <li>Pas de logiciel à installer : une icône sur l’écran d’accueil suffit.</li>
   </ul>
+
+  <section class="contact" id="contact">
+    <h2>Nous contacter</h2>
+    <p>Ghislain N’Dri, directeur général · Abidjan, Côte d’Ivoire</p>
+    <div class="actions">
+      <a class="wa" href="https://wa.me/2250172767791?text=Bonjour%20SoluGis%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20vos%20solutions." target="_blank" rel="noopener">Écrire sur WhatsApp</a>
+      <a class="tel" href="tel:+2250172767791">Appeler le <span style="white-space:nowrap">+225 01 72 76 77 91</span></a>
+    </div>
+  </section>
 </main>
-<footer>© SoluGis · Solutions numériques &amp; IA</footer>
+<footer>© SoluGis · Solutions numériques &amp; IA · Abidjan, Côte d’Ivoire</footer>
 </body>
 </html>

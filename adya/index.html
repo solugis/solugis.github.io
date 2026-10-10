@@ -34,6 +34,13 @@
   .pastille { display: inline-block; width: 34px; height: 34px; border-radius: 10px; background: var(--or); margin-bottom: 10px; }
   ul.points { padding-left: 20px; margin: 0; }
   ul.points li { margin: 6px 0; }
+  .contact { margin-top: 40px; background: var(--carte); border: 1px solid var(--ligne); border-radius: 18px; padding: 20px; display: grid; gap: 12px; }
+  .contact h2 { margin: 0; }
+  .contact p { margin: 0; color: var(--doux); }
+  .contact .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .contact .actions a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 12px; font-weight: 700; text-decoration: none; }
+  .contact .wa { background: #1f8f4e; color: #fff; }
+  .contact .tel { border: 2px solid var(--ligne); color: var(--texte); }
   footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--ligne); color: var(--doux); font-size: 14px; }
   footer a { color: inherit; }
 </style>
@@ -68,6 +75,15 @@
     <li>Chaque membre se connecte avec son code personnel ou avec Face ID, et retrouve l’icône du groupe sur l’écran d’accueil de son téléphone.</li>
     <li>Export complet vers Excel à tout moment, et sauvegarde automatique chaque semaine.</li>
   </ul>
+
+  <section class="contact" id="contact">
+    <h2>Installer Adya pour votre groupe</h2>
+    <p>Parlons de votre famille, de votre amicale ou de votre mutuelle : nous installons Adya dans le compte Google de votre groupe. SoluGis · Abidjan, Côte d’Ivoire.</p>
+    <div class="actions">
+      <a class="wa" href="https://wa.me/2250172767791?text=Bonjour%20SoluGis%2C%20je%20souhaite%20installer%20Adya%20pour%20notre%20groupe." target="_blank" rel="noopener">Écrire sur WhatsApp</a>
+      <a class="tel" href="tel:+2250172767791">Appeler le <span style="white-space:nowrap">+225 01 72 76 77 91</span></a>
+    </div>
+  </section>
 
   <footer>Adya est une solution <a href="../">SoluGis</a> · Solutions numériques &amp; IA.</footer>
 </main>
