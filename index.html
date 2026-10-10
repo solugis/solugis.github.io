@@ -6,6 +6,8 @@
 <title>SoluGis – Solutions numériques &amp; IA</title>
 <meta name="description" content="SoluGis conçoit des applications simples pour les familles, les associations et les entreprises, installées sur leur propre compte Google.">
 <meta name="theme-color" content="#0d1b2e">
+<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="icon" type="image/png" href="icone-180.png">
 <style>
   :root { --nuit: #0d1b2e; --turquoise: #2ab7c9; --creme: #f3ead8; --fond: #f6f7f9; --carte: #ffffff; --texte: #142235; --doux: #5a6778; --ligne: #dfe3ea; }
   @media (prefers-color-scheme: dark) { :root { --fond: #0a1524; --carte: #122238; --texte: #e8edf4; --doux: #a3b0c2; --ligne: #22344d; } }
@@ -16,7 +18,9 @@
   .tete-in, main { max-width: 980px; margin: 0 auto; padding: 0 16px; }
   .tete-in { padding-top: 28px; padding-bottom: 44px; }
   .marque { display: flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
-  .marque svg { width: 22px; height: 30px; }
+  .marque { gap: 14px; }
+  .marque img { width: 52px; height: auto; }
+  .nom-marque { letter-spacing: 0.22em; font-weight: 700; background: linear-gradient(180deg, #fbeee4, #e3ad8c); -webkit-background-clip: text; background-clip: text; color: transparent; }
   h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.12; margin: 34px 0 12px; letter-spacing: -0.02em; text-wrap: balance; }
   .tete p { color: #cfd6e2; font-size: 19px; max-width: 640px; margin: 0; }
   h2 { font-size: 24px; margin: 40px 0 14px; }
@@ -41,7 +45,7 @@
 </head>
 <body>
 <div class="tete"><div class="tete-in">
-  <div class="marque"><svg viewBox="0 0 24 32" aria-hidden="true"><path d="M12 1C12 1 2 13 2 20a10 10 0 0 0 20 0C22 13 12 1 12 1z" fill="#2ab7c9"/></svg>SoluGis</div>
+  <div class="marque"><img src="symbole.svg" alt="" width="52" height="47"><span class="nom-marque">SOLUGIS</span></div>
   <h1>Des applications simples, qui travaillent pour vous.</h1>
   <p>Solutions numériques &amp; IA pour les familles, les associations et les entreprises de Côte d’Ivoire.</p>
 </div></div>
