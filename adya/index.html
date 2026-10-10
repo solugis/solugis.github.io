@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adya – la caisse commune de votre groupe</title>
+<meta name="description" content="Adya, une solution SoluGis : cotisations, capital commun, solidarité, votes et vie du groupe, dans une application installée sur votre propre compte Google.">
+<meta name="theme-color" content="#0a4a30">
+<link rel="apple-touch-icon" href="icone-180.png">
+<link rel="icon" type="image/png" href="icone-180.png">
+<style>
+  :root { --vert: #0a4a30; --or: #e3a43a; --fond: #f4f6ef; --carte: #ffffff; --texte: #16261c; --doux: #55665a; --ligne: #d9e1d4; }
+  @media (prefers-color-scheme: dark) { :root { --vert: #8fd0a6; --fond: #0f1612; --carte: #17211b; --texte: #e8efe7; --doux: #a2b3a6; --ligne: #2a3b31; } }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--fond); color: var(--texte); font: 17px/1.55 -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 0 16px 48px; }
+  header { padding: 28px 0 8px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  header img { height: 46px; width: auto; }
+  .logo-sombre { display: none; }
+  @media (prefers-color-scheme: dark) { .logo-clair { display: none; } .logo-sombre { display: block; } }
+  header a { color: var(--doux); font-size: 14px; text-decoration: none; }
+  h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.12; margin: 28px 0 14px; letter-spacing: -0.02em; text-wrap: balance; }
+  h2 { font-size: 24px; margin: 44px 0 14px; }
+  .chapeau { font-size: 19px; color: var(--doux); max-width: 640px; margin: 0 0 26px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 22px; border-radius: 14px; font-weight: 700; text-decoration: none; }
+  .btn.principal { background: #0a4a30; color: #fff; }
+  .btn.second { border: 2px solid var(--ligne); color: var(--texte); }
+  .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .carte { background: var(--carte); border: 1px solid var(--ligne); border-radius: 18px; padding: 18px; }
+  .carte h3 { margin: 0 0 6px; font-size: 18px; }
+  .carte p { margin: 0; color: var(--doux); font-size: 15.5px; }
+  .pastille { display: inline-block; width: 34px; height: 34px; border-radius: 10px; background: var(--or); margin-bottom: 10px; }
+  ul.points { padding-left: 20px; margin: 0; }
+  ul.points li { margin: 6px 0; }
+  footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--ligne); color: var(--doux); font-size: 14px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <a href="./"><img class="logo-clair" src="logo.svg" alt="Adya"><img class="logo-sombre" src="logo-sombre.svg" alt="Adya"></a>
+    <a href="../">Une solution SoluGis</a>
+  </header>
+
+  <h1>La caisse commune de votre famille, de votre amicale ou de votre mutuelle.</h1>
+  <p class="chapeau">Cotisations, capital commun, solidarité, votes et vie du groupe : tout est suivi dans une application simple, sur le téléphone de chaque membre, et chacun voit les mêmes chiffres.</p>
+  <div class="actions">
+    <a class="btn principal" href="demo/">Essayer la démonstration</a>
+    <a class="btn second" href="demo/?vue=membre">Voir comme un membre</a>
+  </div>
+
+  <h2>Ce qu’Adya fait pour votre groupe</h2>
+  <div class="grille">
+    <div class="carte"><span class="pastille"></span><h3>Cotisations et parts</h3><p>Chaque versement est enregistré par la trésorerie. Les parts du capital commun, les arriérés et le solde se calculent tout seuls.</p></div>
+    <div class="carte"><span class="pastille"></span><h3>Fonds et solidarité</h3><p>Capital commun, fonds de solidarité, fonds de fonctionnement : chaque versement est réparti selon les règles de votre charte.</p></div>
+    <div class="carte"><span class="pastille"></span><h3>Cotisations exceptionnelles</h3><p>Funérailles, mariage : lancez une collecte à montant fixe ou libre, suivez qui a participé et l’aide remise.</p></div>
+    <div class="carte"><span class="pastille"></span><h3>Reçus et bilans</h3><p>Un reçu numéroté pour chaque versement, avec un code d’authenticité. Bilans mensuels publiés pour tous.</p></div>
+    <div class="carte"><span class="pastille"></span><h3>Décisions et projets</h3><p>Votes avec date de clôture, suivi des projets étape par étape, charte du groupe toujours à portée de main.</p></div>
+    <div class="carte"><span class="pastille"></span><h3>Vie du groupe</h3><p>Nouvelles, agenda, anniversaires et murs de vœux : le groupe reste uni entre deux réunions.</p></div>
+  </div>
+
+  <h2>Vos données restent à vous</h2>
+  <ul class="points">
+    <li>Adya est installée dans <strong>le compte Google de votre groupe</strong> : les données sont dans votre propre classeur Google Sheets.</li>
+    <li>Chaque membre se connecte avec son code personnel ou avec Face ID, et retrouve l’icône du groupe sur l’écran d’accueil de son téléphone.</li>
+    <li>Export complet vers Excel à tout moment, et sauvegarde automatique chaque semaine.</li>
+  </ul>
+
+  <footer>Adya est une solution <a href="../">SoluGis</a> · Solutions numériques &amp; IA.</footer>
+</main>
+</body>
+</html>
