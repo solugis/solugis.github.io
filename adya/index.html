@@ -41,6 +41,16 @@
   .contact .actions a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 12px; font-weight: 700; text-decoration: none; }
   .contact .wa { background: #1f8f4e; color: #fff; }
   .contact .tel { border: 2px solid var(--ligne); color: var(--texte); }
+  .tarifs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .tarif { background: var(--carte); border: 1px solid var(--ligne); border-radius: 18px; padding: 18px; display: grid; gap: 10px; align-content: start; }
+  .tarif.vedette { border: 2px solid #0a4a30; }
+  .tarif h3 { margin: 0; font-size: 18px; }
+  .tarif .sous { margin: 0; color: var(--doux); font-size: 14.5px; }
+  .tarif table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .tarif td { padding: 7px 0; border-top: 1px solid var(--ligne); }
+  .tarif td:last-child { text-align: right; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .lancement { margin: 14px 0 0; padding: 12px 16px; border-radius: 14px; background: color-mix(in srgb, var(--or) 22%, transparent); font-weight: 700; }
+  .notes-tarifs { color: var(--doux); font-size: 14.5px; margin: 10px 0 0; padding-left: 20px; }
   footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--ligne); color: var(--doux); font-size: 14px; }
   footer a { color: inherit; }
 </style>
@@ -57,6 +67,7 @@
   <div class="actions">
     <a class="btn principal" href="demo/">Essayer la démonstration</a>
     <a class="btn second" href="demo/?vue=membre">Voir comme un membre</a>
+    <a class="btn second" href="#tarifs">Voir les tarifs</a>
   </div>
 
   <h2>Ce qu’Adya fait pour votre groupe</h2>
@@ -74,6 +85,32 @@
     <li>Adya est installée dans <strong>le compte Google de votre groupe</strong> : les données sont dans votre propre classeur Google Sheets.</li>
     <li>Chaque membre se connecte avec son code personnel ou avec Face ID, et retrouve l’icône du groupe sur l’écran d’accueil de son téléphone.</li>
     <li>Export complet vers Excel à tout moment, et sauvegarde automatique chaque semaine.</li>
+  </ul>
+
+  <h2 id="tarifs">Tarifs</h2>
+  <div class="tarifs">
+    <div class="tarif">
+      <h3>Abonnement mensuel</h3>
+      <p class="sous">Installation : 150 000 FCFA, une seule fois</p>
+      <table><tr><td>Jusqu’à 30 membres</td><td>7 500 FCFA / mois</td></tr><tr><td>31 à 100 membres</td><td>10 000 FCFA / mois</td></tr></table>
+    </div>
+    <div class="tarif vedette">
+      <h3>Abonnement annuel</h3>
+      <p class="sous">2 mois offerts · installation : 150 000 FCFA, une seule fois</p>
+      <table><tr><td>Jusqu’à 30 membres</td><td>75 000 FCFA / an</td></tr><tr><td>31 à 100 membres</td><td>100 000 FCFA / an</td></tr></table>
+    </div>
+    <div class="tarif">
+      <h3>Licence définitive</h3>
+      <p class="sous">Installation comprise, payée une seule fois</p>
+      <table><tr><td>Jusqu’à 30 membres</td><td>250 000 FCFA</td></tr><tr><td>31 à 100 membres</td><td>350 000 FCFA</td></tr></table>
+    </div>
+  </div>
+  <p class="lancement">Offre de lancement : le 1<sup>er</sup> mois d’abonnement est offert.</p>
+  <ul class="notes-tarifs">
+    <li>Plus de 100 membres : sur devis.</li>
+    <li>Intervention ponctuelle : 15 000 FCFA par intervention.</li>
+    <li>Abonnement payable d’avance (avant le 5 de chaque mois, ou en début d’année pour l’offre annuelle), avec un engagement de 12 mois.</li>
+    <li>Paiement par Wave, Orange Money, MTN MoMo, Moov Money ou virement.</li>
   </ul>
 
   <section class="contact" id="contact">
