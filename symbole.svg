@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="60 40 440 400" width="440" height="400" role="img" aria-label="SoluGis">
+  <defs>
+    <linearGradient id="creme" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbeee4"/><stop offset="0.55" stop-color="#f2d2bd"/><stop offset="1" stop-color="#e3ad8c"/>
+    </linearGradient>
+    <linearGradient id="vers-turquoise" x1="340" y1="215" x2="400" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f2d2bd"/><stop offset="0.45" stop-color="#bfe6f2"/><stop offset="1" stop-color="#3fd0f5"/>
+    </linearGradient>
+    <radialGradient id="goutte" cx="0.38" cy="0.32" r="0.75">
+      <stop offset="0" stop-color="#6fe3ff"/><stop offset="0.6" stop-color="#2cc3f2"/><stop offset="1" stop-color="#1596d6"/>
+    </radialGradient>
+  </defs>
+  <!-- liaisons -->
+  <path d="M238 196 L176 306" stroke="url(#creme)" stroke-width="30" stroke-linecap="round" fill="none"/>
+  <path d="M344 196 L410 312" stroke="url(#vers-turquoise)" stroke-width="30" stroke-linecap="round" fill="none"/>
+  <!-- anneau du haut -->
+  <circle cx="290" cy="140" r="70" fill="none" stroke="url(#creme)" stroke-width="30"/>
+  <!-- anneau de gauche -->
+  <circle cx="148" cy="355" r="55" fill="none" stroke="url(#creme)" stroke-width="27"/>
+  <!-- goutte turquoise -->
+  <circle cx="425" cy="356" r="68" fill="url(#goutte)"/>
+</svg>
