@@ -4,8 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<link rel="apple-touch-icon" href="../icone-180.png">
-<meta name="theme-color" content="#0a4a30">
 <title>Adya</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -601,7 +599,7 @@ var UrlFetchApp = { fetch: function (url) {
 } };
 </script>
 <script>/**
- * Adya – l'application privée des familles, amicales et mutuelles
+ * Adya – l'application privée des familles, amicales et associations : unis, solidaires, organisés
  * Une solution SoluGis. Ce fichier est installé dans le compte Google du groupe :
  * les données restent dans ce compte.
  * ---------------------------------------------------------------
@@ -627,6 +625,7 @@ var UrlFetchApp = { fetch: function (url) {
  * ================================================================ */
 const PARAMETRES = {
   GROUPE: 'Famille Exemple',      // nom affiché dans l'application, les e-mails et les reçus
+  NOM_OFFICIEL: '',               // facultatif : nom officiel imprimé sur les reçus (ex. 'Association Famille NDK') ; sinon GROUPE
   TYPE: 'famille',                // famille, amicale, mutuelle, association ou groupe
   SIGLE: 'FEX',                   // 2 à 6 lettres : début des numéros de reçus (FEX-2026-0001)
   MEMBRES: ['Awa Koné', 'Koffi Yao', 'Mariam Traoré', 'Serge N’Guessan', 'Nadia Bamba', 'Paul Kouassi', 'Inès Diallo', 'Hervé Aka'],
@@ -665,7 +664,7 @@ function groupe_() {
   const m = String(p.PORTE || '').match(/^(https:\/\/[^/]+|http:\/\/localhost(?::\d+)?)/);   // localhost : banc d'essai seulement
   if (m) porte = m[1];
   return {
-    nom: String(p.GROUPE || 'Mon groupe').slice(0, 80), type: TYPES_GROUPE_.indexOf(p.TYPE) >= 0 ? p.TYPE : 'groupe', sigle: sigle,
+    nom: String(p.GROUPE || 'Mon groupe').slice(0, 80), nomOfficiel: String(p.NOM_OFFICIEL || '').slice(0, 120), type: TYPES_GROUPE_.indexOf(p.TYPE) >= 0 ? p.TYPE : 'groupe', sigle: sigle,
     tresorier: p.TRESORIER === 'trésorière' ? 'trésorière' : 'trésorier', porte: porte, lienPorte: String(p.PORTE || ''),
     cotisation: Math.max(1, Math.round(+p.COTISATION || 10000)), echeance: Math.min(28, Math.max(1, Math.round(+p.ECHEANCE || 15))),
     maxMembres: Math.max(2, Math.round(+p.MAX_MEMBRES || 100)), licence: (p.LICENCE || {}).TYPE === 'definitive' ? 'definitive' : 'abonnement'
@@ -1113,7 +1112,7 @@ function etat_(docs, moi) {
   const admin = cfg.admins.indexOf(moi) >= 0;
   if (!admin) cfg.ordre.forEach(function (id) { delete cfg.membres[id].email; });
   const G = groupe_();
-  cfg.groupe = { nom: G.nom, type: G.type, sigle: G.sigle, tresorier: G.tresorier };
+  cfg.groupe = { nom: G.nom, nomOfficiel: G.nomOfficiel, type: G.type, sigle: G.sigle, tresorier: G.tresorier };
   S.config = cfg;
   S.licence = etatLicence_();
   S.moi = moi;
@@ -2052,7 +2051,7 @@ function moteurCalcul() {
     var g = cfg.groupe || {}, mandats = (cfg.tresoriers || []).filter(function (t) { return t.membre === v.par; });
     var titre = (mandats.length ? mandats[mandats.length - 1].titre : '') || g.tresorier || 'trésorier';
     var r = {
-      id: id, numero: (numeros || numerosRecus(L, g.sigle))[id], groupe: g.nom || '', sigle: g.sigle || '', typeGroupe: g.type || 'groupe', titrePar: titre, repriseLe: cfg.repriseLe || null, membre: v.membre, nomMembre: v.membre ? nom(v.membre) : (v.donateur || ''), exterieur: !v.membre, montant: +v.montant, lettres: enLettres(v.montant),
+      id: id, numero: (numeros || numerosRecus(L, g.sigle))[id], groupe: g.nomOfficiel || g.nom || '', sigle: g.sigle || '', typeGroupe: g.type || 'groupe', titrePar: titre, repriseLe: cfg.repriseLe || null, membre: v.membre, nomMembre: v.membre ? nom(v.membre) : (v.donateur || ''), exterieur: !v.membre, montant: +v.montant, lettres: enLettres(v.montant),
       rubrique: rubrique(v), objet: objetVersement(v, P),
       fonds: (function () { var f = fondsDe(v, P); return P.fonds.filter(function (x) { return f[x.id]; }).map(function (x) { return { nom: x.nom, montant: +f[x.id], capital: x.capital }; }); })(),
       date: v.date, moyen: v.moyen, libMoyen: hist && (!v.moyen || v.moyen === 'autre') ? 'Non précisé dans l’historique' : MOYEN[v.moyen] || 'Autre', reference: v.reference || '',
@@ -2681,6 +2680,7 @@ const ico = (n, cls) => '<svg class="' + (cls || '') + '" viewBox="0 0 24 24" fi
 /* ============ État ============ */
 const S = {};
 const SESSION = { jeton: lsGet('jeton', null) };
+const JETON_AU_DEMARRAGE = !!SESSION.jeton;   // diagnostic : la mémoire du cadre a-t-elle gardé la connexion ?
 let enCours = 0;
 let DEMO = null, DEMO_ME = null, DEMO_PREFS = null, DEMO_CHARTE = null;
 const ui = {
@@ -2834,7 +2834,7 @@ async function actualiser(ouverture) {
   let opts = null;
   if (ouverture && Date.now() - derniereOuverture > 15 * 60000) { derniereOuverture = Date.now(); opts = { ouverture: true }; }
   try { appliquerEtat(await appelFiable('apiEtat', SESSION.jeton, opts)); }
-  catch (e) { if (estSession(e)) finSession('Votre connexion a expiré. Reconnectez-vous.'); else if (!S.charge) { ui.erreurChargement = messageErreur(e); planifier(); } else if (ui.depuisCache) { ui.cacheEchec = true; planifier(); } }
+  catch (e) { if (estSession(e)) { versPorte({ adya: 'diag', t: 'connexion refusée par le serveur' }); finSession('Votre connexion a expiré. Reconnectez-vous.'); } else if (!S.charge) { ui.erreurChargement = messageErreur(e); planifier(); } else if (ui.depuisCache) { ui.cacheEchec = true; planifier(); } }
 }
 async function chargerListe() { try { ui.liste = await appelFiable('apiListeConnexion'); ui.erreurListe = null; } catch (e) { ui.liste = []; ui.erreurListe = messageErreur(e); } planifier(); }
 /** Écrit sur le serveur ; rien n'est présenté comme enregistré avant sa confirmation. */
@@ -3030,7 +3030,7 @@ function vuePrincipale() {
   return vAccueil();
 }
 function vConnexion() {
-  let h = '<section class="connexion"><img class="hero-logo" src="' + LOGO_HERO + '" alt="Logo Adya"><h1>' + esc(nomGroupe()) + '</h1><p class="doux">Votre espace privé, sur Adya.</p>';
+  let h = '<section class="connexion"><img class="hero-logo" src="' + LOGO_HERO + '" alt="Logo de ' + esc(nomGroupe()) + '"><h1>' + esc(nomGroupe()) + '</h1><p class="doux">Votre espace privé, sur Adya.</p>';
   if (ui.horsAppsScript) return h + '<div class="vide"><strong>Aperçu hors ligne.</strong><span>Cette page doit être ouverte depuis le lien de l’application.</span><div><button class="btn or" data-a="demo-on">Voir un exemple</button></div></div></section>';
   if (!ui.liste) return h + '<div class="vide"><strong>Chargement…</strong></div></section>';
   if (ui.erreurListe) h += '<p class="plat petit">' + esc(ui.erreurListe) + ' <button class="btn lien petit" data-a="recharger-liste">Réessayer</button></p>';
@@ -3057,7 +3057,7 @@ function vAccueil() {
   const aDonnees = c.L.all.length > 0;
   const total = aDonnees ? F(c.tous.reduce((s, m) => s + cumul(c.L, m.id, t), 0)) : '—';
   const sol = aDonnees ? F(solde(c.L, t)) : '—';
-  let h = '<section class="accueil-tete"><div class="bonjour"><span class="surtitre">' + esc(jourSemaine(t)) + ' ' + esc(fmtDate(t)) + '</span><h1>' + (moi ? 'Bonjour ' + esc(moi.nomAff) : 'Bienvenue') + '</h1><p class="doux">L’espace ' + esc(G().du) + ' pour se retrouver, suivre le capital commun et décider ensemble.</p></div><img class="hero-logo" src="' + LOGO_HERO + '" alt="Logo Adya"></section>';
+  let h = '<section class="accueil-tete"><div class="bonjour"><span class="surtitre">' + esc(jourSemaine(t)) + ' ' + esc(fmtDate(t)) + '</span><h1>' + (moi ? 'Bonjour ' + esc(moi.nomAff) : 'Bienvenue') + '</h1><p class="doux">L’espace ' + esc(G().du) + ' pour rester unis, solidaires et organisés, et aller plus loin ensemble.</p></div><img class="hero-logo" src="' + LOGO_HERO + '" alt="Logo de ' + esc(nomGroupe()) + '"></section>';
   fetes.forEach(p => { h += carteFete(p); });
   h += '<section class="reperes" aria-label="Repères">' +
     '<div class="repere"><span>Membres</span><strong class="num">' + c.membres.length + '</strong></div>' +
@@ -4301,7 +4301,9 @@ window.addEventListener('message', e => {
   if (m.adya === 'porte') {
     ui.porte = { webauthn: !!m.webauthn, libelle: String(m.libelle || 'Face ID').slice(0, 40), actif: !!m.actif }; ui.porteEtat = null;
     // Sur iPhone, le stockage du cadre Google peut être effacé entre deux ouvertures : la page d'accueil garde la connexion.
+    ui.porteDiag = { v: String(m.v || 'ancienne'), jeton: !!m.jeton, journal: Array.isArray(m.diag) ? m.diag.slice(-15).map(String) : [] };
     if (!SESSION.jeton && typeof m.jeton === 'string' && m.jeton) {
+      versPorte({ adya: 'diag', t: 'connexion rendue à l’application' });
       SESSION.jeton = m.jeton; lsSet('jeton', m.jeton); ui.erreurListe = null;
       const g = m.etat; if (g && g.j === m.jeton && g.s && !S.charge) { ui.depuisCache = g.le; appliquerEtat(g.s, true); }
       actualiser(true);
@@ -4349,6 +4351,16 @@ async function enregistrerFaceID(m) {
     toast(((ui.porte && ui.porte.libelle) || 'Face ID') + ' est activé sur cet appareil.');
   } catch (e) { if (estSession(e)) finSession(); toast(messageErreur(e)); }
 }
+/** Diagnostic de la connexion gardée (à communiquer à SoluGis en cas de reconnexion à chaque ouverture). */
+function diagConnexion() {
+  const d = ui.porteDiag;
+  let h = '<details class="pli" id="d-diag"><summary>Diagnostic de connexion</summary><div class="carte" style="margin-top:10px"><ul class="liste petit">';
+  h += '<li>Page d’accueil : ' + (d ? esc(d.v) : 'non détectée (application ouverte sans son icône)') + '</li>';
+  h += '<li>Connexion gardée par la page d’accueil à l’ouverture : ' + (d ? (d.jeton ? 'oui' : 'non') : '—') + '</li>';
+  h += '<li>Connexion gardée par l’application elle-même : ' + (JETON_AU_DEMARRAGE ? 'oui' : 'non') + '</li></ul>';
+  if (d && d.journal.length) h += '<p class="petit doux" style="margin:10px 0 4px">Journal de la page d’accueil :</p><ul class="liste petit">' + d.journal.slice().reverse().map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>';
+  return h + '</div></details>';
+}
 function vFaceID(c) {
   const lib = (ui.porte && ui.porte.libelle) || 'Face ID';
   const liste = S.faceid || [];
@@ -4361,6 +4373,7 @@ function vFaceID(c) {
   else h += '<div><button class="btn second" data-a="faceid-activer">' + ico('visage') + 'Activer ' + esc(lib) + ' sur cet appareil</button></div>';
   if (liste.length) h += '<ul class="liste" style="margin-top:8px">' + liste.map(f => '<li style="align-items:center"><div style="flex:1;min-width:0"><strong>' + esc(f.appareil) + '</strong><div class="doux petit">Activé le ' + esc(fmtDate(f.cree)) + (f.dernier ? ' · dernière connexion le ' + esc(fmtDate(f.dernier)) : '') + '</div></div>' + confirmBar('fid:' + f.cle, 'Retirer', 'faceid-retirer', 'data-k="' + esc(f.cle) + '"') + '</li>').join('') + '</ul>';
   h += '<p class="doux petit">Téléphone perdu ? Retirez-le ici, ou demandez à l’administrateur un nouveau code : cela retire aussi tous vos appareils.</p>';
+  h += diagConnexion();
   return h + '</section>';
 }
 
