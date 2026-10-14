@@ -51,6 +51,9 @@
   .tarif td:last-child { text-align: right; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .lancement { margin: 14px 0 0; padding: 12px 16px; border-radius: 14px; background: color-mix(in srgb, var(--or) 22%, transparent); font-weight: 700; }
   .notes-tarifs { color: var(--doux); font-size: 14.5px; margin: 10px 0 0; padding-left: 20px; }
+  .video { margin: 32px 0 0; }
+  .video video { display: block; width: 100%; height: auto; border-radius: 18px; background: #0a4a30; box-shadow: 0 12px 40px rgba(10, 40, 25, .18); }
+  .video figcaption { margin-top: 10px; color: var(--doux); font-size: 14.5px; }
   footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--ligne); color: var(--doux); font-size: 14px; }
   footer a { color: inherit; }
 </style>
@@ -69,6 +72,14 @@
     <a class="btn second" href="demo/?vue=membre">Voir comme un membre</a>
     <a class="btn second" href="#tarifs">Voir les tarifs</a>
   </div>
+
+  <figure class="video">
+    <video controls playsinline preload="none" poster="adya-video.jpg" width="1280" height="720">
+      <source src="adya-video.mp4" type="video/mp4">
+      Votre navigateur ne lit pas cette vidéo. <a href="adya-video.mp4">Télécharger la vidéo</a>.
+    </video>
+    <figcaption>Une journée avec Adya : l’accueil, la famille, les cotisations, les reçus, les projets, la charte et le bilan, sur le téléphone, la tablette et l’ordinateur (1 min 27, avec musique).</figcaption>
+  </figure>
 
   <h2>Ce qu’Adya fait pour votre groupe</h2>
   <div class="grille">
