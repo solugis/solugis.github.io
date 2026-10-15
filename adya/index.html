@@ -54,6 +54,9 @@
   .video { margin: 32px 0 0; }
   .video video { display: block; width: 100%; height: auto; border-radius: 18px; background: #0a4a30; box-shadow: 0 12px 40px rgba(10, 40, 25, .18); }
   .video figcaption { margin-top: 10px; color: var(--doux); font-size: 14.5px; }
+  .signe { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; }
+  .signe img { width: 22px; height: auto; }
+  @media (prefers-color-scheme: dark) { .signe img { content: url(../symbole.svg); } }
   footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--ligne); color: var(--doux); font-size: 14px; }
   footer a { color: inherit; }
 </style>
@@ -62,7 +65,7 @@
 <main>
   <header>
     <a href="./"><img class="logo-clair" src="logo.svg" alt="Adya"><img class="logo-sombre" src="logo-sombre.svg" alt="Adya"></a>
-    <a href="../">Une solution SoluGis</a>
+    <a href="../" class="signe">Une solution<img src="../symbole-cuivre.svg" alt="" width="22" height="20">SoluGis</a>
   </header>
 
   <h1>Unis, solidaires, organisés : ensemble, allons plus loin.</h1>
@@ -133,7 +136,7 @@
     </div>
   </section>
 
-  <footer>Adya est une solution <a href="../">SoluGis</a> · Solutions numériques &amp; IA.</footer>
+  <footer>Adya est une solution <a href="../" class="signe"><img src="../symbole-cuivre.svg" alt="" width="22" height="20">SoluGis</a> · Solutions numériques &amp; IA.</footer>
 </main>
 </body>
 </html>
