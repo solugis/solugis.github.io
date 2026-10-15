@@ -206,6 +206,7 @@ body[data-ecran="connexion"] #connexion,body[data-ecran="changer"] #changer{disp
 .btn.lien{background:none;color:var(--ink2);text-decoration:underline;font-weight:500}
 .login-box .signature{font-size:11.5px;color:var(--muted);margin-top:18px}
 a.btn{text-decoration:none;display:inline-flex;align-items:center}
+.op.repli .act{display:none}.op.repli.ouvert .act{display:flex}.op[data-op]{cursor:pointer}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -1972,10 +1973,13 @@ function renderSynth(qRaw,qn,flt,l){
 }
 function opRow(r){
   const b=r.p?`<span class="badge${r.p==='non_retrouvee'?' warn':''}">${r.p==='non_retrouvee'?'Saisie · à vérifier':'Saisie · en attente'}</span>`:'';
-  return `<div class="op"><span class="c">${esc(r.c)}</span><span class="a${r.v>0?' pos':''}">${sgn(r.v)}</span>
+  return `<div class="op${r.sid&&!r.p?' repli':''}"${r.sid&&!r.p?' data-op="1"':''}><span class="c">${esc(r.c)}</span><span class="a${r.v>0?' pos':''}">${sgn(r.v)}</span>
     <span class="s">${fdate(r.d)} · ${esc(r.g)}${r.note?' · '+esc(r.note):''} ${b}</span><span></span>
     ${r.sid?`<span class="act"><button class="btn small danger" type="button" data-del="${esc(r.sid)}">Supprimer</button>${r.p==='non_retrouvee'?`<button class="btn small" type="button" data-keep="${esc(r.sid)}">Garder</button>`:''}</span>`:''}</div>`;
 }
+document.addEventListener('click',e=>{   // saisie définitive : actions affichées en touchant la ligne
+  const o=e.target.closest('[data-op]');if(o&&!e.target.closest('button'))o.classList.toggle('ouvert');
+});
 document.addEventListener('click',async e=>{
   const d=e.target.closest('[data-del]'),k=e.target.closest('[data-keep]');
   if(d){if(d.dataset.armed!=='1'){d.dataset.armed='1';d.textContent='Confirmer la suppression';setTimeout(()=>{if(d.isConnected){d.dataset.armed='';d.textContent='Supprimer';}},4000);return;}
@@ -2395,6 +2399,8 @@ async function enregistrerFaceID(m){
 
 // ================= démarrage =================
 async function demarrer(){
+  // Une adresse peut ouvrir directement un onglet (#postes, #ops, #constats, #donnees) ou la saisie (#ajouter)
+  const ancre=location.hash.slice(1);if(['apercu','postes','ops','constats','donnees'].includes(ancre))state.tab=ancre;
   setTab(state.tab);
   if(MF.proprietaire)$('cxBonjour').textContent='Bonjour '+MF.proprietaire;
   if(SESSION.jeton){const g=etatGarde();if(g){ui.depuisCache=g.le;appliquerEtat(g.s,true);}}
@@ -2402,6 +2408,7 @@ async function demarrer(){
   try{render();}catch(e){montrerErreur('affichage initial : '+(e&&e.message||e));}
   if(!(window.google&&google.script&&google.script.run)){showMsg('cxMsg',messageErreur(new Error('HORS_APPS_SCRIPT')),'bad');return;}
   if(SESSION.jeton)await actualiser();
+  if(ancre==='ajouter'&&SESSION.jeton)openSheet();
   setInterval(()=>{if(document.visibilityState==='visible'&&!document.querySelector('.sheet:not([hidden])'))actualiser();},300000);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')actualiser();});
 }
@@ -2412,6 +2419,7 @@ demarrer().catch(e=>montrerErreur(e&&e.message||e));
 </script>
 <script>/* Bandeau de la démonstration publique */
 (function () {
+  if (/capture=1/.test(location.search)) return;   // captures pour le dossier de présentation
   var b = document.createElement('div');
   b.setAttribute('role', 'note');
   b.style.cssText = 'position:relative;z-index:30;background:#0f3d2e;color:#fff;font:600 13px/1.4 -apple-system,system-ui,sans-serif;padding:8px 14px calc(8px);padding-top:calc(8px + env(safe-area-inset-top,0px));display:flex;gap:10px;align-items:center;justify-content:space-between';
