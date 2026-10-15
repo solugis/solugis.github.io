@@ -40,6 +40,12 @@
   .contact .actions a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 12px; font-weight: 700; text-decoration: none; }
   .contact .wa { background: #1f8f4e; color: #fff; }
   .contact .tel { border: 2px solid var(--ligne); color: var(--texte); }
+  .video { margin: 18px 0 0; }
+  .video video { display: block; width: 100%; height: auto; border-radius: 18px; background: var(--nuit); box-shadow: 0 12px 40px rgba(13, 27, 46, .18); }
+  .video figcaption { margin-top: 10px; color: var(--doux); font-size: 14.5px; }
+  .signe { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; }
+  .signe img { width: 22px; height: auto; }
+  @media (prefers-color-scheme: dark) { .signe img { content: url(symbole.svg); } }
   footer { margin: 40px auto 0; padding: 18px 16px 40px; max-width: 980px; color: var(--doux); font-size: 14px; border-top: 1px solid var(--ligne); }
 </style>
 </head>
@@ -64,6 +70,15 @@
     </div>
   </div>
 
+  <h2>Adya en vidéo</h2>
+  <figure class="video">
+    <video controls playsinline preload="none" poster="adya/adya-video.jpg" width="1280" height="720">
+      <source src="adya/adya-video.mp4" type="video/mp4">
+      Votre navigateur ne lit pas cette vidéo. <a href="adya/adya-video.mp4">Télécharger la vidéo</a>.
+    </video>
+    <figcaption>Une journée avec Adya, sur le téléphone, la tablette et l’ordinateur (1 min 27, avec musique). <a href="adya/">Découvrir Adya</a></figcaption>
+  </figure>
+
   <h2>Notre approche</h2>
   <ul class="points">
     <li>Vos applications sont installées dans <strong>votre propre compte Google</strong> : vos données restent chez vous.</li>
@@ -80,6 +95,6 @@
     </div>
   </section>
 </main>
-<footer>© SoluGis · Solutions numériques &amp; IA · Abidjan, Côte d’Ivoire</footer>
+<footer><span class="signe"><img src="symbole-cuivre.svg" alt="" width="22" height="20">© SoluGis</span> · Solutions numériques &amp; IA · Abidjan, Côte d’Ivoire</footer>
 </body>
 </html>
