@@ -207,6 +207,12 @@ body[data-ecran="connexion"] #connexion,body[data-ecran="changer"] #changer{disp
 .login-box .signature{font-size:11.5px;color:var(--muted);margin-top:18px}
 a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .op.repli .act{display:none}.op.repli.ouvert .act{display:flex}.op[data-op]{cursor:pointer}
+.ct-poste{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;font-size:14px}
+.ct-poste .cap{margin:0}
+.ct-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ct-chips .chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink)}
+.ct-edit{background:var(--surface2);border-radius:10px;padding:10px;display:grid;gap:8px;margin-top:8px}
+.ct-edit .row{display:flex;gap:8px;flex-wrap:wrap}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -324,6 +330,15 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
         <div class="row2"><div class="field"><label for="dpMontant">Montant (FCFA)</label><input id="dpMontant" inputmode="numeric" placeholder="0"></div>
         <div class="field"><label for="dpDate">À la date du</label><input id="dpDate" type="date"></div></div>
         <button class="btn primary" id="dpBtn" type="submit">Enregistrer le solde de départ</button></form>
+      <div class="card" id="cardCats"><h3>Mes catégories</h3>
+        <p>Rangez vos dépenses et vos revenus à votre façon : créez une catégorie ou un poste, renommez, déplacez. Touchez une catégorie pour la modifier.</p>
+        <div class="seg" role="group" aria-label="Sens"><button type="button" id="ctDep" aria-pressed="true">Dépenses</button><button type="button" id="ctRev" aria-pressed="false">Revenus</button></div>
+        <div id="catsList"></div>
+        <form id="catAjout" class="ct-edit" autocomplete="off"><b>Nouvelle catégorie</b>
+          <input id="caNom" placeholder="Nom, par exemple Pharmacie" maxlength="60">
+          <select id="caPoste" aria-label="Poste"></select>
+          <input id="caNouveauPoste" placeholder="Nom du nouveau poste" maxlength="60" hidden>
+          <button class="btn small primary" type="submit">Ajouter la catégorie</button></form></div>
       <div class="card" id="cardDrive"><h3 id="driveTitre">Mettre à jour depuis Google Drive</h3>
         <p>Exportez « Mes finances » depuis Money Manager vers Google Drive, puis touchez le bouton. L'application prend le fichier le plus récent (.csv ou .xls) et retrouve vos saisies déjà présentes dans l'export. Un export de quelques jours complète le mois sans effacer le début. Chaque mois, le passage automatique fait la même chose tout seul.</p>
         <button class="btn primary" id="btnDrive" type="button">Mettre à jour depuis Drive</button>
@@ -688,24 +703,40 @@ function reprendre() {
 /** Catégories proposées à une nouvelle installation (modifiables ensuite dans l'application). Les postes sont ceux du moteur de calcul. */
 const CATEGORIES_DEFAUT = {
   depenses: [
-    ['Marché', 'Alimentation'], ['Supermarché', 'Alimentation'], ['Boulangerie', 'Alimentation'], ['Eau minérale', 'Alimentation'], ['Restaurant, maquis', 'Alimentation'], ['Snacks et boissons', 'Alimentation'],
-    ['Loyer', 'Logement & énergie'], ['Électricité', 'Logement & énergie'], ['Eau', 'Logement & énergie'], ['Gaz', 'Logement & énergie'], ['Entretien et réparations', 'Logement & énergie'], ['Équipement de la maison', 'Logement & énergie'],
-    ['Carburant', 'Transport & livraisons'], ['Taxi, woro-woro', 'Transport & livraisons'], ['Gbaka, bus', 'Transport & livraisons'], ['Entretien du véhicule', 'Transport & livraisons'], ['Livraison', 'Transport & livraisons'],
-    ['Pharmacie', 'Santé, bien-être & habits'], ['Consultation, soins', 'Santé, bien-être & habits'], ['Assurance santé', 'Santé, bien-être & habits'], ['Coiffure, beauté', 'Santé, bien-être & habits'], ['Vêtements, chaussures', 'Santé, bien-être & habits'], ['Hygiène', 'Santé, bien-être & habits'], ['Sport', 'Santé, bien-être & habits'],
-    ['Scolarité', 'Famille'], ['Fournitures scolaires', 'Famille'], ['Enfants', 'Famille'], ['Aide aux parents', 'Famille'],
+    ['Marché', 'Alimentation'], ['Supermarché', 'Alimentation'], ['Boulangerie', 'Alimentation'], ['Eau minérale', 'Alimentation'], ['Snacks et boissons', 'Alimentation'],
+    ['Restaurant, maquis', 'Restauration'],
+    ['Loyer', 'Logement'], ['Entretien et réparations', 'Logement'], ['Équipement de la maison', 'Logement'],
+    ['Électricité', 'Énergie'], ['Gaz', 'Énergie'],
+    ['Eau', 'Eau'],
+    ['Carburant', 'Transport'], ['Taxi, woro-woro', 'Transport'], ['Gbaka, bus', 'Transport'], ['Entretien du véhicule', 'Transport'], ['Livraison', 'Transport'],
+    ['Pharmacie', 'Santé'], ['Consultation, soins', 'Santé'], ['Assurance santé', 'Santé'],
+    ['Vêtements, chaussures', 'Habillement'],
+    ['Coiffure', 'Beauté'], ['Hygiène, soins', 'Beauté'],
+    ['Scolarité', 'Éducation'], ['Fournitures scolaires', 'Éducation'],
+    ['Enfants', 'Famille'], ['Aide aux parents', 'Famille'],
     ['Ménagère, nounou', 'Personnel de maison'], ['Gardien', 'Personnel de maison'],
-    ['Crédit et forfait téléphone', 'Télécom & loisirs'], ['Internet', 'Télécom & loisirs'], ['Abonnement TV', 'Télécom & loisirs'], ['Sorties, loisirs', 'Télécom & loisirs'], ['Voyages', 'Télécom & loisirs'],
-    ['Église, mosquée', 'Dons & vie sociale'], ['Cérémonies (mariage, baptême, funérailles)', 'Dons & vie sociale'], ['Cotisations d’association', 'Dons & vie sociale'], ['Cadeaux', 'Dons & vie sociale'], ['Dons', 'Dons & vie sociale'],
-    ['Achats divers', 'Achats & divers'], ['Frais bancaires, Mobile Money', 'Achats & divers'], ['Impôts et taxes', 'Achats & divers'],
+    ['Crédit et forfait téléphone', 'Téléphone'],
+    ['Internet', 'Internet'],
+    ['Abonnement TV', 'Télévision'],
+    ['Sorties', 'Loisirs'], ['Voyages', 'Loisirs'], ['Sport', 'Loisirs'],
+    ['Église, mosquée', 'Dons'], ['Dons', 'Dons'], ['Cadeaux', 'Dons'],
+    ['Mariage, baptême', 'Cérémonies'], ['Funérailles', 'Cérémonies'],
+    ['Cotisations d’association', 'Cotisations'],
+    ['Frais bancaires', 'Frais financiers'], ['Frais Mobile Money', 'Frais financiers'],
+    ['Impôts et taxes', 'Impôts'],
+    ['Achats divers', 'Divers'],
     ['Projet, investissement', 'Projets'], ['Jeux, paris', 'Paris sportifs'],
     ['Épargne', 'Épargne'], ['Tontine (versement)', 'Épargne'],
     ['Remboursement de dette', 'Remboursement de dettes'], ['Prêt accordé', 'Prêts accordés']
   ],
   revenus: [
     ['Salaire', 'Salaire'], ['Prime, 13e mois', 'Salaire'],
-    ['Ventes', 'Business'], ['Prestations', 'Business'], ['Commerce', 'Business'],
-    ['Frais de mission', 'Frais pro'], ['Aide familiale reçue', 'Soutien familial'], ['Bourse, subvention', 'Coupons & subventions'],
-    ['Loyer perçu', 'Autres revenus'], ['Autres revenus', 'Autres revenus'], ['Gains de jeux', 'Gains paris sportifs'],
+    ['Ventes', 'Activité'], ['Prestations', 'Activité'],
+    ['Frais de mission', 'Frais professionnels'],
+    ['Aide familiale reçue', 'Soutien familial'],
+    ['Bourse, subvention', 'Bourses et subventions'],
+    ['Loyer perçu', 'Loyers perçus'],
+    ['Autres revenus', 'Autres revenus'], ['Gains de jeux', 'Gains paris sportifs'],
     ['Emprunt reçu', 'Emprunts'], ['Remboursement reçu', 'Remboursements reçus'], ['Retrait d’épargne', "Retraits d'épargne"], ['Tontine (reçue)', "Retraits d'épargne"]
   ],
   renommer: []
@@ -1123,6 +1154,55 @@ function appliquer_(docs, op, d) {
     journal_('Catégorie classée', c + ' → ' + p);
     return '« ' + c + ' » classée dans ' + p;
   }
+  if (op === 'categorie-renommer') {
+    const k = d.revenu ? 'revenus' : 'depenses', ancien = txt_(d.c, 60), nouveau = txt_(d.nouveau, 60);
+    if (!ancien || !nouveau || ancien === nouveau) throw refus_('Nom invalide.');
+    const liste = cats[k] || [];
+    if (!liste.some(function (x) { return x[0] === ancien; })) throw refus_('Catégorie introuvable.');
+    if (liste.some(function (x) { return x[0] === nouveau; })) throw refus_('« ' + nouveau + ' » existe déjà : choisissez un autre nom.');
+    const n = Object.assign({ revenus: [], depenses: [], renommer: [] }, cats);
+    n[k] = liste.map(function (x) { return x[0] === ancien ? [nouveau, x[1]] : x; });
+    // Les prochains imports Money Manager qui portent encore l'ancien nom seront rangés sous le nouveau
+    n.renommer = (n.renommer || []).map(function (x) { return x[1] === ancien ? [x[0], nouveau] : x; }).filter(function (x) { return x[0] !== ancien; }).concat([[ancien, nouveau]]);
+    poserDoc_(docs, 'config/categories', n);
+    const signe = function (v) { return d.revenu ? v > 0 : v < 0; };
+    Object.keys(docs).forEach(function (cle) {
+      const v = docs[cle].data;
+      if (cle.indexOf('saisies/') === 0 && v.c === ancien && signe(v.v)) poserDoc_(docs, cle, Object.assign({}, v, { c: nouveau }));
+      else if (cle.indexOf('mm/') === 0 && (v.tx || []).some(function (t) { return t[1] === ancien && signe(t[2]); }))
+        poserDoc_(docs, cle, Object.assign({}, v, { tx: v.tx.map(function (t) { return t[1] === ancien && signe(t[2]) ? [t[0], nouveau, t[2]] : t; }) }));
+    });
+    ecrireLisibles_(docs);
+    journal_('Catégorie renommée', ancien + ' → ' + nouveau);
+    return '« ' + ancien + ' » s’appelle désormais « ' + nouveau + ' »';
+  }
+  if (op === 'poste-renommer') {
+    const k = d.revenu ? 'revenus' : 'depenses', ancien = txt_(d.poste, 60), nouveau = txt_(d.nouveau, 60);
+    const MC = moteurCalcul();
+    if (MC.RESERVES.indexOf(ancien) >= 0) throw refus_('Ce poste sert aux calculs (épargne, emprunts, jeux…) : il ne se renomme pas.');
+    if (!nouveau || MC.RESERVES.indexOf(nouveau) >= 0 || !/^[\p{L}\p{N} &'’.,()-]{2,60}$/u.test(nouveau)) throw refus_('Nom de poste invalide.');
+    if (!(cats[k] || []).some(function (x) { return x[1] === ancien; })) throw refus_('Poste introuvable.');
+    const n = Object.assign({ revenus: [], depenses: [], renommer: [] }, cats);
+    n[k] = n[k].map(function (x) { return x[1] === ancien ? [x[0], nouveau] : x; });
+    poserDoc_(docs, 'config/categories', n);
+    ecrireLisibles_(docs);
+    journal_('Poste renommé', ancien + ' → ' + nouveau);
+    return 'Le poste « ' + ancien + ' » s’appelle désormais « ' + nouveau + ' »';
+  }
+  if (op === 'categorie-retirer') {
+    const k = d.revenu ? 'revenus' : 'depenses', c = txt_(d.c, 60);
+    const signe = function (v) { return d.revenu ? v > 0 : v < 0; };
+    let n = 0;
+    Object.keys(docs).forEach(function (cle) {
+      const v = docs[cle].data;
+      if (cle.indexOf('saisies/') === 0 && v.c === c && signe(v.v)) n++;
+      else if (cle.indexOf('mm/') === 0) (v.tx || []).forEach(function (t) { if (t[1] === c && signe(t[2])) n++; });
+    });
+    if (n) throw refus_('« ' + c + ' » est utilisée par ' + n + ' opération' + (n > 1 ? 's' : '') + ' : renommez-la ou déplacez-la vers un autre poste plutôt que de la retirer.');
+    poserDoc_(docs, 'config/categories', Object.assign({}, cats, { [k]: (cats[k] || []).filter(function (x) { return x[0] !== c; }) }));
+    ecrireCategories_(docs);
+    return '« ' + c + ' » retirée';
+  }
   if (op === 'solde-depart') {
     const v = Math.round(+d.v);
     if (!isFinite(v) || Math.abs(v) > 1e11) throw refus_('Montant invalide.');
@@ -1141,7 +1221,7 @@ function appliquer_(docs, op, d) {
 function ajouterCategorie_(docs, cats, c, poste, revenu) {
   const k = revenu ? 'revenus' : 'depenses';
   const autres = (cats[k] || []).map(function (x) { return x[1]; });
-  if (poste === 'Report' || (autres.indexOf(poste) < 0 && !/^[\p{L}\p{N} &'’.,()-]{2,60}$/u.test(poste))) throw refus_('Poste invalide.');
+  if (poste === 'Report' || poste === 'À classer' || (autres.indexOf(poste) < 0 && !/^[\p{L}\p{N} &'’.,()-]{2,60}$/u.test(poste))) throw refus_('Poste invalide.');
   const n = Object.assign({ revenus: [], depenses: [], renommer: [] }, cats);
   n[k] = (n[k] || []).filter(function (x) { return x[0] !== c; }).concat([[c, poste]]);
   poserDoc_(docs, 'config/categories', n);
@@ -1359,6 +1439,10 @@ function moteurCalcul() {
   function cartes(cats) { cats = cats || {}; return { inc: new Map(cats.revenus || []), dep: new Map(cats.depenses || []), ren: new Map(cats.renommer || []) }; }
   function cls(c, cat, v) { return (v > 0 ? c.inc : c.dep).get(cat) || A_CLASSER; }
   const isCur = function (r) { return r.v < 0 && FIN_OUT.indexOf(r.g) < 0 && r.g !== BET_OUT; };
+  /** Revenu propre : les postes historiques (OWN) et tout poste de revenus créé par l'utilisateur, hors financement, gains de jeux et report. */
+  const estPropre = function (r) { return OWN.indexOf(r.g) >= 0 || (r.v > 0 && FIN_IN.indexOf(r.g) < 0 && r.g !== BET_IN && r.g !== A_CLASSER && r.g !== 'Report'); };
+  /** Postes dont le nom compte pour les calculs : ils ne se renomment pas. */
+  const RESERVES = FIN_IN.concat(FIN_OUT, [BET_IN, BET_OUT, 'Report', A_CLASSER]);
   /** Totaux d'une liste d'opérations { d, c, v, g } : revenus propres, dépenses courantes, paris, emprunts… */
   function agg(list) {
     const a = { own: 0, cur: 0, betIn: 0, betOut: 0, borrow: 0, repay: 0, byG: {}, byC: {} };
@@ -1366,7 +1450,7 @@ function moteurCalcul() {
       if (r.g === 'Report') return;
       a.byG[r.g] = (a.byG[r.g] || 0) + r.v;
       const k = r.g + '|' + r.c; (a.byC[k] || (a.byC[k] = { g: r.g, c: r.c, v: 0, n: 0 })).v += r.v; a.byC[k].n++;
-      if (OWN.indexOf(r.g) >= 0) a.own += r.v;
+      if (estPropre(r)) a.own += r.v;
       else if (r.g === BET_IN) a.betIn += r.v;
       else if (r.g === BET_OUT) a.betOut += -r.v;
       else if (isCur(r)) a.cur += -r.v;
@@ -1426,7 +1510,7 @@ function moteurCalcul() {
     tx.sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0; });
     return { tx: tx, unknown: Object.keys(unknown), first: tx[0][0], last: tx[tx.length - 1][0], bad: bad };
   }
-  return { OWN: OWN, FIN_IN: FIN_IN, FIN_OUT: FIN_OUT, BET_IN: BET_IN, BET_OUT: BET_OUT, A_CLASSER: A_CLASSER,
+  return { OWN: OWN, estPropre: estPropre, RESERVES: RESERVES, FIN_IN: FIN_IN, FIN_OUT: FIN_OUT, BET_IN: BET_IN, BET_OUT: BET_OUT, A_CLASSER: A_CLASSER,
     cartes: cartes, cls: cls, isCur: isCur, agg: agg, monthRange: monthRange, joursEntre: joursEntre, lireExport: lireExport };
 }
 
@@ -1510,11 +1594,11 @@ function remplirDemo() {
     for (var j = 1; j <= 28; j += 3) op(jour(j), 'Taxi, woro-woro', -entre(1000, 2500));
     for (var k = 2; k <= 28; k += 6) op(jour(k), 'Boulangerie', -entre(500, 1500));
     op(jour(17), 'Pharmacie', -entre(3000, 12000));
-    op(jour(19), 'Coiffure, beauté', -entre(5000, 15000));
+    op(jour(19), 'Coiffure', -entre(5000, 15000));
     if (m % 3 === 1) op(jour(21), 'Vêtements, chaussures', -entre(10000, 30000));
-    op(jour(22), 'Frais bancaires, Mobile Money', -entre(1500, 4000));
-    if (m % 4 === 2) op(jour(24), 'Cérémonies (mariage, baptême, funérailles)', -entre(20000, 50000));
-    if (m % 3 === 2) op(jour(25), 'Sorties, loisirs', -entre(10000, 25000));
+    op(jour(22), 'Frais Mobile Money', -entre(1500, 4000));
+    if (m % 4 === 2) op(jour(24), 'Mariage, baptême', -entre(20000, 50000));
+    if (m % 3 === 2) op(jour(25), 'Sorties', -entre(10000, 25000));
     if (m === 1) { op(jour(11), 'Emprunt reçu', 200000, 'Réparation de la voiture'); op(jour(11), 'Entretien du véhicule', -185000); }
     if (m >= 2 && m <= 6) op(jour(27), 'Remboursement de dette', -40000);
     if (m === 7) op(jour(16), 'Tontine (reçue)', 150000);
@@ -1646,7 +1730,7 @@ function agg(list){
     if(r.g==='Report')continue;
     a.byG[r.g]=(a.byG[r.g]||0)+r.v;
     const k=r.g+'|'+r.c;(a.byC[k]||(a.byC[k]={g:r.g,c:r.c,v:0,n:0})).v+=r.v;a.byC[k].n++;
-    if(OWN.includes(r.g))a.own+=r.v;
+    if(MC.estPropre(r))a.own+=r.v;
     else if(r.g===BET_IN)a.betIn+=r.v;
     else if(r.g===BET_OUT)a.betOut+=-r.v;
     else if(isCur(r))a.cur+=-r.v;
@@ -1868,7 +1952,7 @@ function renderPostes(){
   hlist($('depList'),cg);$('depCap').textContent=`${fmt(ct)} F sur la période${PARIS()?', paris compris':''}. Touchez un poste pour le détail.`;
   const fo=FIN_OUT.map(g=>({key:g,label:g,v:a.byG[g]||0,color:'var(--repay)'})).filter(x=>x.v);
   hlist($('finOutList'),fo,{max:Math.max(1,...cg.map(x=>-x.v),...fo.map(x=>-x.v))});
-  const inc=OWN.concat([BET_IN]).map(g=>({key:g,label:g,v:a.byG[g]||0,color:'var(--rev)'})).filter(x=>x.v).sort((x,y)=>y.v-x.v);
+  const inc=[...new Set(list.filter(r=>r.v>0&&(MC.estPropre(r)||r.g===BET_IN)).map(r=>r.g))].map(g=>({key:g,label:g,v:a.byG[g]||0,color:'var(--rev)'})).filter(x=>x.v).sort((x,y)=>y.v-x.v);
   const it=inc.reduce((s,x)=>s+x.v,0);inc.forEach(x=>x.pct=pct(x.v,it));
   const ac=a.byG[A_CLASSER]>0?[{key:A_CLASSER,label:A_CLASSER,v:a.byG[A_CLASSER],color:'var(--warn)'}]:[];
   const fi=FIN_IN.map(g=>({key:g,label:g,v:a.byG[g]||0,color:'var(--borrow)'})).filter(x=>x.v);
@@ -2090,7 +2174,7 @@ function renderConstats(){
   if(a.solde<0)P.push(nMois<1.5?`<b>Aligner les dépenses sur les revenus du mois</b> : ${F(dep)} dépensés pour ${F(a.own)} de revenus propres.`:`<b>Plafonner les dépenses courantes</b> à ≈ ${F(a.own/nMois)} par mois (vos revenus propres moyens sur la période), contre ≈ ${F(dep/nMois)} dépensés.`);
   else P.push(`<b>Mettre l'excédent de côté</b> : ${F(a.solde)} sur la période. Un versement fixe vers l'épargne le jour du salaire l'empêche de repartir en dépenses courantes.`);
   if(b){const ch=post.map(([g,v])=>[g,v+(b.byG[g]||0)]).sort((x,y)=>y[1]-x[1]);if(ch[0]&&ch[0][1]>=50000)P.push(`<b>Surveiller « ${esc(ch[0][0])} »</b>, en hausse de ${F(ch[0][1])} : fixer un montant mensuel à l'avance.`);}
-  else{const comp=post.find(([g])=>['Relations','Achats & divers','Paris sportifs','Dons & vie sociale'].includes(g));if(comp)P.push(`<b>Fixer un budget « ${esc(comp[0])} »</b> : ${F(comp[1])} sur la période, soit ≈ ${F(comp[1]/nMois)} par mois.`);}
+  else{const comp=post.find(([g])=>['Relations','Achats & divers','Divers','Paris sportifs','Dons & vie sociale','Loisirs','Cérémonies','Dons'].includes(g));if(comp)P.push(`<b>Fixer un budget « ${esc(comp[0])} »</b> : ${F(comp[1])} sur la période, soit ≈ ${F(comp[1]/nMois)} par mois.`);}
   if(a.borrow-a.repay>0)P.push(`<b>Casser le cycle emprunt → remboursement</b> : la dette nette a augmenté de ${F(a.borrow-a.repay)}. Rembourser d'abord la dette qui coûte le plus, sans réemprunter pour le faire.`);
   if(a.betOut>=50000&&a.bets<0)P.push(`<b>Plafonner les mises</b> : ${F(a.betOut)} misés pour une perte de ${F(-a.bets)}.`);
   if(fee>=10000)P.push(`<b>Regrouper les envois Mobile Money</b> vers les mêmes personnes pour réduire les ≈ ${F(fee)} de frais.`);
@@ -2114,7 +2198,7 @@ function renderDonnees(){
     const postesR=[...new Set((S.cats?.revenus||[]).map(p=>p[1]))].filter(p=>p!=='Report').sort((a,b)=>a.localeCompare(b,'fr'));
     $('classerList').innerHTML=unk.map((r,i)=>{const tot=rows.filter(x=>x.g===A_CLASSER&&x.c===r.c&&(x.v>0)===(r.v>0)).reduce((s,x)=>s+x.v,0);
       const opts=(r.v>0?postesR:postes);
-      return `<div class="classer"><div><b>${esc(r.c)}</b> <span class="cap">${r.v>0?'revenu':'dépense'} · ${sgn(tot)} F</span></div><div class="row"><select id="cl${i}" aria-label="Poste pour ${esc(r.c)}">${opts.map(p=>`<option${p===(opts.includes('Relations')?'Relations':'Achats & divers')?' selected':''}>${esc(p)}</option>`).join('')}</select><button class="btn small primary" type="button" data-cl="${i}">Classer</button></div></div>`;}).join('');
+      return `<div class="classer"><div><b>${esc(r.c)}</b> <span class="cap">${r.v>0?'revenu':'dépense'} · ${sgn(tot)} F</span></div><div class="row"><select id="cl${i}" aria-label="Poste pour ${esc(r.c)}">${opts.map(p=>`<option${p===(['Relations','Divers','Achats & divers'].find(x=>opts.includes(x))||opts[0])?' selected':''}>${esc(p)}</option>`).join('')}</select><button class="btn small primary" type="button" data-cl="${i}">Classer</button></div></div>`;}).join('');
     $('classerList').querySelectorAll('[data-cl]').forEach(b=>b.addEventListener('click',async()=>{const r=unk[+b.dataset.cl];const p=$('cl'+b.dataset.cl).value;b.disabled=true;
       if(!await ecrire('categorie',{c:r.c,poste:p,revenu:r.v>0}))b.disabled=false;}));}
   const nr=rows.filter(r=>r.p==='non_retrouvee');$('cardNonRetro').hidden=!nr.length;$('nonRetroList').innerHTML=nr.map(opRow).join('');
@@ -2127,6 +2211,7 @@ function renderDonnees(){
   $('driveTitre').textContent=modeSaisie()?'Importer depuis Money Manager (facultatif)':'Mettre à jour depuis Google Drive';
   $('btnDrive').disabled=!SESSION.jeton||!!ui.import;
   renderReglages();
+  renderCats();
 }
 
 // ================= onglets =================
@@ -2323,6 +2408,57 @@ document.addEventListener('click',async e=>{
   else if(a.dataset.a==='fid-activer')activerFaceID();
   else if(a.dataset.a==='fid-retirer'){if(a.dataset.armed!=='1'){a.dataset.armed='1';a.textContent='Confirmer';return;}a.disabled=true;
     try{appliquerEtat(await appel('apiRetirerFaceID',SESSION.jeton,a.dataset.k));toast('Appareil retiré.');if(!(S.faceid||[]).length)versPorte({mf:'faceid-oublie'});}catch(err){toast(messageErreur(err));a.disabled=false;}}
+});
+
+// ================= mes catégories (onglet Données) =================
+ui.ctSens='dep';ui.ctEdit=null;let ctSig='';
+const ctListe=()=>((ui.ctSens==='rev'?S.cats?.revenus:S.cats?.depenses)||[]).filter(([c,g])=>g!=='Report');
+const ctPostes=()=>[...new Set(ctListe().map(x=>x[1]))].sort((a,b)=>a.localeCompare(b,'fr'));
+function renderCats(force){
+  const sig=JSON.stringify([S.cats,ui.ctSens,ui.ctEdit]);if(!force&&sig===ctSig)return;ctSig=sig;
+  $('ctDep').setAttribute('aria-pressed',ui.ctSens==='dep');$('ctRev').setAttribute('aria-pressed',ui.ctSens==='rev');
+  const L=ctListe(),postes=ctPostes(),rev=ui.ctSens==='rev';
+  const usage=c=>rows.filter(r=>r.c===c&&(r.v>0)===rev).length;
+  const optPostes=sel=>postes.map(p=>`<option${p===sel?' selected':''}>${esc(p)}</option>`).join('')+'<option value="__nouveau">Nouveau poste…</option>';
+  $('catsList').innerHTML=postes.map(p=>{
+    const cs=L.filter(x=>x[1]===p).map(x=>x[0]).sort((a,b)=>a.localeCompare(b,'fr'));
+    const reserve=MC.RESERVES.includes(p);
+    let h=`<div class="ct-poste"><b>${esc(p)}</b>${reserve?'<span class="cap">poste de calcul</span>':`<button class="btn small" type="button" data-ct="poste" data-p="${esc(p)}">Renommer</button>`}</div>`;
+    if(ui.ctEdit==='p:'+p)h+=`<form class="ct-edit" data-ctf="poste" data-p="${esc(p)}"><input name="nom" value="${esc(p)}" maxlength="60" aria-label="Nouveau nom du poste"><div class="row"><button class="btn small primary" type="submit">Enregistrer</button><button class="btn small" type="button" data-ct="fermer">Annuler</button></div></form>`;
+    h+=`<div class="ct-chips">${cs.map(c=>`<button class="chip" type="button" data-ct="cat" data-c="${esc(c)}" aria-pressed="${ui.ctEdit==='c:'+c}">${esc(c)}</button>`).join('')}</div>`;
+    const ed=cs.find(c=>ui.ctEdit==='c:'+c);
+    if(ed!=null){const n=usage(ed);h+=`<form class="ct-edit" data-ctf="cat" data-c="${esc(ed)}"><span class="cap" style="margin:0">${n?`${n} opération${n>1?'s':''} dans cette catégorie : un nouveau nom s'applique aussi à elles.`:'Aucune opération dans cette catégorie.'}</span>
+      <input name="nom" value="${esc(ed)}" maxlength="60" aria-label="Nom de la catégorie"><select name="poste" aria-label="Poste">${optPostes(p)}</select><input name="nouveauPoste" placeholder="Nom du nouveau poste" maxlength="60" hidden>
+      <div class="row"><button class="btn small primary" type="submit">Enregistrer</button><button class="btn small" type="button" data-ct="fermer">Annuler</button>${n?'':`<button class="btn small danger" type="button" data-ct="retirer" data-c="${esc(ed)}">Retirer</button>`}</div></form>`;}
+    return h;}).join('')||'<p class="cap">Aucune catégorie pour l\'instant.</p>';
+  if(document.activeElement!==$('caNom')){$('caPoste').innerHTML=optPostes(postes[0]);$('caNouveauPoste').hidden=true;}
+}
+$('ctDep').addEventListener('click',()=>{ui.ctSens='dep';ui.ctEdit=null;renderCats();});
+$('ctRev').addEventListener('click',()=>{ui.ctSens='rev';ui.ctEdit=null;renderCats();});
+$('cardCats').addEventListener('change',e=>{const s=e.target;if(s.tagName!=='SELECT')return;const f=s.closest('form');const champ=f&&(f.querySelector('[name=nouveauPoste]')||(f.id==='catAjout'?$('caNouveauPoste'):null));if(champ)champ.hidden=s.value!=='__nouveau';});
+$('cardCats').addEventListener('click',async e=>{
+  const b=e.target.closest('[data-ct]');if(!b)return;const a=b.dataset.ct;
+  if(a==='cat'){ui.ctEdit=ui.ctEdit==='c:'+b.dataset.c?null:'c:'+b.dataset.c;renderCats();}
+  else if(a==='poste'){ui.ctEdit='p:'+b.dataset.p;renderCats();}
+  else if(a==='fermer'){ui.ctEdit=null;renderCats();}
+  else if(a==='retirer'){if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='Confirmer le retrait';return;}b.disabled=true;
+    if(await ecrire('categorie-retirer',{c:b.dataset.c,revenu:ui.ctSens==='rev'})){ui.ctEdit=null;renderCats(true);}else b.disabled=false;}
+});
+$('cardCats').addEventListener('submit',async e=>{
+  e.preventDefault();const f=e.target,rev=ui.ctSens==='rev';const btn=f.querySelector('[type=submit]');btn.disabled=true;
+  try{
+    if(f.id==='catAjout'){const nom=$('caNom').value.trim();let poste=$('caPoste').value;if(poste==='__nouveau')poste=$('caNouveauPoste').value.trim();
+      if(!nom||!poste){toast('Indiquez le nom de la catégorie et son poste.');return;}
+      if(ctListe().some(x=>x[0]===nom)){toast('« '+nom+' » existe déjà.');return;}
+      if(await ecrire('categorie',{c:nom,poste,revenu:rev})){$('caNom').value='';renderCats(true);}return;}
+    if(f.dataset.ctf==='poste'){const nouveau=f.elements.nom.value.trim();if(nouveau&&nouveau!==f.dataset.p&&await ecrire('poste-renommer',{poste:f.dataset.p,nouveau,revenu:rev})){ui.ctEdit=null;renderCats(true);}return;}
+    if(f.dataset.ctf==='cat'){const ancien=f.dataset.c,nom=f.elements.nom.value.trim();let poste=f.elements.poste.value;if(poste==='__nouveau')poste=f.elements.nouveauPoste.value.trim();
+      if(!nom||!poste){toast('Indiquez un nom et un poste.');return;}
+      const actuel=(ctListe().find(x=>x[0]===ancien)||[])[1];let ok=true;
+      if(nom!==ancien)ok=await ecrire('categorie-renommer',{c:ancien,nouveau:nom,revenu:rev});
+      if(ok&&poste!==actuel)ok=await ecrire('categorie',{c:nom,poste,revenu:rev});
+      if(ok){ui.ctEdit=null;renderCats(true);}}
+  }finally{btn.disabled=false;}
 });
 
 // ================= import des exports Money Manager =================
