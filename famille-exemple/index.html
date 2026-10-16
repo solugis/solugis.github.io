@@ -57,7 +57,7 @@
 <body>
 <div id="attente"><img src="icone-192.png" alt="">Ouverture de Famille Exemple…<small id="attente-etat" role="status"></small><button id="attente-reessayer" type="button" hidden>Réessayer</button></div>
 <!-- L'application elle-même (Google Apps Script, dans le compte du groupe). Cette page lui donne un nom, une icône et la connexion par Face ID. -->
-<iframe id="app" src="https://script.google.com/macros/s/AKfycbw2epKrIgm36_2gekKRESP9h36t1kCW4r-eFtzwE0b0MF8zJYcM0ISaUvjR4Mj9qUQ/exec" title="Famille Exemple" allow="clipboard-write"></iframe>
+<iframe id="app" data-src="https://script.google.com/macros/s/AKfycbw2epKrIgm36_2gekKRESP9h36t1kCW4r-eFtzwE0b0MF8zJYcM0ISaUvjR4Mj9qUQ/exec" title="Famille Exemple" allow="clipboard-write"></iframe>
 
 <div class="fid" id="fid-connexion" hidden role="region" aria-label="Connexion rapide">
   <button class="principal" id="fid-go" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 15.5a3.5 3.5 0 0 0 5 0"/></svg><span id="fid-go-txt">Se connecter avec Face ID</span></button>
@@ -251,7 +251,9 @@
 
   /* Surveillance de l'ouverture : sur le réseau mobile, une connexion à Google reste parfois bloquée.
      Si l'application ne s'est pas annoncée à temps, la page la recharge (deux fois), puis propose « Réessayer ». */
-  var SRC = $('app').getAttribute('src'), essai = 1, minuteur = null, lent = null;
+  var SRC = $('app').getAttribute('data-src'), essai = 1, minuteur = null, lent = null;
+  // Toujours la version la plus récente : une adresse unique à chaque ouverture, pour que le téléphone ne resserve jamais une ancienne copie.
+  $('app').setAttribute('src', SRC + (SRC.indexOf('?') < 0 ? '?' : '&') + 'ouverture=' + Date.now());
   function surveiller() {
     clearTimeout(minuteur); clearTimeout(lent);
     lent = setTimeout(function () { if (!app) $('attente-etat').textContent = 'Connexion lente, merci de patienter…'; }, 6000);
