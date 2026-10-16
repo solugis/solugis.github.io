@@ -529,6 +529,30 @@ h3 .puce { vertical-align: 2px; }
 .ar-enfants .puce { border: 0; cursor: pointer; font: inherit; font-size: 0.8rem; font-weight: 700; }
 .ar-ligne { display: grid; text-align: left; background: none; border: 0; padding: 6px 0; font: inherit; color: inherit; width: 100%; cursor: pointer; }
 .ar-fiche dd .btn.lien { padding: 0; min-height: 0; text-align: left; justify-content: flex-start; }
+/* Champ de code avec œil ; bouton de dictée sous les longues saisies */
+.mdp { position: relative; display: flex; align-items: center; }
+.mdp input { flex: 1; min-width: 0; padding-right: 48px; }
+.oeil { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; color: var(--doux); border-radius: 10px; cursor: pointer; }
+.oeil svg { width: 21px; height: 21px; }
+.oeil[aria-pressed="true"] { color: var(--vert); }
+.dictee { align-self: flex-start; justify-self: start; width: max-content; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 6px 12px 6px 10px; border: 1px solid var(--ligne); border-radius: 999px; background: var(--carte); color: var(--vert); font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer; min-height: 36px; }
+.dictee svg { width: 17px; height: 17px; }
+/* Notes vocales : boutons d'écoute et lecteur fixe */
+.pj-voix { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 6px; }
+.voix-btn { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 340px; padding: 8px 12px; border: 1px solid var(--ligne); border-radius: 999px; background: var(--sauge-pale); color: var(--vert); font: inherit; text-align: left; cursor: pointer; min-height: 44px; }
+.voix-btn > svg { width: 22px; height: 22px; flex: none; }
+.voix-btn.actif { border-color: var(--vert); }
+.voix-txt { display: grid; min-width: 0; line-height: 1.2; }
+.voix-txt strong { font-size: .9rem; }
+.voix-onde { flex: 1; height: 18px; min-width: 40px; background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 6px); opacity: .25; -webkit-mask: linear-gradient(0deg, transparent 20%, #000 20% 80%, transparent 80%); border-radius: 2px; }
+.voix-btn.actif .voix-onde { opacity: .6; }
+.lect-voix { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); z-index: 60; max-width: 520px; margin: 0 auto; background: var(--carte); border: 1px solid var(--ligne); border-radius: 16px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 10px 12px; display: grid; gap: 6px; }
+.lect-voix[hidden] { display: none; }
+.lv-tete { display: flex; align-items: center; gap: 8px; }
+.lv-tete strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .9rem; }
+.lv-ico svg { width: 20px; height: 20px; color: var(--vert); }
+.lect-voix audio { width: 100%; height: 40px; }
+.pj-boutons .pj-ajout { margin: 0; }
 </style>
 </head>
 <body>
@@ -1661,10 +1685,12 @@ function appliquer_(docs, moi, chemin, op, data) {
     if (op === 'delete') {
       exiger(docs[chemin], 'Personne introuvable.');
       exiger(!tous.some(function (k) { return docs[k].data.parent === s[1]; }), 'Cette personne a des enfants dans l’arbre : rattachez-les d’abord à quelqu’un d’autre.');
-      retirerDoc_(docs, chemin); journal_(moi, 'Arbre : personne retirée', docs[chemin] ? '' : s[1]); return effets;
+      voixListe_(docs, moi, chemin, [], docs[chemin].data.voix, effets);
+      retirerDoc_(docs, chemin); journal_(moi, 'Arbre : personne retirée', s[1]); return effets;
     }
     const v = personneArbre_(data, cfg);
     exiger(v.nom, 'Indiquez le nom.');
+    v.voix = voixListe_(docs, moi, chemin, data.voix, docs[chemin] ? docs[chemin].data.voix : [], effets);
     exiger(!v.parent || v.parent !== s[1], 'Une personne ne peut pas être son propre parent.');
     exiger(!v.parent || tous.indexOf('arbre/' + v.parent) >= 0, 'Parent introuvable dans l’arbre.');
     // pas de boucle : le parent ne doit pas descendre de cette personne
@@ -1680,10 +1706,11 @@ function appliquer_(docs, moi, chemin, op, data) {
   if (s[0] === 'propositions') {
     // Propositions de correction de l'arbre : tout membre propose, l'administrateur ou le poste chargé de l'arbre les traite.
     exiger(s.length === 4 && s[2] === 'items', 'Chemin invalide.');
-    if (op === 'delete') { exiger(s[1] === moi || admin || aDroit_(cfg, moi, 'arbre'), 'Réservé à l’auteur et aux responsables de l’arbre.'); retirerDoc_(docs, chemin); return effets; }
+    if (op === 'delete') { exiger(s[1] === moi || admin || aDroit_(cfg, moi, 'arbre'), 'Réservé à l’auteur et aux responsables de l’arbre.'); const anc = docs[chemin] ? docs[chemin].data : null; retirerDoc_(docs, chemin); if (anc && anc.pj) voixListe_(docs, moi, chemin, [], anc.pj, effets); return effets; }
     exiger(s[1] === moi, 'Vous ne pouvez proposer qu’en votre nom.');
-    const t = txt_(data.texte, 600); exiger(t, 'Décrivez la correction proposée.');
-    poserDoc_(docs, chemin, { personne: /^p[\w-]{1,30}$/.test(String(data.personne || '')) ? data.personne : null, texte: t, le: maintenant }, moi);
+    const t = txt_(data.texte, 600), pjP = pjPublication_(docs, moi, chemin, data.pj); exiger(t || aVocal_(pjP), 'Décrivez la correction proposée (par écrit ou de vive voix).');
+    poserDoc_(docs, chemin, { personne: /^p[\w-]{1,30}$/.test(String(data.personne || '')) ? data.personne : null, texte: t, pj: pjP, le: maintenant }, moi);
+    pjRattacher_(docs, moi, chemin, pjP, [], effets);
     return effets;
   }
 
@@ -1734,13 +1761,13 @@ function appliquer_(docs, moi, chemin, op, data) {
     const droitPoste = { nouvelles: 'annonces', agenda: 'agenda', votes: 'votes', projets: 'votes' }[droitKey];
     if (!ancien) exiger((cfg.droits || {})[droitKey] !== 'admin' || admin || aDroit_(cfg, moi, droitPoste), 'Publication réservée à l’administrateur et aux postes qui en ont le droit.');
     let v;
-    if (type === 'nouvelle') { exiger(!ancien, 'Modification impossible.'); v = { type: type, genre: ['nouvelle', 'annonce', 'information', 'voeux'].indexOf(data.genre) >= 0 ? data.genre : 'nouvelle', titre: txt_(data.titre, 120), texte: txt_(data.texte, 4000), pj: pjPublication_(docs, moi, chemin, data.pj) }; exiger(v.titre && v.texte, 'Titre et message obligatoires.'); }
-    else if (type === 'evenement') { exiger(!ancien, 'Modification impossible.'); v = { type: type, titre: txt_(data.titre, 120), date: data.date, heure: /^\d{2}:\d{2}$/.test(data.heure || '') ? data.heure : '', lieu: txt_(data.lieu, 160), description: txt_(data.description, 1000) }; exiger(v.titre && estDate_(v.date), 'Titre et date obligatoires.'); }
+    if (type === 'nouvelle') { exiger(!ancien, 'Modification impossible.'); v = { type: type, genre: ['nouvelle', 'annonce', 'information', 'voeux'].indexOf(data.genre) >= 0 ? data.genre : 'nouvelle', titre: txt_(data.titre, 120), texte: txt_(data.texte, 4000), pj: pjPublication_(docs, moi, chemin, data.pj) }; exiger(v.titre && (v.texte || aVocal_(v.pj)), 'Titre et message (écrit ou vocal) obligatoires.'); }
+    else if (type === 'evenement') { exiger(!ancien, 'Modification impossible.'); v = { type: type, titre: txt_(data.titre, 120), date: data.date, heure: /^\d{2}:\d{2}$/.test(data.heure || '') ? data.heure : '', lieu: txt_(data.lieu, 160), description: txt_(data.description, 1000), pj: pjPublication_(docs, moi, chemin, data.pj) }; exiger(v.titre && estDate_(v.date), 'Titre et date obligatoires.'); }
     else if (type === 'vote') {
       exiger(!ancien, 'Un vote ouvert ne peut plus être modifié.');
       let cl = null;
       if (data.cloture) { cl = new Date(data.cloture); exiger(!isNaN(cl) && cl.getTime() > Date.now(), 'La clôture doit être dans le futur.'); cl = cl.toISOString(); }
-      v = { type: type, titre: txt_(data.titre, 160), description: txt_(data.description, 2000), categorie: ['ordinaire', 'pret', 'investissement', 'statuts', 'autre'].indexOf(data.categorie) >= 0 ? data.categorie : 'autre', cloture: cl };
+      v = { type: type, titre: txt_(data.titre, 160), description: txt_(data.description, 2000), categorie: ['ordinaire', 'pret', 'investissement', 'statuts', 'autre'].indexOf(data.categorie) >= 0 ? data.categorie : 'autre', cloture: cl, pj: pjPublication_(docs, moi, chemin, data.pj) };
       exiger(v.titre, 'Indiquez la question soumise au vote.');
       effets.push(function () { notifier_('votes', 'Nouveau vote : ' + v.titre, 'Un vote est ouvert dans Adya : « ' + v.titre + ' ».' + (cl ? '\nClôture : ' + Utilities.formatDate(new Date(cl), CONFIG.FUSEAU, 'dd/MM/yyyy à HH:mm') + ' (heure d’Abidjan).' : '\nSans date limite.')); });
     }
@@ -1765,8 +1792,8 @@ function appliquer_(docs, moi, chemin, op, data) {
     exiger(!docs[chemin], 'Ce message existe déjà.');
     const m = { cible: txt_(data.cible, 120), annee: Math.round(+data.annee) || new Date().getFullYear(), texte: txt_(data.texte, 2000), le: maintenant };
     if (data.recuDe) m.recuDe = txt_(data.recuDe, 80);
-    exiger(m.texte && /^(m:m\d+|e:m\d+:[\w-]+)$/.test(m.cible), 'Message invalide.');
     m.pj = pjPublication_(docs, moi, chemin, data.pj);
+    exiger((m.texte || aVocal_(m.pj)) && /^(m:m\d+|e:m\d+:[\w-]+)$/.test(m.cible), 'Message invalide.');
     poserDoc_(docs, chemin, m, moi);
     pjRattacher_(docs, moi, chemin, m.pj, [], effets);
     return effets;
@@ -1909,7 +1936,9 @@ const PJ_TYPES = {
   'application/msword': 'word',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'word',
   'application/vnd.ms-excel': 'excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'excel'
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'excel',
+  // notes vocales (enregistrées depuis l'icône du groupe, ou fichiers audio du téléphone)
+  'audio/mp4': 'audio', 'audio/aac': 'audio', 'audio/mpeg': 'audio', 'audio/ogg': 'audio', 'audio/webm': 'audio', 'audio/wav': 'audio'
 };
 const PJ_MAX_PHOTO = 1500000, PJ_MAX_DOC = 5 * 1024 * 1024, PJ_PAR_PUBLICATION = 4;
 
@@ -1921,13 +1950,14 @@ function apiDeposerPJ(jeton, nom, type, b64) {
   exigerActif_();
   type = String(type || '');
   const genre = PJ_TYPES[type];
-  if (!genre) throw refus_('Type de fichier non accepté : photo, PDF, Word ou Excel seulement.');
+  if (!genre) throw refus_('Type de fichier non accepté : photo, note vocale, PDF, Word ou Excel seulement.');
   let octets;
   try { octets = Utilities.base64Decode(String(b64 || '')); } catch (e) { throw refus_('Fichier illisible.'); }
   if (!octets.length || octets.length > (genre === 'photo' ? PJ_MAX_PHOTO : PJ_MAX_DOC)) throw refus_(genre === 'photo' ? 'Photo trop lourde.' : 'Document trop lourd : 5 Mo au plus.');
   const o = function (i) { return (octets[i] + 256) % 256; };
   const signature = genre === 'photo' ? o(0) === 0xFF && o(1) === 0xD8
     : genre === 'pdf' ? o(0) === 0x25 && o(1) === 0x50 && o(2) === 0x44 && o(3) === 0x46
+    : genre === 'audio' ? audioReconnu_(type, o)
     : (o(0) === 0x50 && o(1) === 0x4B) || (o(0) === 0xD0 && o(1) === 0xCF);
   if (!signature) throw refus_('Le contenu du fichier ne correspond pas à son type.');
   nom = txt_(nom, 100).replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_') || 'fichier';
@@ -1947,6 +1977,20 @@ function apiDeposerPJ(jeton, nom, type, b64) {
   effets.forEach(function (f) { try { f(); } catch (e) { Logger.log(e); } });
   return { id: id, nom: nom, type: type, taille: octets.length };
 }
+
+/** Signature des fichiers audio : MP4/M4A (« ftyp »), MP3 (ID3 ou trame), AAC (ADTS), Ogg/Opus, WebM, WAV. */
+function audioReconnu_(type, o) {
+  const txt = function (i, t) { for (let j = 0; j < t.length; j++) if (o(i + j) !== t.charCodeAt(j)) return false; return true; };
+  if (type === 'audio/mp4') return txt(4, 'ftyp');
+  if (type === 'audio/mpeg') return txt(0, 'ID3') || (o(0) === 0xFF && (o(1) & 0xE0) === 0xE0);
+  if (type === 'audio/aac') return o(0) === 0xFF && (o(1) & 0xF6) === 0xF0;
+  if (type === 'audio/ogg') return txt(0, 'OggS');
+  if (type === 'audio/webm') return o(0) === 0x1A && o(1) === 0x45 && o(2) === 0xDF && o(3) === 0xA3;
+  if (type === 'audio/wav') return txt(0, 'RIFF') && txt(8, 'WAVE');
+  return false;
+}
+/** Une liste de pièces contient-elle une note vocale ? */
+function aVocal_(l) { return (l || []).some(function (x) { return PJ_TYPES[x.type] === 'audio'; }); }
 
 /** Renvoie le contenu d'une pièce jointe à un membre connecté (clé « m4/identifiant »). */
 function apiLirePJ(jeton, cle) {
@@ -1968,7 +2012,9 @@ function pjPublication_(docs, moi, chemin, liste) {
     const d = docs['pj/' + moi + '/' + id];
     if (!/^\w{8,40}$/.test(id) || !d || vus[id] || (d.data.lien && d.data.lien !== chemin)) throw refus_('Pièce jointe introuvable : joignez-la de nouveau.');
     vus[id] = 1;
-    return { id: id, nom: d.data.nom, type: d.data.type, taille: d.data.taille };
+    const o = { id: id, nom: d.data.nom, type: d.data.type, taille: d.data.taille, par: moi };
+    if (PJ_TYPES[o.type] === 'audio' && +x.duree > 0) o.duree = Math.min(3600, Math.round(+x.duree));
+    return o;
   });
 }
 /** Rattache les pièces à leur publication ; celles qui n'y figurent plus partent à la corbeille du Drive. */
@@ -1980,6 +2026,24 @@ function pjRattacher_(docs, moi, chemin, nouvelles, anciennes, effets) {
     if (d && d.data.lien !== chemin) { d.data.lien = chemin; poserDoc_(docs, k, d.data, moi); }
   });
   (anciennes || []).forEach(function (p) { if (!garder[p.id]) pjSupprimer_(docs, 'pj/' + moi + '/' + p.id, effets); });
+}
+/** Notes vocales d'un document tenu à plusieurs (arbre) : on garde celles déjà là, on accepte les nouvelles de l'auteur, on retire les autres. */
+function voixListe_(docs, moi, chemin, liste, anciennes, effets) {
+  anciennes = anciennes || [];
+  const gardees = {}, out = [];
+  (Array.isArray(liste) ? liste : []).slice(0, 6).forEach(function (x) {
+    const par = String((x && x.par) || moi), id = String((x && x.id) || ''), k = par + '/' + id;
+    if (gardees[k] || !/^\w{8,40}$/.test(id)) return;
+    const anc = anciennes.filter(function (a) { return (a.par || moi) === par && a.id === id; })[0];
+    if (anc) { gardees[k] = 1; out.push(anc); return; }
+    const d = docs['pj/' + moi + '/' + id];
+    if (par !== moi || !d || (d.data.lien && d.data.lien !== chemin)) throw refus_('Note vocale introuvable : enregistrez-la de nouveau.');
+    if (PJ_TYPES[d.data.type] !== 'audio') throw refus_('Seules les notes vocales sont acceptées ici.');
+    d.data.lien = chemin; poserDoc_(docs, 'pj/' + moi + '/' + id, d.data, moi);
+    gardees[k] = 1; out.push({ id: id, nom: d.data.nom, type: d.data.type, taille: d.data.taille, par: moi, duree: Math.max(0, Math.min(3600, Math.round(+x.duree || 0))) });
+  });
+  anciennes.forEach(function (a) { const par = a.par || moi; if (!gardees[par + '/' + a.id]) pjSupprimer_(docs, 'pj/' + par + '/' + a.id, effets); });
+  return out;
 }
 function pjSupprimer_(docs, cle, effets) {
   const d = docs[cle];
@@ -2870,7 +2934,7 @@ function voitFiche_(cfg, moi, membre, f) {
 }
 function resumeFiche_(f) {
   return { modele: f.modele, par: f.par || null, numero: f.numero, etat: f.etat, creeLe: f.creeLe, valeurs: f.valeurs, decision: f.decision || null, code: f.code,
-    signeLe: f.signature ? f.signature.le : null, contre: f.contre ? { nom: f.contre.nom, qualite: f.contre.qualite, le: f.contre.le } : null, pdf: !!f.pdf };
+    signeLe: f.signature ? f.signature.le : null, contre: f.contre ? { nom: f.contre.nom, qualite: f.contre.qualite, le: f.contre.le } : null, pdf: !!f.pdf, pj: f.pj || [] };
 }
 /** Vérifie le code personnel avant une signature (mêmes limites d'essais que la connexion). */
 function confirmerCode_(id, code) {
@@ -2942,8 +3006,11 @@ function apiSignerFiche(jeton, modele, valeurs, img, code, extra) {
       f.signature = { nom: txt_(extra.nom, 80), qualite: txt_(extra.qualite, 60) || (extra.nom === cfg.membres[v.membre].nom ? 'membre' : 'ayant droit'), img: img2, le: le, presence: true, temoin: cfg.membres[moi].nom };
       f.contre = { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: le };
     } else f.signature = { nom: cfg.membres[moi].nom, qualite: m.auteur === 'bureau' ? qualite_(cfg, moi) : 'membre', img: img, le: le };
+    const chF = 'fiches/' + titulaire + '/items/' + id;
+    f.pj = pjPublication_(docs, moi, chF, extra.pj);
     f.code = codeFiche_(f);
-    poserDoc_(docs, 'fiches/' + titulaire + '/items/' + id, f, titulaire);
+    poserDoc_(docs, chF, f, titulaire);
+    pjRattacher_(docs, moi, chF, f.pj, [], []);
     if (modele === 'convocation') {
       appliquer_(docs, moi, 'contenus/' + moi + '/items/ag' + id.slice(0, 10), 'set', { type: 'evenement', titre: 'Assemblée générale ' + v.nature.toLowerCase(), date: v.date, heure: v.heure, lieu: v.lieu || (v.lienEnLigne ? 'En ligne' : ''), description: 'Ordre du jour : ' + v.ordre.split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean).join(' · ') + '.' + (v.lienEnLigne ? ' Lien : ' + v.lienEnLigne : '') + ' Convocation ' + f.numero + ' dans Mon espace › Documents du groupe.' });
     }
@@ -3347,6 +3414,9 @@ const I = {
   video: '<rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 10l4-2v8l-4-2"/>',
   doc: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   fermer: '<path d="M6 6l12 12M18 6L6 18"/>',
+  oeil: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  oeilBarre: '<path d="M3 3l18 18"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.2M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7a10.4 10.4 0 0 0 5.4-1.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+  micro: '<rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7"/>',
   visage: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 15.5a3.5 3.5 0 0 0 5 0"/>'
 };
 const ico = (n, cls) => '<svg class="' + (cls || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[n] + '</svg>';
@@ -3641,6 +3711,39 @@ function nouveauxVoeux(key) { const sv = (ui.vusAvant || {}).famille; if (!sv) r
 /* ============ Rendu ============ */
 let rendu = false;
 function planifier() { if (rendu) return; rendu = true; requestAnimationFrame(() => { rendu = false; render(); }); }
+/** Champs de code : un œil pour afficher ce que l'on tape. Longues saisies : un micro pour dicter. */
+function ameliorerChamps(root) {
+  root.querySelectorAll('input[type="password"]').forEach(inp => {
+    const k = inp.id || inp.name; if (!k || inp.parentNode.classList.contains('mdp')) return;
+    const w = document.createElement('span'); w.className = 'mdp'; inp.parentNode.insertBefore(w, inp); w.appendChild(inp);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'oeil'; b.dataset.a = 'oeil'; b.dataset.k = k; w.appendChild(b);
+    majOeil(b, inp, !!(ui.oeil && ui.oeil.has(k)));
+  });
+  root.querySelectorAll('textarea').forEach(t => {
+    if (t.dataset.sansDictee != null || (t.nextElementSibling && t.nextElementSibling.classList.contains('dictee'))) return;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'dictee'; b.dataset.a = 'dicter';
+    b.setAttribute('aria-label', 'Dicter au lieu d’écrire'); b.title = 'Dicter au lieu d’écrire';
+    b.innerHTML = ico('micro') + '<span>Dicter</span>'; t.insertAdjacentElement('afterend', b);
+  });
+}
+/** Dictée : par la page d'accueil quand elle sait écouter (le cadre Google n'a pas accès au micro), sinon par le micro du clavier. */
+function dicter(t) {
+  if (!t) return;
+  if (ui.porte && ui.porte.dictee) { ui.dicteeCible = t.id || t.name; versPorte({ adya: 'dictee', lang: 'fr-FR' }); return; }
+  t.focus();
+  toast('Touchez le micro 🎤 du clavier, ' + (IOS ? 'en bas à droite' : 'à côté de la barre d’espace') + ', puis parlez. Retouchez-le pour arrêter.');
+}
+function insererDictee(texte) {
+  const k = ui.dicteeCible; const t = k && (document.getElementById(k) || document.querySelector('textarea[name="' + k + '"]')); if (!t || !texte) return;
+  const a = t.selectionStart ?? t.value.length, b = t.selectionEnd ?? a, avant = t.value.slice(0, a);
+  const sep = avant && !/\s$/.test(avant) ? ' ' : '';
+  t.setRangeText(sep + texte, a, b, 'end'); t.dispatchEvent(new Event('input', { bubbles: true }));
+}
+function majOeil(b, inp, voir) {
+  inp.type = voir ? 'text' : 'password';
+  b.innerHTML = ico(voir ? 'oeilBarre' : 'oeil');
+  const t = voir ? 'Masquer le code' : 'Afficher le code'; b.setAttribute('aria-label', t); b.title = t; b.setAttribute('aria-pressed', String(voir));
+}
 function capturer(root) {
   const etat = {}; if (!root) return etat;
   root.querySelectorAll('input[id],select[id],textarea[id]').forEach(el => { if (el.type === 'file') return; etat[el.id] = { v: el.value, c: el.checked }; });
@@ -3683,6 +3786,7 @@ function render() {
   if (!ui.demo && ui.depuisCache && S.charge && SESSION.jeton) html = '<p class="info-cache" role="status">' + (ui.cacheEchec ? 'Pas de connexion pour l’instant. Dernières données : ' + esc(fmtHeureCache(ui.depuisCache)) + '. <button class="btn lien petit" data-a="actualiser">Réessayer</button>' : (ui.reprise ? 'Connexion lente, nouvel essai en cours…' : 'Mise à jour en cours…') + ' (dernières données : ' + esc(fmtHeureCache(ui.depuisCache)) + ')') + '</p>' + html;
   const sigData = {}; document.querySelectorAll('.sig-pad').forEach(c => { if (SIGS[c.id]) sigData[c.id] = c.toDataURL(); });
   vue.innerHTML = html;
+  ameliorerChamps(vue);
   restaurer(vue, etat);
   Object.keys(SIGS).forEach(id => { const cv = document.getElementById(id); if (!cv) { delete SIGS[id]; return; } if (sigData[id]) { const im = new Image(); im.onload = () => cv.getContext('2d').drawImage(im, 0, 0); im.src = sigData[id]; } });
   sigTrace = !!SIGS.sig;
@@ -3782,7 +3886,7 @@ function carteFete(p) {
 }
 function blocEvt(e) {
   const p = e.date.split('-');
-  return '<div class="evt" style="flex:1"><div class="evt-date' + (e._anniv ? ' anniv' : '') + '"><small>' + esc(MOIS_C[+p[1] - 1]) + '</small><b class="num">' + (+p[2]) + '</b></div><div style="min-width:0"><strong>' + esc(e.titre) + '</strong>' + (e._p ? ' <span class="attente">En attente de confirmation</span>' : '') + '<div class="doux petit">' + esc(jourSemaine(e.date)) + (e.heure ? ' · ' + esc(e.heure) : '') + (e.lieu ? ' · ' + esc(e.lieu) : '') + '</div>' + (e.description ? '<p class="petit" style="margin-top:4px">' + esc(e.description) + '</p>' : '') + '</div></div>';
+  return '<div class="evt" style="flex:1"><div class="evt-date' + (e._anniv ? ' anniv' : '') + '"><small>' + esc(MOIS_C[+p[1] - 1]) + '</small><b class="num">' + (+p[2]) + '</b></div><div style="min-width:0"><strong>' + esc(e.titre) + '</strong>' + (e._p ? ' <span class="attente">En attente de confirmation</span>' : '') + '<div class="doux petit">' + esc(jourSemaine(e.date)) + (e.heure ? ' · ' + esc(e.heure) : '') + (e.lieu ? ' · ' + esc(e.lieu) : '') + '</div>' + (e.description ? '<p class="petit" style="margin-top:4px">' + esc(e.description) + '</p>' : '') + (e.pj && e.pj.length && e._auteur ? blocPJ(e._auteur, e.pj) : '') + '</div></div>';
 }
 
 /* ---------- Vie de famille ---------- */
@@ -3954,7 +4058,7 @@ function vSouvenirs(c) {
     h += '<h2 class="sous-titre">' + esc(an) + '</h2><div class="albums">' + albums.filter(a => anneeDe(a) === an).map((a, i) => '<button type="button" class="album" data-a="album-ouvrir" data-k="' + esc(a._key) + '">' + couverture(a, i) + '<strong>' + esc(a.titre) + '</strong><span class="doux petit">' + esc([dateSouvenir(a.date), (a.photos || []).length + ' photo' + ((a.photos || []).length > 1 ? 's' : ''), (a.videos || []).length ? (a.videos.length + ' vidéo' + (a.videos.length > 1 ? 's' : '')) : ''].filter(Boolean).join(' · ')) + '</span></button>').join('') + '</div>';
   });
   if (pn.length) h += '<h2 class="sous-titre">Partagées dans les nouvelles</h2><div class="albums"><button type="button" class="album" data-a="album-ouvrir" data-k="__nouvelles">' + couverture({ photos: [pn[0]] }, 3) + '<strong>Photos des nouvelles</strong><span class="doux petit">' + pn.length + ' photo' + (pn.length > 1 ? 's' : '') + '</span></button></div>';
-  if (archives.length) h += '<h2 class="sous-titre">Archives</h2><div class="carte"><ul class="liste archives">' + archives.map(x => '<li>' + (ui.demo ? '<span class="arch-ico">' + ico('doc') + '</span><span class="arch-txt"><strong>' + esc(x.titre) + '</strong>' : '<button type="button" class="arch" data-a="' + (x.fichier.type === 'image/jpeg' ? 'souv-photo' : 'pj-doc') + '" data-k="' + esc(x.fichier.par + '/' + x.fichier.id) + '" data-n="' + esc(x.fichier.nom) + '" data-t="' + esc(x.fichier.type) + '"><span class="arch-ico">' + ico('doc') + '</span><span class="arch-txt"><strong>' + esc(x.titre) + '</strong>') + '<span class="doux petit">' + esc([dateSouvenir(x.date), x.fichier ? (x.fichier.type === 'image/jpeg' ? 'Image' : genreDoc(x.fichier.type)) : '', 'déposé par ' + nomMembre(x.creePar), x.note].filter(Boolean).join(' · ')) + '</span></span>' + (ui.demo ? '' : '</button>') + (peutSouvenirs() && !ui.demo ? confirmBar('souv-suppr:' + x._key, 'Retirer', 'souv-suppr', 'data-k="' + esc(x._key) + '"') : '') + '</li>').join('') + '</ul></div>';
+  if (archives.length) h += '<h2 class="sous-titre">Archives</h2><div class="carte"><ul class="liste archives">' + archives.map(x => '<li>' + (ui.demo ? '<span class="arch-ico">' + ico('doc') + '</span><span class="arch-txt"><strong>' + esc(x.titre) + '</strong>' : '<button type="button" class="arch" data-a="' + (x.fichier.type === 'image/jpeg' ? 'souv-photo' : estAudio(x.fichier.type) ? 'ecouter' : 'pj-doc') + '" data-k="' + esc(x.fichier.par + '/' + x.fichier.id) + '" data-n="' + esc(x.fichier.nom) + '" data-t="' + esc(x.fichier.type) + '"><span class="arch-ico">' + ico(estAudio(x.fichier.type) ? 'micro' : 'doc') + '</span><span class="arch-txt"><strong>' + esc(x.titre) + '</strong>') + '<span class="doux petit">' + esc([dateSouvenir(x.date), x.fichier ? (x.fichier.type === 'image/jpeg' ? 'Image' : genreDoc(x.fichier.type)) : '', 'déposé par ' + nomMembre(x.creePar), x.note].filter(Boolean).join(' · ')) + '</span></span>' + (ui.demo ? '' : '</button>') + (peutSouvenirs() && !ui.demo ? confirmBar('souv-suppr:' + x._key, 'Retirer', 'souv-suppr', 'data-k="' + esc(x._key) + '"') : '') + '</li>').join('') + '</ul></div>';
   return h;
 }
 function vAlbum(c, a) {
@@ -4038,7 +4142,7 @@ function formFiche(c, modele) {
     h += '</fieldset>';
   });
   if (m.presence) h += '<fieldset class="fi-sec"><legend>Signature du membre ou de l’ayant droit</legend><div class="champs-2"><label class="champ"><span>Nom de la personne qui signe</span><input name="__nom" required maxlength="80"></label><label class="champ"><span>Qualité</span><select name="__qualite"><option>membre</option><option>ayant droit</option></select></label></div>' + padSignature('Sa signature', 'sig2', 'La personne signe avec le doigt, sur cet appareil.') + '</fieldset>';
-  return h + padSignature(m.auteur === 'bureau' ? (m.presence ? 'Ma signature, pour le bureau' : m.sig1 || 'Ma signature') : modele === 'adhesion' ? 'Ma signature' : m.sig1 || 'Signature du demandeur', 'sig') + blocConfirmer(modele === 'convocation' ? 'Signer et convoquer' : 'Signer et envoyer') + '</form>';
+  return h + padSignature(m.auteur === 'bureau' ? (m.presence ? 'Ma signature, pour le bureau' : m.sig1 || 'Ma signature') : modele === 'adhesion' ? 'Ma signature' : m.sig1 || 'Signature du demandeur', 'sig') + '<fieldset class="fi-sec"><legend>Explication orale <small>(facultatif)</small></legend>' + zonePJ('fiche') + '</fieldset>' + blocConfirmer(modele === 'convocation' ? 'Signer et convoquer' : 'Signer et envoyer') + '</form>';
 }
 function vMesFiches(c) {
   const mes = c.fiches.filter(f => f._membre === c.moi && !MF.M[f.modele].public && !MF.M[f.modele].auteur);
@@ -4065,7 +4169,8 @@ function resumeValeurs(f) {
     if (sec.table) { const r = (f.valeurs || {})[sec.table[0]] || []; if (r.length) h += '<dt>' + esc(sec.titre.replace(/ \(.*\)$/, '')) + '</dt><dd>' + r.map(x => sec.table[2].map(k => x[k[0]] ? (k[0] === 'nom' || k[0] === 'point' ? '' : k[1] + ' : ') + x[k[0]] : '').filter(Boolean).map(esc).join(' · ')).join('<br>') + '</dd>'; return; }
     sec.champs.forEach(x => { const v = (f.valeurs || {})[x[0]]; if (x[2] === 'engagement' || v === '' || v == null || (Array.isArray(v) && !v.length)) return; h += '<dt>' + esc(x[1]) + '</dt><dd style="white-space:pre-line">' + esc(MF.valeur(x, v, NOMS())) + (v === MF.AUTRE ? ' : ' + esc(f.valeurs[x[0] + 'Prec'] || '') : '') + '</dd>'; });
   });
-  return h + '</dl>';
+  const au = (f.pj || []).filter(x => estAudio(x.type));
+  return h + '</dl>' + (au.length ? '<div class="pile" style="gap:4px"><strong class="petit">Explication orale</strong>' + blocVoix(f.par || f._membre, au) + '</div>' : '');
 }
 function formExamen(c, f) {
     const m = MF.M[f.modele], soi = f._membre === c.moi && !m.auteur;
@@ -4190,17 +4295,18 @@ function ficheArbre(c, A, p) {
   h += '</dl>';
   if (p.kids.length) h += '<div class="ar-enfants">' + p.kids.map(k => '<button type="button" class="puce neutre" data-a="ar-voir" data-k="' + esc(k.id) + '">' + esc(k.nom) + (k.kids.length ? ' · ' + k.kids.length : '') + '</button>').join('') + '</div>';
   if (p.note) h += '<p class="petit" style="white-space:pre-line"><strong>Note.</strong> ' + esc(p.note) + '</p>';
+  if (p.voix && p.voix.length) h += '<div class="pile" style="gap:4px"><strong class="petit">La voix de la famille</strong>' + blocVoix(null, p.voix) + '</div>';
   h += '<div class="ligne" style="gap:8px;flex-wrap:wrap">' + (p.kids.length ? '<button type="button" class="btn second petit" data-a="ar-plier" data-k="' + esc(p.id) + '">' + ((ui.arOpen || new Set()).has(p.id) ? 'Replier la descendance' : 'Déplier la descendance') + '</button>' : '');
   if (ed) h += '<button type="button" class="btn second petit" data-a="ar-edit" data-k="' + esc(p.id) + '">Modifier</button><button type="button" class="btn second petit" data-a="ar-edit" data-k="new:' + esc(p.id) + '">Ajouter un enfant</button>';
   else if (!ui.demo && c.moi) h += '<button type="button" class="btn second petit" data-a="ar-proposer" data-k="' + esc(p.id) + '">Proposer une correction</button>';
   h += '</div>';
-  if (ui.arProposer === p.id) h += '<form class="form plat" data-f="ar-proposition" data-k="' + esc(p.id) + '"><label class="champ"><span>Votre correction ou ajout</span><textarea name="texte" required maxlength="600" placeholder="Ex. Le prénom exact est… ; il manque un enfant :…"></textarea></label><div><button class="btn petit">Envoyer aux responsables de l’arbre</button></div></form>';
+  if (ui.arProposer === p.id) h += '<form class="form plat" data-f="ar-proposition" data-k="' + esc(p.id) + '"><label class="champ"><span>Votre correction ou ajout</span><textarea name="texte" maxlength="600" placeholder="Ex. Le prénom exact est… ; il manque un enfant :…"></textarea></label>' + zonePJ('prop') + '<div><button class="btn petit">Envoyer aux responsables de l’arbre</button></div></form>';
   return h + '</article>';
 }
 function formArbre(c, A) {
   const nouveau = String(ui.arEdit).indexOf('new:') === 0, p = nouveau ? { parent: ui.arEdit.slice(4) || null, conjoints: [] } : A && A.P[ui.arEdit] || {};
   const opts = A ? A.tous.filter(x => x.id !== ui.arEdit).map(x => '<option value="' + esc(x.id) + '"' + (x.id === p.parent ? ' selected' : '') + '>' + esc('—'.repeat(Math.min(x.gen - 1, 5)) + ' ' + x.nom) + '</option>').join('') : '';
-  return '<form class="form carte" data-f="ar-personne" id="f-ar" data-k="' + esc(ui.arEdit) + '"><h3>' + (nouveau ? 'Ajouter une personne' : 'Modifier ' + esc(p.nom)) + '</h3><div class="champs-2"><label class="champ"><span>Nom et prénoms</span><input name="nom" required maxlength="100" value="' + esc(p.nom || '') + '"></label><label class="champ"><span>Surnom ou nom d’usage <small>(facultatif)</small></span><input name="label" maxlength="60" value="' + esc(p.label || '') + '"></label><label class="champ"><span>Sexe</span><select name="sexe"><option value="">—</option><option value="h"' + (p.sexe === 'h' ? ' selected' : '') + '>Homme</option><option value="f"' + (p.sexe === 'f' ? ' selected' : '') + '>Femme</option></select></label><label class="champ"><span>Parent</span><select name="parent"' + (A ? ' required' : '') + '>' + (A ? '' : '<option value="">Aucun : c’est la souche</option>') + opts + '</select></label><label class="champ"><span>Naissance <small>(année ou date)</small></span><input name="naissance" maxlength="10" placeholder="1935 ou 1935-04-12" value="' + esc(p.naissance || '') + '"></label><label class="champ"><span>Décès <small>(année ou date)</small></span><input name="deces" maxlength="10" value="' + esc(p.deces || '') + '"></label></div><label class="champ"><span>Conjoint(s) <small>(séparés par /)</small></span><input name="conjoints" maxlength="300" value="' + esc((p.conjoints || []).join(' / ')) + '"></label><div class="champs-2"><label class="champ"><span>Membre de l’application <small>(facultatif)</small></span><select name="membre"><option value="">Non</option>' + c.membres.map(m => '<option value="' + m.id + '"' + (m.id === p.membre ? ' selected' : '') + '>' + esc(m.nomAff) + '</option>').join('') + '</select></label><label class="champ"><span>Ordre parmi les frères et sœurs</span><input name="ordre" inputmode="numeric" value="' + esc(p.ordre || '') + '" placeholder="10, 20, 30…"></label></div><label class="case"><input type="checkbox" name="verifier"' + (p.verifier ? ' checked' : '') + '>À vérifier</label><label class="champ"><span>Note <small>(facultatif)</small></span><textarea name="note" maxlength="600">' + esc(p.note || '') + '</textarea></label><div class="ligne" style="gap:8px"><button class="btn">Enregistrer</button><button type="button" class="btn lien" data-a="ar-edit" data-k="">Annuler</button>' + (!nouveau && p.kids && !p.kids.length ? confirmBar('ar-suppr:' + ui.arEdit, 'Retirer de l’arbre', 'ar-suppr', 'data-k="' + esc(ui.arEdit) + '"') : '') + '</div></form>';
+  return '<form class="form carte" data-f="ar-personne" id="f-ar" data-k="' + esc(ui.arEdit) + '"><h3>' + (nouveau ? 'Ajouter une personne' : 'Modifier ' + esc(p.nom)) + '</h3><div class="champs-2"><label class="champ"><span>Nom et prénoms</span><input name="nom" required maxlength="100" value="' + esc(p.nom || '') + '"></label><label class="champ"><span>Surnom ou nom d’usage <small>(facultatif)</small></span><input name="label" maxlength="60" value="' + esc(p.label || '') + '"></label><label class="champ"><span>Sexe</span><select name="sexe"><option value="">—</option><option value="h"' + (p.sexe === 'h' ? ' selected' : '') + '>Homme</option><option value="f"' + (p.sexe === 'f' ? ' selected' : '') + '>Femme</option></select></label><label class="champ"><span>Parent</span><select name="parent"' + (A ? ' required' : '') + '>' + (A ? '' : '<option value="">Aucun : c’est la souche</option>') + opts + '</select></label><label class="champ"><span>Naissance <small>(année ou date)</small></span><input name="naissance" maxlength="10" placeholder="1935 ou 1935-04-12" value="' + esc(p.naissance || '') + '"></label><label class="champ"><span>Décès <small>(année ou date)</small></span><input name="deces" maxlength="10" value="' + esc(p.deces || '') + '"></label></div><label class="champ"><span>Conjoint(s) <small>(séparés par /)</small></span><input name="conjoints" maxlength="300" value="' + esc((p.conjoints || []).join(' / ')) + '"></label><div class="champs-2"><label class="champ"><span>Membre de l’application <small>(facultatif)</small></span><select name="membre"><option value="">Non</option>' + c.membres.map(m => '<option value="' + m.id + '"' + (m.id === p.membre ? ' selected' : '') + '>' + esc(m.nomAff) + '</option>').join('') + '</select></label><label class="champ"><span>Ordre parmi les frères et sœurs</span><input name="ordre" inputmode="numeric" value="' + esc(p.ordre || '') + '" placeholder="10, 20, 30…"></label></div><label class="case"><input type="checkbox" name="verifier"' + (p.verifier ? ' checked' : '') + '>À vérifier</label><label class="champ"><span>Note <small>(facultatif)</small></span><textarea name="note" maxlength="600">' + esc(p.note || '') + '</textarea></label><div class="pile" style="gap:6px"><strong class="petit">La voix de la famille <small class="doux">(souvenirs racontés, proverbes, chants…)</small></strong>' + (ui.pjArbreK !== ui.arEdit ? ((ui.pj.arbre = (p.voix || []).map(x => Object.assign({ etat: 'ok' }, x))), (ui.pjArbreK = ui.arEdit), '') : '') + zonePJ('arbre') + '</div><div class="ligne" style="gap:8px"><button class="btn">Enregistrer</button><button type="button" class="btn lien" data-a="ar-edit" data-k="">Annuler</button>' + (!nouveau && p.kids && !p.kids.length ? confirmBar('ar-suppr:' + ui.arEdit, 'Retirer de l’arbre', 'ar-suppr', 'data-k="' + esc(ui.arEdit) + '"') : '') + '</div></form>';
 }
 function vArbre(c) {
   const A = arbreDe(c), ed = peutArbre() && !ui.demo;
@@ -4224,7 +4330,7 @@ function vArbre(c) {
   else if (vue === 'liste') { const l = A.tous.slice().sort((a, b) => a.nom.localeCompare(b.nom)); h += '<div class="carte"><ul class="liste">' + l.slice(0, ui.arMax || 60).map(p => '<li><button type="button" class="ar-ligne" data-a="ar-voir" data-k="' + esc(p.id) + '"><strong>' + esc(p.nom) + (p.verifier ? ' ◆' : '') + '</strong><span class="doux petit">Gén. ' + p.gen + (p.branche ? ' · ' + esc(nomCourt(p.branche)) : '') + (datesPers(p) ? ' · ' + esc(datesPers(p)) : '') + '</span></button></li>').join('') + '</ul>' + (l.length > (ui.arMax || 60) ? '<button type="button" class="btn second petit" data-a="ar-plus">Afficher plus</button>' : '') + '</div>'; }
   else { for (let g = 1; g <= A.gens; g++) { const l = A.tous.filter(p => p.gen === g); h += '<details class="pli carte" id="d-gen-' + g + '"><summary>Génération ' + g + ' · ' + l.length + ' personne' + (l.length > 1 ? 's' : '') + '</summary><div class="ar-enfants" style="margin-top:8px">' + l.map(p => '<button type="button" class="puce neutre" data-a="ar-voir" data-k="' + esc(p.id) + '">' + esc(p.nom) + '</button>').join('') + '</div></details>'; } }
   h += '<div class="ligne" style="gap:8px;flex-wrap:wrap;margin-top:10px">' + (!ui.demo ? '<button type="button" class="btn second petit" data-a="ar-pdf">' + ico('telecharger') + 'Version imprimable (PDF)</button>' : '') + (ed ? '<button type="button" class="btn second petit" data-a="ar-edit" data-k="new:' + esc(A.souche.id) + '">Ajouter une personne</button><label class="btn second petit">Importer un arbre<input type="file" class="sr" accept=".json,.html,.htm" data-a-change="ar-import"></label>' : '') + '</div>';
-  if (ed && c.propositions.length) h += '<section class="carte pile"><h3>Propositions de correction (' + c.propositions.length + ')</h3><ul class="liste">' + c.propositions.map(x => '<li style="flex-direction:column;align-items:stretch;gap:4px"><span class="doux petit">' + esc(nomMembre(x._auteur)) + ' · ' + esc(fmtDate(x.le)) + (x.personne && A.P[x.personne] ? ' · au sujet de <button type="button" class="btn lien petit" data-a="ar-voir" data-k="' + esc(x.personne) + '">' + esc(A.P[x.personne].nom) + '</button>' : '') + '</span><span style="white-space:pre-line">' + esc(x.texte) + '</span><div><button type="button" class="btn second petit" data-a="ar-prop-ok" data-k="' + esc(x._key) + '">Traitée</button></div></li>').join('') + '</ul></section>';
+  if (ed && c.propositions.length) h += '<section class="carte pile"><h3>Propositions de correction (' + c.propositions.length + ')</h3><ul class="liste">' + c.propositions.map(x => '<li style="flex-direction:column;align-items:stretch;gap:4px"><span class="doux petit">' + esc(nomMembre(x._auteur)) + ' · ' + esc(fmtDate(x.le)) + (x.personne && A.P[x.personne] ? ' · au sujet de <button type="button" class="btn lien petit" data-a="ar-voir" data-k="' + esc(x.personne) + '">' + esc(A.P[x.personne].nom) + '</button>' : '') + '</span><span style="white-space:pre-line">' + esc(x.texte) + '</span>' + (x.pj && x.pj.length ? blocVoix(x._auteur, x.pj) : '') + '<div><button type="button" class="btn second petit" data-a="ar-prop-ok" data-k="' + esc(x._key) + '">Traitée</button></div></li>').join('') + '</ul></section>';
   h += '<p class="doux petit">' + (aOption('arbre') ? 'Arbre généalogique : option activée pour ' + esc(G().le) + '.' : 'L’option Arbre généalogique n’est plus active : l’arbre reste consultable, mais ne peut plus être modifié.') + '</p>';
   return h;
 }
@@ -4244,7 +4350,7 @@ function confirmBar(key, label, action, data) {
 }
 function vNouvelles() {
   let h = '';
-  if (peutPublier('nouvelles')) h += '<details class="pli carte" id="d-nouv"><summary>Partager une nouvelle</summary><form class="form" data-f="nouvelle" id="f-nouv" style="margin-top:12px"><div class="champs-2"><label class="champ"><span>Type</span><select id="n-genre" name="genre">' + Object.keys(GENRES).map(k => '<option value="' + k + '">' + GENRES[k] + '</option>').join('') + '</select></label><label class="champ"><span>Titre</span><input id="n-titre" name="titre" required maxlength="120"></label></div><label class="champ"><span>Message</span><textarea id="n-texte" name="texte" required maxlength="4000"></textarea></label>' + zonePJ('nouv') + '<div><button class="btn">Publier</button></div></form></details>';
+  if (peutPublier('nouvelles')) h += '<details class="pli carte" id="d-nouv"><summary>Partager une nouvelle</summary><form class="form" data-f="nouvelle" id="f-nouv" style="margin-top:12px"><div class="champs-2"><label class="champ"><span>Type</span><select id="n-genre" name="genre">' + Object.keys(GENRES).map(k => '<option value="' + k + '">' + GENRES[k] + '</option>').join('') + '</select></label><label class="champ"><span>Titre</span><input id="n-titre" name="titre" required maxlength="120"></label></div><label class="champ"><span>Message</span><textarea id="n-texte" name="texte" maxlength="4000"></textarea></label>' + zonePJ('nouv') + '<div><button class="btn">Publier</button></div></form></details>';
   else if (!ui.demo) h += '<p class="doux petit">La publication de nouvelles est réservée selon les règles choisies par ' + esc(G().le) + '.</p>';
   const liste = C.items.filter(i => i.type === 'nouvelle').sort((a, b) => (b.creeLe || '').localeCompare(a.creeLe || ''));
   if (!liste.length) return h + '<div class="vide"><strong>Aucune nouvelle pour l’instant.</strong><span>Une naissance, un voyage, une réussite, une annonce : partagez-la ici, elle restera dans le fil.</span></div>';
@@ -4258,7 +4364,7 @@ function evenementsAgenda(du, au) {
 }
 function vAgenda() {
   const t = C.today; let h = '';
-  if (peutPublier('agenda')) h += '<details class="pli carte" id="d-evt"><summary>Ajouter un rendez-vous</summary><form class="form" data-f="evenement" id="f-evt" style="margin-top:12px"><label class="champ"><span>Titre</span><input id="e-titre" name="titre" required maxlength="120" placeholder="Réunion, fête, repas…"></label><div class="champs-2"><label class="champ"><span>Date</span><input type="date" id="e-date" name="date" required value="' + t + '"></label><label class="champ"><span>Heure <small>(facultatif)</small></span><input type="time" id="e-heure" name="heure"></label></div><label class="champ"><span>Lieu <small>(facultatif)</small></span><input id="e-lieu" name="lieu" maxlength="160"></label><label class="champ"><span>Description <small>(facultatif)</small></span><textarea id="e-desc" name="description" maxlength="1000"></textarea></label><div><button class="btn">Ajouter à l’agenda</button></div></form></details>';
+  if (peutPublier('agenda')) h += '<details class="pli carte" id="d-evt"><summary>Ajouter un rendez-vous</summary><form class="form" data-f="evenement" id="f-evt" style="margin-top:12px"><label class="champ"><span>Titre</span><input id="e-titre" name="titre" required maxlength="120" placeholder="Réunion, fête, repas…"></label><div class="champs-2"><label class="champ"><span>Date</span><input type="date" id="e-date" name="date" required value="' + t + '"></label><label class="champ"><span>Heure <small>(facultatif)</small></span><input type="time" id="e-heure" name="heure"></label></div><label class="champ"><span>Lieu <small>(facultatif)</small></span><input id="e-lieu" name="lieu" maxlength="160"></label><label class="champ"><span>Description <small>(facultatif)</small></span><textarea id="e-desc" name="description" maxlength="1000"></textarea></label>' + zonePJ('agen') + '<div><button class="btn">Ajouter à l’agenda</button></div></form></details>';
   const aVenir = evenementsAgenda(t, addDays(t, 365));
   const parMois = {}; aVenir.forEach(e => { (parMois[e.date.slice(0, 7)] = parMois[e.date.slice(0, 7)] || []).push(e); });
   if (!aVenir.length) h += '<div class="vide"><strong>L’agenda est vide.</strong><span>Les rendez-vous ajoutés par les membres et les anniversaires renseignés apparaîtront ici.</span></div>';
@@ -4311,7 +4417,7 @@ function vPersonne() {
   h += barreReactions('carte:' + p.key + ':' + annee);
   h += '<section class="section"><div class="section-tete"><h2>Mur de vœux ' + annee + '</h2>' + (annees.length > 1 ? '<label class="champ" style="grid-auto-flow:column;align-items:center;gap:8px"><span>Souvenirs</span><select id="sel-annee" data-a-change="annee">' + annees.map(a => '<option value="' + a + '"' + (a === annee ? ' selected' : '') + '>' + a + '</option>').join('') + '</select></label>' : '') + '</div>';
   h += msgs.length ? '<div class="mur">' + msgs.map(m => '<article class="voeu"><div class="ligne">' + avMembre(C.uidToM[m._uid], 'p') + '<strong>' + esc(nomMembre(C.uidToM[m._uid])) + '</strong><span class="doux petit">' + esc(fmtDate(m.le)) + '</span>' + (estNouveau('famille', m.le, m._uid) && (m.cible === 'm:' + C.moi || m.cible.indexOf('e:' + C.me.uid + ':') === 0) ? PUCE_NOUVEAU : '') + (m.recuDe ? '<span class="puce neutre">vœu reçu de ' + esc(m.recuDe) + '</span>' : '') + (m._p ? '<span class="attente">En attente de confirmation</span>' : '') + '</div><p style="white-space:pre-line">' + esc(m.texte) + '</p>' + blocPJ(C.uidToM[m._uid], m.pj) + barreReactions(m._id) + (m._uid === C.me.uid ? confirmBar('delv:' + m._id, 'Supprimer', 'suppr-voeu', 'data-k="' + esc(m._mid) + '"') : '') + '</article>').join('') + '</div>' : '<div class="vide"><strong>Aucun message pour ' + annee + '.</strong><span>Soyez la première ou le premier à écrire.</span></div>';
-  if (C.moi || ui.demo) h += '<form class="form carte" data-f="voeu" id="f-voeu" data-k="' + esc(p.key) + '" data-y="' + annee + '"><label class="champ"><span>Votre message pour ' + esc(p.nom) + '</span><textarea id="v-texte" name="texte" required maxlength="2000" placeholder="Joyeux anniversaire…"></textarea></label>' + (estCelebre ? '<label class="champ"><span>Partager un vœu reçu ailleurs <small>(facultatif : nom de la personne qui vous l’a adressé)</small></span><input id="v-recu" name="recuDe" maxlength="80" placeholder="Ex. reçu par WhatsApp de…"></label>' : '') + zonePJ('voeu') + '<div><button class="btn or">' + ico('gateau') + 'Envoyer mes vœux</button></div></form>';
+  if (C.moi || ui.demo) h += '<form class="form carte" data-f="voeu" id="f-voeu" data-k="' + esc(p.key) + '" data-y="' + annee + '"><label class="champ"><span>Votre message pour ' + esc(p.nom) + '</span><textarea id="v-texte" name="texte" maxlength="2000" placeholder="Joyeux anniversaire… (ou une note vocale)"></textarea></label>' + (estCelebre ? '<label class="champ"><span>Partager un vœu reçu ailleurs <small>(facultatif : nom de la personne qui vous l’a adressé)</small></span><input id="v-recu" name="recuDe" maxlength="80" placeholder="Ex. reçu par WhatsApp de…"></label>' : '') + zonePJ('voeu') + '<div><button class="btn or">' + ico('gateau') + 'Envoyer mes vœux</button></div></form>';
   h += '</section>';
   return h;
 }
@@ -4619,7 +4725,7 @@ function resultats(v) {
 }
 function vVotes() {
   let h = '';
-  if (peutPublier('votes')) h += '<details class="pli carte" id="d-vote"><summary>Ouvrir un vote</summary><form class="form" data-f="vote" id="f-vote" style="margin-top:12px"><label class="champ"><span>Question soumise au vote</span><input id="vo-titre" name="titre" required maxlength="160"></label><label class="champ"><span>Explications <small>(facultatif)</small></span><textarea id="vo-desc" name="description" maxlength="2000"></textarea></label><div class="champs-2"><label class="champ"><span>Catégorie</span><select id="vo-cat" name="categorie">' + Object.keys(CAT_VOTE).map(k => '<option value="' + k + '">' + CAT_VOTE[k] + '</option>').join('') + '</select></label></div><label class="case"><input type="checkbox" id="vo-sans" name="sans" checked data-a-change="re">Sans date limite</label><div class="champs-2" id="vo-dates"><label class="champ"><span>Date de clôture</span><input type="date" id="vo-date" name="date" min="' + C.today + '"></label><label class="champ"><span>Heure de clôture <small>(heure GMT)</small></span><input type="time" id="vo-heure" name="heure" value="20:00"></label></div><div><button class="btn">Ouvrir le vote</button></div></form></details>';
+  if (peutPublier('votes')) h += '<details class="pli carte" id="d-vote"><summary>Ouvrir un vote</summary><form class="form" data-f="vote" id="f-vote" style="margin-top:12px"><label class="champ"><span>Question soumise au vote</span><input id="vo-titre" name="titre" required maxlength="160"></label><label class="champ"><span>Explications <small>(facultatif)</small></span><textarea id="vo-desc" name="description" maxlength="2000"></textarea></label>' + zonePJ('vote') + '<div class="champs-2"><label class="champ"><span>Catégorie</span><select id="vo-cat" name="categorie">' + Object.keys(CAT_VOTE).map(k => '<option value="' + k + '">' + CAT_VOTE[k] + '</option>').join('') + '</select></label></div><label class="case"><input type="checkbox" id="vo-sans" name="sans" checked data-a-change="re">Sans date limite</label><div class="champs-2" id="vo-dates"><label class="champ"><span>Date de clôture</span><input type="date" id="vo-date" name="date" min="' + C.today + '"></label><label class="champ"><span>Heure de clôture <small>(heure GMT)</small></span><input type="time" id="vo-heure" name="heure" value="20:00"></label></div><div><button class="btn">Ouvrir le vote</button></div></form></details>';
   const votes = C.items.filter(i => i.type === 'vote').sort((a, b) => (b.creeLe || '').localeCompare(a.creeLe || ''));
   if (!votes.length) return h + '<div class="vide"><strong>Aucun vote en cours ni passé.</strong><span>Un vote peut être ouvert pour un prêt, un investissement ou toute décision ' + esc(G().du) + '.</span></div>';
   const ouverts = votes.filter(v => !(v.cloture && Date.now() >= Date.parse(v.cloture)));
@@ -4635,7 +4741,7 @@ function carteVote(v) {
   const reg = C.cfg.reglagesVote || {};
   const peut = !ui.demo && !lectureSeule() && moiM && moiM.droitVote && !clos && (!mb || reg.modification);
   const barre = (lib, n, coul) => '<div class="barre"><span class="petit" style="font-weight:800">' + lib + '</span><div class="barre-piste" role="img" aria-label="' + lib + ' : ' + n + ' voix"><div class="barre-rempli" style="width:' + (r.autorises ? n / r.autorises * 100 : 0) + '%;background:' + coul + '"></div></div><span class="n">' + n + '</span></div>';
-  let h = '<article class="carte pile"><div class="ligne" style="justify-content:space-between"><span class="puce neutre">' + esc(CAT_VOTE[v.categorie] || 'Décision') + '</span>' + (clos ? '<span class="puce danger">Vote clos</span>' : v.cloture ? '<span class="puce or">' + esc(restant(v.cloture)) + '</span>' : '<span class="puce">Sans date limite</span>') + '</div><div data-lz="v:' + esc(v._key) + '"><h3 data-lb data-dire="' + esc('Vote ouvert par ' + nomMembre(v._auteur) + '. ' + v.titre) + '">' + esc(v.titre) + (estNouveau('projets', v.creeLe, v._uid) ? ' ' + PUCE_NOUVEAU : '') + '</h3>' + (v.description ? '<p data-lb class="petit" style="white-space:pre-line">' + esc(v.description) + '</p>' : '') + '</div>' + (v.description ? '<div>' + boutonLire('v:' + v._key, v.titre) + '</div>' : '') + '<p class="doux petit">Ouvert par ' + esc(nomMembre(v._auteur)) + ' le ' + esc(fmtDate(v.creeLe)) + (v.cloture ? ' · clôture le ' + esc(fmtDateHeure(v.cloture)) + ' (heure GMT)' : '') + '</p>';
+  let h = '<article class="carte pile"><div class="ligne" style="justify-content:space-between"><span class="puce neutre">' + esc(CAT_VOTE[v.categorie] || 'Décision') + '</span>' + (clos ? '<span class="puce danger">Vote clos</span>' : v.cloture ? '<span class="puce or">' + esc(restant(v.cloture)) + '</span>' : '<span class="puce">Sans date limite</span>') + '</div><div data-lz="v:' + esc(v._key) + '"><h3 data-lb data-dire="' + esc('Vote ouvert par ' + nomMembre(v._auteur) + '. ' + v.titre) + '">' + esc(v.titre) + (estNouveau('projets', v.creeLe, v._uid) ? ' ' + PUCE_NOUVEAU : '') + '</h3>' + (v.description ? '<p data-lb class="petit" style="white-space:pre-line">' + esc(v.description) + '</p>' : '') + (v.pj && v.pj.length ? blocPJ(v._auteur, v.pj) : '') + '</div>' + (v.description ? '<div>' + boutonLire('v:' + v._key, v.titre) + '</div>' : '') + '<p class="doux petit">Ouvert par ' + esc(nomMembre(v._auteur)) + ' le ' + esc(fmtDate(v.creeLe)) + (v.cloture ? ' · clôture le ' + esc(fmtDateHeure(v.cloture)) + ' (heure GMT)' : '') + '</p>';
   h += '<div class="barres">' + barre('Pour', r.pour, 'var(--vert-2)') + barre('Contre', r.contre, 'var(--danger)') + barre('Abstention', r.abst, 'var(--sauge)') + '</div>';
   h += '<p class="petit"><strong class="num">' + r.exprimes + ' vote' + (r.exprimes > 1 ? 's' : '') + ' exprimé' + (r.exprimes > 1 ? 's' : '') + ' sur ' + r.autorises + ' membres autorisés</strong> · dont ' + r.abst + ' abstention' + (r.abst > 1 ? 's' : '') + ' · ' + r.restants + (r.restants > 1 ? ' n’ont pas ' : ' n’a pas ') + (clos ? 'voté' : 'encore voté') + '</p>';
   if (v.categorie === 'statuts') { const sc = seuilCharte(r.autorises); if (sc) h += '<p class="plat petit">Seuil prévu pour modifier la charte : ' + esc(sc.lib.toLowerCase()) + ', soit ' + sc.n + ' voix Pour sur ' + r.autorises + '. Voix Pour actuelles : ' + r.pour + '.</p>'; }
@@ -4886,12 +4992,22 @@ const A = {
   'ar-vue': el => { ui.arVue = el.dataset.v; planifier(); },
   'ar-prof': el => { const A = arbreDe(C); if (!A) return; ui.arProf = +el.dataset.v; ui.arFocus = null; ui.arOpen = new Set(A.tous.filter(p => !ui.arProf || p.gen < ui.arProf).map(p => p.id)); planifier(); },
   'ar-branche': el => { ui.arBranche = el.dataset.k || null; ui.arFocus = null; const A = arbreDe(C); if (A && ui.arBranche) { ui.arOpen = ui.arOpen || new Set(); ui.arOpen.add(ui.arBranche); } planifier(); },
+  oeil: el => {
+    const inp = el.parentNode.querySelector('input'); if (!inp) return; ui.oeil = ui.oeil || new Set();
+    const voir = inp.type === 'password'; if (voir) ui.oeil.add(el.dataset.k); else ui.oeil.delete(el.dataset.k);
+    majOeil(el, inp, voir);
+    clearTimeout(ui.oeilT); if (voir) ui.oeilT = setTimeout(() => { ui.oeil.clear(); document.querySelectorAll('.oeil[aria-pressed="true"]').forEach(b => majOeil(b, b.parentNode.querySelector('input'), false)); }, 30000);
+    try { inp.focus({ preventScroll: true }); const n = inp.value.length; inp.setSelectionRange(n, n); } catch (e) {}
+  },
+  dicter: el => dicter(el.previousElementSibling),
+  vocal: el => noteVocale(el.dataset.z),
+  ecouter: el => ecouter(el.dataset.k, el.dataset.n),
   'ar-plier': el => { ui.arOpen = ui.arOpen || new Set(); const k = el.dataset.k; ui.arFocus = k; if (ui.arOpen.has(k)) ui.arOpen.delete(k); else ui.arOpen.add(k); planifier(); },
   'ar-voir': el => { const A = arbreDe(C); if (!A) return; ui.arSel = el.dataset.k; ui.arFocus = el.dataset.k; ui.arProposer = null; ui.arOpen = ui.arOpen || new Set(); let p = A.P[ui.arSel]; while (p && p.parent) { ui.arOpen.add(p.parent); p = A.P[p.parent]; } if (ui.arBranche && A.P[ui.arSel].branche && A.P[ui.arSel].branche.id !== ui.arBranche) ui.arBranche = null; planifier(); setTimeout(() => { const f = document.getElementById('ar-fiche'); if (f) f.scrollIntoView({ block: 'nearest' }); }, 60); },
   'ar-fermer': () => { ui.arSel = null; planifier(); },
   'ar-zoom': el => { ui.arZoom = Math.max(0.5, Math.min(1.6, (ui.arZoom || 1) + 0.2 * +el.dataset.v)); planifier(); },
   'ar-plus': () => { ui.arMax = (ui.arMax || 60) + 60; planifier(); },
-  'ar-edit': el => { if (ui.demo) { toast('Exemple : rien n’est enregistré.'); return; } ui.arEdit = el.dataset.k || null; planifier(); scrollTo(0, 0); },
+  'ar-edit': el => { if (ui.demo) { toast('Exemple : rien n’est enregistré.'); return; } ui.arEdit = el.dataset.k || null; ui.pjArbreK = null; planifier(); scrollTo(0, 0); },
   'ar-proposer': el => { ui.arProposer = ui.arProposer === el.dataset.k ? null : el.dataset.k; planifier(); },
   'ar-suppr': async el => { ui.confirm = null; if (await ecrire('arbre/' + el.dataset.k, 'delete', null, 'Personne retirée de l’arbre.')) { ui.arEdit = null; ui.arSel = null; planifier(); } },
   'ar-prop-ok': async el => { const x = C.propositions.find(p => p._key === el.dataset.k); if (x) await ecrire('propositions/' + x._auteur + '/items/' + x._id, 'delete', null, 'Proposition marquée comme traitée.'); },
@@ -5043,17 +5159,19 @@ function valeurs(form) { const o = {}; new FormData(form).forEach((v, k) => { o[
 function annivDe(o) { const j = +o.j, m = +o.m; if (!j || !m) return null; const max = new Date(Date.UTC(2024, m, 0)).getUTCDate(); if (j > max) return 'invalide'; const a = o.a ? +o.a : null; return { j, m, a: a && a > 1900 ? a : null }; }
 function finForm(form) { try { form.reset(); } catch (e) {} const d = form.closest('details'); if (d) { d.open = false; if (d.id) ui.ouvert[d.id] = false; } }
 const FORMS = {
-  nouvelle: async (f, o) => { const pj = pjPretes('nouv'); if (!pj) return; const id = newId(); if (await ecrire('contenus/' + S.moi + '/items/' + id, 'set', { type: 'nouvelle', genre: o.genre, titre: o.titre, texte: o.texte, pj, creeLe: nowISO() }, 'Nouvelle publiée.')) { ui.pj.nouv = []; finForm(f); } },
-  evenement: async (f, o) => { const id = newId(); if (await ecrire('contenus/' + S.moi + '/items/' + id, 'set', { type: 'evenement', titre: o.titre, date: o.date, heure: o.heure || '', lieu: o.lieu || '', description: o.description || '', creeLe: nowISO() }, 'Rendez-vous ajouté à l’agenda.')) finForm(f); },
+  nouvelle: async (f, o) => { const pj = pjPretes('nouv'); if (!pj) return; if (!o.texte && !pj.some(x => estAudio(x.type))) { toast('Écrivez un message ou joignez une note vocale.'); return; } const id = newId(); if (await ecrire('contenus/' + S.moi + '/items/' + id, 'set', { type: 'nouvelle', genre: o.genre, titre: o.titre, texte: o.texte, pj, creeLe: nowISO() }, 'Nouvelle publiée.')) { ui.pj.nouv = []; finForm(f); } },
+  evenement: async (f, o) => { const pj = pjPretes('agen'); if (!pj) return; const id = newId(); if (await ecrire('contenus/' + S.moi + '/items/' + id, 'set', { type: 'evenement', titre: o.titre, date: o.date, heure: o.heure || '', lieu: o.lieu || '', description: o.description || '', pj, creeLe: nowISO() }, 'Rendez-vous ajouté à l’agenda.')) { ui.pj.agen = []; finForm(f); } },
   voeu: async (f, o) => {
     const pj = pjPretes('voeu'); if (!pj) return;
+    if (!o.texte && !pj.some(x => estAudio(x.type))) { toast('Écrivez un message ou enregistrez une note vocale.'); return; }
     const d = { cible: f.dataset.k, annee: +f.dataset.y, texte: o.texte, pj }; if (o.recuDe) d.recuDe = o.recuDe;
     if (await ecrire('voeux/' + S.moi + '/messages/' + newId(), 'set', d, 'Vœux envoyés.')) { ui.pj.voeu = []; finForm(f); }
   },
   vote: async (f, o) => {
     let cloture = null;
     if (!o.sans) { if (!o.date || !o.heure) { toast('Indiquez la date et l’heure de clôture, ou cochez « Sans date limite ».'); return; } cloture = o.date + 'T' + o.heure + ':00Z'; if (Date.parse(cloture) <= Date.now()) { toast('La clôture doit être dans le futur.'); return; } }
-    const id = newId(); if (await ecrire('contenus/' + S.moi + '/items/' + id, 'set', { type: 'vote', titre: o.titre, description: o.description || '', categorie: o.categorie, cloture, creeLe: nowISO() }, 'Vote ouvert.')) finForm(f);
+    const pj = pjPretes('vote'); if (!pj) return;
+    const id = newId(); if (await ecrire('contenus/' + S.moi + '/items/' + id, 'set', { type: 'vote', titre: o.titre, description: o.description || '', categorie: o.categorie, cloture, pj, creeLe: nowISO() }, 'Vote ouvert.')) { ui.pj.vote = []; finForm(f); }
   },
   projet: async (f, o) => {
     const etapes = (o.etapes || '').split('\n').map(s => s.trim()).filter(Boolean).map(l => { const p = l.split(';'); return { id: newId(), nom: p[0].trim(), poids: Math.max(1, Math.round(+(p[1] || '').trim() || 1)), faiteLe: null }; });
@@ -5181,8 +5299,9 @@ const FORMS = {
     let extra = null;
     if (m.presence) { const img2 = imageSignature('sig2'); if (!img2) { toast('La personne qui reçoit le règlement doit signer dans son cadre.'); return; } extra = { img2, nom: o.__nom, qualite: o.__qualite }; }
     const v = valeursFiche(f); delete v.__nom; delete v.__qualite;
+    const pjF = pjPretes('fiche'); if (!pjF) return; if (pjF.length) { extra = extra || {}; extra.pj = pjF; }
     const msg = { convocation: 'Convocation envoyée à tous les membres.', pouvoir: 'Pouvoir enregistré.', pv: 'Procès-verbal signé : il attend la signature du secrétaire de séance.', depart: 'Solde de tout compte signé.', passation: 'Passation signée : le responsable entrant doit la contresigner.' }[modele] || 'Fiche signée et envoyée au bureau.';
-    await envoyerSigne('apiSignerFiche', [modele, v, img, o.code, extra], msg);
+    if (await envoyerSigne('apiSignerFiche', [modele, v, img, o.code, extra], msg)) ui.pj.fiche = [];
   },
   contre: async (f, o) => {
     const img = imageSignature(); if (!img) { toast('Signez dans le cadre avant de valider.'); return; }
@@ -5197,9 +5316,9 @@ const FORMS = {
     const k = f.dataset.k, nouveau = k.indexOf('new:') === 0, id = nouveau ? 'p' + Date.now().toString(36) : k;
     let n = o.naissance || '', d = o.deces || ''; const fr = x => { const m = x.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? m[3] + '-' + m[2] + '-' + m[1] : x; }; n = fr(n); d = fr(d);
     if ((n && !/^\d{4}(-\d{2}-\d{2})?$/.test(n)) || (d && !/^\d{4}(-\d{2}-\d{2})?$/.test(d))) { toast('Dates : une année (1935) ou une date (12/04/1935).'); return; }
-    if (await ecrire('arbre/' + id, 'set', { nom: o.nom, label: o.label, sexe: o.sexe, parent: o.parent || null, naissance: n, deces: d, conjoints: o.conjoints, membre: o.membre || null, ordre: o.ordre, verifier: !!o.verifier, note: o.note }, nouveau ? 'Personne ajoutée à l’arbre.' : 'Fiche mise à jour.')) { ui.arEdit = null; ui.arSel = id; ui.arOpen = ui.arOpen || new Set(); if (o.parent) ui.arOpen.add(o.parent); planifier(); }
+    if (await ecrire('arbre/' + id, 'set', { nom: o.nom, label: o.label, sexe: o.sexe, parent: o.parent || null, naissance: n, deces: d, conjoints: o.conjoints, membre: o.membre || null, ordre: o.ordre, verifier: !!o.verifier, note: o.note, voix: (pjPretes('arbre') || []) }, nouveau ? 'Personne ajoutée à l’arbre.' : 'Fiche mise à jour.')) { ui.arEdit = null; ui.arSel = id; ui.arOpen = ui.arOpen || new Set(); if (o.parent) ui.arOpen.add(o.parent); planifier(); }
   },
-  'ar-proposition': async (f, o) => { if (await ecrire('propositions/' + S.moi + '/items/' + newId(), 'set', { personne: f.dataset.k, texte: o.texte }, 'Merci : votre proposition est transmise aux responsables de l’arbre.')) { ui.arProposer = null; planifier(); } },
+  'ar-proposition': async (f, o) => { const pj = pjPretes('prop'); if (!pj) return; if (!o.texte && !pj.length) { toast('Décrivez la correction, par écrit ou de vive voix.'); return; } if (await ecrire('propositions/' + S.moi + '/items/' + newId(), 'set', { personne: f.dataset.k, texte: o.texte, pj }, 'Merci : votre proposition est transmise aux responsables de l’arbre.')) { ui.arProposer = null; ui.pj.prop = []; planifier(); } },
   album: async (f, o) => {
     if (ui.demo) { toast('Exemple : rien n’est enregistré.'); return; }
     const id = newId();
@@ -5341,20 +5460,40 @@ const PJC = {}, PJE = {}, PJV = {};   // contenus chargés, erreurs de chargemen
 let pjEnVol = 0;
 ui.pj = {};
 function tailleTxt(n) { return n >= 1048576 ? (n / 1048576).toFixed(1).replace('.', ',') + ' Mo' : Math.max(1, Math.round(n / 1024)) + ' Ko'; }
-function genreDoc(t) { return /pdf/.test(t) ? 'PDF' : /word/.test(t) ? 'Word' : /excel|sheet/.test(t) ? 'Excel' : 'Document'; }
+function genreDoc(t) { return /^audio/.test(t) ? 'Note vocale' : /pdf/.test(t) ? 'PDF' : /word/.test(t) ? 'Word' : /excel|sheet/.test(t) ? 'Excel' : 'Document'; }
 /** Zone d'ajout dans un formulaire ; les fichiers partent vers le serveur dès qu'ils sont choisis. */
+/** Zone de pièces jointes. mode « vocal » : notes vocales seulement (arbre, fiches). */
+const ZONES_VOCAL = { arbre: 1, fiche: 1, prop: 1 };
 function zonePJ(z, max) {
-  max = max == null ? PJ_MAX : max;
+  const vocalSeul = !!ZONES_VOCAL[z];
+  max = max == null ? (z === 'arbre' ? 6 : PJ_MAX) : max;
   const l = ui.pj[z] || [];
-  return '<div class="pj-zone">' + (l.length ? '<ul class="pj-liste">' + l.map((x, i) => '<li class="pj-chip' + (x.etat === 'erreur' ? ' err' : '') + '">' + (x.apercu ? '<img src="' + x.apercu + '" alt="">' : '<span class="pj-ico">' + ico('doc') + '</span>') + '<span class="pj-nom"><span>' + esc(x.nom) + '</span><small>' + (x.etat === 'envoi' ? 'Envoi en cours…' : x.etat === 'erreur' ? esc(x.err) : tailleTxt(x.taille) + ' · prête') + '</small></span><button type="button" class="pj-x" data-a="pj-retirer" data-z="' + esc(z) + '" data-i="' + i + '" aria-label="Retirer ' + esc(x.nom) + '">' + ico('fermer') + '</button></li>').join('') + '</ul>' : '') +
-    (l.filter(x => x.etat !== 'erreur').length < max ? (z === 'alb' ? '<label class="btn second petit pj-ajout">' + ico('photo') + 'Choisir des photos<input type="file" class="sr" multiple accept="image/*" data-pj="alb"></label>' : '<label class="btn second petit pj-ajout">' + ico('trombone') + (z === 'arc' ? 'Choisir le document ou la photo' : 'Joindre une photo ou un document') + '<input type="file" class="sr"' + (z === 'arc' ? '' : ' multiple') + ' accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" data-pj="' + esc(z) + '"></label>') : '') +
-    '<small class="doux">' + (z === 'alb' ? 'Photos réduites automatiquement · 40 au plus à la fois' : z === 'arc' ? 'Photo, PDF, Word ou Excel jusqu’à 5 Mo' : 'Photos réduites automatiquement · PDF, Word ou Excel jusqu’à 5 Mo · ' + PJ_MAX + ' pièces au plus') + '</small></div>';
+  const place = l.filter(x => x.etat !== 'erreur').length < max;
+  const btnVocal = z !== 'alb' ? '<button type="button" class="btn second petit pj-ajout" data-a="vocal" data-z="' + esc(z) + '">' + ico('micro') + 'Note vocale</button><input type="file" class="sr" accept="audio/*" capture data-pj="' + esc(z) + '" id="vin-' + esc(z.replace(/[^\w-]/g, '_')) + '" tabindex="-1" aria-hidden="true">' : '';
+  return '<div class="pj-zone">' + (l.length ? '<ul class="pj-liste">' + l.map((x, i) => '<li class="pj-chip' + (x.etat === 'erreur' ? ' err' : '') + '">' + (x.apercu ? '<img src="' + x.apercu + '" alt="">' : '<span class="pj-ico">' + ico(estAudio(x.type) ? 'micro' : 'doc') + '</span>') + '<span class="pj-nom"><span>' + esc(x.nom) + '</span><small>' + (x.etat === 'envoi' ? 'Envoi en cours…' : x.etat === 'erreur' ? esc(x.err) : (x.duree ? dureeTxt(x.duree) + ' · ' : '') + tailleTxt(x.taille) + ' · prête') + '</small></span><button type="button" class="pj-x" data-a="pj-retirer" data-z="' + esc(z) + '" data-i="' + i + '" aria-label="Retirer ' + esc(x.nom) + '">' + ico('fermer') + '</button></li>').join('') + '</ul>' : '') +
+    (place ? '<div class="ligne pj-boutons" style="gap:8px;flex-wrap:wrap">' + btnVocal + (vocalSeul ? '' : z === 'alb' ? '<label class="btn second petit pj-ajout">' + ico('photo') + 'Choisir des photos<input type="file" class="sr" multiple accept="image/*" data-pj="alb"></label>' : '<label class="btn second petit pj-ajout">' + ico('trombone') + (z === 'arc' ? 'Choisir le document ou la photo' : 'Photo ou document') + '<input type="file" class="sr"' + (z === 'arc' ? '' : ' multiple') + ' accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" data-pj="' + esc(z) + '"></label>') + '</div>' : '') +
+    '<small class="doux">' + (z === 'alb' ? 'Photos réduites automatiquement · 40 au plus à la fois' : vocalSeul ? 'Notes vocales ' + (z === 'arbre' ? 'de 15 minutes' : 'de 3 minutes') + ' au plus · ' + max + ' au plus' : z === 'arc' ? 'Note vocale (15 minutes au plus), photo, PDF, Word ou Excel jusqu’à 5 Mo' : 'Note vocale (3 minutes au plus) · photos réduites automatiquement · PDF, Word ou Excel jusqu’à 5 Mo · ' + PJ_MAX + ' pièces au plus') + '</small></div>';
+}
+/** Durée d'un fichier audio, lue par le navigateur (0 si inconnue). */
+function dureeAudio(f) {
+  return new Promise(res => { try { const a = new Audio(), u = URL.createObjectURL(f); const fin = d => { URL.revokeObjectURL(u); res(isFinite(d) && d > 0 ? Math.round(d) : 0); }; a.preload = 'metadata'; a.onloadedmetadata = () => fin(a.duration); a.onerror = () => fin(0); setTimeout(() => fin(0), 4000); a.src = u; } catch (e) { res(0); } });
+}
+function estAudio(t) { return /^audio\//.test(t || ''); }
+function dureeTxt(s) { s = Math.round(+s || 0); return s < 60 ? s + ' s' : Math.floor(s / 60) + ' min' + (s % 60 ? ' ' + String(s % 60).padStart(2, '0') : ''); }
+const TYPES_AUDIO = { m4a: 'audio/mp4', mp4: 'audio/mp4', aac: 'audio/aac', mp3: 'audio/mpeg', ogg: 'audio/ogg', oga: 'audio/ogg', opus: 'audio/ogg', weba: 'audio/webm', webm: 'audio/webm', wav: 'audio/wav' };
+/** Type audio reconnu par le serveur, d'après le fichier du téléphone. */
+function typeAudio(f, ext) {
+  const t = String(f.type || '').toLowerCase().split(';')[0];
+  const parType = { 'audio/mp4': 'audio/mp4', 'audio/x-m4a': 'audio/mp4', 'audio/m4a': 'audio/mp4', 'audio/aac': 'audio/aac', 'audio/x-aac': 'audio/aac', 'audio/mpeg': 'audio/mpeg', 'audio/mp3': 'audio/mpeg', 'audio/ogg': 'audio/ogg', 'audio/opus': 'audio/ogg', 'audio/webm': 'audio/webm', 'audio/wav': 'audio/wav', 'audio/x-wav': 'audio/wav', 'audio/wave': 'audio/wav' }[t];
+  if (parType) return parType;
+  if (/^audio\//.test(t) || !t || t === 'video/mp4' || t === 'application/octet-stream') return TYPES_AUDIO[ext] || '';
+  return '';
 }
 /** Pièces prêtes à publier, ou null si un envoi n'est pas terminé. */
 function pjPretes(z) {
   const l = ui.pj[z] || [];
   if (l.some(x => x.etat === 'envoi')) { toast('Patientez : les pièces jointes sont en cours d’envoi.'); return null; }
-  return l.filter(x => x.etat === 'ok').map(x => ({ id: x.id, nom: x.nom, type: x.type, taille: x.taille }));
+  return l.filter(x => x.etat === 'ok').map(x => { const o = { id: x.id, nom: x.nom, type: x.type, taille: x.taille }; if (x.par) o.par = x.par; if (x.duree) o.duree = x.duree; return o; });
 }
 function lireB64(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = () => rej(new Error('lecture')); r.readAsDataURL(blob); }); }
 /** Réduit une photo (1600 px au plus, environ 600 Ko au plus) ; les données de localisation de l'appareil photo disparaissent au passage. */
@@ -5369,23 +5508,27 @@ async function reduirePhoto(file) {
 async function ajouterPJ(z, fichiers) {
   if (ui.demo) { toast('Exemple : rien n’est envoyé.'); return; }
   const l = ui.pj[z] = ui.pj[z] || [];
-  const max = z === 'alb' ? 40 : z === 'arc' ? 1 : z.indexOf('pm:') === 0 ? PJ_MAX - ((itemParCle(z.slice(3)) || {}).pj || []).length : PJ_MAX;
+  const max = z === 'alb' ? 40 : z === 'arc' ? 1 : z === 'arbre' ? 6 : z.indexOf('pm:') === 0 ? PJ_MAX - ((itemParCle(z.slice(3)) || {}).pj || []).length : PJ_MAX;
   for (const f of fichiers) {
     if (l.filter(x => x.etat !== 'erreur').length >= max) { toast(z === 'alb' ? '40 photos au plus à la fois : ajoutez-les, puis continuez.' : z === 'arc' ? 'Un seul fichier par archive.' : PJ_MAX + ' pièces jointes au plus par publication.'); break; }
     const nom = f.name || 'photo.jpg'; const ext = (nom.split('.').pop() || '').toLowerCase();
-    const image = /^image\//.test(f.type || '') || /^(jpe?g|png|heic|heif|webp|gif)$/.test(ext);
-    const x = { nom, type: image ? 'image/jpeg' : TYPES_DOC[ext] || '', taille: f.size, etat: 'envoi' };
-    if (!image && !x.type) { toast('« ' + nom + ' » : seuls les photos, PDF, Word et Excel sont acceptés.'); continue; }
+    const audio = typeAudio(f, ext);
+    const image = !audio && (/^image\//.test(f.type || '') || /^(jpe?g|png|heic|heif|webp|gif)$/.test(ext));
+    const x = { nom, type: audio || (image ? 'image/jpeg' : TYPES_DOC[ext] || ''), taille: f.size, etat: 'envoi', duree: f.duree || 0 };
+    if (!image && !x.type) { toast('« ' + nom + ' » : seuls les notes vocales, photos, PDF, Word et Excel sont acceptés.'); continue; }
+    if (ZONES_VOCAL[z] && !audio) { toast('Ici, seules les notes vocales sont acceptées.'); continue; }
     if (z === 'alb' && !image) { toast('« ' + nom + ' » : un album ne reçoit que des photos.'); continue; }
     if (!image && f.size > DOC_MAX) { toast('« ' + nom + ' » dépasse 5 Mo.'); continue; }
     l.push(x); planifier();
+    if (audio && !x.duree) x.duree = await dureeAudio(f);
     try {
       let b64, complet = null;
       if (image) { const r = await reduirePhoto(f); b64 = r.b64; complet = r.complet; x.apercu = r.mini; x.vignette = r.vignette; x.taille = r.taille; x.nom = nom.replace(/\.[^.]*$/, '') + '.jpg'; planifier(); }
       else b64 = await lireB64(f);
       const r = await appel('apiDeposerPJ', SESSION.jeton, x.nom, x.type, b64);
       if (z === 'alb' && x.vignette) { try { const m = await appel('apiDeposerPJ', SESSION.jeton, 'mini-' + x.nom, 'image/jpeg', x.vignette.split(',')[1]); x.mini = m.id; PJC[S.moi + '/' + m.id] = x.vignette; } catch (e) { x.mini = null; } }
-      Object.assign(x, { id: r.id, nom: r.nom, taille: r.taille, etat: 'ok' });
+      Object.assign(x, { id: r.id, nom: r.nom, taille: r.taille, etat: 'ok', par: S.moi });
+      if (audio) AUD[S.moi + '/' + r.id] = URL.createObjectURL(f);
       if (complet) PJC[S.moi + '/' + r.id] = complet;
     } catch (e) {
       if (estSession(e)) finSession();
@@ -5397,11 +5540,60 @@ async function ajouterPJ(z, fichiers) {
 /** Affichage des pièces d'une publication : vignettes des photos, liste des documents. */
 function blocPJ(auteur, l) {
   if (!l || !l.length) return '';
-  const ph = l.filter(x => x.type === 'image/jpeg'), dc = l.filter(x => x.type !== 'image/jpeg');
+  const ph = l.filter(x => x.type === 'image/jpeg'), au = l.filter(x => estAudio(x.type)), dc = l.filter(x => x.type !== 'image/jpeg' && !estAudio(x.type));
   let h = '<div class="pj-aff">';
+  if (au.length) h += blocVoix(auteur, au);
   if (ph.length) h += '<div class="pj-photos n' + ph.length + '">' + ph.map(x => { const k = auteur + '/' + x.id; return '<button type="button" class="pj-photo" data-a="pj-voir" data-k="' + esc(k) + '" data-n="' + esc(x.nom) + '" aria-label="Agrandir la photo ' + esc(x.nom) + '">' + (PJC[k] ? '<img src="' + PJC[k] + '" alt="">' : '<span class="pj-attente"' + (PJE[k] ? '' : ' data-pjc="' + esc(k) + '"') + '>' + (PJE[k] ? 'Photo indisponible : touchez pour réessayer' : 'Chargement…') + '</span>') + '</button>'; }).join('') + '</div>';
   if (dc.length) h += '<ul class="pj-docs">' + dc.map(x => { const k = auteur + '/' + x.id; return '<li><button type="button" class="pj-doc" data-a="pj-doc" data-k="' + esc(k) + '" data-n="' + esc(x.nom) + '" data-t="' + esc(x.type) + '">' + ico('doc') + '<span class="pj-doc-txt"><span class="pj-doc-nom">' + esc(x.nom) + '</span><small class="doux">' + esc(genreDoc(x.type)) + ' · ' + tailleTxt(x.taille) + (PJV[k] ? ' · ouverture…' : ' · toucher pour ouvrir') + '</small></span></button></li>'; }).join('') + '</ul>';
   return h + '</div>';
+}
+/** Notes vocales : un bouton « Écouter » par note ; la lecture se fait dans le lecteur fixe, qui survit aux rafraîchissements. */
+function blocVoix(auteur, l) {
+  return '<ul class="pj-voix">' + l.map(x => { const k = (x.par || auteur) + '/' + x.id, actif = VOIX.k === k; return '<li><button type="button" class="voix-btn' + (actif ? ' actif' : '') + '" data-a="ecouter" data-k="' + esc(k) + '" data-n="' + esc(x.nom) + '">' + ico(actif && VOIX.lecture ? 'pause' : 'lecture') + '<span class="voix-txt"><strong>Note vocale</strong><small class="doux">' + (x.duree ? dureeTxt(x.duree) + ' · ' : '') + tailleTxt(x.taille) + '</small></span><span class="voix-onde" aria-hidden="true"></span></button></li>'; }).join('') + '</ul>';
+}
+const AUD = {}, VOIX = { k: null, lecture: false };
+function lecteurVoix() {
+  let el = document.getElementById('lect-voix'); if (el) return el;
+  el = document.createElement('div'); el.id = 'lect-voix'; el.className = 'lect-voix'; el.hidden = true;
+  el.innerHTML = '<div class="lv-tete"><span class="lv-ico">' + ico('micro') + '</span><strong id="lv-titre">Note vocale</strong><button type="button" class="btn-icone" id="lv-fermer" aria-label="Fermer le lecteur">' + ico('fermer') + '</button></div><audio id="lv-audio" controls preload="auto"></audio><span id="lv-etat" class="petit doux" role="status"></span>';
+  document.body.appendChild(el);
+  const au = el.querySelector('audio');
+  au.addEventListener('play', () => { VOIX.lecture = true; planifier(); });
+  au.addEventListener('pause', () => { VOIX.lecture = false; planifier(); });
+  au.addEventListener('ended', () => { VOIX.lecture = false; planifier(); });
+  au.addEventListener('error', () => { document.getElementById('lv-etat').textContent = 'Lecture impossible sur cet appareil : téléchargez le fichier.'; });
+  el.querySelector('#lv-fermer').addEventListener('click', () => { au.pause(); el.hidden = true; VOIX.k = null; planifier(); });
+  return el;
+}
+async function ecouter(k, nom) {
+  const el = lecteurVoix(), au = el.querySelector('audio'), etat = el.querySelector('#lv-etat');
+  if (VOIX.k === k && au.src) { if (au.paused) au.play().catch(() => {}); else au.pause(); return; }
+  if (ui.demo) { toast('Exemple : les notes vocales s’écoutent dans l’application réelle.'); return; }
+  VOIX.k = k; el.hidden = false; document.getElementById('lv-titre').textContent = nom ? nom.replace(/\.[^.]*$/, '') : 'Note vocale';
+  au.pause(); au.removeAttribute('src'); etat.textContent = 'Chargement…'; planifier();
+  try {
+    if (!AUD[k]) { const r = await appel('apiLirePJ', SESSION.jeton, k); const b = Uint8Array.from(atob(r.b64), c => c.charCodeAt(0)); AUD[k] = URL.createObjectURL(new Blob([b], { type: r.type })); }
+    if (VOIX.k !== k) return;
+    au.src = AUD[k]; etat.textContent = ''; await au.play().catch(() => { etat.textContent = 'Touchez ▶ pour écouter.'; });
+  } catch (e) { if (estSession(e)) finSession(); etat.textContent = messageErreur(e); }
+}
+/** Note vocale : enregistrée par la page d'accueil (icône du groupe), sinon choisie ou enregistrée par le téléphone. */
+function noteVocale(z) {
+  if (ui.demo) { toast('Exemple : rien n’est envoyé.'); return; }
+  const max = z === 'arc' || z === 'arbre' ? 900 : 180;
+  if (ui.porte && ui.porte.micro) { versPorte({ adya: 'micro', z, max }); return; }
+  const inp = document.getElementById('vin-' + z.replace(/[^\w-]/g, '_'));
+  if (inp) { toast(IOS ? 'Choisissez un enregistrement (Dictaphone, WhatsApp…). Pour enregistrer d’un toucher, ouvrez l’application depuis son icône.' : 'Enregistrez ou choisissez une note vocale.'); inp.click(); }
+}
+function recevoirVocal(m) {
+  const z = String(m.z || ''); if (!z || typeof m.b64 !== 'string') return;
+  try {
+    const b = Uint8Array.from(atob(m.b64), c => c.charCodeAt(0)), type = String(m.type || 'audio/mp4').split(';')[0];
+    const ext = { 'audio/mp4': 'm4a', 'audio/webm': 'webm', 'audio/ogg': 'ogg', 'audio/mpeg': 'mp3', 'audio/aac': 'aac', 'audio/wav': 'wav' }[type] || 'm4a';
+    const d = new Date(), nom = 'Note vocale du ' + String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + ' à ' + String(d.getHours()).padStart(2, '0') + 'h' + String(d.getMinutes()).padStart(2, '0') + '.' + ext;
+    const f = new File([b], nom, { type }); f.duree = Math.round(+m.duree || 0);
+    ajouterPJ(z, [f]);
+  } catch (e) { toast('Note vocale illisible : recommencez.'); }
 }
 /** Charge les photos visibles (trois à la fois). */
 function chargerPJ() {
@@ -5559,7 +5751,7 @@ window.addEventListener('message', e => {
   const m = e.data;
   if (m.adya === 'porte-prete') { versPorte({ adya: 'bonjour' }); return; }
   if (m.adya === 'porte') {
-    ui.porte = { webauthn: !!m.webauthn, libelle: String(m.libelle || 'Face ID').slice(0, 40), actif: !!m.actif }; ui.porteEtat = null;
+    ui.porte = { webauthn: !!m.webauthn, libelle: String(m.libelle || 'Face ID').slice(0, 40), actif: !!m.actif, dictee: !!m.dictee, micro: !!m.micro }; ui.porteEtat = null;
     // Sur iPhone, le stockage du cadre Google peut être effacé entre deux ouvertures : la page d'accueil garde la connexion.
     ui.porteDiag = { v: String(m.v || 'ancienne'), jeton: !!m.jeton, journal: Array.isArray(m.diag) ? m.diag.slice(-15).map(String) : [] };
     if (!SESSION.jeton && typeof m.jeton === 'string' && m.jeton) {
@@ -5570,6 +5762,9 @@ window.addEventListener('message', e => {
     } else if (SESSION.jeton && m.jeton !== SESSION.jeton) { versPorte({ adya: 'session', jeton: SESSION.jeton }); const g = etatGarde(); if (g) versPorte({ adya: 'etat', g }); }
     planifier();
   }
+  else if (m.adya === 'dictee-texte') insererDictee(String(m.texte || '').slice(0, 4000));
+  else if (m.adya === 'vocal') recevoirVocal(m);
+  else if (m.adya === 'vocal-erreur') { if (m.message) toast(String(m.message).slice(0, 200)); }
   else if (m.adya === 'faceid-cree') enregistrerFaceID(m);
   else if (m.adya === 'faceid-assertion') connexionFaceID(m);
   else if (m.adya === 'faceid-erreur') { defiConnexion = null; ui.porteEtat = null; if (m.message) toast(String(m.message).slice(0, 200)); planifier(); }
