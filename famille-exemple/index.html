@@ -42,6 +42,16 @@
     .fid p { color: #a2b3a6; } .fid strong { color: #8fd0a6; }
     .fid .principal { background: #3d9a66; color: #06140c; } .fid .second { background: #1d2c23; color: #8fd0a6; }
   }
+  /* Note vocale et dictée : le micro n'est permis qu'ici, pas dans le cadre Google */
+  .mic-temps { font: 600 34px system-ui, sans-serif; color: #0a4a30; text-align: center; font-variant-numeric: tabular-nums; }
+  .mic-temps.enr::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 10px; border-radius: 50%; background: #c0392b; vertical-align: middle; animation: clignote 1s infinite; }
+  @keyframes clignote { 50% { opacity: .2; } }
+  .mic-dit { min-height: 64px; max-height: 30vh; overflow: auto; padding: 10px 12px; border-radius: 12px; background: #f4f6ef; font-size: 16px; line-height: 1.45; color: #16261c; white-space: pre-wrap; }
+  .mic-dit:empty::before { content: "Votre texte s’affichera ici…"; color: #8a978d; }
+  #mic audio { width: 100%; }
+  #mic [hidden] { display: none; }
+  .fid .rouge { background: #c0392b; color: #fff; }
+  @media (prefers-color-scheme: dark) { .mic-temps { color: #8fd0a6; } .mic-dit { background: #1d2c23; color: #e8efe7; } }
 </style>
 </head>
 <body>
@@ -60,6 +70,17 @@
   <button class="second" id="fid-non" type="button">Plus tard</button>
 </div>
 
+<div class="fid" id="mic" hidden role="dialog" aria-modal="true" aria-labelledby="mic-titre">
+  <strong id="mic-titre">Note vocale</strong>
+  <p id="mic-texte"></p>
+  <div class="mic-temps" id="mic-temps" hidden>0:00</div>
+  <div class="mic-dit" id="mic-dit" hidden aria-live="polite"></div>
+  <audio id="mic-audio" controls hidden></audio>
+  <button class="principal" id="mic-go" type="button">Enregistrer</button>
+  <button class="second" id="mic-autre" type="button" hidden>Recommencer</button>
+  <button class="second" id="mic-non" type="button">Annuler</button>
+</div>
+
 <script>
 (function () {
   var GROUPE = 'famille-exemple';                                           // plusieurs groupes peuvent partager ce domaine
@@ -72,13 +93,22 @@
   var lsSet = function (k, v) { try { if (v == null) localStorage.removeItem('adya.' + GROUPE + '.' + k); else localStorage.setItem('adya.' + GROUPE + '.' + k, v); } catch (e) {} };
   var app = null, origineApp = null, defi = null, enrol = null, webauthn = false, cleEnCours = null;
   var $ = function (id) { return document.getElementById(id); };
-  var envoyer = function (m) { if (app) app.postMessage(m, origineApp); };
+  /* Compatibilité avec une ancienne application (ex. NDK Family, messages « ndk ») : les messages portent les deux clés,
+     et la connexion gardée sous l'ancien préfixe est reprise une fois. Vide pour un nouveau groupe. */
+  var COMPAT = '';
+  if (COMPAT) ['jeton', 'etat', 'faceid'].forEach(function (k) { try { var v = localStorage.getItem(COMPAT + '.' + k); if (v != null && lsGet(k) == null) lsSet(k, v); } catch (e) {} });
+  var envoyer = function (m) { if (COMPAT && m.adya) m[COMPAT] = m.adya; if (app) app.postMessage(m, origineApp); };
+  /* Petit journal de diagnostic (affiché dans Mon espace › Connexion avec Face ID) : ce que cette page reçoit et garde. */
+  var VERSION = 'a2026-10-16';
+  function diag(x) { try { var a = JSON.parse(lsGet('diag') || '[]'); var d = new Date(); a.push(('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + ' ' + d.toTimeString().slice(0, 5) + ' · ' + x); lsSet('diag', JSON.stringify(a.slice(-15))); } catch (e) {} }
+  function journal() { try { return JSON.parse(lsGet('diag') || '[]'); } catch (e) { return []; } }
+  diag('ouverture (' + VERSION + ') · connexion gardée : ' + (lsGet('jeton') ? 'oui' : 'non') + (window.navigator.standalone ? ' · icône' : ' · navigateur'));
   var b64u = function (buf) { var s = '', b = new Uint8Array(buf); for (var i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
   var deB64u = function (t) { t = t.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; var s = atob(t), b = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return b; };
   var hex = function (b) { return Array.prototype.map.call(b, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); };
   var erreur = function (e) {
     var n = e && e.name;
-    if (n === 'NotAllowedError' || n === 'AbortError') return LIB + ' annulé.';
+    if (n === 'NotAllowedError' || n === 'AbortError') return LIB + ' annulé. Si le téléphone indique qu’aucune clé n’est enregistrée, connectez-vous avec votre code, puis touchez « Réactiver » dans Mon espace.';
     if (n === 'InvalidStateError') return LIB + ' est déjà activé sur cet appareil.';
     if (n === 'NotSupportedError') return 'Cet appareil ne propose pas ' + LIB + '.';
     return LIB + ' n’a pas abouti. Réessayez ou utilisez votre code.';
@@ -91,7 +121,88 @@
   disponible.then(function (ok) { webauthn = !!ok; if (app) annoncer(); });
   /* La connexion et la dernière situation sont gardées ici : sur iPhone, le stockage du cadre Google est effacé entre deux ouvertures. */
   function etatGarde() { try { return JSON.parse(lsGet('etat') || 'null'); } catch (e) { return null; } }
-  function annoncer() { envoyer({ adya: 'porte', webauthn: webauthn, libelle: LIB, actif: lsGet('faceid') === '1', jeton: lsGet('jeton'), etat: etatGarde() }); }
+  var MICRO = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+  var Reco = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function annoncer() { envoyer({ adya: 'porte', webauthn: webauthn, libelle: LIB, actif: lsGet('faceid') === '1', jeton: lsGet('jeton'), etat: etatGarde(), v: VERSION, diag: journal(), micro: MICRO, dictee: !!Reco }); }
+
+  /* ---- Note vocale : enregistrée ici, puis transmise à l'application, qui l'envoie dans le Drive du groupe ---- */
+  var mic = { mode: null, z: null, max: 180, flux: null, rec: null, morceaux: [], t0: 0, tic: null, blob: null, type: '', duree: 0, reco: null, texte: '' };
+  var mm = function (s) { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); };
+  function micAfficher(etat) {
+    var enr = etat === 'enr', fini = etat === 'fini', dictee = mic.mode === 'dictee';
+    $('mic-titre').textContent = dictee ? 'Dicter un texte' : 'Note vocale';
+    $('mic-temps').hidden = dictee || etat === 'pret'; $('mic-temps').className = 'mic-temps' + (enr ? ' enr' : '');
+    $('mic-dit').hidden = !dictee;
+    $('mic-audio').hidden = !fini || dictee;
+    $('mic-autre').hidden = !fini;
+    $('mic-go').className = enr ? 'rouge' : 'principal';
+    $('mic-go').textContent = etat === 'pret' ? (dictee ? 'Parler' : 'Enregistrer') : enr ? (dictee ? 'Terminer' : 'Arrêter') : (dictee ? 'Insérer le texte' : 'Joindre la note');
+    $('mic-texte').textContent = etat === 'pret' ? (dictee ? 'Touchez « Parler », puis dictez votre texte. Dites « virgule » ou « point » pour la ponctuation.' : 'Touchez « Enregistrer », parlez près du téléphone, puis « Arrêter ». ' + (mic.max >= 600 ? 'Jusqu’à ' + Math.round(mic.max / 60) + ' minutes.' : 'Jusqu’à 3 minutes.'))
+      : enr ? (dictee ? 'Je vous écoute…' : 'Enregistrement en cours…') : (dictee ? 'Vérifiez le texte, puis insérez-le.' : 'Écoutez la note si vous le souhaitez, puis joignez-la.');
+    mic.etat = etat;
+  }
+  function micOuvrir(mode, z, max) {
+    if (mic.mode) return;
+    mic.mode = mode; mic.z = z; mic.max = Math.max(10, Math.min(900, +max || 180)); mic.blob = null; mic.texte = ''; $('mic-dit').textContent = '';
+    $('fid-voile').hidden = false; $('mic').hidden = false; micAfficher('pret'); $('mic-go').focus();
+  }
+  function micFermer() {
+    clearInterval(mic.tic); mic.tic = null;
+    try { if (mic.rec && mic.rec.state !== 'inactive') { mic.rec.onstop = null; mic.rec.stop(); } } catch (e) {}
+    try { if (mic.reco) { mic.reco.onend = null; mic.reco.abort(); } } catch (e) {}
+    if (mic.flux) mic.flux.getTracks().forEach(function (t) { t.stop(); });
+    var a = $('mic-audio'); if (a.src) { a.pause(); URL.revokeObjectURL(a.src); a.removeAttribute('src'); }
+    mic.flux = mic.rec = mic.reco = null; mic.mode = null;
+    $('mic').hidden = true; $('fid-voile').hidden = true;
+  }
+  function micErreur(e) {
+    var n = e && (e.name || e.error);
+    var t = n === 'NotAllowedError' || n === 'not-allowed' || n === 'service-not-allowed' ? 'Le micro est refusé : autorisez-le pour cette page dans les réglages du téléphone (Safari › Micro), puis réessayez.'
+      : n === 'NotFoundError' || n === 'audio-capture' ? 'Aucun micro trouvé sur cet appareil.' : n === 'no-speech' ? 'Je n’ai rien entendu : réessayez en parlant près du téléphone.' : n === 'network' ? 'La dictée a besoin d’une connexion internet.' : 'Le micro n’a pas pu démarrer. Réessayez.';
+    micFermer(); envoyer({ adya: 'vocal-erreur', message: t }); diag('micro : ' + (n || 'erreur'));
+  }
+  function micEnregistrer() {
+    navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true } }).then(function (flux) {
+      if (!mic.mode) { flux.getTracks().forEach(function (t) { t.stop(); }); return; }
+      mic.flux = flux; mic.morceaux = [];
+      var types = ['audio/mp4', 'audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/webm'], type = '';
+      for (var i = 0; i < types.length; i++) if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(types[i])) { type = types[i]; break; }
+      var opts = { audioBitsPerSecond: 32000 }; if (type) opts.mimeType = type;
+      var rec; try { rec = new MediaRecorder(flux, opts); } catch (e) { rec = new MediaRecorder(flux); }
+      mic.rec = rec; mic.type = (rec.mimeType || type || 'audio/mp4').split(';')[0];
+      rec.ondataavailable = function (ev) { if (ev.data && ev.data.size) mic.morceaux.push(ev.data); };
+      rec.onstop = function () {
+        clearInterval(mic.tic); mic.duree = (Date.now() - mic.t0) / 1000;
+        if (mic.flux) mic.flux.getTracks().forEach(function (t) { t.stop(); }); mic.flux = null;
+        mic.blob = new Blob(mic.morceaux, { type: mic.type });
+        var a = $('mic-audio'); a.src = URL.createObjectURL(mic.blob); micAfficher('fini');
+      };
+      rec.start(1000); mic.t0 = Date.now(); $('mic-temps').textContent = '0:00'; micAfficher('enr');
+      mic.tic = setInterval(function () { var s = (Date.now() - mic.t0) / 1000, reste = mic.max - s; $('mic-temps').textContent = mm(s) + (reste <= 30 ? ' · encore ' + Math.ceil(reste) + ' s' : ''); if (reste <= 0) rec.stop(); }, 250);
+    }).catch(micErreur);
+  }
+  function micDicter() {
+    var r = new Reco(); mic.reco = r; r.lang = 'fr-FR'; r.continuous = true; r.interimResults = true;
+    var acquis = mic.texte;
+    r.onresult = function (ev) { var fin = '', prov = ''; for (var i = ev.resultIndex; i < ev.results.length; i++) { if (ev.results[i].isFinal) fin += ev.results[i][0].transcript; else prov += ev.results[i][0].transcript; } if (fin) acquis = (acquis ? acquis + ' ' : '') + fin.trim(); mic.texte = acquis; $('mic-dit').textContent = acquis + (prov ? ' ' + prov : ''); };
+    r.onerror = function (ev) { if (ev.error !== 'aborted' && !(ev.error === 'no-speech' && mic.texte)) micErreur(ev); };
+    r.onend = function () { if (mic.mode === 'dictee') micAfficher('fini'); };
+    try { r.start(); micAfficher('enr'); } catch (e) { micErreur(e); }
+  }
+  function micEnvoyer() {
+    if (mic.mode === 'dictee') { var t = (mic.texte || '').trim(); micFermer(); if (t) envoyer({ adya: 'dictee-texte', texte: t }); return; }
+    var b = mic.blob, z = mic.z, type = mic.type, duree = Math.round(mic.duree); if (!b) return;
+    if (b.size > 5 * 1024 * 1024) { micFermer(); envoyer({ adya: 'vocal-erreur', message: 'Note trop longue (5 Mo au plus) : enregistrez-la en plusieurs parties.' }); return; }
+    var lu = new FileReader(); lu.onload = function () { micFermer(); envoyer({ adya: 'vocal', z: z, type: type, duree: duree, b64: String(lu.result).split(',')[1] || '' }); diag('note vocale transmise (' + duree + ' s)'); };
+    lu.readAsDataURL(b);
+  }
+  $('mic-go').addEventListener('click', function () {
+    if (mic.etat === 'pret') { if (mic.mode === 'dictee') micDicter(); else micEnregistrer(); }
+    else if (mic.etat === 'enr') { if (mic.mode === 'dictee') { try { mic.reco.stop(); } catch (e) { micAfficher('fini'); } } else if (mic.rec) mic.rec.stop(); }
+    else micEnvoyer();
+  });
+  $('mic-autre').addEventListener('click', function () { var a = $('mic-audio'); if (a.src) { a.pause(); URL.revokeObjectURL(a.src); a.removeAttribute('src'); } mic.blob = null; mic.texte = ''; $('mic-dit').textContent = ''; micAfficher('pret'); });
+  $('mic-non').addEventListener('click', micFermer);
 
   /* Clé publique (x, y) : directement si le navigateur la fournit, sinon lue dans la réponse CBOR. */
   function clePublique(rep) {
@@ -116,22 +227,26 @@
   }
 
   window.addEventListener('message', function (e) {
-    if (!APP.test(e.origin) || !e.data || typeof e.data.adya !== 'string') return;
+    if (!APP.test(e.origin) || !e.data || (typeof e.data.adya !== 'string' && !(COMPAT && typeof e.data[COMPAT] === 'string'))) return;
     app = e.source; origineApp = e.origin;
     clearTimeout(minuteur); clearTimeout(lent); $('attente-etat').textContent = ''; $('attente').className = ''; $('attente-reessayer').hidden = true;
     var m = e.data;
+    if (typeof m.adya !== 'string') { m = JSON.parse(JSON.stringify(m)); m.adya = m[COMPAT]; }
     if (m.adya === 'bonjour') annoncer();
     else if (m.adya === 'connexion') { defi = m.defi; $('fid-connexion').hidden = !(webauthn && lsGet('faceid') === '1' && defi); }
     else if (m.adya === 'connecte') { defi = null; $('fid-connexion').hidden = true; }
     else if (m.adya === 'enrolement') { enrol = m; $('fid-voile').hidden = false; $('fid-activer').hidden = false; $('fid-oui').focus(); }
     else if (m.adya === 'faceid-ok') { lsSet('faceid', '1'); if (cleEnCours) lsSet('cle', cleEnCours); cleEnCours = null; annoncer(); }
     else if (m.adya === 'faceid-oublie') { lsSet('faceid', null); lsSet('cle', null); annoncer(); }
-    else if (m.adya === 'session') { lsSet('jeton', typeof m.jeton === 'string' && m.jeton ? m.jeton : null); if (!m.jeton) lsSet('etat', null); }
-    else if (m.adya === 'etat') { if (m.g && m.g.j && m.g.j === lsGet('jeton')) lsSet('etat', JSON.stringify(m.g)); }
+    else if (m.adya === 'session') { lsSet('jeton', typeof m.jeton === 'string' && m.jeton ? m.jeton : null); if (!m.jeton) lsSet('etat', null); diag('connexion ' + (m.jeton ? 'reçue' : 'effacée') + ' · relue : ' + (lsGet('jeton') ? 'oui' : 'non')); }
+    else if (m.adya === 'etat') { if (m.g && m.g.j && m.g.j === lsGet('jeton')) { try { localStorage.setItem('adya.' + GROUPE + '.etat', JSON.stringify(m.g)); } catch (e) { diag('situation trop lourde pour être gardée'); } } }
+    else if (m.adya === 'diag') { diag(String(m.t || '').slice(0, 120)); }
+    else if (m.adya === 'micro' && MICRO && typeof m.z === 'string') micOuvrir('note', m.z.slice(0, 60), m.max);
+    else if (m.adya === 'dictee' && Reco) micOuvrir('dictee', null, 600);
   });
   // L'application a peut-être dit bonjour avant que cette page écoute : on se présente à tous les cadres
   // (le cadre de l'application est deux niveaux sous cette page) dès que le cadre principal est chargé.
-  function saluer(w, n) { try { for (var k = 0; k < w.frames.length; k++) { w.frames[k].postMessage({ adya: 'porte-prete' }, '*'); if (n < 3) saluer(w.frames[k], n + 1); } } catch (e) {} }
+  function saluer(w, n) { try { for (var k = 0; k < w.frames.length; k++) { var p = { adya: 'porte-prete' }; if (COMPAT) p[COMPAT] = 'porte-prete'; w.frames[k].postMessage(p, '*'); if (n < 3) saluer(w.frames[k], n + 1); } } catch (e) {} }
   $('app').addEventListener('load', function () { setTimeout(function () { saluer($('app').contentWindow, 0); }, 400); setTimeout(function () { if (!app) saluer($('app').contentWindow, 0); }, 2500); });
 
   /* Surveillance de l'ouverture : sur le réseau mobile, une connexion à Google reste parfois bloquée.
