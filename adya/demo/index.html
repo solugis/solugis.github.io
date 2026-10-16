@@ -150,7 +150,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .champ textarea { min-height: 96px; resize: vertical; }
 .champs-2 { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); }
 .case { display: flex; gap: 10px; align-items: center; min-height: 44px; }
-.case input { width: 22px; height: 22px; accent-color: var(--primaire); }
+.case input { width: 22px; height: 22px; flex: none; accent-color: var(--primaire); }
 details.pli > summary { cursor: pointer; font-weight: 800; min-height: 44px; display: flex; align-items: center; gap: 8px; list-style: none; }
 details.pli > summary::-webkit-details-marker { display: none; }
 details.pli > summary::before { content: "+"; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--sauge-pale); color: var(--vert); font-weight: 900; }
@@ -422,6 +422,113 @@ h3 .puce { vertical-align: 2px; }
 .lm dt { color: var(--doux); }
 .lm dd { margin: 0; text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
 @media (max-width: 700px) { .lignes-membres { display: block; } }
+
+/* Bureau, patriarche ou matriarche */
+.aine-ligne { display: flex; gap: 12px; align-items: center; margin: 14px 0 4px; padding: 10px 14px; text-decoration: none; color: inherit; }
+.aine-ligne .aine-txt { flex: 1; min-width: 0; display: grid; }
+.aine-ligne .surtitre { margin: 0; }
+.aine-ligne strong { font-size: 0.98rem; }
+.aine-ligne.hommage, .aine-carte.hommage { background: color-mix(in srgb, var(--carte) 88%, var(--doux)); }
+.portrait { width: 44px; height: 44px; flex: none; border-radius: 50%; display: grid; place-items: center; overflow: hidden; font-weight: 800; color: #fff; background: linear-gradient(135deg, #8a5a2b, #c8862a); box-shadow: 0 0 0 3px var(--carte), 0 0 0 5px var(--or); }
+.portrait img { width: 100%; height: 100%; object-fit: cover; }
+.portrait.g { width: 68px; height: 68px; font-size: 1.3rem; }
+.portrait.p { width: 32px; height: 32px; font-size: 0.75rem; box-shadow: 0 0 0 2px var(--carte), 0 0 0 3px var(--or); }
+.aine-carte { display: flex; gap: 16px; align-items: center; margin-top: 14px; }
+.aine-carte h2 { margin: 2px 0 0; font-size: 1.25rem; }
+.sous-titre { font-size: 1.1rem; margin: 22px 0 10px; }
+.frise { list-style: none; padding: 0; margin: 0 0 0 18px; border-left: 3px solid var(--ligne); }
+.frise li { display: flex; gap: 12px; align-items: center; padding: 9px 0; margin-left: -18px; }
+.frise li > div { display: grid; }
+.frise li.actuel strong { color: var(--vert); }
+.frise li.actuel .av { box-shadow: 0 0 0 3px var(--carte), 0 0 0 5px var(--or); }
+.carte.poste { display: grid; gap: 8px; }
+.carte.poste .ligne { gap: 10px; align-items: center; flex-wrap: wrap; }
+.form h4 { margin: 0; font-size: 1rem; }
+.aine-ligne .surtitre, .aine-ligne strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.aine-lien { white-space: nowrap; font-size: 1.1rem; }
+.aine-lien span { font-size: 0.85rem; }
+@media (max-width: 480px) { .aine-lien span { display: none; } }
+
+/* Souvenirs */
+.souv-intro { display: grid; gap: 4px; }
+.souv-actions { gap: 8px; flex-wrap: wrap; }
+.souv-actions .btn svg, .pli summary svg { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; }
+.albums { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.album { display: grid; gap: 3px; text-align: left; background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; }
+.album strong { font-size: 0.95rem; line-height: 1.25; }
+.alb-couv { aspect-ratio: 4 / 3; border-radius: var(--r); display: grid; place-items: center; overflow: hidden; color: rgb(255 255 255 / 90%); background: var(--sauge-pale); margin-bottom: 6px; }
+.alb-couv svg { width: 34px; height: 34px; color: var(--sauge); }
+.alb-couv img { width: 100%; height: 100%; object-fit: cover; }
+.alb-grille { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+@media (min-width: 700px) { .alb-grille { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.alb-case { position: relative; }
+.alb-ph { display: block; width: 100%; aspect-ratio: 1; border: 0; padding: 0; border-radius: 10px; overflow: hidden; background: var(--sauge-pale); cursor: zoom-in; }
+.alb-ph img { width: 100%; height: 100%; object-fit: cover; }
+.alb-retirer { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgb(0 0 0 / 60%); color: #fff; display: grid; place-items: center; }
+.alb-retirer svg { width: 16px; height: 16px; }
+.carte.video { display: grid; gap: 10px; }
+.vid-vignette { position: relative; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 12px; background: #1f2a24 center / cover no-repeat; display: grid; place-items: center; cursor: pointer; }
+.vid-play { width: 56px; height: 56px; border-radius: 50%; background: rgb(255 255 255 / 92%); display: grid; place-items: center; color: var(--vert); }
+.vid-play svg { width: 26px; height: 26px; margin-left: 3px; fill: currentColor; }
+.video-cadre { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; }
+.video-cadre iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.aide-video { margin: 6px 0; padding-left: 20px; display: grid; gap: 4px; }
+.archives li { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.arch { display: flex; gap: 12px; align-items: flex-start; background: none; border: 0; padding: 4px 0; text-align: left; color: inherit; font: inherit; cursor: pointer; flex: 1; min-width: 0; }
+.arch-ico { color: var(--vert); flex: none; }
+.arch-ico svg { width: 22px; height: 22px; }
+.arch-txt { display: grid; }
+
+/* Fiches numériques */
+.rappel-fiche { display: flex; gap: 12px; align-items: center; margin: 10px 0 4px; padding: 12px 14px; text-decoration: none; color: inherit; border-color: var(--or); background: var(--or-pale); }
+.rappel-fiche > svg { width: 26px; height: 26px; flex: none; color: var(--vert); }
+.rappel-fiche > span:nth-child(2) { flex: 1; display: grid; }
+.fiche-form { display: grid; gap: 12px; }
+.fi-sec { border: 1px solid var(--ligne); border-radius: var(--r); padding: 10px 14px 14px; margin: 0; display: grid; gap: 10px; }
+.fi-sec legend { font-weight: 800; color: var(--vert); padding: 0 6px; }
+.champs-3 { display: grid; grid-template-columns: 2fr 1.4fr 0.8fr; gap: 8px; }
+.sig-zone { position: relative; border: 2px dashed var(--sauge); border-radius: 12px; background: #fff; }
+.sig-zone canvas { display: block; width: 100%; height: auto; aspect-ratio: 600 / 220; touch-action: none; cursor: crosshair; }
+.sig-zone .btn { position: absolute; right: 6px; top: 4px; }
+.liste.fiches li { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.liste.fiches .btn svg { width: 16px; height: 16px; margin-right: 4px; vertical-align: -3px; }
+.fi-resume { display: grid; grid-template-columns: minmax(120px, 40%) 1fr; gap: 4px 12px; margin: 0; font-size: 0.92rem; }
+.fi-resume dt { color: var(--doux); }
+.fi-resume dd { margin: 0; }
+.barre { height: 8px; border-radius: 999px; background: var(--ligne); overflow: hidden; }
+.barre span { display: block; height: 100%; background: var(--vert); }
+.fi-membres { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0 12px; }
+.fi-large { grid-column: 1 / -1; }
+.fi-auto { display: block; padding: 10px 12px; border-radius: 10px; background: var(--carte-2); border: 1px dashed var(--ligne); color: var(--doux); }
+.fi-point { border-top: 1px solid var(--ligne); padding-top: 10px; display: grid; gap: 8px; }
+.champs-3.votes { grid-template-columns: repeat(3, 1fr); }
+
+/* Arbre généalogique */
+.ar-tete p { margin: 2px 0 0; }
+.ar-barre { gap: 8px; flex-wrap: wrap; }
+.ar-barre .seg { display: inline-flex; flex-wrap: nowrap; border-radius: 999px; padding: 3px; }
+.ar-barre .seg button { flex: none; min-height: 36px; border-radius: 999px; padding: 6px 12px; }
+.ar-barre .seg button[aria-pressed="true"] { background: var(--vert); color: var(--sur-primaire); }
+.ar-branches { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.ar-branches .puce { border: 0; cursor: pointer; flex: none; font: inherit; font-size: 0.8rem; font-weight: 800; padding: 6px 12px; }
+.ar-branches .puce:not(.neutre) { background: #9a5a32; color: #fff; }
+.ar-cadre { overflow: auto; max-height: 70vh; border: 1px solid var(--ligne); border-radius: var(--r); background: var(--carte-2); -webkit-overflow-scrolling: touch; }
+.arbre-svg { display: block; }
+.ar-lien { fill: none; stroke: #c9bfa9; stroke-width: 1.4; }
+.ar-pt { fill: var(--carte); stroke: var(--vert); stroke-width: 2; cursor: pointer; }
+.ar-pt.plein { fill: var(--vert); }
+.ar-pt.feuille { fill: #b9b2a1; stroke: none; }
+.ar-zone { fill: transparent; cursor: pointer; }
+.ar-nom { font: 600 13px var(--f-texte); fill: var(--texte); cursor: pointer; }
+.tete .ar-nom { font: 800 14px var(--f-titre); fill: var(--vert); }
+.ar-sous { font: italic 10.5px var(--f-texte); fill: #9a5a32; cursor: pointer; }
+.ar-n.sel .ar-nom { fill: #9a5a32; text-decoration: underline; }
+.ar-outils { justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.ar-fiche { display: grid; gap: 10px; border-color: var(--or); }
+.ar-enfants { display: flex; flex-wrap: wrap; gap: 6px; }
+.ar-enfants .puce { border: 0; cursor: pointer; font: inherit; font-size: 0.8rem; font-weight: 700; }
+.ar-ligne { display: grid; text-align: left; background: none; border: 0; padding: 6px 0; font: inherit; color: inherit; width: 100%; cursor: pointer; }
+.ar-fiche dd .btn.lien { padding: 0; min-height: 0; text-align: left; justify-content: flex-start; }
 </style>
 </head>
 <body>
@@ -648,7 +755,8 @@ const CONFIG = {
   NOM_DOSSIER_SAUVEGARDES: 'Adya – ' + PARAMETRES.GROUPE + ' – Sauvegardes',
   NOM_DOSSIER_PJ: 'Adya – ' + PARAMETRES.GROUPE + ' – Pièces jointes',   // photos et documents joints aux publications
   NOM_DOSSIER_RECUS: 'Adya – ' + PARAMETRES.GROUPE + ' – Reçus',          // copies PDF des reçus de cotisation
-  NOM_DOSSIER_EXPORTS: 'Adya – ' + PARAMETRES.GROUPE + ' – Exports',      // copies temporaires pour l'export Excel
+  NOM_DOSSIER_EXPORTS: 'Adya – ' + PARAMETRES.GROUPE + ' – Exports',
+  NOM_DOSSIER_FICHES: 'Adya – ' + PARAMETRES.GROUPE + ' – Fiches signées',   // fiches d'adhésion, demandes, attestations (PDF)      // copies temporaires pour l'export Excel
   ADMIN: 'm' + PARAMETRES.ADMIN,
   FUSEAU: PARAMETRES.FUSEAU || 'Africa/Abidjan',
   JOURS_SESSION: 120,          // durée d'une connexion sur un appareil
@@ -672,9 +780,19 @@ function groupe_() {
 }
 /** « La trésorière » ou « Le trésorier » en fonction (titre choisi à la désignation). */
 function titreTresorerie_(cfg, majuscule) {
-  const t = ((cfg && cfg.tresoriers) || []).filter(function (x) { return !x.au; })[0];
+  const actifs = tresActifs_(cfg);
+  if (actifs.length > 1) return (majuscule ? 'La' : 'la') + ' trésorerie';
+  const t = actifs[0];
   const f = (t && t.titre ? t.titre : groupe_().tresorier) === 'trésorière';
   return (majuscule ? (f ? 'La' : 'Le') : (f ? 'la' : 'le')) + ' ' + (f ? 'trésorière' : 'trésorier');
+}
+/** Personnes en fonction à la trésorerie : plusieurs à la fois si le groupe le décide. */
+function tresActifs_(cfg) { return ((cfg && cfg.tresoriers) || []).filter(function (x) { return !x.au; }); }
+function estTres_(cfg, id) { return tresActifs_(cfg).some(function (t) { return t.membre === id; }); }
+/** Droits que donnent les postes du bureau (Administration › Bureau et postes). La trésorerie n'en fait jamais partie. */
+const DROITS_POSTE_ = ['souvenirs', 'annonces', 'agenda', 'votes', 'situations', 'arbre'];
+function aDroit_(cfg, id, droit) {
+  return ((cfg && cfg.postes) || []).some(function (p) { return (p.droits || []).indexOf(droit) >= 0 && (p.titulaires || []).some(function (t) { return t.membre === id && !t.au; }); });
 }
 /** Nom des e-mails et du titre de la page. */
 function nomApp_() { return 'Adya · ' + groupe_().nom; }
@@ -720,7 +838,7 @@ function installer() {
   const membres = {}, ordre = [];
   noms.forEach(function (nom, i) { const id = 'm' + (i + 1); ordre.push(id); membres[id] = nouveauMembre_(id, nom, '', null); });
   const cfg = {
-    ordre: ordre, membres: membres, admins: [CONFIG.ADMIN], tresoriers: [],
+    ordre: ordre, membres: membres, admins: [CONFIG.ADMIN], tresoriers: [], postes: [], aines: { actuel: null, anciens: [], hommage: 0 },
     finances: { montant: G.cotisation, jour: G.echeance },
     droits: { nouvelles: 'tous', agenda: 'tous', votes: 'tous', projets: 'tous' },
     reglagesVote: { modification: false, choixVisibles: false },
@@ -1093,7 +1211,7 @@ function retirerDoc_(docs, chemin) {
 
 /** Assemble les documents dans la forme attendue par l'application. */
 function etat_(docs, moi) {
-  const S = { config: null, charte: null, appels: {}, profils: {}, enfants: {}, contenus: {}, voeux: {}, bulletins: {}, tres: {}, ecritures: {}, bilans: {}, prefs: null };
+  const S = { config: null, charte: null, appels: {}, profils: {}, enfants: {}, contenus: {}, voeux: {}, bulletins: {}, tres: {}, ecritures: {}, bilans: {}, prefs: null, portraits: {}, souvenirs: {}, fiches: {}, arbre: {}, propositions: {} };
   Object.keys(docs).forEach(function (chemin) {
     const s = chemin.split('/'), v = docs[chemin].data;
     const sous = function (o, k) { return o[k] = o[k] || {}; };
@@ -1106,6 +1224,11 @@ function etat_(docs, moi) {
       case 'tresorerie': if (s.length === 2) S.tres[s[1]] = v; else if (s[2] === 'ecritures') sous(S.ecritures, s[1])[s[3]] = v; else if (s[2] === 'bilans') sous(S.bilans, s[1])[s[3]] = v; break;
       case 'prefs': if (s[1] === moi) S.prefs = v; break;
       case 'appels': if (s.length === 2) S.appels[s[1]] = v; break;
+      case 'portraits': if (s.length === 2) S.portraits[s[1]] = v.photo; break;
+      case 'souvenirs': if (s.length === 4) S.souvenirs[s[1] + '~' + s[3]] = v; break;
+      case 'arbre': if (s.length === 2) S.arbre[s[1]] = v; break;
+      case 'propositions': if (s.length === 4) S.propositions[s[1] + '~' + s[3]] = v; break;
+      case 'fiches': if (s.length === 4 && voitFiche_(docs['config/app'].data, moi, s[1], v)) S.fiches[s[1] + '~' + s[3]] = resumeFiche_(v); break;
     }
   });
   const cfg = JSON.parse(JSON.stringify(S.config));
@@ -1115,6 +1238,7 @@ function etat_(docs, moi) {
   cfg.groupe = { nom: G.nom, nomOfficiel: G.nomOfficiel, type: G.type, sigle: G.sigle, tresorier: G.tresorier };
   S.config = cfg;
   S.licence = etatLicence_();
+  S.options = optionsActives_();
   S.moi = moi;
   S.admin = admin;
   S.emailConnu = !!emailDe_(docs, moi);
@@ -1164,7 +1288,7 @@ function apiEcrire(jeton, opId, chemin, op, data) {
 const MSG_CONSULTATION = 'L’application est en mode consultation : l’abonnement du groupe est suspendu. Tout reste consultable et exportable ; l’administrateur peut réactiver l’abonnement auprès de SoluGis.';
 function verifierLicence_() {
   const L = PARAMETRES.LICENCE || {};
-  if (L.TYPE === 'definitive' || !L.URL || !L.ID) return null;
+  if (!L.URL || !L.ID) return null;   // licence définitive sans fichier : options fixées dans PARAMETRES.LICENCE.OPTIONS
   let rep;
   try { rep = UrlFetchApp.fetch(L.URL + (L.URL.indexOf('?') >= 0 ? '&' : '?') + 't=' + Date.now(), { muteHttpExceptions: true, followRedirects: true }); } catch (e) { return null; }
   if (rep.getResponseCode() !== 200) return null;
@@ -1172,7 +1296,9 @@ function verifierLicence_() {
   try { j = JSON.parse(rep.getContentText()); } catch (e) { return null; }
   const c = j && j.clients && j.clients[L.ID];
   if (!c) return null;   // groupe absent du fichier : on garde le dernier état connu
-  const etat = { type: c.type === 'definitive' ? 'definitive' : 'abonnement', payeJusqua: estDate_(c.payeJusqua) ? c.payeJusqua : null, verifieLe: Date.now() };
+  const opts = {};
+  Object.keys(c.options && typeof c.options === 'object' ? c.options : {}).forEach(function (k) { if (OPTIONS_.indexOf(k) >= 0 && (c.options[k] === true || estDate_(c.options[k]))) opts[k] = c.options[k]; });
+  const etat = { type: c.type === 'definitive' ? 'definitive' : 'abonnement', payeJusqua: estDate_(c.payeJusqua) ? c.payeJusqua : null, verifieLe: Date.now(), options: opts };
   PropertiesService.getScriptProperties().setProperty('LICENCE', JSON.stringify(etat));
   return etat;
 }
@@ -1188,6 +1314,18 @@ function etatLicence_() {
   return { mode: t <= e.payeJusqua ? 'actif' : t <= finGrace ? 'grace' : 'consultation', type: 'abonnement', payeJusqua: e.payeJusqua, finGrace: finGrace };
 }
 function exigerActif_() { if (etatLicence_().mode === 'consultation') throw refus_(MSG_CONSULTATION); }
+/** Options payantes : vidéos dans les Souvenirs, arbre généalogique. Achetées une fois (true) ou payées jusqu'à une date. */
+const OPTIONS_ = ['videos', 'arbre'];
+function optionsActives_() {
+  const out = {};
+  ((PARAMETRES.LICENCE || {}).OPTIONS || []).forEach(function (k) { if (OPTIONS_.indexOf(k) >= 0) out[k] = true; });
+  let e = null;
+  try { e = JSON.parse(PropertiesService.getScriptProperties().getProperty('LICENCE') || 'null'); } catch (x) { e = null; }
+  const t = aujourdhui_();
+  Object.keys((e && e.options) || {}).forEach(function (k) { const v = e.options[k]; if (v === true || (estDate_(v) && t <= v)) out[k] = true; });
+  return Object.keys(out);
+}
+function aOption_(k) { return optionsActives_().indexOf(k) >= 0; }
 
 /* ================================================================
  * 4 ter. MEMBRES : arrivées, départs, administrateurs (réservé à l'administrateur)
@@ -1232,8 +1370,7 @@ function apiMembres(jeton, action, d) {
     } else if (action === 'retirer') {
       if (!m || m.sortie) throw refus_('Membre inconnu ou déjà parti.');
       if (!estDate_(d.sortie) || d.sortie > aujourdhui_()) throw refus_('Indiquez la date du départ (aujourd’hui ou avant).');
-      const tres = (cfg.tresoriers || []).filter(function (t) { return !t.au; })[0];
-      if (tres && tres.membre === id) throw refus_('Désignez d’abord une autre personne à la trésorerie.');
+      if (estTres_(cfg, id)) throw refus_('Mettez d’abord fin à son mandat à la trésorerie.');
       if (cfg.admins.length === 1 && cfg.admins[0] === id) throw refus_('Désignez d’abord un autre administrateur.');
       m.sortie = d.sortie; m.motifSortie = txt_(d.motif, 300);
       cfg.admins = cfg.admins.filter(function (a) { return a !== id; });
@@ -1385,7 +1522,8 @@ function appliquer_(docs, moi, chemin, op, data) {
     });
     r.tresoriers = (n.tresoriers || []).filter(function (t) { return r.membres[t.membre] && estDate_(t.du); })
       .map(function (t) { return { membre: t.membre, uid: t.membre, du: t.du, au: estDate_(t.au) ? t.au : null, titre: t.titre === 'trésorière' ? 'trésorière' : t.titre === 'trésorier' ? 'trésorier' : groupe_().tresorier }; });
-    exiger(r.tresoriers.filter(function (t) { return !t.au; }).length <= 1, 'Une seule personne à la trésorerie à la fois.');
+    const actifsT = r.tresoriers.filter(function (t) { return !t.au; }).map(function (t) { return t.membre; });
+    exiger(new Set(actifsT).size === actifsT.length, 'Cette personne est déjà à la trésorerie.');
     r.tresoriers.forEach(function (t) { if (!t.au) exiger(!r.membres[t.membre].sortie, 'Ce membre a quitté le groupe.'); });
     exiger(r.tresoriers.length >= (cfg.tresoriers || []).length, 'L’historique des mandats ne peut pas être effacé.');
     const dr = n.droits || {}; r.droits = {};
@@ -1414,6 +1552,26 @@ function appliquer_(docs, moi, chemin, op, data) {
     r.repartition = MCf.repartitionDe({ repartition: n.repartition || cfg.repartition }, nf);
     Object.keys(r.repartition).forEach(function (k) { r.repartition[k].parts = r.repartition[k].parts.slice(0, 4).map(function (x) { return { fonds: x.fonds, mode: x.mode, valeur: x.mode === 'pct' ? Math.min(100, Math.max(0, Math.round(x.valeur * 100) / 100)) : Math.max(0, Math.round(x.valeur)) }; }); });
     r.seuilCharte = ['2/3', '3/4', 'majorite', 'unanimite', 'aucun'].indexOf(n.seuilCharte) >= 0 ? n.seuilCharte : (cfg.seuilCharte || '2/3');
+    // Bureau : postes libres (titre, droits, titulaires présents et passés, membres ou non) ; patriarche ou matriarche et leurs prédécesseurs
+    const dateSouple = function (d) { return /^\d{4}(-\d{2}(-\d{2})?)?$/.test(String(d || '')) ? String(d) : ''; };
+    r.postes = (Array.isArray(n.postes) ? n.postes : (cfg.postes || [])).slice(0, 30).map(function (p, i) {
+      return { id: /^[a-z0-9-]{2,40}$/.test(String(p.id || '')) ? String(p.id) : 'poste-' + (i + 1), titre: txt_(p.titre, 60) || 'Poste',
+        type: ['president', 'vice-president', 'secretaire', 'communication', 'commissaire', 'autre'].indexOf(p.type) >= 0 ? p.type : 'autre',
+        droits: (Array.isArray(p.droits) ? p.droits : []).filter(function (d, j, a) { return DROITS_POSTE_.indexOf(d) >= 0 && a.indexOf(d) === j; }),
+        titulaires: (Array.isArray(p.titulaires) ? p.titulaires : []).slice(0, 60).map(function (t) {
+          const m = r.membres[t.membre] ? t.membre : null;
+          return { membre: m, nom: m ? '' : txt_(t.nom, 80), du: dateSouple(t.du), au: dateSouple(t.au) || null, note: txt_(t.note, 120) };
+        }).filter(function (t) { return t.membre || t.nom; }) };
+    });
+    exiger(new Set(r.postes.map(function (p) { return p.id; })).size === r.postes.length, 'Deux postes portent le même identifiant.');
+    const ai = n.aines || cfg.aines || {};
+    const aine = function (x) {
+      if (!x || !txt_(x.nom, 80)) return null;
+      return { nom: txt_(x.nom, 80), sexe: x.sexe === 'f' ? 'f' : 'h', naissance: dateSouple(x.naissance), deces: estDate_(x.deces) ? x.deces : null,
+        membre: r.membres[x.membre] ? x.membre : null, portrait: /^[a-z0-9-]{2,40}$/.test(String(x.portrait || '')) ? String(x.portrait) : null, note: txt_(x.note, 160) };
+    };
+    r.campagneAdhesion = estDate_(n.campagneAdhesion) ? n.campagneAdhesion : (n.campagneAdhesion === null ? null : (cfg.campagneAdhesion || null));
+    r.aines = { actuel: aine(ai.actuel), anciens: (Array.isArray(ai.anciens) ? ai.anciens : []).slice(0, 30).map(aine).filter(Boolean), hommage: Math.min(120, Math.max(0, Math.round(+ai.hommage || 0))) };
     delete r.groupe;   // le nom et le type du groupe viennent des paramètres d'installation
     poserDoc_(docs, chemin, r, moi);
     if (r.rappels.heure !== (cfg.rappels || {}).heure) effets.push(function () { reprogrammer_(r.rappels.heure); });
@@ -1423,8 +1581,7 @@ function appliquer_(docs, moi, chemin, op, data) {
 
   if (s[0] === 'appels') {
     // Cotisations exceptionnelles (funérailles, mariage…) : lancées par l'administrateur ou la trésorerie.
-    const tres = (cfg.tresoriers || []).filter(function (t) { return !t.au; })[0];
-    exiger(admin || (tres && tres.membre === moi), 'Réservé à l’administrateur et à la trésorerie.');
+    exiger(admin || estTres_(cfg, moi), 'Réservé à l’administrateur et à la trésorerie.');
     exiger(s.length === 2, 'Chemin invalide.');
     const ancien = docs[chemin] ? docs[chemin].data : null;
     const lies = Object.keys(docs).filter(function (k) { return /^tresorerie\/[^/]+\/ecritures\//.test(k) && docs[k].data.appel === s[1]; });
@@ -1441,6 +1598,101 @@ function appliquer_(docs, moi, chemin, op, data) {
     poserDoc_(docs, chemin, a, moi);
     journal_(moi, ancien ? (a.clos && !ancien.clos ? 'Cotisation exceptionnelle close' : 'Cotisation exceptionnelle modifiée') : 'Cotisation exceptionnelle lancée', a.titre);
     if (!ancien) effets.push(function () { notifier_('appels', 'Cotisation exceptionnelle : ' + a.titre, 'Une cotisation exceptionnelle est ouverte : « ' + a.titre + ' ».\n' + (a.mode === 'fixe' ? 'Montant demandé à chaque membre : ' + moteurCalcul().enLettres(a.montant) + ' francs CFA (' + a.montant + ' FCFA).' : 'Participation libre' + (a.minimum ? ', à partir de ' + a.minimum + ' FCFA.' : '.')) + (a.dateLimite ? '\nDate limite : ' + a.dateLimite.split('-').reverse().join('/') + '.' : '') + (a.description ? '\n\n' + a.description : '')); });
+    return effets;
+  }
+
+  if (s[0] === 'souvenirs') {
+    // Médiathèque : albums photo (vidéos en option) et archives ; tenue par l'administrateur et les postes qui en ont le droit.
+    exiger(admin || aDroit_(cfg, moi, 'souvenirs'), 'Réservé à l’administrateur et aux postes chargés des souvenirs.');
+    exiger(s.length === 4 && s[2] === 'items' && cfg.membres[s[1]] && /^[\w-]{4,40}$/.test(s[3]), 'Chemin invalide.');
+    const ancien = docs[chemin] ? docs[chemin].data : null;
+    const fichiersDe = function (x) { const l = []; if (!x) return l; (x.photos || []).forEach(function (f) { l.push(f); if (f.mini) l.push({ par: f.par, id: f.mini }); }); if (x.fichier) l.push(x.fichier); return l; };
+    if (op === 'delete') {
+      exiger(ancien, 'Ce souvenir n’existe plus.');
+      retirerDoc_(docs, chemin);
+      fichiersDe(ancien).forEach(function (f) { pjSupprimer_(docs, 'pj/' + f.par + '/' + f.id, effets); });
+      journal_(moi, 'Souvenir supprimé', ancien.titre);
+      return effets;
+    }
+    const type = ancien ? ancien.type : data.type;
+    exiger(type === 'album' || type === 'archive', 'Type inconnu.');
+    const piece = function (x, photoSeule) {
+      const par = String((x && x.par) || ''), id = String((x && x.id) || ''), d = docs['pj/' + par + '/' + id];
+      exiger(cfg.membres[par] && /^\w{8,40}$/.test(id) && d && (!d.data.lien || d.data.lien === chemin), 'Fichier introuvable : ajoutez-le de nouveau.');
+      exiger(!photoSeule || d.data.type === 'image/jpeg', 'Un album ne reçoit que des photos.');
+      return { par: par, id: id, nom: d.data.nom, type: d.data.type, taille: d.data.taille };
+    };
+    const quand = /^\d{4}(-\d{2}(-\d{2})?)?$/.test(String(data.date || '')) ? String(data.date) : aujourdhui_();
+    let v;
+    if (type === 'album') {
+      const vus = {};
+      const photos = (Array.isArray(data.photos) ? data.photos : []).slice(0, 400).map(function (x) { const f = piece(x, true); if (x.mini) f.mini = piece({ par: x.par, id: x.mini }, true).id; return f; }).filter(function (x) { const k = x.par + '/' + x.id; if (vus[k]) return false; vus[k] = 1; return true; });
+      const avant = (ancien && ancien.videos) || [];
+      const videos = (Array.isArray(data.videos) ? data.videos : []).slice(0, 60).map(function (x) {
+        const url = txt_(x.url, 300);
+        exiger(/^https:\/\/(www\.youtube\.com\/(watch\?v=|shorts\/)|youtu\.be\/|m\.youtube\.com\/watch\?v=|drive\.google\.com\/)[\w\-?=&%./]+$/.test(url), 'Lien de vidéo non reconnu : YouTube ou Google Drive seulement.');
+        return { url: url, titre: txt_(x.titre, 120) || 'Vidéo', date: estDate_(x.date) ? x.date : '' };
+      });
+      const nouvelles = videos.filter(function (x) { return !avant.some(function (a) { return a.url === x.url; }); });
+      exiger(!nouvelles.length || aOption_('videos'), 'L’option Vidéos n’est pas activée pour ce groupe : contactez SoluGis.');
+      v = { type: 'album', titre: txt_(data.titre, 120), date: quand, description: txt_(data.description, 1000), photos: photos, videos: videos, couverture: Math.max(0, Math.min(photos.length - 1, Math.round(+data.couverture || 0))) };
+      exiger(v.titre, 'Indiquez le nom de l’album (ex. Mariage de Mariam).');
+    } else {
+      v = { type: 'archive', titre: txt_(data.titre, 140), date: quand, note: txt_(data.note, 600), fichier: piece(data.fichier, false) };
+      exiger(v.titre, 'Indiquez le titre du document.');
+    }
+    v.creeLe = ancien ? ancien.creeLe : maintenant; v.creePar = ancien ? ancien.creePar : moi;
+    if (ancien) { v.majLe = maintenant; v.majPar = moi; }
+    poserDoc_(docs, chemin, v, moi);
+    const garder = {};
+    fichiersDe(v).forEach(function (f) { garder[f.par + '/' + f.id] = 1; const k = 'pj/' + f.par + '/' + f.id, d = docs[k]; if (d && d.data.lien !== chemin) { d.data.lien = chemin; poserDoc_(docs, k, d.data, f.par); } });
+    fichiersDe(ancien).forEach(function (f) { if (!garder[f.par + '/' + f.id]) pjSupprimer_(docs, 'pj/' + f.par + '/' + f.id, effets); });
+    journal_(moi, ancien ? 'Souvenir mis à jour' : (type === 'album' ? 'Album créé' : 'Archive ajoutée'), v.titre);
+    if (!ancien && type === 'album') effets.push(function () { notifier_('nouv', 'Nouvel album : ' + v.titre, 'Un album de souvenirs a été ajouté dans Adya : « ' + v.titre + ' ».\n' + lienApp_()); });
+    return effets;
+  }
+
+  if (s[0] === 'arbre') {
+    // Arbre généalogique (option) : une personne par document ; tenu par l'administrateur et les postes qui en ont le droit.
+    exiger(admin || aDroit_(cfg, moi, 'arbre'), 'Réservé à l’administrateur et aux postes chargés de l’arbre.');
+    exiger(aOption_('arbre'), 'L’option Arbre généalogique n’est pas activée pour ce groupe : contactez SoluGis.');
+    exiger(s.length === 2 && /^p[\w-]{1,30}$/.test(s[1]), 'Chemin invalide.');
+    const tous = Object.keys(docs).filter(function (k) { return /^arbre\/p/.test(k); });
+    if (op === 'delete') {
+      exiger(docs[chemin], 'Personne introuvable.');
+      exiger(!tous.some(function (k) { return docs[k].data.parent === s[1]; }), 'Cette personne a des enfants dans l’arbre : rattachez-les d’abord à quelqu’un d’autre.');
+      retirerDoc_(docs, chemin); journal_(moi, 'Arbre : personne retirée', docs[chemin] ? '' : s[1]); return effets;
+    }
+    const v = personneArbre_(data, cfg);
+    exiger(v.nom, 'Indiquez le nom.');
+    exiger(!v.parent || v.parent !== s[1], 'Une personne ne peut pas être son propre parent.');
+    exiger(!v.parent || tous.indexOf('arbre/' + v.parent) >= 0, 'Parent introuvable dans l’arbre.');
+    // pas de boucle : le parent ne doit pas descendre de cette personne
+    let p2 = v.parent, garde = 0;
+    while (p2 && garde++ < 200) { exiger(p2 !== s[1], 'Ce lien créerait une boucle dans l’arbre.'); p2 = docs['arbre/' + p2] ? docs['arbre/' + p2].data.parent : null; }
+    exiger(v.parent || !tous.some(function (k) { return k !== chemin && !docs[k].data.parent; }), 'L’arbre a déjà une souche : choisissez un parent.');
+    v.majLe = maintenant; v.majPar = moi;
+    poserDoc_(docs, chemin, v, moi);
+    journal_(moi, 'Arbre : personne ' + (tous.indexOf(chemin) >= 0 ? 'modifiée' : 'ajoutée'), v.nom);
+    return effets;
+  }
+
+  if (s[0] === 'propositions') {
+    // Propositions de correction de l'arbre : tout membre propose, l'administrateur ou le poste chargé de l'arbre les traite.
+    exiger(s.length === 4 && s[2] === 'items', 'Chemin invalide.');
+    if (op === 'delete') { exiger(s[1] === moi || admin || aDroit_(cfg, moi, 'arbre'), 'Réservé à l’auteur et aux responsables de l’arbre.'); retirerDoc_(docs, chemin); return effets; }
+    exiger(s[1] === moi, 'Vous ne pouvez proposer qu’en votre nom.');
+    const t = txt_(data.texte, 600); exiger(t, 'Décrivez la correction proposée.');
+    poserDoc_(docs, chemin, { personne: /^p[\w-]{1,30}$/.test(String(data.personne || '')) ? data.personne : null, texte: t, le: maintenant }, moi);
+    return effets;
+  }
+
+  if (s[0] === 'portraits') {
+    exiger(admin && s.length === 2 && /^[a-z0-9-]{2,40}$/.test(s[1]), 'Réservé à l’administrateur.');
+    if (op === 'delete') { retirerDoc_(docs, chemin); journal_(moi, 'Portrait retiré', s[1]); return effets; }
+    exiger(data.photo, 'Choisissez une photo.');
+    poserDoc_(docs, chemin, { photo: photo_(data.photo), majLe: maintenant }, moi);
+    journal_(moi, 'Portrait mis à jour', s[1]);
     return effets;
   }
 
@@ -1479,7 +1731,8 @@ function appliquer_(docs, moi, chemin, op, data) {
     const type = ancien ? ancien.type : data.type;
     exiger(['nouvelle', 'evenement', 'vote', 'projet'].indexOf(type) >= 0, 'Type inconnu.');
     const droitKey = { nouvelle: 'nouvelles', evenement: 'agenda', vote: 'votes', projet: 'projets' }[type];
-    if (!ancien) exiger((cfg.droits || {})[droitKey] !== 'admin' || admin, 'Publication réservée à l’administrateur.');
+    const droitPoste = { nouvelles: 'annonces', agenda: 'agenda', votes: 'votes', projets: 'votes' }[droitKey];
+    if (!ancien) exiger((cfg.droits || {})[droitKey] !== 'admin' || admin || aDroit_(cfg, moi, droitPoste), 'Publication réservée à l’administrateur et aux postes qui en ont le droit.');
     let v;
     if (type === 'nouvelle') { exiger(!ancien, 'Modification impossible.'); v = { type: type, genre: ['nouvelle', 'annonce', 'information', 'voeux'].indexOf(data.genre) >= 0 ? data.genre : 'nouvelle', titre: txt_(data.titre, 120), texte: txt_(data.texte, 4000), pj: pjPublication_(docs, moi, chemin, data.pj) }; exiger(v.titre && v.texte, 'Titre et message obligatoires.'); }
     else if (type === 'evenement') { exiger(!ancien, 'Modification impossible.'); v = { type: type, titre: txt_(data.titre, 120), date: data.date, heure: /^\d{2}:\d{2}$/.test(data.heure || '') ? data.heure : '', lieu: txt_(data.lieu, 160), description: txt_(data.description, 1000) }; exiger(v.titre && estDate_(v.date), 'Titre et date obligatoires.'); }
@@ -1534,8 +1787,7 @@ function appliquer_(docs, moi, chemin, op, data) {
   }
 
   if (s[0] === 'tresorerie') {
-    const actuelle = (cfg.tresoriers || []).filter(function (t) { return !t.au; })[0];
-    exiger(actuelle && actuelle.membre === moi, 'Réservé à la personne désignée à la trésorerie.');
+    exiger(estTres_(cfg, moi), 'Réservé aux personnes désignées à la trésorerie.');
     exiger(op === 'set', 'Une écriture ne s’efface pas : enregistrez une correction.');
     if (s.length === 2) {
       exiger(/^\d{4}-\d{2}$/.test(data.debutSuivi || ''), 'Mois invalide.');
@@ -1763,8 +2015,7 @@ function versementsDocs_(docs) {
     .map(function (k) { return Object.assign({ _id: k.split('/')[3] }, docs[k].data); });
 }
 function voitTousLesRecus_(cfg, moi) {
-  const t = (cfg.tresoriers || []).filter(function (x) { return !x.au; })[0];
-  return cfg.admins.indexOf(moi) >= 0 || !!(t && t.membre === moi);
+  return cfg.admins.indexOf(moi) >= 0 || estTres_(cfg, moi) || aDroit_(cfg, moi, 'situations');
 }
 /** Codes d'authenticité des reçus visibles par ce membre : les siens (tous pour la trésorerie et l'administrateur). */
 function codesRecus_(docs, moi) {
@@ -2473,6 +2724,384 @@ function restaurer() {
   Logger.log('Restauration faite. Classeur utilisé : ' + f.getUrl());
 }
 
+/* ================================================================
+ * FICHES NUMÉRIQUES (adhésion, demande d'aide, demande de prêt, attestation)
+ * Modèles partagés entre le serveur (PDF) et le téléphone (formulaire) : une seule source.
+ * ================================================================ */
+function modelesFiches() {
+  var AUTRE = 'Autre';
+  var M = {
+    adhesion: { titre: 'Fiche d’adhésion', prefixe: 'ADH', sections: [
+      { titre: 'Identité', champs: [['nom', 'Nom', 'texte', 1], ['prenoms', 'Prénoms', 'texte', 1], ['surnom', 'Nom d’usage ou surnom', 'texte'], ['sexe', 'Sexe', 'choix', 1, ['Homme', 'Femme']], ['naissance', 'Date de naissance', 'date'], ['lieu', 'Lieu de naissance', 'texte'], ['profession', 'Profession ou activité', 'texte']] },
+      { titre: 'Coordonnées', champs: [['tel', 'Téléphone', 'tel', 1], ['whatsapp', 'WhatsApp (si différent)', 'tel'], ['email', 'E-mail', 'email'], ['residence', 'Ville et pays de résidence', 'texte'], ['adresse', 'Adresse ou commune', 'texte']] },
+      { titre: 'Lien avec le groupe', champs: [['lien', 'Lien de parenté ou qualité', 'texte'], ['presente', 'Présenté(e) par', 'texte'], ['depuis', 'Membre depuis le (ou entrée le)', 'date']] },
+      { titre: 'Personne à prévenir en cas d’urgence', champs: [['urgNom', 'Nom et prénoms', 'texte'], ['urgLien', 'Lien', 'texte'], ['urgTel', 'Téléphone', 'tel']] },
+      { titre: 'Bénéficiaires de ma part (facultatif, selon la charte du groupe)', table: ['benef', 4, [['nom', 'Nom et prénoms'], ['lien', 'Lien de parenté'], ['part', 'Part (%)']]], note: 'En cas de décès, ma part du capital commun sera attribuée selon la charte du groupe ; à défaut de règle contraire, aux personnes ci-dessus. Je peux modifier ce choix à tout moment auprès de l’administrateur.' },
+      { titre: 'Mes engagements', champs: [['e1', 'Je m’engage à régler les frais d’adhésion, payés une seule fois, conformément au montant fixé par la charte du groupe.', 'engagement', 1], ['frais', 'Pour un membre déjà inscrit, frais d’adhésion', 'choix', 0, ['déjà réglés', 'à régler']], ['e2', 'Je m’engage à verser ma cotisation mensuelle conformément au montant et à l’échéance fixés par la charte du groupe.', 'engagement', 1], ['e3', 'J’ai reçu, lu et j’accepte la charte du groupe.', 'engagement', 1], ['e4', 'J’accepte que mes informations soient enregistrées dans l’application du groupe, pour sa seule vie interne (loi ivoirienne n° 2013-450 sur les données personnelles).', 'engagement', 1]] }
+    ], decision: null, contre: 'Pour le bureau' },
+    aide: { titre: 'Demande d’aide de solidarité', prefixe: 'SOL', sections: [
+      { titre: 'L’événement', champs: [['nature', 'Nature', 'choix', 1, ['Décès', 'Maladie', 'Naissance', 'Mariage', 'Sinistre', AUTRE]], ['dateEvt', 'Date de l’événement', 'date', 1], ['personne', 'Personne concernée', 'texte', 1], ['description', 'Description', 'long']] },
+      { titre: 'L’aide souhaitée', champs: [['forme', 'Forme', 'choix', 1, ['Somme d’argent', 'Présence', AUTRE]], ['montant', 'Montant souhaité (FCFA)', 'nombre']] }
+    ], decision: { titre: 'Décision du bureau', choix: ['Aide accordée', 'Aide refusée'], champs: [['aide', 'Aide du fonds de solidarité (FCFA)', 'nombre'], ['cotisation', 'Cotisation exceptionnelle', 'choix', 0, ['Non', 'Oui, montant fixe', 'Oui, montant libre']], ['parMembre', 'Montant par membre (FCFA)', 'nombre'], ['note', 'Observation', 'texte']] }, contre: 'Pour le bureau' },
+    pret: { titre: 'Demande de prêt interne', prefixe: 'PRT', sections: [
+      { titre: 'La demande', champs: [['montant', 'Montant demandé (FCFA)', 'nombre', 1], ['duree', 'Durée souhaitée (mois)', 'nombre', 1], ['objet', 'Objet du prêt', 'long', 1], ['garant', 'Garant ou avaliste éventuel', 'texte']] },
+      { titre: 'Mon engagement', champs: [['e1', 'Je m’engage à rembourser selon l’échéancier fixé par le groupe et j’accepte que mes remboursements soient enregistrés dans l’application.', 'engagement', 1]] }
+    ], decision: { titre: 'Décision du bureau ou de l’assemblée', choix: ['Prêt accordé', 'Prêt refusé', 'Décision ajournée'], champs: [['accorde', 'Montant accordé (FCFA)', 'nombre'], ['frais', 'Frais ou intérêt convenu', 'texte'], ['echeances', 'Nombre d’échéances', 'nombre'], ['premiere', 'Première échéance le', 'date'], ['note', 'Observation', 'texte']] }, contre: 'Pour le bureau (trésorerie)' },
+    attestation: { titre: 'Attestation de membre à jour', prefixe: 'ATT', sections: [], decision: null, contre: 'Pour le bureau' },
+    convocation: { titre: 'Convocation à l’assemblée générale', prefixe: 'AG', auteur: 'bureau', sig1: 'Pour le bureau', public: true, final: 'publiee', sections: [
+      { titre: 'L’assemblée', champs: [['nature', 'Nature', 'choix', 1, ['Ordinaire', 'Extraordinaire']], ['date', 'Date', 'date', 1], ['heure', 'Heure', 'heure', 1], ['lieu', 'Lieu', 'texte'], ['lienEnLigne', 'Ou en ligne (lien)', 'texte']] },
+      { titre: 'Ordre du jour', champs: [['ordre', 'Ordre du jour (un point par ligne)', 'long', 1], ['quorum', 'Quorum prévu par la charte', 'texte']] }
+    ] },
+    pouvoir: { titre: 'Pouvoir pour l’assemblée générale', prefixe: 'POU', sig1: 'Le membre qui donne pouvoir', final: 'deposee', sections: [
+      { titre: 'Pouvoir', champs: [['assemblee', 'Assemblée générale du', 'date', 1], ['mandataire', 'Je donne pouvoir à', 'membre', 1], ['e1', 'Je donne pouvoir à ce membre de me représenter et de voter en mon nom à cette assemblée générale.', 'engagement', 1]] }
+    ] },
+    pv: { titre: 'Procès-verbal d’assemblée générale', prefixe: 'PV', auteur: 'bureau', sig1: 'Le président de séance', contre: 'Le secrétaire de séance', second: 'bureau', public: true, sections: [
+      { titre: 'Tenue de l’assemblée', champs: [['nature', 'Nature', 'choix', 1, ['Ordinaire', 'Extraordinaire']], ['date', 'Date', 'date', 1], ['lieu', 'Lieu', 'texte'], ['ouverture', 'Ouverture à', 'heure'], ['cloture', 'Clôture à', 'heure'], ['presents', 'Membres présents', 'membres', 1], ['representes', 'Membres représentés (et par qui)', 'texte'], ['quorum', 'Quorum atteint', 'choix', 1, ['Oui', 'Non']]] },
+      { titre: 'Points traités et décisions', table: ['points', 10, [['point', 'Point de l’ordre du jour'], ['decision', 'Échanges et décision'], ['pour', 'Pour'], ['contre', 'Contre'], ['abst', 'Abst.']]] },
+      { titre: 'Prochaines échéances', champs: [['prochaine', 'Prochaine assemblée', 'date'], ['suivi', 'Responsable du suivi', 'texte'], ['actions', 'Actions décidées', 'long']] }
+    ] },
+    depart: { titre: 'Fiche de départ et solde de tout compte', prefixe: 'DEP', auteur: 'bureau', sig1: 'Le membre ou l’ayant droit', contre: 'Pour le bureau', presence: true, final: 'validee', sections: [
+      { titre: 'Le membre', champs: [['membre', 'Membre concerné', 'membre', 1], ['dateDepart', 'Date du départ', 'date', 1], ['motif', 'Motif', 'choix', 1, ['Démission', 'Décès', 'Exclusion', AUTRE]]] },
+      { titre: 'Situation à la date du départ', champs: [['verse', 'Total versé au capital commun (FCFA)', 'auto'], ['part', 'Part du capital (%)', 'auto'], ['du', 'Cotisations ou frais restant dus (FCFA)', 'auto'], ['valeur', 'Valeur de la part retenue selon la charte (FCFA)', 'nombre', 1], ['pret', 'Prêt interne restant à rembourser (FCFA)', 'nombre'], ['net', 'Montant net à verser (FCFA)', 'nombre', 1]] },
+      { titre: 'Règlement', champs: [['beneficiaire', 'Versé à', 'texte', 1], ['lienBenef', 'Lien avec le membre (si ayant droit)', 'texte'], ['moyen', 'Moyen', 'choix', 1, ['Wave', 'Orange Money', 'MTN MoMo', 'Moov Money', 'Virement', 'Espèces', AUTRE]], ['dateReglement', 'Date du règlement', 'date', 1], ['e1', 'Le membre, ou son ayant droit, reconnaît avoir reçu la somme ci-dessus pour solde de tout compte et n’avoir plus rien à réclamer au groupe à ce titre.', 'engagement', 1]] }
+    ] },
+    passation: { titre: 'Passation de service', prefixe: 'PAS', auteur: 'bureau', sig1: 'Le responsable sortant', contre: 'Le responsable entrant', second: 'entrant', sections: [
+      { titre: 'Le poste', champs: [['poste', 'Poste concerné', 'texte', 1], ['entrant', 'Responsable entrant', 'membre', 1], ['date', 'Date de la passation', 'date', 1]] },
+      { titre: 'Situation remise', champs: [['caisse', 'Solde en caisse, espèces (FCFA)', 'nombre'], ['mobile', 'Solde du compte mobile money (FCFA)', 'nombre'], ['banque', 'Solde du compte bancaire (FCFA)', 'nombre'], ['prets', 'Prêts internes en cours (nombre et total)', 'texte'], ['retards', 'Cotisations en retard', 'auto'], ['bilan', 'Dernier bilan publié dans Adya', 'auto']] },
+      { titre: 'Remis et transféré', champs: [['r1', 'Le nouveau responsable est désigné dans Adya ; l’ancien perd ses droits à la même date.', 'engagement'], ['r2', 'Les registres papier, carnets et relevés éventuels sont remis.', 'engagement'], ['r3', 'Les reçus et documents en cours sont remis ou archivés dans Adya.', 'engagement'], ['r4', 'Les signatures du compte bancaire ou mobile money sont mises à jour.', 'engagement'], ['observations', 'Observations', 'long'], ['temoin', 'Témoin (président ou administrateur)', 'texte']] }
+    ] }
+  };
+  function e(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function dateFr(d) { if (!d) return ''; var m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? m[3] + '/' + m[2] + '/' + m[1] : String(d); }
+  function valeur(c, v, noms) {
+    if (v == null || v === '') return '';
+    if (c[2] === 'membre') return (noms && noms[v]) || String(v);
+    if (c[2] === 'membres') return (Array.isArray(v) ? v : []).map(function (x) { return (noms && noms[x]) || x; }).join(', ');
+    if (c[2] === 'date') return dateFr(v);
+    if (c[2] === 'nombre') return String(Math.round(+v)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    if (c[2] === 'engagement') return v ? 'oui' : '';
+    return String(v);
+  }
+  /** Nettoie les valeurs reçues du téléphone et vérifie les champs obligatoires ; renvoie le message d'erreur éventuel. */
+  function controler(modele, src, decision) {
+    var m = M[modele], out = {}, err = null;
+    var liste = decision ? (m.decision ? m.decision.champs : []) : [].concat.apply([], m.sections.map(function (s) { return s.champs || []; }));
+    liste.forEach(function (c) {
+      var v = src ? src[c[0]] : null;
+      if (c[2] === 'engagement') v = !!v;
+      else if (c[2] === 'nombre') v = v === '' || v == null || isNaN(+v) ? '' : Math.max(0, Math.round(+v));
+      else if (c[2] === 'date') v = /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? String(v) : '';
+      else if (c[2] === 'heure') v = /^\d{2}:\d{2}$/.test(String(v || '')) ? String(v) : '';
+      else if (c[2] === 'membre') v = /^m\d+$/.test(String(v || '')) ? String(v) : '';
+      else if (c[2] === 'membres') v = (Array.isArray(v) ? v : []).filter(function (x, i, a) { return /^m\d+$/.test(String(x)) && a.indexOf(x) === i; });
+      else if (c[2] === 'auto') v = src && src[c[0]] != null ? String(src[c[0]]).slice(0, 160) : '';
+      else if (c[2] === 'choix') { v = (c[4] || []).indexOf(v) >= 0 ? v : ''; if (v === AUTRE) out[c[0] + 'Prec'] = String((src && src[c[0] + 'Prec']) || '').trim().slice(0, 120); }
+      else v = String(v == null ? '' : v).trim().slice(0, c[2] === 'long' ? 1500 : 160);
+      out[c[0]] = v;
+      if (!err && c[3] && (v === '' || v === false || (Array.isArray(v) && !v.length))) err = c[2] === 'engagement' ? 'Cochez chacun des engagements.' : 'Renseignez « ' + c[1] + ' ».';
+      if (!err && v === AUTRE && !out[c[0] + 'Prec']) err = 'Précisez « ' + c[1] + ' ».';
+    });
+    if (!decision) m.sections.forEach(function (s) {
+      if (!s.table) return;
+      var rows = (src && Array.isArray(src[s.table[0]]) ? src[s.table[0]] : []).slice(0, s.table[1]).map(function (r) { var o = {}; s.table[2].forEach(function (k) { o[k[0]] = String((r && r[k[0]]) || '').trim().slice(0, k[0] === 'decision' ? 400 : 80); }); return o; }).filter(function (r) { return r.nom || r.point; });
+      out[s.table[0]] = rows;
+      var tot = rows.reduce(function (a, r) { return a + (+r.part || 0); }, 0);
+      if (!err && rows.length && tot > 100) err = 'La somme des parts des bénéficiaires dépasse 100 %.';
+    });
+    if (!err && decision && m.decision && !src.choix) err = 'Indiquez la décision.';
+    if (decision && m.decision) out.choix = m.decision.choix.indexOf(src.choix) >= 0 ? src.choix : '';
+    return { valeurs: out, erreur: err };
+  }
+  /** Fiche remplie, au format A4, pour le PDF (tableaux simples : le convertisseur PDF de Google ignore flex et grid). */
+  function ficheHTML(f, g) {
+    var m = M[f.modele], V = '#0a4a30', D = '#55665a', L = '#c9d2c6';
+    var ligne = function (lbl, val) { return '<tr><td style="padding:5px 8px 5px 0;color:' + D + ';font-size:11px;width:42%;vertical-align:top;border-bottom:1px solid #e6ebe3;">' + e(lbl) + '</td><td style="padding:5px 0;font-size:12px;color:#16261c;border-bottom:1px solid #e6ebe3;">' + e(val).replace(/\n/g, '<br>') + '&nbsp;</td></tr>'; };
+    var titreSec = function (n, t) { return '<div style="margin:14px 0 4px;font-size:13px;font-weight:bold;color:' + V + ';">' + n + '. ' + e(t) + '</div>'; };
+    var h = '<div style="font-family:Arial,Helvetica,sans-serif;width:660px;margin:0 auto;color:#16261c;">';
+    h += '<table width="100%" style="border-collapse:collapse;border-bottom:4px solid ' + V + ';"><tr><td style="padding-bottom:8px;"><div style="font-size:18px;font-weight:bold;color:' + V + ';">' + e(g.nom) + '</div><div style="font-size:10px;color:' + D + ';">Document du groupe · établi dans Adya</div></td><td style="text-align:right;padding-bottom:8px;"><div style="font-size:20px;font-weight:bold;color:' + V + ';">' + e(m.titre) + '</div><div style="font-size:10px;color:' + D + ';">N° ' + e(f.numero || '') + (f.valeurs && f.valeurs.type ? ' · ' + e(f.valeurs.type) : '') + '</div></td></tr></table>';
+    if (f.modele === 'attestation') {
+      var a = f.valeurs || {};
+      h += '<div style="font-size:13px;line-height:1.9;margin-top:26px;">Le bureau de <b>' + e(g.nom) + '</b> atteste que <b>' + e(f.nomMembre) + '</b>, membre du groupe' + (a.depuis ? ' depuis le ' + e(dateFr(a.depuis)) : '') + ', est <b>à jour de ses cotisations</b> à la date du ' + e(dateFr(a.date)) + ' : cotisations mensuelles versées jusqu’au mois de ' + e(a.jusqua || '') + ' inclus' + (a.adhesion ? ', frais d’adhésion réglés' : '') + '.<br><br>La présente attestation est délivrée à l’intéressé(e) pour servir et valoir ce que de droit.</div>';
+    } else {
+      var n = 0;
+      m.sections.forEach(function (s) {
+        n++; h += titreSec(n, s.titre);
+        if (s.table) {
+          var rows = (f.valeurs || {})[s.table[0]] || [];
+          h += '<table width="100%" style="border-collapse:collapse;font-size:11.5px;"><tr>' + s.table[2].map(function (k) { return '<td style="padding:4px 6px;color:' + D + ';font-size:10px;border-bottom:1px solid ' + L + ';">' + e(k[1].toUpperCase()) + '</td>'; }).join('') + '</tr>' + (rows.length ? rows : [{}]).map(function (r) { return '<tr>' + s.table[2].map(function (k) { return '<td style="padding:5px 6px;border-bottom:1px solid #e6ebe3;">' + e(r[k[0]] || '') + '&nbsp;</td>'; }).join('') + '</tr>'; }).join('') + '</table>';
+          if (s.note) h += '<div style="font-size:9.5px;color:' + D + ';margin-top:4px;">' + e(s.note) + '</div>';
+          return;
+        }
+        var eng = s.champs.filter(function (c) { return c[2] === 'engagement'; }), aut = s.champs.filter(function (c) { return c[2] !== 'engagement' && !(c[0] === 'frais' && !(f.valeurs || {}).frais); });
+        if (aut.length) h += '<table width="100%" style="border-collapse:collapse;">' + aut.map(function (c) { var v = (f.valeurs || {})[c[0]]; return ligne(c[1], valeur(c, v, g.noms) + (v === AUTRE && f.valeurs[c[0] + 'Prec'] ? ' : ' + f.valeurs[c[0] + 'Prec'] : '')); }).join('') + '</table>';
+        if (eng.length) h += eng.map(function (c) { return '<div style="font-size:11.5px;margin:5px 0;"><span style="display:inline-block;width:12px;height:12px;border:1px solid ' + V + ';text-align:center;line-height:12px;font-size:10px;color:' + V + ';margin-right:6px;">' + ((f.valeurs || {})[c[0]] ? '✓' : '&nbsp;') + '</span>' + e(c[1]) + '</div>'; }).join('');
+      });
+      if (m.decision && f.decision) {
+        var d = f.decision;
+        h += '<div style="background:#f4f6ef;padding:8px 12px;margin-top:14px;">' + titreSec(n + 1, m.decision.titre) + '<table width="100%" style="border-collapse:collapse;">' + ligne('Décision', d.choix) + m.decision.champs.filter(function (c) { return d[c[0]] !== '' && d[c[0]] != null; }).map(function (c) { return ligne(c[1], valeur(c, d[c[0]])); }).join('') + '</table></div>';
+      }
+    }
+    var sig = function (titre, s) { return '<td style="width:50%;vertical-align:top;padding:8px 10px;border:1px solid ' + L + ';"><div style="font-size:11.5px;font-weight:bold;color:' + V + ';">' + e(titre) + '</div>' + (s ? '<div style="font-size:10.5px;color:' + D + ';">' + e(s.nom) + (s.qualite ? ', ' + e(s.qualite) : '') + '<br>Signé le ' + e(dateFr(s.le)) + ' à ' + e(String(s.le || '').slice(11, 16)) + ' (heure GMT), ' + (s.presence ? 'en présence de ' + e(s.temoin || 'un membre du bureau') : 'confirmé par code personnel') + '</div><img src="' + s.img + '" style="width:200px;height:78px;">' : '<div style="height:90px;"></div>') + '</td>'; };
+    var t1 = m.sig1 || (f.modele === 'adhesion' ? 'Le membre' : 'Le demandeur');
+    var cases = f.modele === 'attestation' ? [sig(m.contre, f.contre)] : m.contre || m.second ? [sig(t1, f.signature), sig(m.contre, f.contre)] : [sig(t1, f.signature)];
+    h += '<table width="100%" style="border-collapse:separate;border-spacing:0;margin-top:16px;"><tr>' + cases.join('') + '</tr></table>';
+    h += '<div style="margin-top:14px;padding:8px 10px;border:1px dashed #8a978d;font-size:10px;color:' + D + ';">Code d’authenticité : <b style="font-family:Courier New,monospace;letter-spacing:1px;color:' + V + ';">' + e(f.code || '') + '</b> · document signé électroniquement dans l’application Adya du groupe ; toute modification invalide ce code.</div>';
+    return h + '</div>';
+  }
+  return { M: M, controler: controler, ficheHTML: ficheHTML, valeur: valeur, AUTRE: AUTRE };
+}
+
+/* ---- Fiches : signature, contreseing, attestation, PDF ---- */
+function bureauFiches_(cfg, id) {
+  return cfg.admins.indexOf(id) >= 0 || estTres_(cfg, id) || ((cfg.postes || []).some(function (p) { return p.type === 'president' && (p.titulaires || []).some(function (t) { return t.membre === id && !t.au; }); }));
+}
+function qualite_(cfg, id) {
+  if (cfg.admins.indexOf(id) >= 0) return 'administrateur';
+  if (estTres_(cfg, id)) return titreTresorerie_(cfg, false).replace(/^(la|le) /, '');
+  const p = (cfg.postes || []).filter(function (p) { return (p.titulaires || []).some(function (t) { return t.membre === id && !t.au; }); })[0];
+  return p ? p.titre.toLowerCase() : 'membre';
+}
+/** Qui voit une fiche : le membre concerné, le bureau, tous pour les convocations et les procès-verbaux validés, l'entrant d'une passation, le mandataire d'un pouvoir. */
+function voitFiche_(cfg, moi, membre, f) {
+  if (membre === moi || f.par === moi || bureauFiches_(cfg, moi)) return true;
+  if (f.modele === 'convocation' || (f.modele === 'pv' && f.etat === 'validee')) return true;
+  const v = f.valeurs || {};
+  return (f.modele === 'passation' && v.entrant === moi) || (f.modele === 'pouvoir' && v.mandataire === moi);
+}
+function resumeFiche_(f) {
+  return { modele: f.modele, par: f.par || null, numero: f.numero, etat: f.etat, creeLe: f.creeLe, valeurs: f.valeurs, decision: f.decision || null, code: f.code,
+    signeLe: f.signature ? f.signature.le : null, contre: f.contre ? { nom: f.contre.nom, qualite: f.contre.qualite, le: f.contre.le } : null, pdf: !!f.pdf };
+}
+/** Vérifie le code personnel avant une signature (mêmes limites d'essais que la connexion). */
+function confirmerCode_(id, code) {
+  const cache = CacheService.getScriptCache(), k = 'echecs:' + id, n = Number(cache.get(k) || 0);
+  if (n >= 5) throw refus_('Trop d’essais. Réessayez dans 15 minutes.');
+  if (hacher_(String(code || '').trim()) !== PropertiesService.getScriptProperties().getProperty('code:' + id)) { cache.put(k, String(n + 1), 900); throw refus_('Code personnel incorrect : la signature n’a pas été enregistrée.'); }
+  cache.remove(k);
+}
+function signatureImg_(img) {
+  img = String(img || '');
+  if (img.indexOf('data:image/jpeg;base64,') !== 0 || img.length > 24000 || img.length < 600) throw refus_('Signature absente ou illisible : signez dans le cadre.');
+  return img;
+}
+function codeFiche_(f) {
+  const texte = JSON.stringify([f.modele, f.membre, f.numero, f.valeurs, f.decision || null, f.signature ? f.signature.le : '', f.contre ? f.contre.le : '']);
+  const h = Utilities.computeHmacSha256Signature(texte, cleRecus_()).map(function (x) { return ('0' + ((x + 256) % 256).toString(16)).slice(-2); }).join('').toUpperCase();
+  return h.slice(0, 4) + '-' + h.slice(4, 8) + '-' + h.slice(8, 12);
+}
+function numeroFiche_(docs, modele) {
+  const MF = modelesFiches(), an = aujourdhui_().slice(0, 4);
+  const n = Object.keys(docs).filter(function (k) { return /^fiches\/[^/]+\/items\//.test(k) && docs[k].data.modele === modele && String(docs[k].data.numero || '').indexOf('-' + an + '-') > 0; }).length + 1;
+  return MF.M[modele].prefixe + '-' + an + '-' + ('000' + n).slice(-4);
+}
+/** Le membre remplit et signe sa fiche (adhésion, demande d'aide, demande de prêt). */
+function apiSignerFiche(jeton, modele, valeurs, img, code, extra) {
+  const moi = session_(jeton);
+  exigerActif_();
+  const MF = modelesFiches(), m = MF.M[modele];
+  if (!m || modele === 'attestation') throw refus_('Fiche inconnue.');
+  const ctl = MF.controler(modele, valeurs || {}, false);
+  if (ctl.erreur) throw refus_(ctl.erreur);
+  img = signatureImg_(img);
+  extra = extra || {};
+  let img2 = null;
+  if (m.presence) { img2 = signatureImg_(extra.img2); if (!txt_(extra.nom, 80)) throw refus_('Indiquez le nom de la personne qui signe le solde de tout compte.'); }
+  confirmerCode_(moi, code);
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  let f;
+  try {
+    const docs = lireDocs_(), cfg = docs['config/app'].data, v = ctl.valeurs;
+    const aUnPoste = (cfg.postes || []).some(function (p) { return (p.titulaires || []).some(function (t) { return t.membre === moi && !t.au; }); });
+    if (m.auteur === 'bureau' && !bureauFiches_(cfg, moi) && !(modele === 'passation' && aUnPoste) && !(modele === 'pv' && aUnPoste)) throw refus_('Réservé au bureau.');
+    ['mandataire', 'entrant', 'membre'].forEach(function (k) { if (v[k] && !cfg.membres[v[k]]) throw refus_('Membre inconnu.'); });
+    if ((v.mandataire || v.entrant) === moi) throw refus_('Choisissez une autre personne que vous-même.');
+    if (v.presents) v.presents = v.presents.filter(function (x) { return cfg.membres[x]; });
+    let titulaire = moi;
+    const S = etat_(docs, CONFIG.ADMIN), MC = moteurCalcul(), c = MC.contexte(S), t = aujourdhui_();
+    if (modele === 'adhesion') {
+      const deja = Object.keys(docs).some(function (k) { return k.indexOf('fiches/' + moi + '/items/') === 0 && docs[k].data.modele === 'adhesion'; });
+      v.type = deja || cfg.campagneAdhesion ? 'mise à jour d’une adhésion existante' : 'nouvelle adhésion';
+    }
+    if (modele === 'depart') {
+      titulaire = v.membre;
+      const D = v.dateDepart <= t ? v.dateDepart : t;
+      let tot = 0; cfg.ordre.forEach(function (id) { tot += MC.cumul(c.L, id, D, c.P); });
+      const cu = MC.cumul(c.L, v.membre, D, c.P), arr = MC.arrieres(c.L, v.membre, D, c.P), ad = MC.adhesionDue(c.L, v.membre, c.P) || 0;
+      const F = function (n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); };
+      v.verse = F(cu); v.part = tot > 0 ? (Math.round(cu / tot * 10000) / 100).toString().replace('.', ',') + ' %' : '—'; v.du = F((arr ? arr.total : 0) + ad);
+    }
+    if (modele === 'passation') {
+      const arrs = cfg.ordre.filter(function (id) { return !cfg.membres[id].sortie; }).map(function (id) { return MC.arrieres(c.L, id, t, c.P); }).filter(function (a) { return a && a.total > 0; });
+      v.retards = arrs.length ? arrs.length + ' membre(s), ' + String(arrs.reduce(function (s2, a) { return s2 + a.total; }, 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' FCFA' : 'aucun';
+      const bl = Object.keys(docs).filter(function (k) { return /^tresorerie\/[^/]+\/bilans\//.test(k); }).map(function (k) { return docs[k].data.cle || k.split('/')[3]; }).sort();
+      v.bilan = bl.length ? bl[bl.length - 1] : 'aucun';
+    }
+    const id = Utilities.getUuid().replace(/-/g, '').slice(0, 16), le = new Date().toISOString();
+    f = { modele: modele, membre: titulaire, par: moi, numero: numeroFiche_(docs, modele), valeurs: v, etat: m.final || 'signee', creeLe: le };
+    if (m.presence) {
+      f.signature = { nom: txt_(extra.nom, 80), qualite: txt_(extra.qualite, 60) || (extra.nom === cfg.membres[v.membre].nom ? 'membre' : 'ayant droit'), img: img2, le: le, presence: true, temoin: cfg.membres[moi].nom };
+      f.contre = { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: le };
+    } else f.signature = { nom: cfg.membres[moi].nom, qualite: m.auteur === 'bureau' ? qualite_(cfg, moi) : 'membre', img: img, le: le };
+    f.code = codeFiche_(f);
+    poserDoc_(docs, 'fiches/' + titulaire + '/items/' + id, f, titulaire);
+    if (modele === 'convocation') {
+      appliquer_(docs, moi, 'contenus/' + moi + '/items/ag' + id.slice(0, 10), 'set', { type: 'evenement', titre: 'Assemblée générale ' + v.nature.toLowerCase(), date: v.date, heure: v.heure, lieu: v.lieu || (v.lienEnLigne ? 'En ligne' : ''), description: 'Ordre du jour : ' + v.ordre.split(/\n+/).map(function (x) { return x.trim(); }).filter(Boolean).join(' · ') + '.' + (v.lienEnLigne ? ' Lien : ' + v.lienEnLigne : '') + ' Convocation ' + f.numero + ' dans Mon espace › Documents du groupe.' });
+    }
+    journal_(moi, 'Fiche signée', m.titre + ' ' + f.numero);
+    SpreadsheetApp.flush();
+  } finally { lock.releaseLock(); }
+  try {
+    const cfg2 = lireDocs_()['config/app'].data;
+    if (modele === 'aide' || modele === 'pret') notifier_('appels', 'Nouvelle demande : ' + m.titre, 'Une demande vient d’être signée dans Adya. Elle attend la décision du bureau.\n' + lienApp_(), cfg2.admins);
+    if (modele === 'convocation') notifier_('agenda', 'Convocation : assemblée générale du ' + f.valeurs.date.split('-').reverse().join('/'), 'Le bureau vous convoque à l’assemblée générale ' + f.valeurs.nature.toLowerCase() + ' du ' + f.valeurs.date.split('-').reverse().join('/') + ' à ' + f.valeurs.heure + (f.valeurs.lieu ? ', ' + f.valeurs.lieu : '') + '.\n\nOrdre du jour :\n' + f.valeurs.ordre + '\n\nEn cas d’empêchement, donnez pouvoir à un autre membre dans Adya (Mon espace › Mes fiches).\n' + lienApp_());
+    if (modele === 'passation') notifier_('appels', 'Passation de service à contresigner', 'Une passation de service vous attend dans Adya (Mon espace › Mes fiches).\n' + lienApp_(), [f.valeurs.entrant]);
+  } catch (e) { Logger.log(e); }
+  return apiEtat(jeton);
+}
+/** Le bureau contresigne (adhésion) ou décide (aide, prêt). */
+function apiContresignerFiche(jeton, cle, img, code, decision) {
+  const moi = session_(jeton);
+  exigerActif_();
+  const MF = modelesFiches();
+  const m = String(cle || '').match(/^(m\d+)~(\w{8,40})$/);
+  if (!m) throw refus_('Fiche introuvable.');
+  img = signatureImg_(img);
+  const effets2 = [];
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    const docs = lireDocs_(), cfg = docs['config/app'].data, chemin = 'fiches/' + m[1] + '/items/' + m[2];
+    const d = docs[chemin]; if (!d) throw refus_('Fiche introuvable.');
+    const f = d.data, mo = MF.M[f.modele];
+    if (f.contre) throw refus_('Cette fiche est déjà contresignée.');
+    if (mo.final) throw refus_('Cette fiche ne demande pas de seconde signature.');
+    if (mo.second === 'entrant') { if ((f.valeurs || {}).entrant !== moi) throw refus_('Seul le responsable entrant peut contresigner cette passation.'); }
+    else {
+      if (!bureauFiches_(cfg, moi) && !(f.modele === 'pv' && (cfg.postes || []).some(function (p) { return (p.titulaires || []).some(function (t) { return t.membre === moi && !t.au; }); }))) throw refus_('Réservé à l’administrateur, à la trésorerie et au président.');
+      if (f.par === moi && f.modele === 'pv') throw refus_('Le secrétaire de séance doit être une autre personne que le président de séance.');
+      if (f.membre === moi && cfg.admins.length + tresActifs_(cfg).length > 1) throw refus_('Une autre personne du bureau doit contresigner votre propre fiche.');
+    }
+    let dec = null;
+    if (MF.M[f.modele].decision) { const c = MF.controler(f.modele, decision || {}, true); if (c.erreur) throw refus_(c.erreur); dec = c.valeurs; }
+    confirmerCode_(moi, code);
+    f.contre = { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: new Date().toISOString() };
+    if (dec) f.decision = dec;
+    f.etat = dec ? (/accord/.test(dec.choix) ? 'accordee' : /refus/.test(dec.choix) ? 'refusee' : 'ajournee') : 'validee';
+    if (f.modele === 'pv') effets2.push(function () { notifier_('nouv', 'Procès-verbal de l’assemblée générale', 'Le procès-verbal de l’assemblée générale du ' + String(f.valeurs.date).split('-').reverse().join('/') + ' est disponible dans Adya (Mon espace › Documents du groupe).\n' + lienApp_()); });
+    f.code = codeFiche_(f); f.pdf = null;
+    poserDoc_(docs, chemin, f, f.membre);
+    journal_(moi, 'Fiche contresignée', MF.M[f.modele].titre + ' ' + f.numero + (dec ? ' · ' + dec.choix : ''));
+    SpreadsheetApp.flush();
+  } finally { lock.releaseLock(); }
+  effets2.forEach(function (fn) { try { fn(); } catch (e) { Logger.log(e); } });
+  return apiEtat(jeton);
+}
+/** Attestation de membre à jour, établie et signée par le bureau à partir des registres. */
+function apiAttestation(jeton, membre, img, code) {
+  const moi = session_(jeton);
+  exigerActif_();
+  img = signatureImg_(img);
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    const docs = lireDocs_(), cfg = docs['config/app'].data;
+    if (!bureauFiches_(cfg, moi)) throw refus_('Réservé à l’administrateur, à la trésorerie et au président.');
+    if (!cfg.membres[membre] || cfg.membres[membre].sortie) throw refus_('Membre inconnu.');
+    const S = etat_(docs, CONFIG.ADMIN), MC = moteurCalcul(), c = MC.contexte(S), t = aujourdhui_();
+    if (!c.P.debut) throw refus_('Le suivi des cotisations n’a pas encore commencé : aucune attestation ne peut être établie.');
+    const arr = MC.arrieres(c.L, membre, t, c.P);
+    if (arr && arr.mois && arr.mois.length) throw refus_(cfg.membres[membre].nom + ' n’est pas à jour : ' + arr.mois.length + ' mois à régulariser.');
+    const du = MC.adhesionDue(c.L, membre, c.P);
+    const echu = +t.slice(8, 10) > c.P.jour ? t.slice(0, 7) : MC.monthAdd(t.slice(0, 7), -1);
+    const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+    confirmerCode_(moi, code);
+    const id = Utilities.getUuid().replace(/-/g, '').slice(0, 16), le = new Date().toISOString();
+    const f = { modele: 'attestation', membre: membre, numero: numeroFiche_(docs, 'attestation'), etat: 'delivree', creeLe: le,
+      valeurs: { date: t, jusqua: MOIS[+echu.slice(5, 7) - 1] + ' ' + echu.slice(0, 4), depuis: cfg.membres[membre].entree ? cfg.membres[membre].entree + '-01' : '', adhesion: !(du > 0) },
+      contre: { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: le } };
+    f.code = codeFiche_(f);
+    poserDoc_(docs, 'fiches/' + membre + '/items/' + id, f, membre);
+    journal_(moi, 'Attestation délivrée', cfg.membres[membre].nom + ' ' + f.numero);
+    SpreadsheetApp.flush();
+  } finally { lock.releaseLock(); }
+  return apiEtat(jeton);
+}
+/** PDF d'une fiche : le membre concerné et le bureau. Gardé dans le Drive du groupe. */
+function apiFichePDF(jeton, cle) {
+  const moi = session_(jeton);
+  const m = String(cle || '').match(/^(m\d+)~(\w{8,40})$/);
+  if (!m) throw refus_('Fiche introuvable.');
+  const docs = lireDocs_(), cfg = docs['config/app'].data, chemin = 'fiches/' + m[1] + '/items/' + m[2], d = docs[chemin];
+  if (!d) throw refus_('Fiche introuvable.');
+  if (!voitFiche_(cfg, moi, m[1], d.data)) throw refus_('Cette fiche ne vous concerne pas.');
+  const f = d.data, MF = modelesFiches(), nom = MF.M[f.modele].titre + ' ' + f.numero + (MF.M[f.modele].public ? '' : ' – ' + cfg.membres[f.membre].nom) + '.pdf';
+  if (f.pdf && f.pdf.code === f.code) { try { return { nom: nom, b64: Utilities.base64Encode(DriveApp.getFileById(f.pdf.fichier).getBlob().getBytes()) }; } catch (e) {} }
+  const G = groupe_();
+  const noms = {}; cfg.ordre.forEach(function (id) { noms[id] = cfg.membres[id].nom; });
+  const html = '<html><head><meta charset="utf-8"></head><body style="margin:20px 0;background:#ffffff;">' + MF.ficheHTML(Object.assign({ nomMembre: cfg.membres[f.membre].nom }, f), { nom: G.nomOfficiel || G.nom, noms: noms }) + '</body></html>';
+  const blob = Utilities.newBlob(html, 'text/html', 'fiche.html').getAs('application/pdf').setName(nom);
+  try {
+    const fic = dossier_('DOSSIER_FICHES', CONFIG.NOM_DOSSIER_FICHES).createFile(blob);
+    const lock = LockService.getScriptLock(); lock.waitLock(20000);
+    try { const d2 = lireDocs_(); const x = d2[chemin]; if (x) { x.data.pdf = { fichier: fic.getId(), code: f.code }; poserDoc_(d2, chemin, x.data, f.membre); } } finally { lock.releaseLock(); }
+  } catch (e) { Logger.log(e); }
+  return { nom: nom, b64: Utilities.base64Encode(blob.getBytes()) };
+}
+
+/* ---- Arbre généalogique ---- */
+function personneArbre_(d, cfg) {
+  const dateSouple = function (x) { return /^\d{4}(-\d{2}(-\d{2})?)?$/.test(String(x || '')) ? String(x) : ''; };
+  return { nom: txt_(d.nom, 100), label: txt_(d.label, 60), sexe: d.sexe === 'f' ? 'f' : d.sexe === 'h' ? 'h' : '',
+    naissance: dateSouple(d.naissance), deces: dateSouple(d.deces), parent: /^p[\w-]{1,30}$/.test(String(d.parent || '')) ? d.parent : null,
+    conjoints: (Array.isArray(d.conjoints) ? d.conjoints : String(d.conjoints || '').split(/\s*\/\s*/)).map(function (x) { return txt_(x, 80); }).filter(Boolean).slice(0, 6),
+    membre: cfg.membres[d.membre] ? d.membre : null, verifier: !!d.verifier, note: txt_(d.note, 600), ordre: Math.max(0, Math.min(9999, Math.round(+d.ordre || 0))) };
+}
+/** Remplace tout l'arbre par une liste importée (format du modèle « Arbre généalogique » : id, name, label, parent, sp, f, note, notes, order). */
+function apiImporterArbre(jeton, liste) {
+  const moi = session_(jeton);
+  exigerActif_();
+  if (!aOption_('arbre')) throw refus_('L’option Arbre généalogique n’est pas activée pour ce groupe : contactez SoluGis.');
+  if (!Array.isArray(liste) || !liste.length || liste.length > 2000) throw refus_('Fichier d’arbre vide ou trop grand.');
+  const lock = LockService.getScriptLock(); lock.waitLock(30000);
+  try {
+    const docs = lireDocs_(), cfg = docs['config/app'].data;
+    if (cfg.admins.indexOf(moi) < 0 && !aDroit_(cfg, moi, 'arbre')) throw refus_('Réservé à l’administrateur et aux postes chargés de l’arbre.');
+    const ids = {}; liste.forEach(function (x, i) { const id = String(x.id || ('p' + i)).replace(/[^\w-]/g, '').slice(0, 30); ids[x.id] = /^p/.test(id) ? id : 'p' + id; });
+    Object.keys(docs).filter(function (k) { return /^arbre\/p/.test(k); }).forEach(function (k) { retirerDoc_(docs, k); });
+    liste.forEach(function (x) {
+      const v = personneArbre_({ nom: x.name || x.nom, label: x.label, sexe: x.sexe, naissance: x.naissance, deces: x.deces, parent: x.parent ? ids[x.parent] : null,
+        conjoints: x.sp || x.conjoints, verifier: x.f || x.verifier, note: [x.note, x.notes].filter(Boolean).join(' '), ordre: x.order || x.ordre }, cfg);
+      v.majLe = new Date().toISOString(); v.majPar = moi;
+      poserDoc_(docs, 'arbre/' + ids[x.id], v, moi);
+    });
+    journal_(moi, 'Arbre importé', liste.length + ' personnes');
+    SpreadsheetApp.flush();
+  } finally { lock.releaseLock(); }
+  return apiEtat(jeton);
+}
+/** Arbre imprimable en PDF : la descendance par branches, génération par génération. */
+function apiArbrePDF(jeton) {
+  const moi = session_(jeton);
+  const docs = lireDocs_(), G = groupe_();
+  const P = {}; Object.keys(docs).filter(function (k) { return /^arbre\/p/.test(k); }).forEach(function (k) { P[k.slice(6)] = docs[k].data; });
+  const ids = Object.keys(P); if (!ids.length) throw refus_('L’arbre est vide.');
+  const enfants = {}; ids.forEach(function (id) { const p = P[id].parent; if (p) (enfants[p] = enfants[p] || []).push(id); });
+  Object.keys(enfants).forEach(function (k) { enfants[k].sort(function (a, b) { return (P[a].ordre - P[b].ordre) || P[a].nom.localeCompare(P[b].nom); }); });
+  const souche = ids.filter(function (id) { return !P[id].parent; })[0];
+  const e = function (x) { return String(x == null ? '' : x).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  const COUL = ['#0a4a30', '#12603f', '#2d6b4c', '#5e8a6b', '#7fa88a', '#93b39c', '#a8b9ab'];
+  let lignes = '', n = 0;
+  (function marche(id, g) {
+    const p = P[id]; n++;
+    const dates = (p.naissance ? p.naissance.slice(0, 4) : '') + (p.deces ? ' – ' + p.deces.slice(0, 4) : '');
+    lignes += '<tr><td style="padding:3px 0 3px ' + (g - 1) * 18 + 'px;font-size:' + (g <= 2 ? 12 : 10.5) + 'px;border-bottom:1px solid #eef1ec;"><span style="display:inline-block;width:8px;height:8px;border-radius:4px;background:' + COUL[Math.min(g - 1, 6)] + ';margin-right:6px;"></span><b style="color:' + COUL[Math.min(g - 1, 6)] + ';">' + e(p.nom) + '</b>' + (p.label ? ' <i style="color:#55665a;">(' + e(p.label) + ')</i>' : '') + (dates ? ' <span style="color:#55665a;">' + e(dates) + '</span>' : '') + (p.conjoints.length ? ' <span style="color:#9a6514;">∞ ' + e(p.conjoints.join(' / ')) + '</span>' : '') + (p.verifier ? ' <span style="color:#b07a2a;">◆</span>' : '') + '</td><td style="width:44px;text-align:right;font-size:9px;color:#8a978d;border-bottom:1px solid #eef1ec;">Gén. ' + g + '</td></tr>';
+    (enfants[id] || []).forEach(function (k) { marche(k, g + 1); });
+  })(souche, 1);
+  const html = '<html><head><meta charset="utf-8"></head><body style="margin:18px 0;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#16261c;"><div style="width:680px;margin:0 auto;"><div style="font-size:10px;letter-spacing:2px;color:#b07a2a;">PATRIMOINE FAMILIAL</div><div style="font-size:22px;font-weight:bold;color:#0a4a30;">Arbre généalogique · ' + e(G.nomOfficiel || G.nom) + '</div><div style="font-size:10.5px;color:#55665a;margin:4px 0 12px;">' + n + ' personnes · descendance de ' + e(P[souche].nom) + ' · ◆ à vérifier · état au ' + aujourdhui_().split('-').reverse().join('/') + '</div><table width="100%" style="border-collapse:collapse;">' + lignes + '</table></div></body></html>';
+  const nom = 'Arbre généalogique – ' + G.nom + '.pdf';
+  const blob = Utilities.newBlob(html, 'text/html', 'arbre.html').getAs('application/pdf').setName(nom);
+  journal_(moi, 'Arbre téléchargé', n + ' personnes');
+  return { nom: nom, b64: Utilities.base64Encode(blob.getBytes()) };
+}
+
 try { localStorage.removeItem('adya.etat'); } catch (e) {} installer();
 /* Démonstration publique d'Adya : remplit le groupe fictif « Famille Exemple » après installer().
  * Tout passe par les règles du serveur (apiEcrire, apiMembres), puis quelques dates de publication sont
@@ -2562,7 +3191,50 @@ function remplirDemo() {
     if (/^bulletins\//.test(c)) { var b = docs[c].data; b.le = jourDe(t, c.indexOf('v2') > 0 ? -10 : -1) + 'T10:00:00.000Z'; poserDoc_(docs, c, b, c.split('/')[1]); }
   });
   Object.keys(MOCK.props).forEach(function (k) { if (k.indexOf('changer:') === 0) delete MOCK.props[k]; });
+  // Options payantes montrées dans la démonstration, puis bureau, matriarche et arbre fictif.
+  PARAMETRES.LICENCE.OPTIONS = ['videos', 'arbre'];
+  remplirNouveautesDemo_();
   return J;
+}
+
+/* Démonstration SoluGis, version 3 : complète le groupe fictif avec les nouveautés (bureau et postes,
+ * matriarche, arbre généalogique). Appelée par installer() une seule fois (propriété DEMO_V3).
+ * Tout passe par les règles du serveur (appliquer_), au nom de l'administrateur fictif (m4). */
+function remplirNouveautesDemo_() {
+  var y = +aujourdhui_().slice(0, 4), adm = 'm4';
+  var docs = lireDocs_();
+  var ecrire = function (chemin, d) { try { appliquer_(docs, adm, chemin, 'set', d); } catch (e) { Logger.log('[démo v3] ' + chemin + ' : ' + e.message); } };
+
+  // Bureau : postes, anciens présidents, matriarche.
+  var cfg = JSON.parse(JSON.stringify(docs['config/app'].data));
+  cfg.postes = [
+    { id: 'president', titre: 'Président', type: 'president', droits: ['annonces', 'agenda', 'votes'], titulaires: [{ membre: 'm1', nom: '', du: (y - 3) + '-01', au: (y - 1) + '-12', note: 'présidente fondatrice' }, { membre: 'm4', nom: '', du: y + '-01', au: null, note: '' }] },
+    { id: 'vice-president', titre: 'Vice-présidente', type: 'vice-president', droits: ['agenda'], titulaires: [{ membre: 'm3', nom: '', du: y + '-01', au: null, note: '' }] },
+    { id: 'secretaire', titre: 'Secrétaire', type: 'secretaire', droits: ['agenda', 'votes'], titulaires: [{ membre: 'm2', nom: '', du: y + '-01', au: null, note: '' }] },
+    { id: 'communication', titre: 'Chargée de communication', type: 'communication', droits: ['souvenirs', 'annonces', 'arbre'], titulaires: [{ membre: 'm7', nom: '', du: y + '-01', au: null, note: '' }] }
+  ];
+  cfg.aines = { actuel: { nom: 'Mamie Akissi', sexe: 'f', naissance: '1935', deces: null, membre: null, portrait: null, note: 'la mémoire de la famille' }, anciens: [], hommage: 40 };
+  ecrire('config/app', cfg);
+
+  // Arbre fictif : la matriarche, ses quatre enfants, les huit membres et leurs enfants.
+  var noms = ['Awa', 'Koffi', 'Mariam', 'Serge', 'Nadia', 'Paul', 'Inès', 'Hervé'];
+  var ar = function (id, nom, parent, ordre, x) {
+    var d = { nom: nom, label: '', sexe: '', naissance: '', deces: '', parent: parent, conjoints: [], membre: null, verifier: false, note: '', ordre: ordre };
+    Object.keys(x || {}).forEach(function (k) { d[k] = x[k]; });
+    ecrire('arbre/' + id, d);
+  };
+  ar('p0', 'Mamie Akissi', null, 0, { sexe: 'f', naissance: '1935', conjoints: ['Papa Yao, décédé'], note: 'La mémoire de la famille.' });
+  ar('p1', 'Tonton Kouassi', 'p0', 10, { sexe: 'h', naissance: '1956', deces: '2019', conjoints: ['Tantie Rose'] });
+  ar('p2', 'Tantie Adjoua', 'p0', 20, { sexe: 'f', naissance: '1959', conjoints: ['Tonton Michel'] });
+  ar('p3', 'Tonton Konan', 'p0', 30, { sexe: 'h', naissance: '1962' });
+  ar('p4', 'Tantie Amoin', 'p0', 40, { sexe: 'f', naissance: '1966', verifier: true, note: 'Année de naissance à confirmer.' });
+  [['p1', 'm1', 'f'], ['p1', 'm2', 'h'], ['p2', 'm3', 'f'], ['p2', 'm4', 'h'], ['p3', 'm5', 'f'], ['p3', 'm6', 'h'], ['p4', 'm7', 'f'], ['p4', 'm8', 'h']].forEach(function (r, i) {
+    ar('p' + (10 + i), noms[+r[1].slice(1) - 1], r[0], (i % 2 + 1) * 10, { sexe: r[2], naissance: String(1980 + i * 2), membre: r[1] });
+  });
+  [['p10', 'Léa'], ['p10', 'Noah'], ['p11', 'Junior'], ['p12', 'Grâce'], ['p13', 'Ethan'], ['p13', 'Emma'], ['p15', 'Kenzo'], ['p16', 'Maëlys']].forEach(function (r, i) {
+    ar('p' + (30 + i), r[1], r[0], (i + 1) * 10, { naissance: String(2008 + i) });
+  });
+  SpreadsheetApp.flush();
 }
 
 (function () { var J = remplirDemo(), m = /vue=membre/.test(location.search) ? 'm1' : 'm4'; try { localStorage.setItem('adya.jeton', JSON.stringify(J[m])); } catch (e) {} })();
@@ -2671,6 +3343,8 @@ const I = {
   hautparleur: '<path d="M4 9.5v5h4l5 4V5.5l-5 4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/>',
   stop: '<rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/>',
   trombone: '<path d="M20 11.5l-7.8 7.8a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/>',
+  photo: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-7 7"/>',
+  video: '<rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 10l4-2v8l-4-2"/>',
   doc: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   fermer: '<path d="M6 6l12 12M18 6L6 18"/>',
   visage: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 15.5a3.5 3.5 0 0 0 5 0"/>'
@@ -2708,8 +3382,11 @@ function construireCtx(D, me) {
   });
   c.moi = me.uid ? c.uidToM[me.uid] || null : null;
   const tr = cfg.tresoriers || [];
-  c.tresActuel = tr.find(t => !t.au) || null;
-  c.isTres = !!(c.tresActuel && me.uid && c.tresActuel.uid === me.uid);
+  c.tresActifs = tr.filter(t => !t.au);
+  c.tresActuel = c.tresActifs.find(t => me.uid && t.uid === me.uid) || c.tresActifs[0] || null;
+  c.isTres = !!(me.uid && c.tresActifs.some(t => t.uid === me.uid));
+  c.droits = new Set();
+  (cfg.postes || []).forEach(p => { if (c.moi && (p.titulaires || []).some(t => t.membre === c.moi && !t.au)) (p.droits || []).forEach(d => c.droits.add(d)); });
   c.tresUids = Array.from(new Set(tr.map(t => t.uid).filter(Boolean)));
   c.isOwner = !!me.isOwner;
   // Paramètres financiers
@@ -2735,6 +3412,11 @@ function construireCtx(D, me) {
       c.people.push({ key: 'e:' + m.uid + ':' + cid, type: 'enfant', parent: m.id, cid, nom: e.prenom, photo: e.photo || null, presentation: e.presentation || '', anniv: e.anniv && e.anniv.j ? e.anniv : null, couleur: COULEURS[(m.i + 3) % 8], gerant: m.uid, _p: e._p });
     });
   });
+  c.options = new Set(D.options || []);
+  c.arbre = D.arbre || {}; c.propositions = Object.keys(D.propositions || {}).map(k => Object.assign({ _key: k, _auteur: k.split('~')[0], _id: k.split('~')[1] }, D.propositions[k]));
+  c.fiches = Object.keys(D.fiches || {}).map(k => Object.assign({ _key: k, _membre: k.split('~')[0] }, D.fiches[k])).sort((a, b) => String(b.creeLe).localeCompare(String(a.creeLe)));
+  c.bureau = !!(c.isOwner || c.isTres || (c.moi && (cfg.postes || []).some(p => p.type === 'president' && (p.titulaires || []).some(t => t.membre === c.moi && !t.au))));
+  c.souvenirs = Object.keys(D.souvenirs || {}).map(k => Object.assign({ _key: k, _auteur: k.split('~')[0], _id: k.split('~')[1] }, D.souvenirs[k]));
   c.bilansTous = bilansTous(c);
   return c;
 }
@@ -2999,8 +3681,12 @@ function render() {
   let html;
   try { html = bandeauLicence() + vuePrincipale(); } catch (e) { console.error(e); html = '<div class="erreur-boot">Erreur d’affichage : ' + esc(e && e.message) + '</div>'; }
   if (!ui.demo && ui.depuisCache && S.charge && SESSION.jeton) html = '<p class="info-cache" role="status">' + (ui.cacheEchec ? 'Pas de connexion pour l’instant. Dernières données : ' + esc(fmtHeureCache(ui.depuisCache)) + '. <button class="btn lien petit" data-a="actualiser">Réessayer</button>' : (ui.reprise ? 'Connexion lente, nouvel essai en cours…' : 'Mise à jour en cours…') + ' (dernières données : ' + esc(fmtHeureCache(ui.depuisCache)) + ')') + '</p>' + html;
+  const sigData = {}; document.querySelectorAll('.sig-pad').forEach(c => { if (SIGS[c.id]) sigData[c.id] = c.toDataURL(); });
   vue.innerHTML = html;
   restaurer(vue, etat);
+  Object.keys(SIGS).forEach(id => { const cv = document.getElementById(id); if (!cv) { delete SIGS[id]; return; } if (sigData[id]) { const im = new Image(); im.onload = () => cv.getContext('2d').drawImage(im, 0, 0); im.src = sigData[id]; } });
+  sigTrace = !!SIGS.sig;
+  vue.querySelectorAll('select[data-a-change="fi-autre"]').forEach(el => CH['fi-autre'](el));
   majBandeau();
   majLecteur();
   synchroPorte();
@@ -3008,6 +3694,11 @@ function render() {
   appliquerCadrage();
   const fv = document.getElementById('f-vers'); if (fv) apercuAffectation(fv);
   const vs = document.getElementById('vo-sans'); if (vs) { const d = document.getElementById('vo-dates'); if (d) d.hidden = vs.checked; }
+  // Arbre : la vue se place sur la personne choisie (ou la souche), sauf si l'on vient de faire défiler soi-même
+  const cadreAr = vue.querySelector('.ar-cadre'); if (cadreAr && ui.arCentre && !ui.arDefile) { cadreAr.scrollLeft = ui.arCentre.x; cadreAr.scrollTop = ui.arCentre.y; }
+  ui.arDefile = false;
+  // Sur téléphone, la barre d'onglets défile : l'onglet choisi reste visible
+  vue.querySelectorAll('.onglets').forEach(o => { const a = o.querySelector('[aria-selected="true"]'); if (a && o.scrollWidth > o.clientWidth + 2) o.scrollLeft = Math.max(0, a.offsetLeft - o.offsetLeft - 24); });
 }
 function fmtHeureCache(ms) {
   const d = new Date(ms), h = ('0' + d.getHours()).slice(-2) + ' h ' + ('0' + d.getMinutes()).slice(-2);
@@ -3058,6 +3749,8 @@ function vAccueil() {
   const total = aDonnees ? F(c.tous.reduce((s, m) => s + cumul(c.L, m.id, t), 0)) : '—';
   const sol = aDonnees ? F(solde(c.L, t)) : '—';
   let h = '<section class="accueil-tete"><div class="bonjour"><span class="surtitre">' + esc(jourSemaine(t)) + ' ' + esc(fmtDate(t)) + '</span><h1>' + (moi ? 'Bonjour ' + esc(moi.nomAff) : 'Bienvenue') + '</h1><p class="doux">L’espace ' + esc(G().du) + ' pour rester unis, solidaires et organisés, et aller plus loin ensemble.</p></div><img class="hero-logo" src="' + LOGO_HERO + '" alt="Logo de ' + esc(nomGroupe()) + '"></section>';
+  h += ligneAine(c);
+  if (!ui.demo && c.moi && c.cfg.campagneAdhesion && !c.fiches.some(f => f._membre === c.moi && f.modele === 'adhesion')) h += '<a class="carte rappel-fiche" href="#espace" data-a="fiche-ouvrir" data-v="adhesion">' + ico('doc') + '<span><strong>Votre fiche d’adhésion</strong><span class="doux petit">Le bureau numérise les adhésions : vérifiez et signez votre fiche, en deux minutes.</span></span><span class="aine-lien">›</span></a>';
   fetes.forEach(p => { h += carteFete(p); });
   h += '<section class="reperes" aria-label="Repères">' +
     '<div class="repere"><span>Membres</span><strong class="num">' + c.membres.length + '</strong></div>' +
@@ -3093,11 +3786,13 @@ function blocEvt(e) {
 }
 
 /* ---------- Vie de famille ---------- */
+/** Droit donné par un poste du bureau (Administration › Bureau et postes). */
+function aDroit(d) { return !!(C && C.droits && C.droits.has(d)); }
 function peutPublier(type) {
   if (ui.demo) return true;
   if (!C.moi || lectureSeule()) return false;
   const d = (C.cfg.droits || {})[type] || 'tous';
-  return d === 'tous' || C.isOwner;
+  return d === 'tous' || C.isOwner || aDroit({ nouvelles: 'annonces', agenda: 'agenda', votes: 'votes', projets: 'votes' }[type]);
 }
 function onglets(nom, actif, liste, compte) { ui.ongletVu = ui.ongletVu || {}; ui.ongletVu[nom + ':' + actif] = 1; return '<div class="onglets" role="tablist">' + liste.map(o => { const n = compte && !ui.ongletVu[nom + ':' + o[0]] ? compte[o[0]] || 0 : 0; return '<button role="tab" aria-selected="' + (o[0] === actif) + '" data-a="onglet" data-g="' + nom + '" data-v="' + o[0] + '">' + esc(o[1]) + (n ? '<span class="onglet-pt" aria-label="' + n + ' nouveauté' + (n > 1 ? 's' : '') + '">' + n + '</span>' : '') + '</button>'; }).join('') + '</div>'; }
 /** Nouveautés de la visite en cours, par onglet (comptées depuis la visite précédente). */
@@ -3113,10 +3808,435 @@ function compteVisite(r) {
 }
 function vFamille() {
   if (ui.personne) return vPersonne();
-  let h = '<div class="titre-page"><span class="surtitre">' + esc(G().vie) + '</span><h1>Ensemble, même à distance</h1><p>Les nouvelles, l’agenda partagé et les anniversaires de tous, petits et grands.</p></div>';
-  h += onglets('famTab', ui.famTab, [['nouvelles', 'Nouvelles'], ['agenda', 'Agenda'], ['anniversaires', 'Anniversaires']], compteVisite('famille'));
-  if (ui.famTab === 'agenda') h += vAgenda(); else if (ui.famTab === 'anniversaires') h += vAnnivs(); else h += vNouvelles();
+  let h = '<div class="titre-page"><span class="surtitre">' + esc(G().vie) + '</span><h1>Ensemble, même à distance</h1><p>Les nouvelles, l’agenda partagé, les anniversaires, les souvenirs et le bureau ' + esc(G().du) + '.</p></div>';
+  h += onglets('famTab', ui.famTab, [['nouvelles', 'Nouvelles'], ['agenda', 'Agenda'], ['anniversaires', 'Anniversaires'], ['souvenirs', 'Souvenirs']].concat(Object.keys(C.arbre || {}).length || aOption('arbre') ? [['arbre', 'Arbre']] : []).concat([['bureau', 'Le bureau']]), compteVisite('famille'));
+  if (ui.famTab === 'agenda') h += vAgenda(); else if (ui.famTab === 'anniversaires') h += vAnnivs(); else if (ui.famTab === 'souvenirs') h += vSouvenirs(C); else if (ui.famTab === 'arbre') h += vArbre(C); else if (ui.famTab === 'bureau') h += vBureau(C); else h += vNouvelles();
   return h;
+}
+
+/* ============ Bureau et postes, patriarche ou matriarche ============ */
+const TYPES_POSTE = { president: 'Président(e)', 'vice-president': 'Vice-président(e)', secretaire: 'Secrétaire général(e)', communication: 'Chargé(e) de communication', commissaire: 'Commissaire aux comptes', autre: 'Autre poste' };
+const DROITS_POSTE = { souvenirs: 'Gérer les souvenirs (albums, vidéos, archives)', annonces: 'Publier les annonces officielles', agenda: 'Gérer l’agenda', votes: 'Ouvrir des votes et suivre les projets', situations: 'Consulter toutes les situations, sans rien saisir', arbre: 'Tenir l’arbre généalogique' };
+const MODELES_BUREAU = {
+  famille: [['president', 'Président'], ['vice-president', 'Vice-président'], ['communication', 'Chargé de communication']],
+  association: [['president', 'Président'], ['vice-president', 'Vice-président'], ['secretaire', 'Secrétaire général'], ['commissaire', 'Commissaire aux comptes'], ['communication', 'Chargé de communication']],
+  mutuelle: [['president', 'Président'], ['vice-president', 'Vice-président'], ['secretaire', 'Secrétaire général'], ['commissaire', 'Commissaire aux comptes'], ['communication', 'Chargé de communication']]
+};
+const DROITS_PAR_TYPE = { president: ['annonces', 'agenda', 'votes'], 'vice-president': ['annonces'], secretaire: ['agenda', 'annonces'], communication: ['souvenirs', 'annonces'], commissaire: ['situations'], autre: [] };
+const dateSouple = d => !d ? '' : d.length === 4 ? d : d.length === 7 ? fmtMois(d) : fmtDate(d);
+function ageDe(naissance, ref) {
+  if (!naissance) return null;
+  const r = ref || today(); let a = +r.slice(0, 4) - +naissance.slice(0, 4);
+  if (naissance.length === 10 && r.slice(5, 10) < naissance.slice(5, 10)) a--;
+  return a >= 0 && a < 130 ? a : null;
+}
+function titreAine(x, maj) { const t = x && x.sexe === 'f' ? 'matriarche' : 'patriarche'; return maj ? t[0].toUpperCase() + t.slice(1) : t; }
+function photoAine(c, x) { return x.membre && c.byId[x.membre] && c.byId[x.membre].profil ? c.byId[x.membre].profil.photo || null : (x.portrait && (c.D.portraits || {})[x.portrait]) || null; }
+/** Ce que l'accueil montre : l'hommage à un patriarche ou une matriarche disparu(e) pendant la période choisie, sinon la personne en titre. */
+function aineAffiche(c) {
+  const ai = (c.cfg && c.cfg.aines) || {};
+  const h = +ai.hommage || 0;
+  if (h) { const r = (ai.anciens || []).filter(x => x.deces).sort((a, b) => b.deces.localeCompare(a.deces))[0]; if (r && joursEntre(r.deces, c.today) <= h) return { p: r, hommage: true }; }
+  return ai.actuel && !ai.actuel.deces ? { p: ai.actuel, hommage: false } : null;
+}
+function portraitAine(c, x, taille) { return '<span class="portrait' + (taille ? ' ' + taille : '') + '">' + (photoAine(c, x) ? '<img src="' + esc(photoAine(c, x)) + '" alt="">' : esc((x.nom || '?').split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase())) + '</span>'; }
+function ligneAine(c) {
+  const a = aineAffiche(c); if (!a) return '';
+  const x = a.p, age = ageDe(x.naissance);
+  const sur = a.hommage ? 'En mémoire de notre ' + titreAine(x) : 'Notre ' + titreAine(x);
+  const det = a.hommage ? (x.naissance ? x.naissance.slice(0, 4) + ' – ' : '') + x.deces.slice(0, 4) : (age != null ? age + ' ans' : '');
+  return '<a class="aine-ligne carte' + (a.hommage ? ' hommage' : '') + '" href="#famille" data-a="aller" data-v="famille" data-t="bureau">' + portraitAine(c, x) + '<span class="aine-txt"><span class="surtitre">' + esc(sur) + '</span><strong>' + esc(x.nom) + (det ? '<span class="doux">, ' + esc(det) + '</span>' : '') + '</strong></span><span class="aine-lien doux petit"><span>Notre histoire </span>›</span></a>';
+}
+function nomTitulaire(c, t) { return t.membre ? nomMembre(t.membre) : t.nom; }
+function avTitulaire(c, t) { return t.membre ? avMembre(t.membre, 'p') : avatar({ nom: t.nom, photo: null, couleur: '#8a978d' }, 'p'); }
+function vBureau(c) {
+  const ai = (c.cfg.aines) || {}, postes = c.cfg.postes || [];
+  let h = '';
+  const a = aineAffiche(c);
+  const cartesAines = a ? [a] : [];
+  if (a && a.hommage && ai.actuel && !ai.actuel.deces) cartesAines.push({ p: ai.actuel, hommage: false });
+  cartesAines.forEach(a => {
+    const x = a.p, age = ageDe(x.naissance);
+    h += '<article class="carte aine-carte' + (a.hommage ? ' hommage' : '') + '">' + portraitAine(c, x, 'g') + '<div><span class="surtitre">' + esc(a.hommage ? 'En mémoire de notre ' + titreAine(x) : 'Notre ' + titreAine(x)) + '</span><h2>' + esc(x.nom) + '</h2><p class="doux petit">' + esc([x.naissance ? (x.naissance.length === 4 ? 'Né' + (x.sexe === 'f' ? 'e' : '') + ' en ' + x.naissance : 'Né' + (x.sexe === 'f' ? 'e' : '') + ' le ' + fmtDate(x.naissance)) : '', a.hommage ? 'disparu' + (x.sexe === 'f' ? 'e' : '') + ' le ' + fmtDate(x.deces) : age != null ? age + ' ans' : '', x.note].filter(Boolean).join(' · ')) + '</p></div></article>';
+  });
+  const pres = [];
+  postes.filter(p => p.type === 'president').forEach(p => (p.titulaires || []).forEach(t => pres.push(t)));
+  pres.sort((x, y) => (!x.au ? 1 : 0) - (!y.au ? 1 : 0) || String(x.du || '').localeCompare(String(y.du || ''))).reverse();
+  if (pres.length) h += '<h2 class="sous-titre">Nos présidents successifs</h2><ol class="frise">' + pres.map(t => '<li class="' + (t.au ? '' : 'actuel') + '">' + avTitulaire(c, t) + '<div><strong>' + esc(nomTitulaire(c, t)) + '</strong><span class="doux petit">' + esc((t.au ? dateSouple(t.du) + ' – ' + dateSouple(t.au) : 'depuis ' + (dateSouple(t.du) || '…') + ' · en exercice') + (t.note ? ' · ' + t.note : '')) + '</span></div></li>').join('') + '</ol>';
+  const cartes = [];
+  postes.forEach(p => {
+    const act = (p.titulaires || []).filter(t => !t.au);
+    if (!act.length || p.type === 'president' && pres.length) return;
+    cartes.push('<article class="carte poste"><span class="surtitre">' + esc(p.titre) + '</span>' + act.map(t => '<div class="ligne">' + avTitulaire(c, t) + '<strong>' + esc(nomTitulaire(c, t)) + '</strong>' + (t.du ? '<span class="doux petit">depuis ' + esc(dateSouple(t.du)) + '</span>' : '') + '</div>').join('') + '</article>');
+  });
+  if (c.tresActifs.length) {
+    const fem = c.tresActifs.every(t => (t.titre || infosGroupe().tresorier) === 'trésorière');
+    const titre = c.tresActifs.length > 1 ? (fem ? 'Trésorières' : 'Trésorerie') : (fem ? 'Trésorière' : 'Trésorier');
+    cartes.push('<article class="carte poste"><span class="surtitre">' + titre + '</span>' + c.tresActifs.map(t => '<div class="ligne">' + avMembre(t.membre, 'p') + '<strong>' + esc(nomMembre(t.membre)) + '</strong><span class="doux petit">depuis ' + esc(fmtDate(t.du)) + '</span></div>').join('') + '</article>');
+  }
+  if (cartes.length) h += '<h2 class="sous-titre">Le bureau actuel</h2><div class="pile">' + cartes.join('') + '</div>';
+  if ((ai.anciens || []).length) h += '<details class="pli carte" id="d-anciens-aines"><summary>Nos patriarches et matriarches</summary><ul class="liste" style="margin-top:8px">' + ai.anciens.map(x => '<li class="ligne">' + portraitAine(c, x, 'p') + '<div><strong>' + esc(x.nom) + '</strong><div class="doux petit">' + esc(titreAine(x, true) + (x.naissance ? ' · ' + x.naissance.slice(0, 4) : '') + (x.deces ? ' – ' + x.deces.slice(0, 4) : '')) + '</div></div></li>').join('') + '</ul></details>';
+  if (!h) h = '<div class="vide"><strong>Le bureau n’est pas encore présenté.</strong><span>' + (c.isOwner ? 'Créez les postes et désignez le patriarche ou la matriarche dans Mon espace › Administration › Bureau et postes.' : 'L’administrateur le complétera bientôt.') + '</span></div>';
+  return h;
+}
+function vBureauAdmin(c) {
+  const cfg = c.cfg, postes = cfg.postes || [], ai = cfg.aines || {};
+  const optMembres = (sel, vide) => (vide ? '<option value="">' + vide + '</option>' : '') + c.membres.map(m => '<option value="' + m.id + '"' + (m.id === sel ? ' selected' : '') + '>' + esc(m.nomAff) + '</option>').join('');
+  let h = '<div class="carte pile" id="adm-bureau"><div class="section-tete"><h3>Bureau et postes</h3><span class="puce neutre">' + postes.length + ' poste' + (postes.length > 1 ? 's' : '') + '</span></div><p class="petit doux">Créez les postes ' + esc(G().du) + ', nommez une ou plusieurs personnes à chacun et choisissez ce qu’elles peuvent faire. La trésorerie se règle plus bas ; aucun poste ne peut enregistrer de versements.</p>';
+  if (!postes.length) h += '<div class="plat pile"><strong>Partir d’un modèle</strong><div class="ligne" style="gap:8px;flex-wrap:wrap">' + Object.keys(MODELES_BUREAU).map(k => '<button type="button" class="btn second petit" data-a="poste-modele" data-v="' + k + '">' + ({ famille: 'Famille', association: 'Association', mutuelle: 'Mutuelle' }[k]) + '</button>').join('') + '</div><span class="petit doux">Association : président, vice-président, secrétaire général, commissaire aux comptes, chargé de communication.</span></div>';
+  h += '<ul class="liste">' + postes.map(p => {
+    const act = (p.titulaires || []).filter(t => !t.au), anc = (p.titulaires || []).filter(t => t.au);
+    let li = '<li style="flex-direction:column;align-items:stretch;gap:8px"><div class="ligne" style="justify-content:space-between"><div><strong>' + esc(p.titre) + '</strong><div class="doux petit">' + (act.length ? act.map(t => esc(nomTitulaire(c, t))).join(', ') : 'Personne pour l’instant') + (p.droits.length ? ' · ' + p.droits.length + ' droit' + (p.droits.length > 1 ? 's' : '') : '') + (anc.length ? ' · ' + anc.length + ' ancien' + (anc.length > 1 ? 's' : '') : '') + '</div></div><button type="button" class="btn second petit" data-a="poste-edit" data-k="' + esc(p.id) + '">' + (ui.posteEdit === p.id ? 'Fermer' : 'Modifier') + '</button></div>';
+    if (ui.posteEdit === p.id) li += formPoste(c, p, optMembres);
+    return li + '</li>';
+  }).join('') + '</ul>';
+  h += ui.posteEdit === '__nouveau' ? formPoste(c, null, optMembres) : '<div><button type="button" class="btn second petit" data-a="poste-edit" data-k="__nouveau">Ajouter un poste</button></div>';
+  // Patriarche ou matriarche
+  const x = ai.actuel;
+  h += '<form class="form plat" data-f="aine" id="f-aine"><h4>Patriarche ou matriarche</h4><p class="petit doux">La personne la plus âgée ' + esc(G().du) + ', présentée à l’accueil et dans « Le bureau ». Elle n’a pas besoin d’être membre de l’application.</p><div class="champs-2"><label class="champ"><span>Nom</span><input id="ai-nom" name="nom" maxlength="80" value="' + esc(x ? x.nom : '') + '" placeholder="Ex. Mamie Akissi"></label><label class="champ"><span>Sexe</span><select id="ai-sexe" name="sexe"><option value="f"' + (x && x.sexe === 'f' ? ' selected' : '') + '>Femme : matriarche</option><option value="h"' + (x && x.sexe === 'h' ? ' selected' : '') + '>Homme : patriarche</option></select></label></div><div class="champs-2"><label class="champ"><span>Naissance <small>(date, ou année seule)</small></span><input id="ai-naiss" name="naissance" maxlength="10" value="' + esc(x ? x.naissance : '') + '" placeholder="1935 ou 1935-04-12"></label><label class="champ"><span>Membre de l’application <small>(facultatif)</small></span><select id="ai-membre" name="membre">' + optMembres(x && x.membre, 'Non') + '</select></label></div><label class="champ"><span>Quelques mots <small>(facultatif)</small></span><input id="ai-note" name="note" maxlength="160" value="' + esc(x ? x.note : '') + '" placeholder="Ex. la mémoire de la famille"></label>' + (() => { const A = arbreDe(c); if (!A) return ''; const v = A.tous.filter(p => p.naissance && !p.deces).sort((a, b) => a.naissance.localeCompare(b.naissance))[0]; return v ? '<p class="plat petit">D’après l’arbre, la personne vivante la plus âgée est <strong>' + esc(v.nom) + '</strong> (' + (v.sexe === 'h' ? 'né' : v.sexe === 'f' ? 'née' : 'né(e)') + ' en ' + esc(v.naissance.slice(0, 4)) + '). <button type="button" class="btn lien petit" data-a="aine-arbre" data-k="' + esc(v.id) + '">Reprendre</button></p>' : ''; })() + '<label class="champ"><span>Après un décès, hommage à l’accueil pendant</span><select id="ai-hommage" name="hommage">' + [[0, 'Pas d’hommage'], [7, '7 jours'], [40, '40 jours'], [90, '3 mois']].map(([v, t]) => '<option value="' + v + '"' + ((+ai.hommage || 0) === v ? ' selected' : '') + '>' + t + '</option>').join('') + '</select></label>';
+  if (x && !x.membre) h += ui.cadrage && ui.cadrage.cible === 'portrait:' + x.portrait ? vCadrage() : '<div class="ligne">' + portraitAine(c, x) + '<label class="btn second petit" style="cursor:pointer">' + (photoAine(c, x) ? 'Changer la photo' : 'Ajouter une photo') + '<input type="file" accept="image/*" class="sr" data-photo="portrait:' + esc(x.portrait || '') + '"></label></div>';
+  h += '<div class="ligne" style="gap:8px"><button class="btn second">' + (x ? 'Enregistrer' : 'Désigner') + '</button></div></form>';
+  if (x) h += '<form class="form plat" data-f="aine-deces" id="f-aine-deces"><p class="petit"><strong>En cas de décès</strong> : indiquez la date. ' + esc(x.nom) + ' rejoindra « Nos patriarches et matriarches », puis vous désignerez la personne qui prend la suite.</p><div class="champs-2"><label class="champ"><span>Date du décès</span><input type="date" id="ai-deces" name="deces" max="' + c.today + '" required></label></div><div>' + confirmBar('aine-deces', 'Enregistrer le décès', 'aine-deces', '') + '</div></form>';
+  return h + '</div>';
+}
+function formPoste(c, p, optMembres) {
+  const id = p ? p.id : '__nouveau', dr = p ? p.droits : [];
+  let h = '<form class="form plat" data-f="poste" id="f-poste-' + esc(id) + '" data-k="' + esc(id) + '"><div class="champs-2"><label class="champ"><span>Intitulé</span><input id="po-titre-' + esc(id) + '" name="titre" required maxlength="60" value="' + esc(p ? p.titre : '') + '" placeholder="Ex. Chargée de communication"></label><label class="champ"><span>Nature du poste</span><select id="po-type-' + esc(id) + '" name="type">' + Object.keys(TYPES_POSTE).map(k => '<option value="' + k + '"' + ((p ? p.type : 'autre') === k ? ' selected' : '') + '>' + TYPES_POSTE[k] + '</option>').join('') + '</select></label></div>';
+  h += '<div class="champ"><span>Ce que ce poste peut faire</span>' + Object.keys(DROITS_POSTE).map(k => '<label class="case"><input type="checkbox" name="d-' + k + '"' + (dr.indexOf(k) >= 0 ? ' checked' : '') + '>' + DROITS_POSTE[k] + '</label>').join('') + '</div>';
+  if (p) {
+    h += '<div class="champ"><span>Titulaires</span><div class="ligne" style="gap:6px;flex-wrap:wrap">' + ((p.titulaires || []).filter(t => !t.au).map((t, i) => '<span class="puce">' + esc(nomTitulaire(c, t)) + (t.du ? ' · depuis ' + esc(dateSouple(t.du)) : '') + ' <button type="button" class="btn lien petit" data-a="titulaire-fin" data-k="' + esc(p.id) + '" data-v="' + (p.titulaires.indexOf(t)) + '" aria-label="Mettre fin au mandat">×</button></span>').join('') || '<span class="doux petit">Personne pour l’instant.</span>') + '</div></div>';
+    h += '<div class="champs-2"><label class="champ"><span>Nommer un membre</span><select name="nouveau" id="po-nouv-' + esc(id) + '">' + optMembres('', '—') + '</select></label><label class="champ"><span>Depuis le</span><input type="date" name="du" id="po-du-' + esc(id) + '" value="' + c.today + '"></label></div>';
+    if (p.type === 'president') h += '<details class="pli"><summary>Ajouter un ancien président, même hors de l’application</summary><div class="champs-2" style="margin-top:8px"><label class="champ"><span>Nom</span><input name="ancNom" id="po-anc-' + esc(id) + '" maxlength="80"></label><label class="champ"><span>Membre de l’application ?</span><select name="ancMembre">' + optMembres('', 'Non') + '</select></label></div><div class="champs-2"><label class="champ"><span>De <small>(année ou date)</small></span><input name="ancDu" maxlength="10" placeholder="2018"></label><label class="champ"><span>À</span><input name="ancAu" maxlength="10" placeholder="2021"></label></div><label class="champ"><span>Mention <small>(facultatif)</small></span><input name="ancNote" maxlength="120" placeholder="Ex. président fondateur"></label></details>';
+  }
+  h += '<div class="ligne" style="gap:8px"><button class="btn">Enregistrer</button>' + (p ? confirmBar('poste-suppr:' + p.id, 'Retirer ce poste', 'poste-suppr', 'data-k="' + esc(p.id) + '"') : '') + '</div></form>';
+  return h;
+}
+
+/* ============ Souvenirs : albums photo (vidéos en option) et archives ============ */
+function peutSouvenirs() { return ui.demo || (!!C.moi && !lectureSeule() && (C.isOwner || aDroit('souvenirs'))); }
+function aOption(k) { return ui.demo || !!(C && C.options && C.options.has(k)); }
+const TONS_DEMO = [['#f2c48d', '#d98c4a'], ['#9fcfb0', '#3f8a5c'], ['#c9c1e3', '#7c6db3'], ['#b9d3e8', '#5b86a8'], ['#e8c1c1', '#b56b6b'], ['#d8e3b8', '#8aa356']];
+function anneeDe(x) { return String(x.date || x.creeLe || '').slice(0, 4) || '—'; }
+function dateSouvenir(d) { return !d ? '' : d.length === 4 ? d : d.length === 7 ? fmtMois(d) : fmtDate(d); }
+function idVideo(url) { const m = String(url).match(/(?:youtu\.be\/|v=|shorts\/)([\w-]{6,20})/); return m ? m[1] : null; }
+/** Vignette d'une photo d'album : la miniature se charge à l'affichage, la photo entière au toucher. */
+function vignette(p, i) {
+  if (ui.demo) { const t = TONS_DEMO[i % TONS_DEMO.length]; return '<span class="alb-ph" style="background:linear-gradient(135deg,' + t[0] + ',' + t[1] + ')"></span>'; }
+  const k = p.par + '/' + (p.mini || p.id), plein = p.par + '/' + p.id;
+  return '<button type="button" class="alb-ph" data-a="souv-photo" data-k="' + esc(plein) + '" data-n="' + esc(p.nom) + '" aria-label="Agrandir la photo"' + (PJC[k] ? '' : ' data-pjc="' + esc(k) + '"') + '>' + (PJC[k] ? '<img src="' + PJC[k] + '" alt="" loading="lazy">' : '') + '</button>';
+}
+function couverture(a, i) {
+  const p = (a.photos || [])[a.couverture || 0];
+  if (p && !ui.demo) { const k = p.par + '/' + (p.mini || p.id); return '<span class="alb-couv"' + (PJC[k] ? '' : ' data-pjc="' + esc(k) + '"') + '>' + (PJC[k] ? '<img src="' + PJC[k] + '" alt="">' : ico('photo')) + '</span>'; }
+  const t = TONS_DEMO[i % TONS_DEMO.length];
+  return '<span class="alb-couv" style="background:linear-gradient(135deg,' + t[0] + ',' + t[1] + ')">' + ico('photo') + '</span>';
+}
+/** Photos déjà partagées dans les nouvelles : elles apparaissent aussi dans les Souvenirs. */
+function photosDesNouvelles(c) {
+  const l = [];
+  c.items.filter(i => i.type === 'nouvelle').forEach(n => (n.pj || []).filter(x => x.type === 'image/jpeg').forEach(x => l.push({ par: n._auteur, id: x.id, nom: x.nom, date: n.creeLe, titre: n.titre })));
+  return l.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+function vSouvenirs(c) {
+  if (ui.album) { const a = c.souvenirs.find(x => x._key === ui.album); if (a) return vAlbum(c, a); if (ui.album === '__nouvelles') return vAlbumNouvelles(c); ui.album = null; }
+  const albums = c.souvenirs.filter(x => x.type === 'album').sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const archives = c.souvenirs.filter(x => x.type === 'archive').sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const pn = photosDesNouvelles(c);
+  let h = '<div class="carte souv-intro"><strong>Les moments ' + esc(G().du) + ', gardés pour les générations futures.</strong><span class="doux petit">Albums photo' + (aOption('videos') ? ' et vidéo' : '') + ' par événement, et documents d’archives. Tout est rangé dans le compte Google ' + esc(G().du) + '.</span></div>';
+  if (peutSouvenirs()) {
+    h += '<div class="ligne souv-actions"><button type="button" class="btn petit" data-a="souv-form" data-v="album">' + ico('plus') + 'Créer un album</button><button type="button" class="btn second petit" data-a="souv-form" data-v="archive">' + ico('doc') + 'Ajouter une archive</button></div>';
+    if (ui.souvForm === 'album') h += '<form class="form carte" data-f="album" id="f-album"><h3>Nouvel album</h3><div class="champs-2"><label class="champ"><span>Nom de l’album</span><input id="al-titre" name="titre" required maxlength="120" placeholder="Ex. Mariage de Mariam"></label><label class="champ"><span>Date de l’événement</span><input type="date" id="al-date" name="date" value="' + c.today + '"></label></div><label class="champ"><span>Quelques mots <small>(facultatif)</small></span><textarea id="al-desc" name="description" maxlength="1000"></textarea></label><p class="petit doux">Vous ajouterez les photos juste après, dans l’album.</p><div class="ligne"><button class="btn">Créer l’album</button><button type="button" class="btn lien" data-a="souv-form" data-v="">Annuler</button></div></form>';
+    if (ui.souvForm === 'archive') h += '<form class="form carte" data-f="archive" id="f-archive"><h3>Nouvelle archive</h3><div class="champs-2"><label class="champ"><span>Titre</span><input id="ar-titre" name="titre" required maxlength="140" placeholder="Ex. Statuts signés"></label><label class="champ"><span>Date ou année</span><input id="ar-date" name="date" maxlength="10" placeholder="2024 ou 2024-01-15"></label></div><label class="champ"><span>Note <small>(facultatif)</small></span><input id="ar-note" name="note" maxlength="600"></label>' + zonePJ('arc', 1) + '<div class="ligne"><button class="btn">Ajouter aux archives</button><button type="button" class="btn lien" data-a="souv-form" data-v="">Annuler</button></div></form>';
+  }
+  const annees = Array.from(new Set(albums.map(anneeDe)));
+  if (!albums.length && !archives.length && !pn.length) return h + '<div class="vide"><strong>Aucun souvenir pour l’instant.</strong><span>' + (peutSouvenirs() ? 'Créez un premier album : un mariage, une fête, une assemblée…' : 'Les albums et les archives apparaîtront ici.') + '</span></div>';
+  annees.forEach(an => {
+    h += '<h2 class="sous-titre">' + esc(an) + '</h2><div class="albums">' + albums.filter(a => anneeDe(a) === an).map((a, i) => '<button type="button" class="album" data-a="album-ouvrir" data-k="' + esc(a._key) + '">' + couverture(a, i) + '<strong>' + esc(a.titre) + '</strong><span class="doux petit">' + esc([dateSouvenir(a.date), (a.photos || []).length + ' photo' + ((a.photos || []).length > 1 ? 's' : ''), (a.videos || []).length ? (a.videos.length + ' vidéo' + (a.videos.length > 1 ? 's' : '')) : ''].filter(Boolean).join(' · ')) + '</span></button>').join('') + '</div>';
+  });
+  if (pn.length) h += '<h2 class="sous-titre">Partagées dans les nouvelles</h2><div class="albums"><button type="button" class="album" data-a="album-ouvrir" data-k="__nouvelles">' + couverture({ photos: [pn[0]] }, 3) + '<strong>Photos des nouvelles</strong><span class="doux petit">' + pn.length + ' photo' + (pn.length > 1 ? 's' : '') + '</span></button></div>';
+  if (archives.length) h += '<h2 class="sous-titre">Archives</h2><div class="carte"><ul class="liste archives">' + archives.map(x => '<li>' + (ui.demo ? '<span class="arch-ico">' + ico('doc') + '</span><span class="arch-txt"><strong>' + esc(x.titre) + '</strong>' : '<button type="button" class="arch" data-a="' + (x.fichier.type === 'image/jpeg' ? 'souv-photo' : 'pj-doc') + '" data-k="' + esc(x.fichier.par + '/' + x.fichier.id) + '" data-n="' + esc(x.fichier.nom) + '" data-t="' + esc(x.fichier.type) + '"><span class="arch-ico">' + ico('doc') + '</span><span class="arch-txt"><strong>' + esc(x.titre) + '</strong>') + '<span class="doux petit">' + esc([dateSouvenir(x.date), x.fichier ? (x.fichier.type === 'image/jpeg' ? 'Image' : genreDoc(x.fichier.type)) : '', 'déposé par ' + nomMembre(x.creePar), x.note].filter(Boolean).join(' · ')) + '</span></span>' + (ui.demo ? '' : '</button>') + (peutSouvenirs() && !ui.demo ? confirmBar('souv-suppr:' + x._key, 'Retirer', 'souv-suppr', 'data-k="' + esc(x._key) + '"') : '') + '</li>').join('') + '</ul></div>';
+  return h;
+}
+function vAlbum(c, a) {
+  const g = peutSouvenirs();
+  let h = '<button type="button" class="btn lien petit" data-a="album-fermer">' + ico('retour') + ' Tous les souvenirs</button>';
+  h += '<div class="titre-page" style="margin-top:6px"><span class="surtitre">Souvenirs · ' + esc(anneeDe(a)) + '</span><h1>' + esc(a.titre) + '</h1><p>' + esc([dateSouvenir(a.date), a.description].filter(Boolean).join(' · ')) + '</p></div>';
+  if (g) {
+    h += '<form class="form carte" data-f="album-photos" id="f-alb-ph" data-k="' + esc(a._key) + '"><strong>Ajouter des photos</strong>' + zonePJ('alb', 40) + '<div><button class="btn petit">Ajouter à l’album</button></div></form>';
+    if (aOption('videos')) h += '<details class="pli carte" id="d-alb-vid"><summary>' + ico('video') + ' Ajouter une vidéo</summary><form class="form" data-f="album-video" id="f-alb-vid" data-k="' + esc(a._key) + '" style="margin-top:10px"><label class="champ"><span>Lien de la vidéo</span><input id="av-url" name="url" type="url" required placeholder="https://youtu.be/…"></label><div class="champs-2"><label class="champ"><span>Titre</span><input id="av-titre" name="titre" maxlength="120" placeholder="Ex. Le discours des mariés"></label><label class="champ"><span>Date du moment</span><input type="date" id="av-date" name="date" value="' + esc(a.date && a.date.length === 10 ? a.date : c.today) + '"></label></div><div class="plat petit"><strong>Comment faire, en trois gestes</strong><ol class="aide-video"><li>Dans YouTube, touchez « Créer », choisissez la vidéo, puis la visibilité « Non répertoriée ».</li><li>Touchez « Partager », puis « Copier le lien ».</li><li>Collez le lien ici et touchez « Ajouter à l’album ».</li></ol>Un lien Google Drive fonctionne aussi.</div><div><button class="btn">Ajouter à l’album</button></div></form></details>';
+    else if (C.isOwner) h += '<p class="plat petit">' + ico('video') + ' <strong>Option Vidéos</strong> : pour ajouter des vidéos à vos albums, contactez SoluGis.</p>';
+  }
+  if ((a.videos || []).length) h += '<div class="pile">' + a.videos.map((v, i) => {
+    const yt = idVideo(v.url), joue = ui.videoJoue === a._key + ':' + i;
+    const lecteur = joue && yt ? '<div class="video-cadre"><iframe src="https://www.youtube-nocookie.com/embed/' + esc(yt) + '?autoplay=1&rel=0" title="' + esc(v.titre) + '" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe></div>' : '';
+    return '<article class="carte video">' + (lecteur || '<button type="button" class="vid-vignette" data-a="video-jouer" data-k="' + esc(a._key + ':' + i) + '" data-u="' + esc(v.url) + '"' + (yt ? ' style="background-image:url(https://i.ytimg.com/vi/' + esc(yt) + '/mqdefault.jpg)"' : '') + ' aria-label="Lire la vidéo ' + esc(v.titre) + '"><span class="vid-play">' + ico('lecture') + '</span></button>') + '<div class="ligne" style="justify-content:space-between;gap:8px"><div><strong>' + esc(v.titre) + '</strong><div class="doux petit">' + esc([v.date ? fmtDate(v.date) : '', yt ? 'YouTube' : 'Google Drive'].filter(Boolean).join(' · ')) + ' · <a href="' + esc(v.url) + '" target="_blank" rel="noopener">Ouvrir</a></div></div>' + (g && !ui.demo ? confirmBar('vid-suppr:' + a._key + ':' + i, 'Retirer', 'vid-suppr', 'data-k="' + esc(a._key) + '" data-v="' + i + '"') : '') + '</div></article>';
+  }).join('') + '</div>';
+  const ph = a.photos || [];
+  h += '<h2 class="sous-titre">' + ph.length + ' photo' + (ph.length > 1 ? 's' : '') + '</h2>';
+  h += ph.length ? '<div class="alb-grille">' + ph.map((p, i) => '<div class="alb-case">' + vignette(p, i) + (g && !ui.demo && ui.albumEdit ? '<button type="button" class="alb-retirer" data-a="souv-photo-retirer" data-k="' + esc(a._key) + '" data-v="' + i + '" aria-label="Retirer cette photo">' + ico('fermer') + '</button>' : '') + '</div>').join('') + '</div>' : '<p class="doux petit">Aucune photo pour l’instant.</p>';
+  h += '<p class="doux petit" style="margin-top:10px">Les photos se chargent à l’ouverture de l’album ; touchez-en une pour l’agrandir et l’enregistrer.</p>';
+  if (g && !ui.demo) h += '<div class="ligne" style="gap:8px;margin-top:8px">' + (ph.length ? '<button type="button" class="btn second petit" data-a="album-edit">' + (ui.albumEdit ? 'Terminer' : 'Retirer des photos') + '</button>' : '') + confirmBar('souv-suppr:' + a._key, 'Supprimer l’album', 'souv-suppr', 'data-k="' + esc(a._key) + '"') + '</div>';
+  return h;
+}
+function vAlbumNouvelles(c) {
+  const pn = photosDesNouvelles(c);
+  return '<button type="button" class="btn lien petit" data-a="album-fermer">' + ico('retour') + ' Tous les souvenirs</button><div class="titre-page" style="margin-top:6px"><span class="surtitre">Souvenirs</span><h1>Photos des nouvelles</h1><p>Les photos partagées dans le fil des nouvelles, de la plus récente à la plus ancienne.</p></div><div class="alb-grille">' + pn.map((p, i) => '<div class="alb-case">' + vignette(p, i) + '</div>').join('') + '</div>';
+}
+/** Écrit un album après une modification (photos ajoutées ou retirées, vidéo ajoutée). */
+async function majAlbum(cle, fn, msg) {
+  const a = C.souvenirs.find(x => x._key === cle); if (!a) return false;
+  const d = clone({ type: 'album', titre: a.titre, date: a.date, description: a.description, photos: a.photos || [], videos: a.videos || [], couverture: a.couverture || 0 });
+  fn(d);
+  return ecrire('souvenirs/' + a._auteur + '/items/' + a._id, 'set', d, msg);
+}
+
+/* ============ Fiches numériques : remplir, signer au doigt, confirmer par le code ============ */
+const MF = modelesFiches();
+const NOMS = () => { const o = {}; (C.tous || []).forEach(m => { o[m.id] = m.nomAff; }); return o; };
+const ETATS_FICHE = { signee: ['En attente du bureau', 'or'], validee: ['Validée', 'ok'], accordee: ['Accordée', 'ok'], refusee: ['Refusée', 'danger'], ajournee: ['Ajournée', 'neutre'], delivree: ['Délivrée', 'ok'] };
+function puceFiche(f) { const e = ETATS_FICHE[f.etat] || ['—', 'neutre']; return '<span class="puce ' + e[1] + '">' + e[0] + '</span>'; }
+function prefill(c, modele) {
+  if (modele !== 'adhesion') return {};
+  const m = c.byId[c.moi] || {}, p = m.profil || {}, morceaux = String(m.nom || '').split(/\s+/);
+  const an = p.anniv && p.anniv.a ? p.anniv.a + '-' + String(p.anniv.m).padStart(2, '0') + '-' + String(p.anniv.j).padStart(2, '0') : '';
+  const ancienne = c.fiches.find(f => f._membre === c.moi && f.modele === 'adhesion');
+  return ancienne ? Object.assign({}, ancienne.valeurs) : { nom: morceaux[0] || '', prenoms: morceaux.slice(1).join(' '), naissance: an, email: m.email || '', depuis: m.entree ? m.entree + '-01' : '' };
+}
+function champFiche(c, k, v, pre) {
+  const id = 'fi-' + c[0], req = c[3] ? ' required' : '', lab = esc(c[1]) + (c[3] || c[2] === 'engagement' ? '' : ' <small>(facultatif)</small>');
+  if (c[2] === 'engagement') return '<label class="case"><input type="checkbox" name="' + c[0] + '"' + (v ? ' checked' : '') + '>' + esc(c[1]) + '</label>';
+  if (c[2] === 'membre') return '<label class="champ"><span>' + lab + '</span><select name="' + c[0] + '" id="' + id + '"' + req + '><option value="">—</option>' + C.membres.filter(m => !(c[0] !== 'membre' && m.id === C.moi)).map(m => '<option value="' + m.id + '"' + (m.id === v ? ' selected' : '') + '>' + esc(m.nomAff) + '</option>').join('') + '</select></label>';
+  if (c[2] === 'membres') return '<div class="champ fi-large"><span>' + lab + '</span><div class="fi-membres">' + C.membres.map(m => '<label class="case"><input type="checkbox" data-multi="' + c[0] + '" value="' + m.id + '"' + ((v || []).indexOf(m.id) >= 0 ? ' checked' : '') + '>' + esc(m.nomAff) + '</label>').join('') + '</div></div>';
+  if (c[2] === 'auto') return '<div class="champ"><span>' + esc(c[1]) + '</span><output class="fi-auto" data-auto="' + c[0] + '">' + esc(v || 'calculé à la signature') + '</output></div>';
+  if (c[2] === 'choix') return '<label class="champ"><span>' + lab + '</span><select name="' + c[0] + '" id="' + id + '"' + req + ' data-a-change="fi-autre"><option value="">—</option>' + c[4].map(o => '<option' + (o === v ? ' selected' : '') + '>' + esc(o) + '</option>').join('') + '</select></label><label class="champ fi-prec"' + (v === MF.AUTRE ? '' : ' hidden') + ' data-pour="' + c[0] + '"><span>À préciser</span><input name="' + c[0] + 'Prec" maxlength="120" value="' + esc((pre || {})[c[0] + 'Prec'] || '') + '"></label>';
+  if (c[2] === 'long') return '<label class="champ"><span>' + lab + '</span><textarea name="' + c[0] + '" id="' + id + '" maxlength="1500"' + req + '>' + esc(v || '') + '</textarea></label>';
+  const type = { date: 'date', heure: 'time', nombre: 'number', tel: 'tel', email: 'email' }[c[2]] || 'text';
+  return '<label class="champ"><span>' + lab + '</span><input type="' + type + '" name="' + c[0] + '" id="' + id + '" value="' + esc(v == null ? '' : v) + '"' + req + (type === 'number' ? ' min="0" inputmode="numeric"' : '') + ' maxlength="160"></label>';
+}
+function padSignature(titre, id, aide) {
+  id = id || 'sig';
+  return '<div class="champ"><span>' + esc(titre) + '</span><div class="sig-zone"><canvas id="' + id + '" class="sig-pad" width="600" height="220" aria-label="Zone de signature : signez avec le doigt"></canvas><button type="button" class="btn lien petit" data-a="sig-effacer" data-k="' + id + '">Effacer</button></div><small class="doux">' + esc(aide || 'Signez avec le doigt dans le cadre.') + '</small></div>';
+}
+function blocConfirmer(libelle) {
+  return '<label class="champ"><span>Mon code personnel, pour confirmer que c’est bien moi</span><input type="password" name="code" inputmode="numeric" autocomplete="current-password" required minlength="6" maxlength="10"></label><div><button class="btn">' + esc(libelle) + '</button> <button type="button" class="btn lien" data-a="fiche-fermer">Annuler</button></div>';
+}
+function formFiche(c, modele) {
+  const m = MF.M[modele], pre = Object.assign(prefill(c, modele), (ui.fiche && ui.fiche.pre) || {});
+  let h = '<form class="form carte fiche-form" data-f="fiche" id="f-fiche" data-v="' + modele + '"><div class="section-tete"><h3>' + esc(m.titre) + '</h3></div>';
+  const AIDES = { adhesion: 'Vérifiez et complétez vos informations, cochez vos engagements, puis signez. Une copie PDF signée est rangée dans les archives ' + G().du + ' ; vous la retrouverez ici.',
+    convocation: 'À la signature, l’assemblée est ajoutée à l’agenda et chaque membre reçoit la convocation. Elle reste téléchargeable dans « Documents du groupe ».',
+    pouvoir: 'Si vous ne pouvez pas assister à l’assemblée générale, désignez le membre qui votera à votre place.',
+    pv: 'Le procès-verbal est signé par vous, président de séance, puis contresigné par le secrétaire de séance. Il devient alors consultable par tous les membres.',
+    depart: 'Les montants versés, la part et les sommes dues sont calculés par Adya à la signature, à la date du départ. La personne qui reçoit le règlement signe sur cet appareil, en votre présence.',
+    passation: 'Vous signez en tant que responsable sortant ; le responsable entrant contresigne ensuite depuis son téléphone. Les retards de cotisation et le dernier bilan sont repris automatiquement.' };
+  if (AIDES[modele]) h += '<p class="petit doux">' + esc(AIDES[modele]) + '</p>';
+  m.sections.forEach((sec, i) => {
+    h += '<fieldset class="fi-sec"><legend>' + (i + 1) + '. ' + esc(sec.titre) + '</legend>';
+    if (sec.table && sec.table[2].length > 3) { const rows = pre[sec.table[0]] || []; for (let r = 0; r < 6; r++) h += '<div class="fi-point"><span class="surtitre">Point ' + (r + 1) + '</span>' + sec.table[2].map(k => k[0] === 'decision' ? '<label class="champ"><span>' + esc(k[1]) + '</span><textarea name="' + sec.table[0] + '.' + r + '.' + k[0] + '" maxlength="400">' + esc((rows[r] || {})[k[0]] || '') + '</textarea></label>' : k[0] === 'point' ? '<label class="champ"><span>' + esc(k[1]) + '</span><input name="' + sec.table[0] + '.' + r + '.point" maxlength="80" value="' + esc((rows[r] || {}).point || '') + '"></label>' : '').join('') + '<div class="champs-3 votes">' + ['pour', 'contre', 'abst'].map(k => '<label class="champ"><span>' + ({ pour: 'Pour', contre: 'Contre', abst: 'Abstentions' }[k]) + '</span><input name="' + sec.table[0] + '.' + r + '.' + k + '" inputmode="numeric" maxlength="4" value="' + esc((rows[r] || {})[k] || '') + '"></label>').join('') + '</div></div>'; }
+    else if (sec.table) { const rows = pre[sec.table[0]] || []; for (let r = 0; r < sec.table[1]; r++) h += '<div class="champs-3">' + sec.table[2].map(k => '<label class="champ"><span>' + esc(k[1]) + '</span><input name="' + sec.table[0] + '.' + r + '.' + k[0] + '" maxlength="80" value="' + esc((rows[r] || {})[k[0]] || '') + '"' + (k[0] === 'part' ? ' inputmode="numeric"' : '') + '></label>').join('') + '</div>'; if (sec.note) h += '<p class="petit doux">' + esc(sec.note) + '</p>'; }
+    else h += '<div class="champs-2">' + sec.champs.filter(x => x[2] !== 'engagement').map(x => champFiche(x, 0, pre[x[0]], pre)).join('') + '</div>' + sec.champs.filter(x => x[2] === 'engagement').map(x => champFiche(x, 0, pre[x[0]], pre)).join('');
+    h += '</fieldset>';
+  });
+  if (m.presence) h += '<fieldset class="fi-sec"><legend>Signature du membre ou de l’ayant droit</legend><div class="champs-2"><label class="champ"><span>Nom de la personne qui signe</span><input name="__nom" required maxlength="80"></label><label class="champ"><span>Qualité</span><select name="__qualite"><option>membre</option><option>ayant droit</option></select></label></div>' + padSignature('Sa signature', 'sig2', 'La personne signe avec le doigt, sur cet appareil.') + '</fieldset>';
+  return h + padSignature(m.auteur === 'bureau' ? (m.presence ? 'Ma signature, pour le bureau' : m.sig1 || 'Ma signature') : modele === 'adhesion' ? 'Ma signature' : m.sig1 || 'Signature du demandeur', 'sig') + blocConfirmer(modele === 'convocation' ? 'Signer et convoquer' : 'Signer et envoyer') + '</form>';
+}
+function vMesFiches(c) {
+  const mes = c.fiches.filter(f => f._membre === c.moi && !MF.M[f.modele].public && !MF.M[f.modele].auteur);
+  if (ui.fiche && ui.fiche.modele && !ui.fiche.cle && !MF.M[ui.fiche.modele].auteur) return '<section class="section" id="mes-fiches">' + formFiche(c, ui.fiche.modele) + '</section>';
+  if (ui.fiche && ui.fiche.cle) { const f = c.fiches.find(x => x._key === ui.fiche.cle); if (f && MF.M[f.modele].second === 'entrant') return '<div id="mes-fiches">' + formExamen(c, f) + '</div>'; }
+  const aSigner = c.fiches.filter(f => f.modele === 'passation' && f.etat === 'signee' && (f.valeurs || {}).entrant === c.moi);
+  const convoc = c.fiches.filter(f => f.modele === 'convocation' && (f.valeurs || {}).date >= c.today).sort((a, b) => a.valeurs.date.localeCompare(b.valeurs.date))[0];
+  const docsGroupe = c.fiches.filter(f => MF.M[f.modele].public && (f.modele === 'convocation' || f.etat === 'validee'));
+  const mesDocs = c.fiches.filter(f => (f.modele === 'passation' && ((f.valeurs || {}).entrant === c.moi || f.par === c.moi)) || (f.modele === 'depart' && f._membre === c.moi));
+  const adh = mes.find(f => f.modele === 'adhesion');
+  let h = '<section class="section carte" id="mes-fiches"><div class="section-tete"><h2>Mes fiches</h2></div>';
+  h += '<div class="ligne" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn ' + (adh ? 'second ' : '') + 'petit" data-a="fiche-ouvrir" data-v="adhesion">' + (adh ? 'Mettre à jour ma fiche d’adhésion' : 'Remplir ma fiche d’adhésion') + '</button><button type="button" class="btn second petit" data-a="fiche-ouvrir" data-v="aide">Demander une aide de solidarité</button><button type="button" class="btn second petit" data-a="fiche-ouvrir" data-v="pret">Demander un prêt</button>' + (convoc ? '<button type="button" class="btn second petit" data-a="fiche-ouvrir" data-v="pouvoir" data-d="' + esc(convoc.valeurs.date) + '">Donner pouvoir pour l’AG du ' + esc(fmtDate(convoc.valeurs.date)) + '</button>' : '') + '</div>';
+  if (aSigner.length) h += '<div class="plat pile"><strong>À contresigner</strong>' + aSigner.map(f => '<div class="ligne" style="justify-content:space-between;gap:8px"><span>Passation de service : ' + esc(f.valeurs.poste) + ', par ' + esc(nomMembre(f.par)) + '</span><button type="button" class="btn petit" data-a="fiche-examiner" data-k="' + esc(f._key) + '">Examiner</button></div>').join('') + '</div>';
+  h += mes.length ? '<ul class="liste fiches">' + mes.map(f => '<li><div style="flex:1;min-width:0"><strong>' + esc(MF.M[f.modele].titre) + '</strong><div class="doux petit">' + esc(f.numero) + ' · ' + esc(fmtDate(f.creeLe)) + (f.decision ? ' · ' + esc(f.decision.choix) : '') + '</div></div>' + puceFiche(f) + '<button type="button" class="btn second petit" data-a="fiche-pdf" data-k="' + esc(f._key) + '">' + ico('telecharger') + 'PDF</button></li>').join('') + '</ul>' : '<p class="doux petit">Aucune fiche signée pour l’instant.</p>';
+  const ligneDoc = f => '<li><div style="flex:1;min-width:0"><strong>' + esc(MF.M[f.modele].titre) + '</strong><div class="doux petit">' + esc(f.numero) + ' · ' + esc(f.valeurs && f.valeurs.date ? fmtDate(f.valeurs.date) : fmtDate(f.creeLe)) + '</div></div>' + (f.modele === 'convocation' ? '' : puceFiche(f)) + '<button type="button" class="btn second petit" data-a="fiche-pdf" data-k="' + esc(f._key) + '">' + ico('telecharger') + 'PDF</button></li>';
+  if (mesDocs.length) h += '<h3 class="sous-titre">Autres documents me concernant</h3><ul class="liste fiches">' + mesDocs.map(ligneDoc).join('') + '</ul>';
+  if (docsGroupe.length) h += '<h3 class="sous-titre">Documents du groupe</h3><ul class="liste fiches">' + docsGroupe.map(ligneDoc).join('') + '</ul>';
+  return h + '</section>';
+}
+function resumeValeurs(f) {
+  const m = MF.M[f.modele]; if (f.modele === 'attestation') return '';
+  let h = '<dl class="fi-resume">';
+  m.sections.forEach(sec => {
+    if (sec.table) { const r = (f.valeurs || {})[sec.table[0]] || []; if (r.length) h += '<dt>' + esc(sec.titre.replace(/ \(.*\)$/, '')) + '</dt><dd>' + r.map(x => sec.table[2].map(k => x[k[0]] ? (k[0] === 'nom' || k[0] === 'point' ? '' : k[1] + ' : ') + x[k[0]] : '').filter(Boolean).map(esc).join(' · ')).join('<br>') + '</dd>'; return; }
+    sec.champs.forEach(x => { const v = (f.valeurs || {})[x[0]]; if (x[2] === 'engagement' || v === '' || v == null || (Array.isArray(v) && !v.length)) return; h += '<dt>' + esc(x[1]) + '</dt><dd style="white-space:pre-line">' + esc(MF.valeur(x, v, NOMS())) + (v === MF.AUTRE ? ' : ' + esc(f.valeurs[x[0] + 'Prec'] || '') : '') + '</dd>'; });
+  });
+  return h + '</dl>';
+}
+function formExamen(c, f) {
+    const m = MF.M[f.modele], soi = f._membre === c.moi && !m.auteur;
+    let h = '<section class="section"><form class="form carte fiche-form" data-f="contre" id="f-contre" data-k="' + esc(f._key) + '"><div class="section-tete"><h3>' + esc(m.titre) + (m.auteur ? '' : ' · ' + esc(nomMembre(f._membre))) + '</h3>' + puceFiche(f) + '</div><p class="petit doux">' + esc(f.numero) + ', signé' + (f.modele === 'pv' || f.modele === 'pouvoir' ? '' : 'e') + ' le ' + esc(fmtDate(f.signeLe)) + (f.par ? ' par ' + esc(nomMembre(f.par)) : '') + '.</p>' + resumeValeurs(f);
+    if (m.decision) h += '<fieldset class="fi-sec"><legend>' + esc(m.decision.titre) + '</legend><div class="champs-2"><label class="champ"><span>Décision</span><select name="choix" required><option value="">—</option>' + m.decision.choix.map(o => '<option>' + esc(o) + '</option>').join('') + '</select></label>' + m.decision.champs.map(x => champFiche(x, 0, '', {})).join('') + '</div></fieldset>';
+    if (soi) h += '<p class="plat petit">C’est votre propre fiche : une autre personne du bureau doit la contresigner, sauf si vous êtes seul(e) au bureau.</p>';
+    return h + padSignature(m.contre && f.modele !== 'adhesion' ? 'Ma signature : ' + m.contre.toLowerCase() : 'Ma signature, pour le bureau') + blocConfirmer(m.decision ? 'Signer la décision' : 'Contresigner') + '</form></section>';
+}
+function vFichesBureau(c) {
+  const att = c.fiches.filter(f => f.etat === 'signee' && f.modele !== 'attestation' && MF.M[f.modele].second !== 'entrant' && !(f.modele === 'pv' && f.par === c.moi));
+  if (ui.fiche && ui.fiche.cle) { const f = c.fiches.find(x => x._key === ui.fiche.cle); if (!f) { ui.fiche = null; return ''; } if (MF.M[f.modele].second !== 'entrant') return formExamen(c, f); }
+  if (ui.fiche && ui.fiche.modele && MF.M[ui.fiche.modele].auteur === 'bureau') return '<section class="section" id="doc-bureau">' + formFiche(c, ui.fiche.modele) + '</section>';
+  if (ui.fiche && ui.fiche.attestation) {
+    return '<section class="section"><form class="form carte fiche-form" data-f="attestation" id="f-attest"><h3>Établir une attestation de membre à jour</h3><p class="petit doux">Adya vérifie dans les registres que le membre est à jour de ses cotisations avant d’établir l’attestation. Elle porte un code d’authenticité.</p><label class="champ"><span>Membre</span><select name="membre" required>' + c.membres.map(m => '<option value="' + m.id + '">' + esc(m.nomAff) + '</option>').join('') + '</select></label>' + padSignature('Ma signature, pour le bureau') + blocConfirmer('Signer l’attestation') + '</form></section>';
+  }
+  const adh = new Set(c.fiches.filter(f => f.modele === 'adhesion').map(f => f._membre)), camp = c.cfg.campagneAdhesion;
+  let h = '<section class="section carte" id="fiches-bureau"><div class="section-tete"><h2>Fiches et attestations</h2><span class="puce' + (att.length ? ' or' : ' neutre') + '">' + att.length + ' en attente</span></div>';
+  h += att.length ? '<ul class="liste fiches">' + att.map(f => '<li><div style="flex:1;min-width:0"><strong>' + esc(MF.M[f.modele].titre) + '</strong><div class="doux petit">' + esc(nomMembre(f._membre)) + ' · ' + esc(f.numero) + ' · ' + esc(fmtDate(f.creeLe)) + '</div></div><button type="button" class="btn petit" data-a="fiche-examiner" data-k="' + esc(f._key) + '">Examiner</button></li>').join('') + '</ul>' : '<p class="doux petit">Aucune fiche n’attend de signature du bureau.</p>';
+  h += '<div class="plat pile"><strong>Fiches d’adhésion : ' + adh.size + ' sur ' + c.membres.length + '</strong><div class="barre"><span style="width:' + Math.round(adh.size / Math.max(1, c.membres.length) * 100) + '%"></span></div>' + (c.membres.filter(m => !adh.has(m.id)).length ? '<span class="petit doux">Manquent : ' + c.membres.filter(m => !adh.has(m.id)).map(m => esc(m.nomAff)).join(', ') + '</span>' : '<span class="petit doux">Toutes les adhésions sont numérisées.</span>') + (c.isOwner ? '<div>' + (camp ? '<button type="button" class="btn second petit" data-a="campagne" data-v="">Arrêter le rappel aux membres</button> <span class="petit doux">Rappel affiché depuis le ' + esc(fmtDate(camp)) + '</span>' : '<button type="button" class="btn second petit" data-a="campagne" data-v="1">Demander à chacun de signer sa fiche</button>') + '</div>' : '') + '</div>';
+  h += '<div class="ligne" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn second petit" data-a="fiche-ouvrir" data-v="convocation">Convoquer une assemblée générale</button><button type="button" class="btn second petit" data-a="fiche-ouvrir" data-v="pv">Rédiger un procès-verbal</button><button type="button" class="btn second petit" data-a="attestation-ouvrir">Attestation de membre à jour</button><button type="button" class="btn second petit" data-a="fiche-ouvrir" data-v="depart">Solde de tout compte</button><button type="button" class="btn second petit" data-a="fiche-ouvrir" data-v="passation">Passation de service</button></div>';
+  const traitees = c.fiches.filter(f => f.etat !== 'signee').slice(0, 30);
+  if (traitees.length) h += '<details class="pli" id="d-fiches-trait"><summary>Fiches signées et attestations (' + traitees.length + ')</summary><ul class="liste fiches" style="margin-top:8px">' + traitees.map(f => '<li><div style="flex:1;min-width:0"><strong>' + esc(MF.M[f.modele].titre) + '</strong><div class="doux petit">' + esc(nomMembre(f._membre)) + ' · ' + esc(f.numero) + '</div></div>' + puceFiche(f) + '<button type="button" class="btn second petit" data-a="fiche-pdf" data-k="' + esc(f._key) + '">PDF</button></li>').join('') + '</ul></details>';
+  return h + '</section>';
+}
+/* Signature au doigt */
+let sigTrace = false;
+const SIGS = {};   // cadres signés : identifiant → vrai
+function brancherSignature() {
+  let cv = null, der = null;
+  const pos = (c, e) => { const r = c.getBoundingClientRect(); return { x: (e.clientX - r.left) * c.width / r.width, y: (e.clientY - r.top) * c.height / r.height }; };
+  document.addEventListener('pointerdown', e => { const c = e.target.closest && e.target.closest('.sig-pad'); if (!c) return; e.preventDefault(); cv = c; der = pos(c, e); try { c.setPointerCapture(e.pointerId); } catch (x) {} });
+  document.addEventListener('pointermove', e => { if (!cv) return; const c = document.getElementById(cv.id); if (!c) { cv = null; return; } const p = pos(c, e), g = c.getContext('2d'); g.strokeStyle = '#0d2a5c'; g.lineWidth = 4.2; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath(); g.moveTo(der.x, der.y); g.lineTo(p.x, p.y); g.stroke(); der = p; SIGS[c.id] = true; if (c.id === 'sig') sigTrace = true; e.preventDefault(); });
+  const fin = () => { cv = null; }; document.addEventListener('pointerup', fin); document.addEventListener('pointercancel', fin);
+}
+function imageSignature(id) {
+  id = id || 'sig';
+  const cv = document.getElementById(id); if (!cv || !SIGS[id]) return null;
+  const o = document.createElement('canvas'); o.width = 360; o.height = 132; const g = o.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, o.width, o.height); g.drawImage(cv, 0, 0, o.width, o.height);
+  for (const q of [0.6, 0.45, 0.3]) { const d = o.toDataURL('image/jpeg', q); if (d.length <= 22000) return d; }
+  return null;
+}
+function valeursFiche(form) {
+  const o = {}; const fd = new FormData(form);
+  fd.forEach((v, k) => { if (k === 'code') return; const t = k.split('.'); if (t.length === 3) { o[t[0]] = o[t[0]] || []; (o[t[0]][+t[1]] = o[t[0]][+t[1]] || {})[t[2]] = String(v).trim(); } else o[k] = typeof v === 'string' ? v.trim() : v; });
+  form.querySelectorAll('input[type=checkbox]:not([data-multi])').forEach(x => { o[x.name] = x.checked; });
+  form.querySelectorAll('input[data-multi]').forEach(x => { o[x.dataset.multi] = o[x.dataset.multi] || []; if (x.checked) o[x.dataset.multi].push(x.value); });
+  Object.keys(o).forEach(k => { if (Array.isArray(o[k])) o[k] = o[k].filter(Boolean); });
+  return o;
+}
+async function telechargerFiche(cle) {
+  if (PJV['fiche:' + cle]) return; PJV['fiche:' + cle] = 1; toast('Préparation du PDF…');
+  try {
+    const r = await appel('apiFichePDF', SESSION.jeton, cle);
+    const bin = atob(r.b64); const buf = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+    const blob = new Blob([buf], { type: 'application/pdf' });
+    try { const f = new File([blob], r.nom, { type: 'application/pdf' }); if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: r.nom }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = r.nom; a.target = '_blank'; a.rel = 'noopener'; document.body.appendChild(a); a.click(); setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 60000);
+    toast('PDF prêt.');
+  } catch (e) { if (estSession(e)) finSession(); toast(messageErreur(e)); } finally { delete PJV['fiche:' + cle]; }
+}
+async function envoyerSigne(api, args, msg) {
+  try { appliquerEtat(await appel(api, SESSION.jeton, ...args)); ui.fiche = null; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); toast(msg); planifier(); return true; }
+  catch (e) { if (estSession(e)) finSession(); toast(messageErreur(e)); return false; }
+}
+
+/* ============ Arbre généalogique (option) ============ */
+const AR = { DX: 44, DY: 250 };
+function peutArbre() { return ui.demo || (!!C.moi && !lectureSeule() && aOption('arbre') && (C.isOwner || aDroit('arbre'))); }
+/** Personnes de l'arbre, liées entre elles, avec génération et branche. */
+function arbreDe(c) {
+  const src = c.arbre || {}, P = {};
+  Object.keys(src).forEach(id => { P[id] = Object.assign({ id, kids: [] }, src[id]); });
+  let souche = null;
+  Object.values(P).forEach(p => { if (p.parent && P[p.parent]) P[p.parent].kids.push(p); else if (!souche) souche = p; });
+  if (!souche) return null;
+  const tous = [];
+  (function marche(p, g, br) { p.gen = g; p.branche = g === 2 ? p : br; tous.push(p); p.kids.sort((a, b) => (a.ordre || 0) - (b.ordre || 0) || a.nom.localeCompare(b.nom)); p.desc = 0; p.kids.forEach(k => { marche(k, g + 1, p.branche); p.desc += 1 + k.desc; }); })(souche, 1, null);
+  return { P, souche, tous, gens: Math.max(...tous.map(p => p.gen)) };
+}
+function nomCourt(p) { return p.label && p.gen === 2 ? p.label : p.nom; }
+function datesPers(p) { return (p.naissance ? p.naissance.slice(0, 4) : '') + (p.deces ? ' – ' + p.deces.slice(0, 4) : (p.naissance ? '' : '')); }
+function arbreSVG(A) {
+  AR.DY = innerWidth < 600 ? 230 : 270;
+  const racine = ui.arBranche && A.P[ui.arBranche] ? A.P[ui.arBranche] : A.souche;
+  const ouvert = ui.arOpen || (ui.arOpen = new Set([A.souche.id]));
+  let feuille = 0; const noeuds = [], liens = [];
+  (function lay(p, d) {
+    const vis = ouvert.has(p.id) && p.kids.length;
+    p._x = d * AR.DY + 24;
+    if (vis) { p.kids.forEach(k => lay(k, d + 1)); p._y = (p.kids[0]._y + p.kids[p.kids.length - 1]._y) / 2; p.kids.forEach(k => liens.push([p, k])); }
+    else p._y = feuille++ * AR.DX + 30;
+    noeuds.push(p);
+  })(racine, 0);
+  const W = Math.max(...noeuds.map(p => p._x)) + AR.DY + 40, H = feuille * AR.DX + 40;
+  const k = ui.arZoom || 1;
+  const cible = (ui.arFocus && noeuds.find(p => p.id === ui.arFocus)) || racine;
+  ui.arCentre = { x: Math.max(0, cible._x * k - 40), y: Math.max(0, cible._y * k - 160) };
+  let svg = '<svg class="arbre-svg" viewBox="0 0 ' + W + ' ' + H + '" width="' + Math.round(W * k) + '" height="' + Math.round(H * k) + '" role="img" aria-label="Arbre généalogique">';
+  // le lien part après le nom du parent (largeur estimée), pour ne jamais le barrer
+  const finNom = p => p._x + Math.min(AR.DY - 34, 22 + p.nom.length * (p.gen <= 2 ? 8.4 : 7.1));
+  liens.forEach(([a, b]) => { const x0 = finNom(a), mx = (x0 + b._x) / 2; svg += '<path class="ar-lien" d="M' + x0 + ' ' + a._y + 'C' + mx + ' ' + a._y + ' ' + mx + ' ' + b._y + ' ' + (b._x - 6) + ' ' + b._y + '"/>'; });
+  noeuds.forEach(p => {
+    const ferme = p.kids.length && !ouvert.has(p.id), r = p.kids.length ? (p.gen <= 2 ? 8 : 6.5) : 3.5;
+    const sous = [p.conjoints && p.conjoints.length ? '∞ ' + p.conjoints.join(' / ') : '', ferme ? p.kids.length + (p.kids.length > 1 ? ' enfants ▸' : ' enfant ▸') : ''].filter(Boolean).join('  ·  ');
+    svg += '<g class="ar-n' + (p.id === ui.arSel ? ' sel' : '') + (p.gen <= 2 ? ' tete' : '') + '" transform="translate(' + p._x + ',' + p._y + ')">'
+      + (p.kids.length ? '<circle class="ar-pt' + (ferme ? ' plein' : '') + '" r="' + r + '" data-a="ar-plier" data-k="' + esc(p.id) + '"/><circle class="ar-zone" r="18" data-a="ar-plier" data-k="' + esc(p.id) + '"/>' : '<circle class="ar-pt feuille" r="3.5"/>')
+      + '<text x="14" y="' + (sous ? -1 : 4) + '" class="ar-nom" data-a="ar-voir" data-k="' + esc(p.id) + '">' + esc((() => { const mx = Math.floor((AR.DY - 50) / (p.gen <= 2 ? 8.4 : 7.1)); return p.nom.length > mx ? p.nom.slice(0, mx - 1) + '…' : p.nom; })()) + (p.verifier ? ' ◆' : '') + '</text>'
+      + (sous ? '<text x="14" y="13" class="ar-sous" data-a="ar-voir" data-k="' + esc(p.id) + '">' + esc(sous.length > 46 ? sous.slice(0, 45) + '…' : sous) + '</text>' : '') + '</g>';
+  });
+  return svg + '</svg>';
+}
+function ficheArbre(c, A, p) {
+  const ed = peutArbre() && !ui.demo;
+  let h = '<article class="carte ar-fiche" id="ar-fiche"><div class="ligne" style="justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:nowrap"><div style="flex:1;min-width:0"><span class="surtitre">' + (p.gen === 1 ? 'Souche · génération 1' : 'Génération ' + p.gen + (p.branche ? ' · branche ' + esc(nomCourt(p.branche)) : '')) + '</span><h2 style="margin:2px 0 0">' + esc(p.nom) + '</h2>' + (p.label ? '<div class="doux">« ' + esc(p.label) + ' »</div>' : '') + '</div><button type="button" class="btn lien petit" style="flex:none" data-a="ar-fermer" aria-label="Fermer la fiche">' + ico('fermer') + '</button></div>';
+  if (p.verifier) h += '<span class="puce or">◆ À vérifier</span>';
+  h += '<dl class="fi-resume">';
+  if (p.naissance || p.deces) h += '<dt>Dates</dt><dd>' + esc((p.naissance ? 'né' + (p.sexe === 'f' ? 'e' : '') + ' ' + (p.naissance.length === 4 ? 'en ' + p.naissance : 'le ' + fmtDate(p.naissance)) : '') + (p.deces ? (p.naissance ? ' · ' : '') + 'décédé' + (p.sexe === 'f' ? 'e' : '') + ' ' + (p.deces.length === 4 ? 'en ' + p.deces : 'le ' + fmtDate(p.deces)) : '')) + '</dd>';
+  if (p.conjoints && p.conjoints.length) h += '<dt>Conjoint(s)</dt><dd>' + esc(p.conjoints.join(' / ')) + '</dd>';
+  h += '<dt>Parent</dt><dd>' + (p.parent && A.P[p.parent] ? '<button type="button" class="btn lien petit" data-a="ar-voir" data-k="' + esc(p.parent) + '">' + esc(A.P[p.parent].nom) + '</button>' : '—') + '</dd>';
+  h += '<dt>Descendance</dt><dd>' + (p.kids.length ? p.kids.length + ' enfant' + (p.kids.length > 1 ? 's' : '') + ' · ' + p.desc + ' descendant' + (p.desc > 1 ? 's' : '') : 'aucune enregistrée') + '</dd>';
+  if (p.membre && c.byId[p.membre]) h += '<dt>Dans l’application</dt><dd>' + esc(nomMembre(p.membre)) + '</dd>';
+  h += '</dl>';
+  if (p.kids.length) h += '<div class="ar-enfants">' + p.kids.map(k => '<button type="button" class="puce neutre" data-a="ar-voir" data-k="' + esc(k.id) + '">' + esc(k.nom) + (k.kids.length ? ' · ' + k.kids.length : '') + '</button>').join('') + '</div>';
+  if (p.note) h += '<p class="petit" style="white-space:pre-line"><strong>Note.</strong> ' + esc(p.note) + '</p>';
+  h += '<div class="ligne" style="gap:8px;flex-wrap:wrap">' + (p.kids.length ? '<button type="button" class="btn second petit" data-a="ar-plier" data-k="' + esc(p.id) + '">' + ((ui.arOpen || new Set()).has(p.id) ? 'Replier la descendance' : 'Déplier la descendance') + '</button>' : '');
+  if (ed) h += '<button type="button" class="btn second petit" data-a="ar-edit" data-k="' + esc(p.id) + '">Modifier</button><button type="button" class="btn second petit" data-a="ar-edit" data-k="new:' + esc(p.id) + '">Ajouter un enfant</button>';
+  else if (!ui.demo && c.moi) h += '<button type="button" class="btn second petit" data-a="ar-proposer" data-k="' + esc(p.id) + '">Proposer une correction</button>';
+  h += '</div>';
+  if (ui.arProposer === p.id) h += '<form class="form plat" data-f="ar-proposition" data-k="' + esc(p.id) + '"><label class="champ"><span>Votre correction ou ajout</span><textarea name="texte" required maxlength="600" placeholder="Ex. Le prénom exact est… ; il manque un enfant :…"></textarea></label><div><button class="btn petit">Envoyer aux responsables de l’arbre</button></div></form>';
+  return h + '</article>';
+}
+function formArbre(c, A) {
+  const nouveau = String(ui.arEdit).indexOf('new:') === 0, p = nouveau ? { parent: ui.arEdit.slice(4) || null, conjoints: [] } : A && A.P[ui.arEdit] || {};
+  const opts = A ? A.tous.filter(x => x.id !== ui.arEdit).map(x => '<option value="' + esc(x.id) + '"' + (x.id === p.parent ? ' selected' : '') + '>' + esc('—'.repeat(Math.min(x.gen - 1, 5)) + ' ' + x.nom) + '</option>').join('') : '';
+  return '<form class="form carte" data-f="ar-personne" id="f-ar" data-k="' + esc(ui.arEdit) + '"><h3>' + (nouveau ? 'Ajouter une personne' : 'Modifier ' + esc(p.nom)) + '</h3><div class="champs-2"><label class="champ"><span>Nom et prénoms</span><input name="nom" required maxlength="100" value="' + esc(p.nom || '') + '"></label><label class="champ"><span>Surnom ou nom d’usage <small>(facultatif)</small></span><input name="label" maxlength="60" value="' + esc(p.label || '') + '"></label><label class="champ"><span>Sexe</span><select name="sexe"><option value="">—</option><option value="h"' + (p.sexe === 'h' ? ' selected' : '') + '>Homme</option><option value="f"' + (p.sexe === 'f' ? ' selected' : '') + '>Femme</option></select></label><label class="champ"><span>Parent</span><select name="parent"' + (A ? ' required' : '') + '>' + (A ? '' : '<option value="">Aucun : c’est la souche</option>') + opts + '</select></label><label class="champ"><span>Naissance <small>(année ou date)</small></span><input name="naissance" maxlength="10" placeholder="1935 ou 1935-04-12" value="' + esc(p.naissance || '') + '"></label><label class="champ"><span>Décès <small>(année ou date)</small></span><input name="deces" maxlength="10" value="' + esc(p.deces || '') + '"></label></div><label class="champ"><span>Conjoint(s) <small>(séparés par /)</small></span><input name="conjoints" maxlength="300" value="' + esc((p.conjoints || []).join(' / ')) + '"></label><div class="champs-2"><label class="champ"><span>Membre de l’application <small>(facultatif)</small></span><select name="membre"><option value="">Non</option>' + c.membres.map(m => '<option value="' + m.id + '"' + (m.id === p.membre ? ' selected' : '') + '>' + esc(m.nomAff) + '</option>').join('') + '</select></label><label class="champ"><span>Ordre parmi les frères et sœurs</span><input name="ordre" inputmode="numeric" value="' + esc(p.ordre || '') + '" placeholder="10, 20, 30…"></label></div><label class="case"><input type="checkbox" name="verifier"' + (p.verifier ? ' checked' : '') + '>À vérifier</label><label class="champ"><span>Note <small>(facultatif)</small></span><textarea name="note" maxlength="600">' + esc(p.note || '') + '</textarea></label><div class="ligne" style="gap:8px"><button class="btn">Enregistrer</button><button type="button" class="btn lien" data-a="ar-edit" data-k="">Annuler</button>' + (!nouveau && p.kids && !p.kids.length ? confirmBar('ar-suppr:' + ui.arEdit, 'Retirer de l’arbre', 'ar-suppr', 'data-k="' + esc(ui.arEdit) + '"') : '') + '</div></form>';
+}
+function vArbre(c) {
+  const A = arbreDe(c), ed = peutArbre() && !ui.demo;
+  let h = '';
+  if (ui.arEdit) return formArbre(c, A);
+  if (!A) return '<div class="vide"><strong>L’arbre n’est pas encore commencé.</strong><span>' + (ed ? 'Commencez par la souche (l’ancêtre commun), ou importez un arbre existant.' : 'Les responsables de l’arbre le compléteront bientôt.') + '</span></div>' + (ed ? '<div class="ligne" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn petit" data-a="ar-edit" data-k="new:">Créer la souche</button><label class="btn second petit">Importer un arbre<input type="file" class="sr" accept=".json,.html,.htm" data-a-change="ar-import"></label></div>' : '');
+  const branches = A.souche.kids, verif = A.tous.filter(p => p.verifier).length;
+  h += '<div class="ar-tete"><span class="surtitre">Patrimoine familial</span><p class="doux petit"><strong>' + A.tous.length + '</strong> personnes · <strong>' + A.gens + '</strong> générations · <strong>' + branches.length + '</strong> branches' + (verif ? ' · <strong>' + verif + '</strong> fiches à vérifier' : '') + '</p></div>';
+  h += '<label class="champ"><span class="sr">Rechercher</span><input id="ar-rech" type="search" placeholder="Rechercher un nom ou un conjoint…" value="' + esc(ui.arRech || '') + '"></label>';
+  const vue = ui.arVue || 'arbre';
+  h += '<div class="ligne ar-barre"><div class="seg">' + [['arbre', 'Arbre'], ['liste', 'Liste'], ['gens', 'Générations']].map(([k, t]) => '<button type="button" aria-pressed="' + (vue === k) + '" data-a="ar-vue" data-v="' + k + '">' + t + '</button>').join('') + '</div>' + (vue === 'arbre' ? '<div class="seg">' + [2, 3, 4, 5, 0].map(g => '<button type="button" aria-pressed="' + ((ui.arProf || 2) === g) + '" data-a="ar-prof" data-v="' + g + '">' + (g || 'Tout') + '</button>').join('') + '</div>' : '') + '</div>';
+  if (vue === 'arbre') h += '<div class="ar-branches"><button type="button" class="puce' + (ui.arBranche ? ' neutre' : '') + '" data-a="ar-branche" data-k="">Vue d’ensemble</button>' + branches.map(b => '<button type="button" class="puce' + (ui.arBranche === b.id ? '' : ' neutre') + '" data-a="ar-branche" data-k="' + esc(b.id) + '">' + esc(nomCourt(b)) + '</button>').join('') + '</div>';
+  const q = sansAccent(ui.arRech || '').trim();
+  if (q) {
+    const res = []; A.tous.forEach(p => { if (sansAccent(p.nom + ' ' + (p.label || '')).includes(q)) res.push([p, '']); (p.conjoints || []).forEach(x => { if (sansAccent(x).includes(q)) res.push([p, 'conjoint(e) : ' + x]); }); });
+    h += '<div class="carte"><ul class="liste">' + (res.slice(0, 40).map(([p, info]) => '<li><button type="button" class="ar-ligne" data-a="ar-voir" data-k="' + esc(p.id) + '"><strong>' + esc(p.nom) + '</strong><span class="doux petit">Gén. ' + p.gen + (p.branche ? ' · ' + esc(nomCourt(p.branche)) : '') + (info ? ' · ' + esc(info) : '') + '</span></button></li>').join('') || '<li class="doux">Aucun résultat.</li>') + '</ul></div>';
+  }
+  const p = ui.arSel && A.P[ui.arSel];
+  if (p) h += ficheArbre(c, A, p);
+  if (vue === 'arbre') h += '<div class="ar-cadre">' + arbreSVG(A) + '</div><div class="ligne ar-outils"><span class="doux petit">● descendance repliée · ○ dépliée · ◆ à vérifier</span><span class="ligne" style="gap:6px"><button type="button" class="btn second petit" data-a="ar-zoom" data-v="-1" aria-label="Réduire">−</button><button type="button" class="btn second petit" data-a="ar-zoom" data-v="1" aria-label="Agrandir">+</button></span></div>';
+  else if (vue === 'liste') { const l = A.tous.slice().sort((a, b) => a.nom.localeCompare(b.nom)); h += '<div class="carte"><ul class="liste">' + l.slice(0, ui.arMax || 60).map(p => '<li><button type="button" class="ar-ligne" data-a="ar-voir" data-k="' + esc(p.id) + '"><strong>' + esc(p.nom) + (p.verifier ? ' ◆' : '') + '</strong><span class="doux petit">Gén. ' + p.gen + (p.branche ? ' · ' + esc(nomCourt(p.branche)) : '') + (datesPers(p) ? ' · ' + esc(datesPers(p)) : '') + '</span></button></li>').join('') + '</ul>' + (l.length > (ui.arMax || 60) ? '<button type="button" class="btn second petit" data-a="ar-plus">Afficher plus</button>' : '') + '</div>'; }
+  else { for (let g = 1; g <= A.gens; g++) { const l = A.tous.filter(p => p.gen === g); h += '<details class="pli carte" id="d-gen-' + g + '"><summary>Génération ' + g + ' · ' + l.length + ' personne' + (l.length > 1 ? 's' : '') + '</summary><div class="ar-enfants" style="margin-top:8px">' + l.map(p => '<button type="button" class="puce neutre" data-a="ar-voir" data-k="' + esc(p.id) + '">' + esc(p.nom) + '</button>').join('') + '</div></details>'; } }
+  h += '<div class="ligne" style="gap:8px;flex-wrap:wrap;margin-top:10px">' + (!ui.demo ? '<button type="button" class="btn second petit" data-a="ar-pdf">' + ico('telecharger') + 'Version imprimable (PDF)</button>' : '') + (ed ? '<button type="button" class="btn second petit" data-a="ar-edit" data-k="new:' + esc(A.souche.id) + '">Ajouter une personne</button><label class="btn second petit">Importer un arbre<input type="file" class="sr" accept=".json,.html,.htm" data-a-change="ar-import"></label>' : '') + '</div>';
+  if (ed && c.propositions.length) h += '<section class="carte pile"><h3>Propositions de correction (' + c.propositions.length + ')</h3><ul class="liste">' + c.propositions.map(x => '<li style="flex-direction:column;align-items:stretch;gap:4px"><span class="doux petit">' + esc(nomMembre(x._auteur)) + ' · ' + esc(fmtDate(x.le)) + (x.personne && A.P[x.personne] ? ' · au sujet de <button type="button" class="btn lien petit" data-a="ar-voir" data-k="' + esc(x.personne) + '">' + esc(A.P[x.personne].nom) + '</button>' : '') + '</span><span style="white-space:pre-line">' + esc(x.texte) + '</span><div><button type="button" class="btn second petit" data-a="ar-prop-ok" data-k="' + esc(x._key) + '">Traitée</button></div></li>').join('') + '</ul></section>';
+  h += '<p class="doux petit">' + (aOption('arbre') ? 'Arbre généalogique : option activée pour ' + esc(G().le) + '.' : 'L’option Arbre généalogique n’est plus active : l’arbre reste consultable, mais ne peut plus être modifié.') + '</p>';
+  return h;
+}
+/** Import : fichier JSON (liste de personnes) ou page du modèle « Arbre généalogique » (const DOCS = [...]). */
+async function importerArbre(file) {
+  const t = await file.text(); let l = null;
+  try { l = JSON.parse(t); } catch (e) { const m = t.match(/const DOCS\s*=\s*(\[[\s\S]*?\]);/); if (m) try { l = JSON.parse(m[1]); } catch (x) { l = null; } }
+  if (Array.isArray(l) && l.length && l[0] && (l[0].name || l[0].nom)) {
+    if (!confirm('Importer ' + l.length + ' personnes ? L’arbre actuel sera remplacé.')) return;
+    toast('Import de l’arbre en cours…');
+    try { appliquerEtat(await appel('apiImporterArbre', SESSION.jeton, l)); toast(l.length + ' personnes importées.'); ui.arOpen = null; planifier(); } catch (e) { if (estSession(e)) finSession(); toast(messageErreur(e)); }
+  } else toast('Ce fichier ne contient pas d’arbre reconnu.');
 }
 function confirmBar(key, label, action, data) {
   if (ui.confirm !== key) return '<button class="btn lien petit" data-a="confirm" data-k="' + esc(key) + '">' + esc(label) + '</button>';
@@ -3291,7 +4411,7 @@ function libEcriture(e) {
 /** Situation des cotisations de chaque membre. Chacun voit la sienne (« Ma situation ») et le résumé du groupe ;
  *  la liste complète, avec recherche, filtres et tri, est réservée à l'administration et à la trésorerie,
  *  sauf si le groupe a choisi de la montrer à tous (Administration › Droits). */
-function voitToutesSituations(c) { return !!(c.isTres || c.isOwner || ui.demo || ((c.cfg && c.cfg.confidentialite) || {}).situations === 'tous'); }
+function voitToutesSituations(c) { return !!(c.isTres || c.isOwner || ui.demo || (c.droits && c.droits.has('situations')) || ((c.cfg && c.cfg.confidentialite) || {}).situations === 'tous'); }
 const sansAccent = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 function blocMembres(c, res, finTxt, ids) {
   const L = res.lignes;
@@ -3630,6 +4750,8 @@ function vEspace() {
   if (ui.demo) h += '<div class="plat">Vous parcourez un exemple. <button class="btn second petit" data-a="demo-off">Quitter l’exemple</button></div>';
   h += vCompte(c);
   if (moiM) h += vRecus(c);
+  if (moiM && !ui.demo) h += vMesFiches(c);
+  if (c.bureau && !ui.demo) h += vFichesBureau(c);
   if (moiM && !ui.demo) h += vFaceID(c);
   if (moiM && !ui.demo) { h += vProfil(c, moiM); h += vEnfants(c); }
   h += vPrefs();
@@ -3701,7 +4823,13 @@ function vAdmin(c) {
   h += vStats(c);
   h += vMembresAdmin(c);
   const tf = T();
-  h += '<form class="form carte" data-f="tresoriere" id="f-tres"><h3>Trésorerie</h3><p class="petit doux">' + (c.tresActuel ? tf.Nom + ' en fonction : <strong>' + esc(nomMembre(c.tresActuel.membre)) + '</strong> depuis le ' + esc(fmtDate(c.tresActuel.du)) + '.' : 'Personne n’est encore désigné à la trésorerie : aucune écriture ne peut être saisie.') + ' Seule la personne désignée peut enregistrer les versements et publier les bilans ; le serveur le vérifie. Les écritures des mandats précédents restent prises en compte.</p><div class="champs-2"><label class="champ"><span>Membre désigné</span><select id="ad-tres" name="membre">' + c.membres.map(m => '<option value="' + m.id + '">' + esc(m.nomAff) + '</option>').join('') + '</select></label><label class="champ"><span>Titre</span><select id="ad-titre" name="titre"><option value="trésorier">Trésorier</option><option value="trésorière"' + (infosGroupe().tresorier === 'trésorière' ? ' selected' : '') + '>Trésorière</option></select></label><label class="champ"><span>Début du mandat</span><input type="date" id="ad-tres-du" name="du" value="' + c.today + '"></label></div>' + (tr.length ? '<p class="petit doux">Historique : ' + tr.map(t => esc(nomMembre(t.membre)) + ' (' + fmtDate(t.du) + (t.au ? ' → ' + fmtDate(t.au) : ' → en cours') + ')').join(' · ') + '</p>' : '') + '<div><button class="btn second">Désigner</button></div></form>';
+  h += vBureauAdmin(c);
+  const actifsT = c.tresActifs || [];
+  h += '<form class="form carte" data-f="tresoriere" id="f-tres"><h3>Trésorerie</h3><p class="petit doux">' + (actifsT.length ? 'En fonction : ' + actifsT.map(t => '<strong>' + esc(nomMembre(t.membre)) + '</strong> depuis le ' + esc(fmtDate(t.du))).join(', ') + '.' : 'Personne n’est encore désigné à la trésorerie : aucune écriture ne peut être saisie.') + ' Seules les personnes désignées peuvent enregistrer les versements et publier les bilans ; le serveur le vérifie. Plusieurs personnes peuvent être en fonction en même temps : elles tiennent ensemble le même registre. Les écritures des mandats précédents restent prises en compte.</p>'
+    + (actifsT.length ? '<ul class="liste">' + actifsT.map(t => '<li class="ligne" style="justify-content:space-between">' + avMembre(t.membre, 'p') + '<span style="flex:1">' + esc(nomMembre(t.membre)) + '</span>' + confirmBar('tres-fin:' + t.membre, 'Mettre fin au mandat', 'tres-fin', 'data-k="' + t.membre + '"') + '</li>').join('') + '</ul>' : '')
+    + '<div class="champs-2"><label class="champ"><span>Membre à désigner</span><select id="ad-tres" name="membre">' + c.membres.filter(m => !actifsT.some(t => t.membre === m.id)).map(m => '<option value="' + m.id + '">' + esc(m.nomAff) + '</option>').join('') + '</select></label><label class="champ"><span>Titre</span><select id="ad-titre" name="titre"><option value="trésorier">Trésorier</option><option value="trésorière"' + (infosGroupe().tresorier === 'trésorière' ? ' selected' : '') + '>Trésorière</option></select></label><label class="champ"><span>Début du mandat</span><input type="date" id="ad-tres-du" name="du" value="' + c.today + '"></label>'
+    + (actifsT.length ? '<label class="champ"><span>Cette personne</span><select id="ad-tres-mode" name="mode"><option value="remplacer">remplace ' + (actifsT.length > 1 ? 'les personnes en fonction' : esc(nomMembre(actifsT[0].membre))) + '</option><option value="ajouter">rejoint la trésorerie (en plus)</option></select></label>' : '') + '</div>'
+    + (tr.length ? '<p class="petit doux">Historique : ' + tr.map(t => esc(nomMembre(t.membre)) + ' (' + fmtDate(t.du) + (t.au ? ' → ' + fmtDate(t.au) : ' → en cours') + ')').join(' · ') + '</p>' : '') + '<div><button class="btn second">Désigner</button></div></form>';
   h += vFondsAdmin(c);
   h += vExport();
   h += '<div class="carte pile"><h3>Importer l’historique</h3><p class="petit doux">Remplissez les onglets « Import – Versements », « Import – Caisse », « Import – Soldes d’ouverture » et « Import – Anniversaires » du classeur, puis touchez « Importer ». Les lignes déjà importées sont ignorées ; chaque ligne reçoit son statut dans le classeur. La trésorerie doit être désignée avant d’importer des écritures.</p><div><button class="btn second" data-a="importer">Importer</button></div></div>';
@@ -3747,6 +4875,55 @@ async function majConfig(fn, msg) {
 }
 const A = {
   'mb-filtre': el => { ui.mbFiltre = el.dataset.v; ui.mbMax = 20; planifier(); },
+  'fiche-ouvrir': el => { if (ui.demo) { toast('Exemple : les fiches ne sont pas disponibles.'); return; } naviguer('espace'); ui.fiche = { modele: el.dataset.v, pre: el.dataset.d ? { assemblee: el.dataset.d } : null }; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); setTimeout(() => { const e = document.getElementById('mes-fiches') && !MF.M[el.dataset.v].auteur ? document.getElementById('mes-fiches') : document.getElementById('doc-bureau'); if (e) e.scrollIntoView({ block: 'start' }); }, 80); },
+  'fiche-examiner': el => { ui.fiche = { cle: el.dataset.k }; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); setTimeout(() => { const e = document.getElementById('f-contre'); if (e) e.scrollIntoView({ block: 'start' }); }, 80); },
+  'attestation-ouvrir': () => { ui.fiche = { attestation: true }; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); setTimeout(() => { const e = document.getElementById('f-attest'); if (e) e.scrollIntoView({ block: 'start' }); }, 80); },
+  'fiche-fermer': () => { ui.fiche = null; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); },
+  'fiche-pdf': el => telechargerFiche(el.dataset.k),
+  'sig-effacer': el => { const id = el.dataset.k || 'sig', cv = document.getElementById(id); if (cv) cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); delete SIGS[id]; if (id === 'sig') sigTrace = false; },
+  campagne: async el => { await majConfig(cfg => { cfg.campagneAdhesion = el.dataset.v ? today() : null; }, el.dataset.v ? 'Chaque membre verra un rappel pour signer sa fiche.' : 'Rappel arrêté.'); },
+  'aine-arbre': el => { const A = arbreDe(C), p = A && A.P[el.dataset.k], f = document.getElementById('f-aine'); if (!p || !f) return; f.querySelector('[name=nom]').value = p.nom; if (p.sexe) f.querySelector('[name=sexe]').value = p.sexe; f.querySelector('[name=naissance]').value = p.naissance || ''; if (p.membre) f.querySelector('[name=membre]').value = p.membre; toast('Vérifiez puis touchez « Enregistrer ».'); },
+  'ar-vue': el => { ui.arVue = el.dataset.v; planifier(); },
+  'ar-prof': el => { const A = arbreDe(C); if (!A) return; ui.arProf = +el.dataset.v; ui.arFocus = null; ui.arOpen = new Set(A.tous.filter(p => !ui.arProf || p.gen < ui.arProf).map(p => p.id)); planifier(); },
+  'ar-branche': el => { ui.arBranche = el.dataset.k || null; ui.arFocus = null; const A = arbreDe(C); if (A && ui.arBranche) { ui.arOpen = ui.arOpen || new Set(); ui.arOpen.add(ui.arBranche); } planifier(); },
+  'ar-plier': el => { ui.arOpen = ui.arOpen || new Set(); const k = el.dataset.k; ui.arFocus = k; if (ui.arOpen.has(k)) ui.arOpen.delete(k); else ui.arOpen.add(k); planifier(); },
+  'ar-voir': el => { const A = arbreDe(C); if (!A) return; ui.arSel = el.dataset.k; ui.arFocus = el.dataset.k; ui.arProposer = null; ui.arOpen = ui.arOpen || new Set(); let p = A.P[ui.arSel]; while (p && p.parent) { ui.arOpen.add(p.parent); p = A.P[p.parent]; } if (ui.arBranche && A.P[ui.arSel].branche && A.P[ui.arSel].branche.id !== ui.arBranche) ui.arBranche = null; planifier(); setTimeout(() => { const f = document.getElementById('ar-fiche'); if (f) f.scrollIntoView({ block: 'nearest' }); }, 60); },
+  'ar-fermer': () => { ui.arSel = null; planifier(); },
+  'ar-zoom': el => { ui.arZoom = Math.max(0.5, Math.min(1.6, (ui.arZoom || 1) + 0.2 * +el.dataset.v)); planifier(); },
+  'ar-plus': () => { ui.arMax = (ui.arMax || 60) + 60; planifier(); },
+  'ar-edit': el => { if (ui.demo) { toast('Exemple : rien n’est enregistré.'); return; } ui.arEdit = el.dataset.k || null; planifier(); scrollTo(0, 0); },
+  'ar-proposer': el => { ui.arProposer = ui.arProposer === el.dataset.k ? null : el.dataset.k; planifier(); },
+  'ar-suppr': async el => { ui.confirm = null; if (await ecrire('arbre/' + el.dataset.k, 'delete', null, 'Personne retirée de l’arbre.')) { ui.arEdit = null; ui.arSel = null; planifier(); } },
+  'ar-prop-ok': async el => { const x = C.propositions.find(p => p._key === el.dataset.k); if (x) await ecrire('propositions/' + x._auteur + '/items/' + x._id, 'delete', null, 'Proposition marquée comme traitée.'); },
+  'ar-pdf': async () => {
+    if (PJV.arbre) return; PJV.arbre = 1; toast('Préparation de l’arbre en PDF…');
+    try { const r = await appel('apiArbrePDF', SESSION.jeton); const bin = atob(r.b64); const buf = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i); const blob = new Blob([buf], { type: 'application/pdf' }); try { const f = new File([blob], r.nom, { type: 'application/pdf' }); if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: r.nom }); return; } } catch (e) { if (e && e.name === 'AbortError') return; } const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = r.nom; document.body.appendChild(a); a.click(); setTimeout(() => { a.remove(); URL.revokeObjectURL(url); }, 60000); }
+    catch (e) { if (estSession(e)) finSession(); toast(messageErreur(e)); } finally { delete PJV.arbre; }
+  },
+  'souv-form': el => { ui.souvForm = el.dataset.v || null; planifier(); },
+  'album-ouvrir': el => { ui.album = el.dataset.k; ui.albumEdit = false; ui.videoJoue = null; planifier(); scrollTo(0, 0); },
+  'album-fermer': () => { ui.album = null; ui.albumEdit = false; ui.videoJoue = null; planifier(); },
+  'album-edit': () => { ui.albumEdit = !ui.albumEdit; planifier(); },
+  'video-jouer': el => { if (!idVideo(el.dataset.u)) { window.open(el.dataset.u, '_blank', 'noopener'); return; } ui.videoJoue = el.dataset.k; planifier(); },
+  'souv-photo': async el => {
+    const k = el.dataset.k; if (PJC[k]) { ouvrirPhoto(k, el.dataset.n); return; }
+    if (ui.demo) return;
+    toast('Ouverture de la photo…');
+    try { const r = await appel('apiLirePJ', SESSION.jeton, k); PJC[k] = 'data:' + r.type + ';base64,' + r.b64; ouvrirPhoto(k, el.dataset.n); } catch (e) { if (estSession(e)) finSession(); else toast('La photo n’a pas pu être ouverte. Vérifiez la connexion.'); }
+  },
+  'souv-photo-retirer': async el => { await majAlbum(el.dataset.k, d => { d.photos.splice(+el.dataset.v, 1); if (d.couverture >= d.photos.length) d.couverture = 0; }, 'Photo retirée.'); },
+  'vid-suppr': async el => { ui.confirm = null; await majAlbum(el.dataset.k, d => { d.videos.splice(+el.dataset.v, 1); }, 'Vidéo retirée.'); },
+  'souv-suppr': async el => { ui.confirm = null; const x = C.souvenirs.find(s => s._key === el.dataset.k); if (!x) return; if (await ecrire('souvenirs/' + x._auteur + '/items/' + x._id, 'delete', null, x.type === 'album' ? 'Album supprimé.' : 'Archive retirée.')) { ui.album = null; planifier(); } },
+  'poste-edit': el => { ui.posteEdit = ui.posteEdit === el.dataset.k ? null : el.dataset.k; planifier(); },
+  'poste-modele': async el => { const m = MODELES_BUREAU[el.dataset.v]; if (!m) return; await majConfig(cfg => { cfg.postes = m.map(([type, titre]) => ({ id: type, titre, type, droits: DROITS_PAR_TYPE[type] || [], titulaires: [] })); }, 'Postes créés : nommez maintenant les titulaires.'); },
+  'poste-suppr': async el => { ui.confirm = null; await majConfig(cfg => { cfg.postes = (cfg.postes || []).filter(p => p.id !== el.dataset.k); }, 'Poste retiré.'); ui.posteEdit = null; },
+  'titulaire-fin': async el => { await majConfig(cfg => { const p = (cfg.postes || []).find(x => x.id === el.dataset.k); const t = p && p.titulaires[+el.dataset.v]; if (t && !t.au) t.au = today(); }, 'Mandat terminé.'); },
+  'tres-fin': async el => { ui.confirm = null; await majConfig(cfg => { cfg.tresoriers = (cfg.tresoriers || []).map(t => !t.au && t.membre === el.dataset.k ? Object.assign({}, t, { au: today() }) : t); }, 'Mandat à la trésorerie terminé.'); },
+  'aine-deces': async () => {
+    const d = (document.getElementById('ai-deces') || {}).value; ui.confirm = null;
+    if (!d) { toast('Indiquez la date du décès.'); planifier(); return; }
+    await majConfig(cfg => { const ai = cfg.aines; if (!ai || !ai.actuel) return; ai.anciens = [Object.assign({}, ai.actuel, { deces: d })].concat(ai.anciens || []); ai.actuel = null; }, 'Décès enregistré. Désignez maintenant la personne qui prend la suite.');
+  },
   'mb-plus': () => { ui.mbMax = (ui.mbMax || 20) + 20; planifier(); },
   'demo-on': () => { DEMO = construireDemo(); ui.demo = true; oublierVisites(); naviguer('accueil'); },
   'demo-off': () => { ui.demo = false; ui.personne = null; oublierVisites(); planifier(); },
@@ -3847,6 +5024,8 @@ const A = {
   }
 };
 const CH = {
+  'ar-import': el => { const f = el.files && el.files[0]; el.value = ''; if (f) importerArbre(f); },
+  'fi-autre': el => { const p = el.form && el.form.querySelector('.fi-prec[data-pour="' + el.name + '"]'); if (p) p.hidden = el.value !== MF.AUTRE; },
   mbtri: el => { ui.mbTri = el.value; ui.mbMax = 20; planifier(); },
   mois: el => { if (el.value) { ui.bilan.mois = el.value; ui.voirLive = false; planifier(); } },
   'annee-b': el => { ui.bilan.annee = +el.value; ui.voirLive = false; planifier(); },
@@ -3992,7 +5171,83 @@ const FORMS = {
   },
   tresoriere: async (f, o) => {
     if (!C.byId[o.membre]) return;
-    await majConfig(cfg => { cfg.tresoriers = (cfg.tresoriers || []).map(t => t.au ? t : Object.assign({}, t, { au: o.du })); cfg.tresoriers.push({ membre: o.membre, uid: o.membre, du: o.du, au: null, titre: o.titre === 'trésorière' ? 'trésorière' : 'trésorier' }); }, 'Trésorerie confiée à ' + nomMembre(o.membre) + '.');
+    if ((C.tresActifs || []).some(t => t.membre === o.membre)) { toast(nomMembre(o.membre) + ' est déjà à la trésorerie.'); return; }
+    const remplacer = o.mode !== 'ajouter';
+    await majConfig(cfg => { cfg.tresoriers = (cfg.tresoriers || []).map(t => t.au || !remplacer ? t : Object.assign({}, t, { au: o.du })); cfg.tresoriers.push({ membre: o.membre, uid: o.membre, du: o.du, au: null, titre: o.titre === 'trésorière' ? 'trésorière' : 'trésorier' }); }, remplacer ? 'Trésorerie confiée à ' + nomMembre(o.membre) + '.' : nomMembre(o.membre) + ' rejoint la trésorerie.');
+  },
+  fiche: async (f, o) => {
+    const modele = f.dataset.v, m = MF.M[modele];
+    const img = imageSignature('sig'); if (!img) { toast('Signez dans le cadre avant d’envoyer.'); return; }
+    let extra = null;
+    if (m.presence) { const img2 = imageSignature('sig2'); if (!img2) { toast('La personne qui reçoit le règlement doit signer dans son cadre.'); return; } extra = { img2, nom: o.__nom, qualite: o.__qualite }; }
+    const v = valeursFiche(f); delete v.__nom; delete v.__qualite;
+    const msg = { convocation: 'Convocation envoyée à tous les membres.', pouvoir: 'Pouvoir enregistré.', pv: 'Procès-verbal signé : il attend la signature du secrétaire de séance.', depart: 'Solde de tout compte signé.', passation: 'Passation signée : le responsable entrant doit la contresigner.' }[modele] || 'Fiche signée et envoyée au bureau.';
+    await envoyerSigne('apiSignerFiche', [modele, v, img, o.code, extra], msg);
+  },
+  contre: async (f, o) => {
+    const img = imageSignature(); if (!img) { toast('Signez dans le cadre avant de valider.'); return; }
+    const d = valeursFiche(f); delete d.code;
+    await envoyerSigne('apiContresignerFiche', [f.dataset.k, img, o.code, d], 'Signature du bureau enregistrée.');
+  },
+  attestation: async (f, o) => {
+    const img = imageSignature(); if (!img) { toast('Signez dans le cadre avant de valider.'); return; }
+    await envoyerSigne('apiAttestation', [o.membre, img, o.code], 'Attestation établie : téléchargez-la en PDF.');
+  },
+  'ar-personne': async (f, o) => {
+    const k = f.dataset.k, nouveau = k.indexOf('new:') === 0, id = nouveau ? 'p' + Date.now().toString(36) : k;
+    let n = o.naissance || '', d = o.deces || ''; const fr = x => { const m = x.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? m[3] + '-' + m[2] + '-' + m[1] : x; }; n = fr(n); d = fr(d);
+    if ((n && !/^\d{4}(-\d{2}-\d{2})?$/.test(n)) || (d && !/^\d{4}(-\d{2}-\d{2})?$/.test(d))) { toast('Dates : une année (1935) ou une date (12/04/1935).'); return; }
+    if (await ecrire('arbre/' + id, 'set', { nom: o.nom, label: o.label, sexe: o.sexe, parent: o.parent || null, naissance: n, deces: d, conjoints: o.conjoints, membre: o.membre || null, ordre: o.ordre, verifier: !!o.verifier, note: o.note }, nouveau ? 'Personne ajoutée à l’arbre.' : 'Fiche mise à jour.')) { ui.arEdit = null; ui.arSel = id; ui.arOpen = ui.arOpen || new Set(); if (o.parent) ui.arOpen.add(o.parent); planifier(); }
+  },
+  'ar-proposition': async (f, o) => { if (await ecrire('propositions/' + S.moi + '/items/' + newId(), 'set', { personne: f.dataset.k, texte: o.texte }, 'Merci : votre proposition est transmise aux responsables de l’arbre.')) { ui.arProposer = null; planifier(); } },
+  album: async (f, o) => {
+    if (ui.demo) { toast('Exemple : rien n’est enregistré.'); return; }
+    const id = newId();
+    if (await ecrire('souvenirs/' + S.moi + '/items/' + id, 'set', { type: 'album', titre: o.titre, date: o.date, description: o.description, photos: [], videos: [] }, 'Album créé : ajoutez maintenant les photos.')) { ui.souvForm = null; ui.album = S.moi + '~' + id; planifier(); }
+  },
+  archive: async (f, o) => {
+    if (ui.demo) { toast('Exemple : rien n’est enregistré.'); return; }
+    const pj = pjPretes('arc'); if (!pj) return;
+    if (!pj.length) { toast('Joignez le document ou la photo à archiver.'); return; }
+    let d = o.date || ''; const fr = d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if (fr) d = fr[3] + '-' + fr[2] + '-' + fr[1];
+    if (await ecrire('souvenirs/' + S.moi + '/items/' + newId(), 'set', { type: 'archive', titre: o.titre, date: d, note: o.note, fichier: { par: S.moi, id: pj[0].id } }, 'Document ajouté aux archives.')) { ui.pj.arc = []; ui.souvForm = null; finForm(f); planifier(); }
+  },
+  'album-photos': async (f) => {
+    if (ui.demo) { toast('Exemple : rien n’est enregistré.'); return; }
+    const l = ui.pj.alb || [];
+    if (l.some(x => x.etat === 'envoi')) { toast('Patientez : les photos sont en cours d’envoi.'); return; }
+    const ok = l.filter(x => x.etat === 'ok');
+    if (!ok.length) { toast('Choisissez d’abord des photos.'); return; }
+    if (await majAlbum(f.dataset.k, d => { ok.forEach(x => d.photos.push({ par: S.moi, id: x.id, mini: x.mini || null })); }, ok.length + ' photo' + (ok.length > 1 ? 's' : '') + ' ajoutée' + (ok.length > 1 ? 's' : '') + '.')) ui.pj.alb = [];
+  },
+  'album-video': async (f, o) => {
+    if (ui.demo) { toast('Exemple : rien n’est enregistré.'); return; }
+    if (await majAlbum(f.dataset.k, d => { d.videos.push({ url: o.url, titre: o.titre || 'Vidéo', date: o.date || '' }); }, 'Vidéo ajoutée à l’album.')) finForm(f);
+  },
+  poste: async (f, o) => {
+    const id = f.dataset.k, droits = Object.keys(DROITS_POSTE).filter(k => o['d-' + k]);
+    if (!o.titre) { toast('Indiquez l’intitulé du poste.'); return; }
+    if ((o.ancNom || o.ancMembre) && !o.ancAu) { toast('Indiquez jusqu’à quand l’ancien titulaire a exercé.'); return; }
+    const ok = await majConfig(cfg => {
+      cfg.postes = cfg.postes || [];
+      let p = cfg.postes.find(x => x.id === id);
+      if (!p) { p = { id: 'poste-' + Date.now().toString(36), titulaires: [] }; cfg.postes.push(p); }
+      p.titre = o.titre; p.type = o.type; p.droits = droits; p.titulaires = p.titulaires || [];
+      if (o.nouveau && !p.titulaires.some(t => t.membre === o.nouveau && !t.au)) p.titulaires.push({ membre: o.nouveau, nom: '', du: o.du || today(), au: null, note: '' });
+      if (o.ancNom || o.ancMembre) p.titulaires.push({ membre: o.ancMembre || null, nom: o.ancMembre ? '' : o.ancNom, du: o.ancDu || '', au: o.ancAu, note: o.ancNote || '' });
+    }, 'Poste enregistré.');
+    if (ok && id === '__nouveau') { ui.posteEdit = null; planifier(); }
+  },
+  aine: async (f, o) => {
+    if (!o.nom) { toast('Indiquez le nom.'); return; }
+    let n = o.naissance || ''; const fr = n.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if (fr) n = fr[3] + '-' + fr[2] + '-' + fr[1];
+    if (n && !/^\d{4}(-\d{2}-\d{2})?$/.test(n)) { toast('Naissance : une année (1935) ou une date (12/04/1935).'); return; }
+    await majConfig(cfg => {
+      const ai = cfg.aines = cfg.aines || { actuel: null, anciens: [], hommage: 0 };
+      const anc = ai.actuel || {};
+      ai.actuel = { nom: o.nom, sexe: o.sexe === 'f' ? 'f' : 'h', naissance: n, deces: null, membre: o.membre || null, portrait: anc.portrait || ('p-' + Date.now().toString(36)), note: o.note || '' };
+      ai.hommage = +o.hommage || 0; ai.anciens = ai.anciens || [];
+    }, (o.sexe === 'f' ? 'Matriarche' : 'Patriarche') + ' enregistré' + (o.sexe === 'f' ? 'e' : '') + '.');
   },
   droits: async (f, o) => {
     await majConfig(cfg => {
@@ -4071,7 +5326,10 @@ async function validerCadrage() {
     const g = cv.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, t, t);
     g.drawImage(img, (CADRE / 2 + c.x - m.W / 2) * k, (CADRE / 2 + c.y - m.H / 2) * k, m.W * k, m.H * k);
     const d = cv.toDataURL('image/jpeg', q);
-    if (d.length <= 40000) { if (c.cible === 'profil') ui.photoProfil = d; else ui.photoEnfant = d; ui.cadrage = null; planifier(); toast('Photo prête : pensez à enregistrer.'); return; }
+    if (d.length <= 40000) {
+      if (String(c.cible).indexOf('portrait:') === 0) { const k = c.cible.slice(9); ui.cadrage = null; planifier(); if (k) await ecrire('portraits/' + k, 'set', { photo: d }, 'Photo enregistrée.'); return; }
+      if (c.cible === 'profil') ui.photoProfil = d; else ui.photoEnfant = d; ui.cadrage = null; planifier(); toast('Photo prête : pensez à enregistrer.'); return;
+    }
   }
   toast('Cette image n’a pas pu être préparée. Essayez une autre photo.');
 }
@@ -4089,8 +5347,8 @@ function zonePJ(z, max) {
   max = max == null ? PJ_MAX : max;
   const l = ui.pj[z] || [];
   return '<div class="pj-zone">' + (l.length ? '<ul class="pj-liste">' + l.map((x, i) => '<li class="pj-chip' + (x.etat === 'erreur' ? ' err' : '') + '">' + (x.apercu ? '<img src="' + x.apercu + '" alt="">' : '<span class="pj-ico">' + ico('doc') + '</span>') + '<span class="pj-nom"><span>' + esc(x.nom) + '</span><small>' + (x.etat === 'envoi' ? 'Envoi en cours…' : x.etat === 'erreur' ? esc(x.err) : tailleTxt(x.taille) + ' · prête') + '</small></span><button type="button" class="pj-x" data-a="pj-retirer" data-z="' + esc(z) + '" data-i="' + i + '" aria-label="Retirer ' + esc(x.nom) + '">' + ico('fermer') + '</button></li>').join('') + '</ul>' : '') +
-    (l.filter(x => x.etat !== 'erreur').length < max ? '<label class="btn second petit pj-ajout">' + ico('trombone') + 'Joindre une photo ou un document<input type="file" class="sr" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" data-pj="' + esc(z) + '"></label>' : '') +
-    '<small class="doux">Photos réduites automatiquement · PDF, Word ou Excel jusqu’à 5 Mo · ' + PJ_MAX + ' pièces au plus</small></div>';
+    (l.filter(x => x.etat !== 'erreur').length < max ? (z === 'alb' ? '<label class="btn second petit pj-ajout">' + ico('photo') + 'Choisir des photos<input type="file" class="sr" multiple accept="image/*" data-pj="alb"></label>' : '<label class="btn second petit pj-ajout">' + ico('trombone') + (z === 'arc' ? 'Choisir le document ou la photo' : 'Joindre une photo ou un document') + '<input type="file" class="sr"' + (z === 'arc' ? '' : ' multiple') + ' accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" data-pj="' + esc(z) + '"></label>') : '') +
+    '<small class="doux">' + (z === 'alb' ? 'Photos réduites automatiquement · 40 au plus à la fois' : z === 'arc' ? 'Photo, PDF, Word ou Excel jusqu’à 5 Mo' : 'Photos réduites automatiquement · PDF, Word ou Excel jusqu’à 5 Mo · ' + PJ_MAX + ' pièces au plus') + '</small></div>';
 }
 /** Pièces prêtes à publier, ou null si un envoi n'est pas terminé. */
 function pjPretes(z) {
@@ -4106,25 +5364,27 @@ async function reduirePhoto(file) {
   let d = null;
   for (const [max, q] of [[1600, 0.8], [1600, 0.7], [1280, 0.7], [1024, 0.65], [800, 0.6]]) { d = dessiner(max, q); if (d.length * 0.75 <= 600000) break; }
   const b64 = d.split(',')[1];
-  return { b64, taille: Math.round(b64.length * 0.75), mini: dessiner(160, 0.7), complet: d };
+  return { b64, taille: Math.round(b64.length * 0.75), mini: dessiner(160, 0.7), vignette: dessiner(420, 0.7), complet: d };
 }
 async function ajouterPJ(z, fichiers) {
   if (ui.demo) { toast('Exemple : rien n’est envoyé.'); return; }
   const l = ui.pj[z] = ui.pj[z] || [];
-  const max = z.indexOf('pm:') === 0 ? PJ_MAX - ((itemParCle(z.slice(3)) || {}).pj || []).length : PJ_MAX;
+  const max = z === 'alb' ? 40 : z === 'arc' ? 1 : z.indexOf('pm:') === 0 ? PJ_MAX - ((itemParCle(z.slice(3)) || {}).pj || []).length : PJ_MAX;
   for (const f of fichiers) {
-    if (l.filter(x => x.etat !== 'erreur').length >= max) { toast(PJ_MAX + ' pièces jointes au plus par publication.'); break; }
+    if (l.filter(x => x.etat !== 'erreur').length >= max) { toast(z === 'alb' ? '40 photos au plus à la fois : ajoutez-les, puis continuez.' : z === 'arc' ? 'Un seul fichier par archive.' : PJ_MAX + ' pièces jointes au plus par publication.'); break; }
     const nom = f.name || 'photo.jpg'; const ext = (nom.split('.').pop() || '').toLowerCase();
     const image = /^image\//.test(f.type || '') || /^(jpe?g|png|heic|heif|webp|gif)$/.test(ext);
     const x = { nom, type: image ? 'image/jpeg' : TYPES_DOC[ext] || '', taille: f.size, etat: 'envoi' };
     if (!image && !x.type) { toast('« ' + nom + ' » : seuls les photos, PDF, Word et Excel sont acceptés.'); continue; }
+    if (z === 'alb' && !image) { toast('« ' + nom + ' » : un album ne reçoit que des photos.'); continue; }
     if (!image && f.size > DOC_MAX) { toast('« ' + nom + ' » dépasse 5 Mo.'); continue; }
     l.push(x); planifier();
     try {
       let b64, complet = null;
-      if (image) { const r = await reduirePhoto(f); b64 = r.b64; complet = r.complet; x.apercu = r.mini; x.taille = r.taille; x.nom = nom.replace(/\.[^.]*$/, '') + '.jpg'; planifier(); }
+      if (image) { const r = await reduirePhoto(f); b64 = r.b64; complet = r.complet; x.apercu = r.mini; x.vignette = r.vignette; x.taille = r.taille; x.nom = nom.replace(/\.[^.]*$/, '') + '.jpg'; planifier(); }
       else b64 = await lireB64(f);
       const r = await appel('apiDeposerPJ', SESSION.jeton, x.nom, x.type, b64);
+      if (z === 'alb' && x.vignette) { try { const m = await appel('apiDeposerPJ', SESSION.jeton, 'mini-' + x.nom, 'image/jpeg', x.vignette.split(',')[1]); x.mini = m.id; PJC[S.moi + '/' + m.id] = x.vignette; } catch (e) { x.mini = null; } }
       Object.assign(x, { id: r.id, nom: r.nom, taille: r.taille, etat: 'ok' });
       if (complet) PJC[S.moi + '/' + r.id] = complet;
     } catch (e) {
@@ -4446,7 +5706,7 @@ async function offrirFichier(b64, nom, type) {
 /* ============ Reçus de cotisation ============ */
 function codeRecu(id) { return ui.demo ? 'EXEM-PLE0-0000' : (S.codesRecus || {})[id] || null; }
 function vRecus(c) {
-  const voitTout = c.isTres || c.isOwner;
+  const voitTout = c.isTres || c.isOwner || (c.droits && c.droits.has('situations'));
   const qui = voitTout && ui.recusMembre && (c.byId[ui.recusMembre] || ui.recusMembre === '__ext') ? ui.recusMembre : c.moi;
   const nums = MC.numerosRecus(c.L, infosGroupe().sigle);
   const liste = c.L.all.filter(v => v.type === 'versement' && (qui === '__ext' ? !v.membre : v.membre === qui)).sort((a, b) => (nums[b._id] || '').localeCompare(nums[a._id] || ''));
@@ -4490,7 +5750,7 @@ function construireDemo() {
   const noms = ['Awa', 'Koffi', 'Mariam', 'Serge', 'Nadia', 'Paul', 'Inès', 'Hervé'];
   const membres = {}, ordre = [];
   noms.forEach((n, i) => { const id = 'm' + (i + 1); ordre.push(id); membres[id] = { nom: n + ' (exemple)', uid: 'd' + (i + 1), droitVote: true }; });
-  const D = { config: { groupe: { nom: 'Famille Exemple', type: 'famille', sigle: 'EXE', tresorier: 'trésorière' }, seuilCharte: '2/3', ordre, membres, adminUid: 'd1', tresoriers: [{ membre: 'm3', uid: 'd3', du: y + '-01-01', au: null, titre: 'trésorière' }], finances: { montant: 10000, jour: 15 }, droits: { nouvelles: 'tous', agenda: 'tous', votes: 'tous', projets: 'tous' }, reglagesVote: { modification: false, choixVisibles: false } }, profils: {}, enfants: {}, contenus: {}, voeux: {}, bulletins: {}, demandes: {}, tres: { d3: { debutSuivi: y + '-01' } }, ecritures: { d3: {} }, bilans: { d3: {} } };
+  const D = { config: { groupe: { nom: 'Famille Exemple', type: 'famille', sigle: 'EXE', tresorier: 'trésorière' }, seuilCharte: '2/3', ordre, membres, adminUid: 'd1', tresoriers: [{ membre: 'm3', uid: 'd3', du: y + '-01-01', au: null, titre: 'trésorière' }], postes: [{ id: 'president', titre: 'Président', type: 'president', droits: ['annonces', 'agenda', 'votes'], titulaires: [{ membre: 'm1', nom: '', du: (y - 3) + '-01', au: (y - 1) + '-12', note: 'présidente fondatrice' }, { membre: 'm4', nom: '', du: y + '-01', au: null, note: '' }] }, { id: 'communication', titre: 'Chargée de communication', type: 'communication', droits: ['souvenirs', 'annonces'], titulaires: [{ membre: 'm7', nom: '', du: y + '-01', au: null, note: '' }] }], aines: { actuel: { nom: 'Mamie Akissi (exemple)', sexe: 'f', naissance: '1935', deces: null, membre: null, portrait: null, note: 'la mémoire de la famille' }, anciens: [], hommage: 40 }, finances: { montant: 10000, jour: 15 }, droits: { nouvelles: 'tous', agenda: 'tous', votes: 'tous', projets: 'tous' }, reglagesVote: { modification: false, choixVisibles: false } }, profils: {}, enfants: {}, contenus: {}, voeux: {}, bulletins: {}, demandes: {}, tres: { d3: { debutSuivi: y + '-01' } }, ecritures: { d3: {} }, bilans: { d3: {} } };
   const ec = D.ecritures.d3; let k = 0;
   const add = o => { if (o.date > t) return; const id = 'x' + (k++); ec[id] = Object.assign({ saisiLe: o.date + 'T12:00:00Z', par: 'm3' }, o); return id; };
   const dernier = jj > 15 ? ymNow : monthAdd(ymNow, -1);
@@ -4545,6 +5805,21 @@ function construireDemo() {
   const c = construireCtx(D, DEMO_ME);
   const ch = calculer(c, pm + '-01', lastDay(pm));
   D.bilans.d3['M-' + pm + '-v1'] = { cle: 'M-' + pm, version: 1, libelle: 'Bilan de ' + fmtMois(pm), du: pm + '-01', au: lastDay(pm), fin: lastDay(pm), chiffres: ch, empreinte: empreinte(ch), publieLe: (jj >= 3 ? ymNow + '-03' : t) + 'T09:00:00Z', publiePar: 'm3', commentaire: '' };
+  D.options = ['videos', 'arbre'];
+  // Arbre fictif : la matriarche, ses enfants, les membres de l'exemple et leurs enfants.
+  const ar = (id, nom, parent, ordre, x) => { D.arbre[id] = Object.assign({ nom, label: '', sexe: '', naissance: '', deces: '', parent, conjoints: [], membre: null, verifier: false, note: '', ordre }, x || {}); };
+  D.arbre = {};
+  ar('p0', 'Mamie Akissi', null, 0, { sexe: 'f', naissance: '1935', conjoints: ['Papa Yao, décédé'], note: 'La mémoire de la famille.' });
+  ar('p1', 'Tonton Kouassi', 'p0', 10, { sexe: 'h', naissance: '1956', deces: '2019', conjoints: ['Tantie Rose'] });
+  ar('p2', 'Tantie Adjoua', 'p0', 20, { sexe: 'f', naissance: '1959', conjoints: ['Tonton Michel'] });
+  ar('p3', 'Tonton Konan', 'p0', 30, { sexe: 'h', naissance: '1962' });
+  ar('p4', 'Tantie Amoin', 'p0', 40, { sexe: 'f', naissance: '1966', verifier: true, note: 'Année de naissance à confirmer.' });
+  [['p1', 'm1', 'f'], ['p1', 'm2', 'h'], ['p2', 'm3', 'f'], ['p2', 'm4', 'h'], ['p3', 'm5', 'f'], ['p3', 'm6', 'h'], ['p4', 'm7', 'f'], ['p4', 'm8', 'h']].forEach(([par, m, sx], i) => ar('p' + (10 + i), noms[+m.slice(1) - 1], par, (i % 2 + 1) * 10, { sexe: sx, naissance: String(1980 + i * 2), membre: m }));
+  [['p10', 'Léa'], ['p10', 'Noah'], ['p11', 'Junior'], ['p12', 'Grâce'], ['p13', 'Ethan'], ['p13', 'Emma'], ['p15', 'Kenzo'], ['p16', 'Maëlys']].forEach(([par, n], i) => ar('p' + (30 + i), n, par, (i + 1) * 10, { naissance: String(2008 + i) }));
+  const ph = n => Array.from({ length: n }, (_, i) => ({ par: 'd7', id: 'demo' + i, nom: 'photo.jpg' }));
+  D.souvenirs = { 'd7~a1': { type: 'album', titre: 'Mariage de Mariam', date: y + '-10-11', description: 'Une belle journée en famille.', photos: ph(9), videos: [{ url: 'https://drive.google.com/exemple', titre: 'Le discours des mariés', date: y + '-10-11' }], creePar: 'm7' },
+    'd7~a2': { type: 'album', titre: 'Pâques en famille', date: y + '-04-05', photos: ph(6), videos: [], creePar: 'm7' },
+    'd4~r1': { type: 'archive', titre: 'Statuts signés', date: (y - 2) + '-01-15', fichier: { par: 'd4', id: 'x', nom: 'statuts.pdf', type: 'application/pdf' }, creePar: 'm4' } };
   return D;
 }
 
@@ -4564,8 +5839,9 @@ function brancher() {
     if (el.dataset && el.dataset.pj) { const fs = Array.from(el.files || []); const z = el.dataset.pj; el.value = ''; if (fs.length) ajouterPJ(z, fs); return; }
     const k = el.dataset && el.dataset.aChange; if (k && CH[k]) CH[k](el);
   });
-  document.addEventListener('input', e => { const el = e.target; if (el.id === 'mb-rech') { ui.mbRech = el.value; ui.mbMax = 20; planifier(); } if (el.dataset && el.dataset.aChange === 'tv') CH.tv(el); if (el.id === 'cad-zoom' && ui.cadrage) { ui.cadrage.zoom = +el.value; appliquerCadrage(); } });
+  document.addEventListener('input', e => { const el = e.target; if (el.id === 'mb-rech') { ui.mbRech = el.value; ui.mbMax = 20; planifier(); } if (el.id === 'ar-rech') { ui.arRech = el.value; planifier(); } if (el.dataset && el.dataset.aChange === 'tv') CH.tv(el); if (el.id === 'cad-zoom' && ui.cadrage) { ui.cadrage.zoom = +el.value; appliquerCadrage(); } });
   brancherCadrage();
+  brancherSignature();
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !document.getElementById('visionneuse').hidden) fermerPhoto(); });
   document.getElementById('visionneuse').addEventListener('click', e => { if (e.target.id === 'visionneuse') fermerPhoto(); });
   document.addEventListener('submit', e => {
