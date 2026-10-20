@@ -568,6 +568,19 @@ h3 .puce { vertical-align: 2px; }
 .pli-reduire { display: none; margin-top: 8px; }
 details.pli.long[open] > .pli-reduire { display: inline-flex; }
 .volet.replie > .section-tete > .btn { display: none; }
+/* Petites icônes colorées devant les titres des blocs de Mon espace */
+.titre-ico { display: flex; align-items: center; gap: 10px; }
+.ico-bloc { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); }
+.ico-bloc svg { width: 19px; height: 19px; }
+h3.titre-ico .ico-bloc { width: 28px; height: 28px; border-radius: 9px; }
+h3.titre-ico .ico-bloc svg { width: 17px; height: 17px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ico-bloc { color: color-mix(in srgb, var(--c) 55%, #ffffff); background: color-mix(in srgb, var(--c) 30%, transparent); } }
+:root[data-theme="dark"] .ico-bloc { color: color-mix(in srgb, var(--c) 55%, #ffffff); background: color-mix(in srgb, var(--c) 30%, transparent); }
+.volet > .section-tete > :is(h2, h3) { min-width: 45%; }
+.volet > .section-tete > .puce { flex: 0 1 auto; min-width: 0; white-space: normal; text-align: center; line-height: 1.25; }
+#administration > .section-tete { flex-wrap: wrap; row-gap: 4px; }
+#administration > .section-tete > .puce { order: 3; flex: none; margin-left: 42px; white-space: nowrap; }
+.volet > .section-tete > :is(h2, h3) { overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
@@ -1098,12 +1111,12 @@ function verifierP256_(xHex, yHex, messageOctets, sigDer) {
   return mod(X[0] * zi % P * zi, P) % N === r;
 }
 
-/** Défi à usage unique (5 minutes) pour activer Face ID ou se connecter avec. */
-function apiDefiFaceID(jeton) {
+/** Défi à usage unique (5 minutes) pour activer Face ID, se connecter avec, ou confirmer une signature de fiche. */
+function apiDefiFaceID(jeton, but) {
   if (!ORIGINE_PORTE) throw refus_('Face ID n’est pas disponible : ce groupe n’a pas de page d’accueil.');
   const moi = jeton ? session_(jeton) : null;
   const defi = b64url_(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, Utilities.getUuid() + Utilities.getUuid() + Date.now()));
-  CacheService.getScriptCache().put('defi:' + defi, JSON.stringify({ but: moi ? 'creation' : 'connexion', m: moi }), 300);
+  CacheService.getScriptCache().put('defi:' + defi, JSON.stringify({ but: moi ? (but === 'signature' ? 'signature' : 'creation') : 'connexion', m: moi }), 300);
   return { defi: defi };
 }
 function consommerDefi_(clientData, type, but) {
@@ -1140,32 +1153,42 @@ function apiEnregistrerFaceID(jeton, d) {
   return apiEtat(jeton);
 }
 
-/** Connexion avec Face ID : vérifie la signature du téléphone, puis ouvre une session comme avec le code. */
-function apiConnexionFaceID(d) {
+/** Vérifie la réponse Face ID du téléphone (défi, domaine, présence et identité confirmées, compteur, signature P-256),
+ *  puis met à jour le compteur de la clé. docs : documents déjà lus sous verrou (sinon le verrou est pris ici). */
+function verifierAssertion_(d, but, attendu, docs) {
   d = d || {};
-  const cache = CacheService.getScriptCache(), g = Number(cache.get('echecs:tous') || 0);
-  if (g >= 40) throw refus_('Trop d’essais. Réessayez dans 15 minutes.');
-  const echec = function (msg) { cache.put('echecs:tous', String(g + 1), 900); return refus_(msg); };
+  const cache = CacheService.getScriptCache(), ke = attendu ? 'echecs:' + attendu : 'echecs:tous', g = Number(cache.get(ke) || 0);
+  if (g >= (attendu ? 5 : 40)) throw refus_('Trop d’essais. Réessayez dans 15 minutes.');
+  const echec = function (msg) { cache.put(ke, String(g + 1), 900); return refus_(msg); };
   const cdOctets = deB64url_(d.clientDataJSON), ad = deB64url_(d.authenticatorData), sig = deB64url_(d.signature);
   const cd = JSON.parse(texteUtf8_(cdOctets));
-  consommerDefi_(cd, 'webauthn.get', 'connexion');
-  const docs = lireDocs_();
-  const cle = faceIdDocs_(docs).filter(function (k) { return docs[k].data.id === String(d.id || ''); })[0];
-  if (!cle) throw echec('Face ID n’est plus activé pour cet appareil : connectez-vous avec votre code, puis réactivez-le dans Mon espace.');
-  const cred = docs[cle].data, membre = cle.split('/')[1];
+  const info = consommerDefi_(cd, 'webauthn.get', but);
+  if (attendu && info.m !== attendu) throw echec('Réponse Face ID invalide.');
+  const lus = docs || lireDocs_();
+  const cle = faceIdDocs_(lus, attendu).filter(function (k) { return lus[k].data.id === String(d.id || ''); })[0];
+  if (!cle) throw echec(attendu ? 'Face ID n’est plus activé pour cet appareil : confirmez avec votre code.' : 'Face ID n’est plus activé pour cet appareil : connectez-vous avec votre code, puis réactivez-le dans Mon espace.');
+  const cred = lus[cle].data, membre = cle.split('/')[1];
   // Données de l'authentificateur : empreinte du domaine (32 octets), indicateurs, compteur
   const rp = octetsVersHex_(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, RP_ID));
   if (octetsVersHex_(ad.slice(0, 32)) !== rp) throw echec('Réponse Face ID invalide.');
   const drapeaux = (ad[32] + 256) % 256;
   if (!(drapeaux & 0x01) || !(drapeaux & 0x04)) throw echec('Face ID n’a pas confirmé votre identité.');
   const compteur = ad.slice(33, 37).reduce(function (s, x) { return s * 256 + (x + 256) % 256; }, 0);
-  if (compteur && cred.compteur && compteur <= cred.compteur) throw echec('Clé Face ID suspecte : connectez-vous avec votre code.');
+  if (compteur && cred.compteur && compteur <= cred.compteur) throw echec('Clé Face ID suspecte : utilisez votre code.');
   const message = ad.concat(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, cdOctets));
   if (!verifierP256_(cred.x, cred.y, message, sig)) throw echec('Signature Face ID invalide.');
-  const lock = LockService.getScriptLock(); lock.waitLock(20000);
-  try { const d2 = lireDocs_(); if (d2[cle]) { const v = d2[cle].data; v.compteur = compteur; v.dernier = new Date().toISOString(); poserDoc_(d2, cle, v, membre); } } finally { lock.releaseLock(); }
-  journal_(membre, 'Connexion (Face ID)', cred.appareil || '');
-  return creerSession_(membre);
+  cache.remove(ke);
+  const maj = function (d2) { if (d2[cle]) { const v = d2[cle].data; v.compteur = compteur; v.dernier = new Date().toISOString(); poserDoc_(d2, cle, v, membre); } };
+  if (docs) maj(docs);
+  else { const lock = LockService.getScriptLock(); lock.waitLock(20000); try { maj(lireDocs_()); } finally { lock.releaseLock(); } }
+  return { membre: membre, appareil: cred.appareil || '' };
+}
+
+/** Connexion avec Face ID : vérifie la signature du téléphone, puis ouvre une session comme avec le code. */
+function apiConnexionFaceID(d) {
+  const r = verifierAssertion_(d, 'connexion', null);
+  journal_(r.membre, 'Connexion (Face ID)', r.appareil);
+  return creerSession_(r.membre);
 }
 
 /** Retire un appareil Face ID du membre connecté. */
@@ -2920,7 +2943,7 @@ function modelesFiches() {
         h += '<div style="background:#f4f6ef;padding:8px 12px;margin-top:14px;">' + titreSec(n + 1, m.decision.titre) + '<table width="100%" style="border-collapse:collapse;">' + ligne('Décision', d.choix) + m.decision.champs.filter(function (c) { return d[c[0]] !== '' && d[c[0]] != null; }).map(function (c) { return ligne(c[1], valeur(c, d[c[0]])); }).join('') + '</table></div>';
       }
     }
-    var sig = function (titre, s) { return '<td style="width:50%;vertical-align:top;padding:8px 10px;border:1px solid ' + L + ';"><div style="font-size:11.5px;font-weight:bold;color:' + V + ';">' + e(titre) + '</div>' + (s ? '<div style="font-size:10.5px;color:' + D + ';">' + e(s.nom) + (s.qualite ? ', ' + e(s.qualite) : '') + '<br>Signé le ' + e(dateFr(s.le)) + ' à ' + e(String(s.le || '').slice(11, 16)) + ' (heure GMT), ' + (s.presence ? 'en présence de ' + e(s.temoin || 'un membre du bureau') : 'confirmé par code personnel') + '</div><img src="' + s.img + '" style="width:200px;height:78px;">' : '<div style="height:90px;"></div>') + '</td>'; };
+    var sig = function (titre, s) { return '<td style="width:50%;vertical-align:top;padding:8px 10px;border:1px solid ' + L + ';"><div style="font-size:11.5px;font-weight:bold;color:' + V + ';">' + e(titre) + '</div>' + (s ? '<div style="font-size:10.5px;color:' + D + ';">' + e(s.nom) + (s.qualite ? ', ' + e(s.qualite) : '') + '<br>Signé le ' + e(dateFr(s.le)) + ' à ' + e(String(s.le || '').slice(11, 16)) + ' (heure GMT), ' + (s.presence ? 'en présence de ' + e(s.temoin || 'un membre du bureau') : s.via === 'faceid' ? 'confirmé par Face ID' : 'confirmé par code personnel') + '</div><img src="' + s.img + '" style="width:200px;height:78px;">' : '<div style="height:90px;"></div>') + '</td>'; };
     var t1 = m.sig1 || (f.modele === 'adhesion' ? 'Le membre' : 'Le demandeur');
     var cases = f.modele === 'attestation' ? [sig(m.contre, f.contre)] : m.contre || m.second ? [sig(t1, f.signature), sig(m.contre, f.contre)] : [sig(t1, f.signature)];
     h += '<table width="100%" style="border-collapse:separate;border-spacing:0;margin-top:16px;"><tr>' + cases.join('') + '</tr></table>';
@@ -2958,6 +2981,12 @@ function confirmerCode_(id, code) {
   if (hacher_(String(code || '').trim()) !== PropertiesService.getScriptProperties().getProperty('code:' + id)) { cache.put(k, String(n + 1), 900); throw refus_('Code personnel incorrect : la signature n’a pas été enregistrée.'); }
   cache.remove(k);
 }
+/** Confirme l'identité avant une signature : réponse Face ID (objet) ou code personnel. Renvoie le moyen utilisé. */
+function confirmerIdentite_(id, preuve, docs) {
+  if (preuve && typeof preuve === 'object') { verifierAssertion_(preuve, 'signature', id, docs); return 'faceid'; }
+  confirmerCode_(id, preuve);
+  return 'code';
+}
 function signatureImg_(img) {
   img = String(img || '');
   if (img.indexOf('data:image/jpeg;base64,') !== 0 || img.length > 24000 || img.length < 600) throw refus_('Signature absente ou illisible : signez dans le cadre.');
@@ -2985,7 +3014,7 @@ function apiSignerFiche(jeton, modele, valeurs, img, code, extra) {
   extra = extra || {};
   let img2 = null;
   if (m.presence) { img2 = signatureImg_(extra.img2); if (!txt_(extra.nom, 80)) throw refus_('Indiquez le nom de la personne qui signe le solde de tout compte.'); }
-  confirmerCode_(moi, code);
+  const via = confirmerIdentite_(moi, code);
   const lock = LockService.getScriptLock(); lock.waitLock(20000);
   let f;
   try {
@@ -3019,8 +3048,8 @@ function apiSignerFiche(jeton, modele, valeurs, img, code, extra) {
     f = { modele: modele, membre: titulaire, par: moi, numero: numeroFiche_(docs, modele), valeurs: v, etat: m.final || 'signee', creeLe: le };
     if (m.presence) {
       f.signature = { nom: txt_(extra.nom, 80), qualite: txt_(extra.qualite, 60) || (extra.nom === cfg.membres[v.membre].nom ? 'membre' : 'ayant droit'), img: img2, le: le, presence: true, temoin: cfg.membres[moi].nom };
-      f.contre = { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: le };
-    } else f.signature = { nom: cfg.membres[moi].nom, qualite: m.auteur === 'bureau' ? qualite_(cfg, moi) : 'membre', img: img, le: le };
+      f.contre = { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: le, via: via };
+    } else f.signature = { nom: cfg.membres[moi].nom, qualite: m.auteur === 'bureau' ? qualite_(cfg, moi) : 'membre', img: img, le: le, via: via };
     const chF = 'fiches/' + titulaire + '/items/' + id;
     f.pj = pjPublication_(docs, moi, chF, extra.pj);
     f.code = codeFiche_(f);
@@ -3064,8 +3093,8 @@ function apiContresignerFiche(jeton, cle, img, code, decision) {
     }
     let dec = null;
     if (MF.M[f.modele].decision) { const c = MF.controler(f.modele, decision || {}, true); if (c.erreur) throw refus_(c.erreur); dec = c.valeurs; }
-    confirmerCode_(moi, code);
-    f.contre = { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: new Date().toISOString() };
+    const via = confirmerIdentite_(moi, code, docs);
+    f.contre = { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: new Date().toISOString(), via: via };
     if (dec) f.decision = dec;
     f.etat = dec ? (/accord/.test(dec.choix) ? 'accordee' : /refus/.test(dec.choix) ? 'refusee' : 'ajournee') : 'validee';
     if (f.modele === 'pv') effets2.push(function () { notifier_('nouv', 'Procès-verbal de l’assemblée générale', 'Le procès-verbal de l’assemblée générale du ' + String(f.valeurs.date).split('-').reverse().join('/') + ' est disponible dans Adya (Mon espace › Documents du groupe).\n' + lienApp_()); });
@@ -3094,11 +3123,11 @@ function apiAttestation(jeton, membre, img, code) {
     const du = MC.adhesionDue(c.L, membre, c.P);
     const echu = +t.slice(8, 10) > c.P.jour ? t.slice(0, 7) : MC.monthAdd(t.slice(0, 7), -1);
     const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-    confirmerCode_(moi, code);
+    const via = confirmerIdentite_(moi, code, docs);
     const id = Utilities.getUuid().replace(/-/g, '').slice(0, 16), le = new Date().toISOString();
     const f = { modele: 'attestation', membre: membre, numero: numeroFiche_(docs, 'attestation'), etat: 'delivree', creeLe: le,
       valeurs: { date: t, jusqua: MOIS[+echu.slice(5, 7) - 1] + ' ' + echu.slice(0, 4), depuis: cfg.membres[membre].entree ? cfg.membres[membre].entree + '-01' : '', adhesion: !(du > 0) },
-      contre: { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: le } };
+      contre: { nom: cfg.membres[moi].nom, qualite: qualite_(cfg, moi), img: img, le: le, via: via } };
     f.code = codeFiche_(f);
     poserDoc_(docs, 'fiches/' + membre + '/items/' + id, f, membre);
     journal_(moi, 'Attestation délivrée', cfg.membres[membre].nom + ' ' + f.numero);
@@ -3332,7 +3361,7 @@ const ADYA = window.ADYA || { groupe: 'Mon groupe', type: 'groupe', sigle: 'ADYA
 const LOGO_HERO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSBzY2FsZSgxLjApIj48cGF0aCBkPSJNMzAgMTcyIEwxMDAgMzYgTDE3MCAxNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzBhNGEzMCIgc3Ryb2tlLXdpZHRoPSIyMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTM0IiByPSIzMCIgZmlsbD0iI2UzYTQzYSIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEzNCIgcj0iMTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2I5N2QxZiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9nPjwvc3ZnPgo=';
 const LOGO_RECU = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSBzY2FsZSgxLjApIj48cGF0aCBkPSJNMzAgMTcyIEwxMDAgMzYgTDE3MCAxNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZiZjlmMyIgc3Ryb2tlLXdpZHRoPSIyMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTM0IiByPSIzMCIgZmlsbD0iI2UzYTQzYSIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEzNCIgcj0iMTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2I5N2QxZiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9nPjwvc3ZnPgo=';
 const ICONE = 'data:image/png;base64,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';
-const VERSION_APP = '20/10/2026 à 15 h 55';   // date et heure de l'assemblage, affichées en bas de Mon espace
+const VERSION_APP = '20/10/2026 à 17 h 20';   // date et heure de l'assemblage, affichées en bas de Mon espace
 const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 const MOIS_C = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 const JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
@@ -3433,7 +3462,18 @@ const I = {
   oeil: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   oeilBarre: '<path d="M3 3l18 18"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.2M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7a10.4 10.4 0 0 0 5.4-1.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
   micro: '<rect x="9" y="2.5" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7"/>',
-  visage: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 15.5a3.5 3.5 0 0 0 5 0"/>'
+  visage: '<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 15.5a3.5 3.5 0 0 0 5 0"/>',
+  recu: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+  fiche: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
+  signer: '<path d="M4 21h16"/><path d="M15.5 4.5l4 4L9 19H5v-4z"/>',
+  enfant: '<circle cx="12" cy="6" r="3"/><path d="M12 9v7M8 12h8M9 21l3-5 3 5"/>',
+  bureau: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
+  stats: '<path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/>',
+  importer: '<path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/>',
+  droits: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  fonds: '<path d="M21 13a9 9 0 1 1-10-10v10z"/><path d="M14 3.5A9 9 0 0 1 20.5 10H14z"/>',
+  telephone: '<rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/>',
+  reglages: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M2.5 12h3M18.5 12h3M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>'
 };
 const ico = (n, cls) => '<svg class="' + (cls || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[n] + '</svg>';
 
@@ -3744,6 +3784,13 @@ function ameliorerChamps(root) {
 }
 /** Mon espace : chaque bloc se replie d'un toucher (− / +) ; le choix est gardé sur le téléphone.
  *  Par défaut, les cartes de l'administration et les blocs pratiques sont repliés. */
+const ICONES_BLOCS = {
+  'mes-recus': ['recu', '#b7791f'], 'mes-fiches': ['fiche', '#2b6cb0'], 'fiches-bureau': ['signer', '#2c7a7b'], faceid: ['visage', '#6b46c1'],
+  'f-profil': ['espace', '#2f855a'], 'Mes enfants': ['enfant', '#d53f8c'], 'notifs-prefs': ['cloche', '#dd6b20'], 'Mettre Adya sur l’écran d’accueil': ['telephone', '#4a6fa5'],
+  administration: ['reglages', '#0a4a30'], stats: ['stats', '#3182ce'], 'adm-membres': ['famille', '#2f855a'], 'adm-bureau': ['bureau', '#805ad5'],
+  'f-tres': ['cotisations', '#b7791f'], 'f-fonds': ['fonds', '#c05621'], 'Exporter les données': ['telecharger', '#2b6cb0'], 'Importer l’historique': ['importer', '#319795'],
+  'f-droits': ['droits', '#c53030'], 'Découvrir avec un exemple': ['oeil', '#718096']
+};
 const VOLETS_REPLIES = ['Mettre Adya sur l’écran d’accueil', 'Découvrir avec un exemple'];
 function cleVolet(el, t) { return el.id || (el.querySelector(':scope > form[id]') || {}).id || t.textContent.replace(/\d+|[()·]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60); }
 function voletReplie(k, admin) { const v = lsGet('volets', {}); return v[k] != null ? v[k] : admin || VOLETS_REPLIES.indexOf(k) >= 0; }
@@ -3762,6 +3809,8 @@ function amenagerVolets(root) {
     if (!tete) { const t = el.firstElementChild; if (!t || !/^H[23]$/.test(t.tagName)) return; tete = document.createElement('div'); tete.className = 'section-tete'; el.insertBefore(tete, t); tete.appendChild(t); }
     const titre = tete.querySelector('h2,h3'); if (!titre || tete.querySelector('.volet-btn')) return;
     const k = cleVolet(el, titre), ferme = voletReplie(k, el.parentNode === admin);
+    const ib = ICONES_BLOCS[k];
+    if (ib && !titre.querySelector('.ico-bloc')) { titre.querySelectorAll('svg.ico-titre').forEach(x => x.remove()); titre.insertAdjacentHTML('afterbegin', '<span class="ico-bloc" style="--c:' + ib[1] + '">' + ico(ib[0]) + '</span>'); titre.classList.add('titre-ico'); }
     const b = document.createElement('button'); b.type = 'button'; b.className = 'volet-btn'; b.dataset.a = 'volet'; b.dataset.k = k; tete.appendChild(b);
     el.classList.add('volet'); majVolet(el, b, ferme);
   });
@@ -4169,7 +4218,38 @@ function padSignature(titre, id, aide) {
 }
 const BTN_FERMER_FICHE = '<button type="button" class="volet-btn" data-a="fiche-fermer" aria-label="Fermer la fiche sans l’envoyer" title="Fermer la fiche sans l’envoyer">×</button>';
 function blocConfirmer(libelle) {
+  if (fidSignature()) {
+    const lib = ui.porte.libelle;
+    return '<div class="pile" style="gap:10px"><div><button type="button" class="btn" data-a="signer-faceid">' + ico('visage') + esc(libelle) + ' avec ' + esc(lib) + '</button></div>' +
+      '<details class="pli" id="d-sig-code"><summary>Ou confirmer avec mon code personnel</summary><label class="champ" style="margin-top:8px"><span>Mon code personnel</span><input type="password" name="code" inputmode="numeric" autocomplete="current-password" minlength="6" maxlength="10"></label><div><button class="btn second">' + esc(libelle) + ' avec mon code</button></div></details>' +
+      '<div><button type="button" class="btn lien" data-a="fiche-fermer">Annuler</button></div></div>';
+  }
   return '<label class="champ"><span>Mon code personnel, pour confirmer que c’est bien moi</span><input type="password" name="code" inputmode="numeric" autocomplete="current-password" required minlength="6" maxlength="10"></label><div><button class="btn">' + esc(libelle) + '</button> <button type="button" class="btn lien" data-a="fiche-fermer">Annuler</button></div>';
+}
+/** Signature des fiches avec Face ID : possible quand Adya est ouverte depuis son icône et que Face ID est activé sur l'appareil. */
+function fidSignature() { return !ui.demo && !!ui.porte && ui.porte.webauthn && ui.porte.signature && ui.porte.actif && (S.faceid || []).length > 0; }
+/** Preuve d'identité pour signer : la réponse Face ID reçue de la page d'accueil, sinon le code saisi. */
+function preuveSignature(o) {
+  const p = ui.preuveFid; ui.preuveFid = null;
+  if (p) return p;
+  if (!o.code) { toast('Saisissez votre code personnel, ou signez avec ' + ((ui.porte && ui.porte.libelle) || 'Face ID') + '.'); return null; }
+  return o.code;
+}
+async function demanderSignatureFaceID(f) {
+  if (!imageSignature('sig') || (f.querySelector('#sig2') && !imageSignature('sig2'))) { toast('Signez dans le cadre avant de confirmer.'); return; }
+  if (!f.reportValidity()) return;
+  try {
+    const r = await appel('apiDefiFaceID', SESSION.jeton, 'signature');
+    ui.sigFid = f.id; ui.preuveFid = null;
+    const t = f.querySelector('h3');
+    versPorte({ adya: 'signature', defi: r.defi, titre: t ? t.textContent : 'Votre fiche' });
+  } catch (e) { if (estSession(e)) finSession(); toast(messageErreur(e)); }
+}
+function signatureFaceID(m) {
+  const f = ui.sigFid && document.getElementById(ui.sigFid); ui.sigFid = null; if (!f) return;
+  ui.preuveFid = { id: m.id, clientDataJSON: m.clientDataJSON, authenticatorData: m.authenticatorData, signature: m.signature };
+  toast('Signature en cours d’enregistrement…');
+  f.requestSubmit();
 }
 function formFiche(c, modele) {
   const m = MF.M[modele], pre = Object.assign(prefill(c, modele), (ui.fiche && ui.fiche.pre) || {});
@@ -5035,6 +5115,7 @@ const A = {
   'attestation-ouvrir': () => { ui.fiche = { attestation: true }; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); setTimeout(() => { const e = document.getElementById('f-attest'); if (e) e.scrollIntoView({ block: 'start' }); }, 80); },
   volet: el => { const s = el.closest('.volet'); if (!s) return; const ferme = !s.classList.contains('replie'); const v = lsGet('volets', {}); v[el.dataset.k] = ferme; lsSet('volets', v); majVolet(s, el, ferme); if (ferme && s.getBoundingClientRect().top < 0) s.scrollIntoView({ block: 'start' }); },
   'pli-reduire': el => { const d = el.closest('details'); if (!d) return; d.open = false; if (d.id) ui.ouvert[d.id] = false; d.classList.remove('long'); const r = d.getBoundingClientRect(); if (r.top < 70) window.scrollBy(0, r.top - 80); },
+  'signer-faceid': el => demanderSignatureFaceID(el.closest('form')),
   'fiche-fermer': () => { ui.fiche = null; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); },
   'fiche-pdf': el => telechargerFiche(el.dataset.k),
   'sig-effacer': el => { const id = el.dataset.k || 'sig', cv = document.getElementById(id); if (cv) cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); delete SIGS[id]; if (id === 'sig') sigTrace = false; },
@@ -5345,23 +5426,25 @@ const FORMS = {
     await majConfig(cfg => { cfg.tresoriers = (cfg.tresoriers || []).map(t => t.au || !remplacer ? t : Object.assign({}, t, { au: o.du })); cfg.tresoriers.push({ membre: o.membre, uid: o.membre, du: o.du, au: null, titre: o.titre === 'trésorière' ? 'trésorière' : 'trésorier' }); }, remplacer ? 'Trésorerie confiée à ' + nomMembre(o.membre) + '.' : nomMembre(o.membre) + ' rejoint la trésorerie.');
   },
   fiche: async (f, o) => {
-    const modele = f.dataset.v, m = MF.M[modele];
+    const modele = f.dataset.v, m = MF.M[modele], preuve = preuveSignature(o); if (!preuve) return;
     const img = imageSignature('sig'); if (!img) { toast('Signez dans le cadre avant d’envoyer.'); return; }
     let extra = null;
     if (m.presence) { const img2 = imageSignature('sig2'); if (!img2) { toast('La personne qui reçoit le règlement doit signer dans son cadre.'); return; } extra = { img2, nom: o.__nom, qualite: o.__qualite }; }
     const v = valeursFiche(f); delete v.__nom; delete v.__qualite;
     const pjF = pjPretes('fiche'); if (!pjF) return; if (pjF.length) { extra = extra || {}; extra.pj = pjF; }
     const msg = { convocation: 'Convocation envoyée à tous les membres.', pouvoir: 'Pouvoir enregistré.', pv: 'Procès-verbal signé : il attend la signature du secrétaire de séance.', depart: 'Solde de tout compte signé.', passation: 'Passation signée : le responsable entrant doit la contresigner.' }[modele] || 'Fiche signée et envoyée au bureau.';
-    if (await envoyerSigne('apiSignerFiche', [modele, v, img, o.code, extra], msg)) ui.pj.fiche = [];
+    if (await envoyerSigne('apiSignerFiche', [modele, v, img, preuve, extra], msg)) ui.pj.fiche = [];
   },
   contre: async (f, o) => {
+    const preuve = preuveSignature(o); if (!preuve) return;
     const img = imageSignature(); if (!img) { toast('Signez dans le cadre avant de valider.'); return; }
     const d = valeursFiche(f); delete d.code;
-    await envoyerSigne('apiContresignerFiche', [f.dataset.k, img, o.code, d], 'Signature du bureau enregistrée.');
+    await envoyerSigne('apiContresignerFiche', [f.dataset.k, img, preuve, d], 'Signature du bureau enregistrée.');
   },
   attestation: async (f, o) => {
+    const preuve = preuveSignature(o); if (!preuve) return;
     const img = imageSignature(); if (!img) { toast('Signez dans le cadre avant de valider.'); return; }
-    await envoyerSigne('apiAttestation', [o.membre, img, o.code], 'Attestation établie : téléchargez-la en PDF.');
+    await envoyerSigne('apiAttestation', [o.membre, img, preuve], 'Attestation établie : téléchargez-la en PDF.');
   },
   'ar-personne': async (f, o) => {
     const k = f.dataset.k, nouveau = k.indexOf('new:') === 0, id = nouveau ? 'p' + Date.now().toString(36) : k;
@@ -5802,7 +5885,7 @@ window.addEventListener('message', e => {
   const m = e.data;
   if (m.adya === 'porte-prete') { versPorte({ adya: 'bonjour' }); return; }
   if (m.adya === 'porte') {
-    ui.porte = { webauthn: !!m.webauthn, libelle: String(m.libelle || 'Face ID').slice(0, 40), actif: !!m.actif, dictee: !!m.dictee, micro: !!m.micro }; ui.porteEtat = null;
+    ui.porte = { webauthn: !!m.webauthn, libelle: String(m.libelle || 'Face ID').slice(0, 40), actif: !!m.actif, dictee: !!m.dictee, micro: !!m.micro, signature: !!m.signature }; ui.porteEtat = null;
     // Sur iPhone, le stockage du cadre Google peut être effacé entre deux ouvertures : la page d'accueil garde la connexion.
     ui.porteDiag = { v: String(m.v || 'ancienne'), jeton: !!m.jeton, journal: Array.isArray(m.diag) ? m.diag.slice(-15).map(String) : [] };
     if (!SESSION.jeton && typeof m.jeton === 'string' && m.jeton) {
@@ -5818,6 +5901,8 @@ window.addEventListener('message', e => {
   else if (m.adya === 'vocal-erreur') { if (m.message) toast(String(m.message).slice(0, 200)); }
   else if (m.adya === 'faceid-cree') enregistrerFaceID(m);
   else if (m.adya === 'faceid-assertion') connexionFaceID(m);
+  else if (m.adya === 'faceid-signature') signatureFaceID(m);
+  else if (m.adya === 'faceid-erreur' && m.but === 'signature') { ui.sigFid = null; if (m.message) toast(String(m.message).slice(0, 200)); }
   else if (m.adya === 'faceid-erreur') { defiConnexion = null; ui.porteEtat = null; if (m.message) toast(String(m.message).slice(0, 200)); planifier(); }
 });
 versPorte({ adya: 'bonjour' });
