@@ -553,6 +553,21 @@ h3 .puce { vertical-align: 2px; }
 .lv-ico svg { width: 20px; height: 20px; color: var(--vert); }
 .lect-voix audio { width: 100%; height: 40px; }
 .pj-boutons .pj-ajout { margin: 0; }
+
+.version-app { text-align: center; margin: 18px 0 6px; }
+
+/* Mon espace : blocs repliables (− / +) et bouton « Réduire » au bas des listes longues */
+.volet-btn { flex: none; margin-left: auto; width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--sauge-pale); color: var(--vert); font-family: inherit; font-weight: 900; font-size: 1.25rem; line-height: 1; display: grid; place-items: center; cursor: pointer; align-self: center; }
+.volet-btn:focus-visible { outline: 3px solid var(--vert); outline-offset: 2px; }
+.volet > .section-tete { align-items: center; flex-wrap: nowrap; }
+.volet > .section-tete > :is(h2, h3) { flex: 1; min-width: 0; }
+.volet.replie > :not(.section-tete) { display: none !important; }
+.volet.replie > .section-tete { margin-bottom: 0; }
+.volet.replie > .section-tete > :is(h2, h3) { margin: 0; }
+.fiche-form > .section-tete { align-items: center; flex-wrap: nowrap; }
+.pli-reduire { display: none; margin-top: 8px; }
+details.pli.long[open] > .pli-reduire { display: inline-flex; }
+.volet.replie > .section-tete > .btn { display: none; }
 </style>
 </head>
 <body>
@@ -3317,6 +3332,7 @@ const ADYA = window.ADYA || { groupe: 'Mon groupe', type: 'groupe', sigle: 'ADYA
 const LOGO_HERO = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSBzY2FsZSgxLjApIj48cGF0aCBkPSJNMzAgMTcyIEwxMDAgMzYgTDE3MCAxNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzBhNGEzMCIgc3Ryb2tlLXdpZHRoPSIyMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTM0IiByPSIzMCIgZmlsbD0iI2UzYTQzYSIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEzNCIgcj0iMTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2I5N2QxZiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9nPjwvc3ZnPgo=';
 const LOGO_RECU = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSBzY2FsZSgxLjApIj48cGF0aCBkPSJNMzAgMTcyIEwxMDAgMzYgTDE3MCAxNzIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZiZjlmMyIgc3Ryb2tlLXdpZHRoPSIyMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTM0IiByPSIzMCIgZmlsbD0iI2UzYTQzYSIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEzNCIgcj0iMTciIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2I5N2QxZiIgc3Ryb2tlLXdpZHRoPSI0Ii8+PC9nPjwvc3ZnPgo=';
 const ICONE = 'data:image/png;base64,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';
+const VERSION_APP = '20/10/2026 à 15 h 55';   // date et heure de l'assemblage, affichées en bas de Mon espace
 const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 const MOIS_C = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 const JOURS = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
@@ -3726,6 +3742,35 @@ function ameliorerChamps(root) {
     b.innerHTML = ico('micro') + '<span>Dicter</span>'; t.insertAdjacentElement('afterend', b);
   });
 }
+/** Mon espace : chaque bloc se replie d'un toucher (− / +) ; le choix est gardé sur le téléphone.
+ *  Par défaut, les cartes de l'administration et les blocs pratiques sont repliés. */
+const VOLETS_REPLIES = ['Mettre Adya sur l’écran d’accueil', 'Découvrir avec un exemple'];
+function cleVolet(el, t) { return el.id || (el.querySelector(':scope > form[id]') || {}).id || t.textContent.replace(/\d+|[()·]/g, '').replace(/\s+/g, ' ').trim().slice(0, 60); }
+function voletReplie(k, admin) { const v = lsGet('volets', {}); return v[k] != null ? v[k] : admin || VOLETS_REPLIES.indexOf(k) >= 0; }
+function amenagerVolets(root) {
+  root.querySelectorAll('details.pli').forEach(d => {
+    if (d.lastElementChild && d.lastElementChild.classList.contains('pli-reduire')) return;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'btn lien petit pli-reduire'; b.dataset.a = 'pli-reduire'; b.textContent = '▴ Réduire'; d.appendChild(b);
+  });
+  requestAnimationFrame(() => root.querySelectorAll('details.pli[open]').forEach(marquerLong));
+  if (ui.route !== 'espace') return;
+  const admin = root.querySelector('#adm-membres') && root.querySelector('#adm-membres').closest('section');
+  const blocs = Array.from(root.querySelectorAll(':scope > section.section, :scope > div > section.section')).filter(el => !el.querySelector('.fiche-form'));
+  if (admin) blocs.push(...Array.from(admin.children).filter(el => el.classList.contains('carte')));
+  blocs.forEach(el => {
+    let tete = el.querySelector(':scope > .section-tete');
+    if (!tete) { const t = el.firstElementChild; if (!t || !/^H[23]$/.test(t.tagName)) return; tete = document.createElement('div'); tete.className = 'section-tete'; el.insertBefore(tete, t); tete.appendChild(t); }
+    const titre = tete.querySelector('h2,h3'); if (!titre || tete.querySelector('.volet-btn')) return;
+    const k = cleVolet(el, titre), ferme = voletReplie(k, el.parentNode === admin);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'volet-btn'; b.dataset.a = 'volet'; b.dataset.k = k; tete.appendChild(b);
+    el.classList.add('volet'); majVolet(el, b, ferme);
+  });
+}
+function majVolet(el, b, ferme) {
+  el.classList.toggle('replie', ferme); b.textContent = ferme ? '+' : '−';
+  const t = (ferme ? 'Déplier : ' : 'Réduire : ') + b.dataset.k; b.setAttribute('aria-label', t); b.title = t; b.setAttribute('aria-expanded', String(!ferme));
+}
+function marquerLong(d) { d.classList.toggle('long', d.open && d.offsetHeight > window.innerHeight * 0.6); }
 /** Dictée : par la page d'accueil quand elle sait écouter (le cadre Google n'a pas accès au micro), sinon par le micro du clavier. */
 function dicter(t) {
   if (!t) return;
@@ -3788,6 +3833,7 @@ function render() {
   vue.innerHTML = html;
   ameliorerChamps(vue);
   restaurer(vue, etat);
+  amenagerVolets(vue);
   Object.keys(SIGS).forEach(id => { const cv = document.getElementById(id); if (!cv) { delete SIGS[id]; return; } if (sigData[id]) { const im = new Image(); im.onload = () => cv.getContext('2d').drawImage(im, 0, 0); im.src = sigData[id]; } });
   sigTrace = !!SIGS.sig;
   vue.querySelectorAll('select[data-a-change="fi-autre"]').forEach(el => CH['fi-autre'](el));
@@ -4121,12 +4167,13 @@ function padSignature(titre, id, aide) {
   id = id || 'sig';
   return '<div class="champ"><span>' + esc(titre) + '</span><div class="sig-zone"><canvas id="' + id + '" class="sig-pad" width="600" height="220" aria-label="Zone de signature : signez avec le doigt"></canvas><button type="button" class="btn lien petit" data-a="sig-effacer" data-k="' + id + '">Effacer</button></div><small class="doux">' + esc(aide || 'Signez avec le doigt dans le cadre.') + '</small></div>';
 }
+const BTN_FERMER_FICHE = '<button type="button" class="volet-btn" data-a="fiche-fermer" aria-label="Fermer la fiche sans l’envoyer" title="Fermer la fiche sans l’envoyer">×</button>';
 function blocConfirmer(libelle) {
   return '<label class="champ"><span>Mon code personnel, pour confirmer que c’est bien moi</span><input type="password" name="code" inputmode="numeric" autocomplete="current-password" required minlength="6" maxlength="10"></label><div><button class="btn">' + esc(libelle) + '</button> <button type="button" class="btn lien" data-a="fiche-fermer">Annuler</button></div>';
 }
 function formFiche(c, modele) {
   const m = MF.M[modele], pre = Object.assign(prefill(c, modele), (ui.fiche && ui.fiche.pre) || {});
-  let h = '<form class="form carte fiche-form" data-f="fiche" id="f-fiche" data-v="' + modele + '"><div class="section-tete"><h3>' + esc(m.titre) + '</h3></div>';
+  let h = '<form class="form carte fiche-form" data-f="fiche" id="f-fiche" data-v="' + modele + '"><div class="section-tete"><h3>' + esc(m.titre) + '</h3>' + BTN_FERMER_FICHE + '</div>';
   const AIDES = { adhesion: 'Vérifiez et complétez vos informations, cochez vos engagements, puis signez. Une copie PDF signée est rangée dans les archives ' + G().du + ' ; vous la retrouverez ici.',
     convocation: 'À la signature, l’assemblée est ajoutée à l’agenda et chaque membre reçoit la convocation. Elle reste téléchargeable dans « Documents du groupe ».',
     pouvoir: 'Si vous ne pouvez pas assister à l’assemblée générale, désignez le membre qui votera à votre place.',
@@ -4174,7 +4221,7 @@ function resumeValeurs(f) {
 }
 function formExamen(c, f) {
     const m = MF.M[f.modele], soi = f._membre === c.moi && !m.auteur;
-    let h = '<section class="section"><form class="form carte fiche-form" data-f="contre" id="f-contre" data-k="' + esc(f._key) + '"><div class="section-tete"><h3>' + esc(m.titre) + (m.auteur ? '' : ' · ' + esc(nomMembre(f._membre))) + '</h3>' + puceFiche(f) + '</div><p class="petit doux">' + esc(f.numero) + ', signé' + (f.modele === 'pv' || f.modele === 'pouvoir' ? '' : 'e') + ' le ' + esc(fmtDate(f.signeLe)) + (f.par ? ' par ' + esc(nomMembre(f.par)) : '') + '.</p>' + resumeValeurs(f);
+    let h = '<section class="section"><form class="form carte fiche-form" data-f="contre" id="f-contre" data-k="' + esc(f._key) + '"><div class="section-tete"><h3>' + esc(m.titre) + (m.auteur ? '' : ' · ' + esc(nomMembre(f._membre))) + '</h3>' + puceFiche(f) + BTN_FERMER_FICHE + '</div><p class="petit doux">' + esc(f.numero) + ', signé' + (f.modele === 'pv' || f.modele === 'pouvoir' ? '' : 'e') + ' le ' + esc(fmtDate(f.signeLe)) + (f.par ? ' par ' + esc(nomMembre(f.par)) : '') + '.</p>' + resumeValeurs(f);
     if (m.decision) h += '<fieldset class="fi-sec"><legend>' + esc(m.decision.titre) + '</legend><div class="champs-2"><label class="champ"><span>Décision</span><select name="choix" required><option value="">—</option>' + m.decision.choix.map(o => '<option>' + esc(o) + '</option>').join('') + '</select></label>' + m.decision.champs.map(x => champFiche(x, 0, '', {})).join('') + '</div></fieldset>';
     if (soi) h += '<p class="plat petit">C’est votre propre fiche : une autre personne du bureau doit la contresigner, sauf si vous êtes seul(e) au bureau.</p>';
     return h + padSignature(m.contre && f.modele !== 'adhesion' ? 'Ma signature : ' + m.contre.toLowerCase() : 'Ma signature, pour le bureau') + blocConfirmer(m.decision ? 'Signer la décision' : 'Contresigner') + '</form></section>';
@@ -4184,7 +4231,7 @@ function vFichesBureau(c) {
   if (ui.fiche && ui.fiche.cle) { const f = c.fiches.find(x => x._key === ui.fiche.cle); if (!f) { ui.fiche = null; return ''; } if (MF.M[f.modele].second !== 'entrant') return formExamen(c, f); }
   if (ui.fiche && ui.fiche.modele && MF.M[ui.fiche.modele].auteur === 'bureau') return '<section class="section" id="doc-bureau">' + formFiche(c, ui.fiche.modele) + '</section>';
   if (ui.fiche && ui.fiche.attestation) {
-    return '<section class="section"><form class="form carte fiche-form" data-f="attestation" id="f-attest"><h3>Établir une attestation de membre à jour</h3><p class="petit doux">Adya vérifie dans les registres que le membre est à jour de ses cotisations avant d’établir l’attestation. Elle porte un code d’authenticité.</p><label class="champ"><span>Membre</span><select name="membre" required>' + c.membres.map(m => '<option value="' + m.id + '">' + esc(m.nomAff) + '</option>').join('') + '</select></label>' + padSignature('Ma signature, pour le bureau') + blocConfirmer('Signer l’attestation') + '</form></section>';
+    return '<section class="section"><form class="form carte fiche-form" data-f="attestation" id="f-attest"><div class="section-tete"><h3>Établir une attestation de membre à jour</h3>' + BTN_FERMER_FICHE + '</div><p class="petit doux">Adya vérifie dans les registres que le membre est à jour de ses cotisations avant d’établir l’attestation. Elle porte un code d’authenticité.</p><label class="champ"><span>Membre</span><select name="membre" required>' + c.membres.map(m => '<option value="' + m.id + '">' + esc(m.nomAff) + '</option>').join('') + '</select></label>' + padSignature('Ma signature, pour le bureau') + blocConfirmer('Signer l’attestation') + '</form></section>';
   }
   const adh = new Set(c.fiches.filter(f => f.modele === 'adhesion').map(f => f._membre)), camp = c.cfg.campagneAdhesion;
   let h = '<section class="section carte" id="fiches-bureau"><div class="section-tete"><h2>Fiches et attestations</h2><span class="puce' + (att.length ? ' or' : ' neutre') + '">' + att.length + ' en attente</span></div>';
@@ -4865,6 +4912,8 @@ function vEspace() {
   if (c.isOwner && !ui.demo) h += vAdmin(c);
   else if (c.isTres && !ui.demo) h += '<section class="section">' + vExport() + '</section>';
   if (!ui.demo) h += '<section class="section"><h2>Découvrir avec un exemple</h2><p class="doux">Affiche des données fictives pour voir l’application remplie. Rien n’est enregistré et vos vraies données ne sont pas touchées.</p><div><button class="btn second" data-a="demo-on">Voir un exemple</button></div></section>';
+  const pv = ui.porteDiag && ui.porteDiag.v && /^a\d{4}-\d{2}-\d{2}$/.test(ui.porteDiag.v) ? ui.porteDiag.v.slice(1).split('-').reverse().join('/') : '';
+  h += '<p class="version-app petit doux">Adya · version du ' + esc(VERSION_APP) + (pv ? ' · page d’accueil du ' + esc(pv) : '') + '</p>';
   return h;
 }
 function vCompte(c) {
@@ -4925,7 +4974,7 @@ function vMembresAdmin(c) {
 }
 function vAdmin(c) {
   const cfg = c.cfg; const tr = cfg.tresoriers || []; const dr = cfg.droits || {}; const rv = cfg.reglagesVote || {}; const rp = cfg.rappels || {};
-  let h = '<section class="section"><div class="section-tete"><h2>Administration</h2><span class="puce">Visible par l’administrateur seulement</span></div>';
+  let h = '<section class="section" id="administration"><div class="section-tete"><h2>Administration</h2><span class="puce">Visible par l’administrateur seulement</span></div>';
   h += vStats(c);
   h += vMembresAdmin(c);
   const tf = T();
@@ -4984,6 +5033,8 @@ const A = {
   'fiche-ouvrir': el => { if (ui.demo) { toast('Exemple : les fiches ne sont pas disponibles.'); return; } naviguer('espace'); ui.fiche = { modele: el.dataset.v, pre: el.dataset.d ? { assemblee: el.dataset.d } : null }; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); setTimeout(() => { const e = document.getElementById('mes-fiches') && !MF.M[el.dataset.v].auteur ? document.getElementById('mes-fiches') : document.getElementById('doc-bureau'); if (e) e.scrollIntoView({ block: 'start' }); }, 80); },
   'fiche-examiner': el => { ui.fiche = { cle: el.dataset.k }; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); setTimeout(() => { const e = document.getElementById('f-contre'); if (e) e.scrollIntoView({ block: 'start' }); }, 80); },
   'attestation-ouvrir': () => { ui.fiche = { attestation: true }; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); setTimeout(() => { const e = document.getElementById('f-attest'); if (e) e.scrollIntoView({ block: 'start' }); }, 80); },
+  volet: el => { const s = el.closest('.volet'); if (!s) return; const ferme = !s.classList.contains('replie'); const v = lsGet('volets', {}); v[el.dataset.k] = ferme; lsSet('volets', v); majVolet(s, el, ferme); if (ferme && s.getBoundingClientRect().top < 0) s.scrollIntoView({ block: 'start' }); },
+  'pli-reduire': el => { const d = el.closest('details'); if (!d) return; d.open = false; if (d.id) ui.ouvert[d.id] = false; d.classList.remove('long'); const r = d.getBoundingClientRect(); if (r.top < 70) window.scrollBy(0, r.top - 80); },
   'fiche-fermer': () => { ui.fiche = null; sigTrace = false; Object.keys(SIGS).forEach(k => delete SIGS[k]); planifier(); },
   'fiche-pdf': el => telechargerFiche(el.dataset.k),
   'sig-effacer': el => { const id = el.dataset.k || 'sig', cv = document.getElementById(id); if (cv) cv.getContext('2d').clearRect(0, 0, cv.width, cv.height); delete SIGS[id]; if (id === 'sig') sigTrace = false; },
@@ -6028,6 +6079,7 @@ function brancher() {
     if (el.tagName === 'A') e.preventDefault();
     Promise.resolve(A[a](el)).catch(err => { console.error(err); toast('Une erreur est survenue.'); });
   });
+  document.addEventListener('toggle', e => { if (e.target.matches && e.target.matches('details.pli')) marquerLong(e.target); }, true);
   document.addEventListener('change', e => {
     const el = e.target;
     if (el.dataset && el.dataset.photo) { const f = el.files && el.files[0]; const cible = el.dataset.photo; el.value = ''; if (!f) return; preparerCadrage(f, cible).catch(() => toast('Cette image n’a pas pu être lue. Essayez une photo JPEG ou PNG.')); return; }
