@@ -70,6 +70,12 @@
   <button class="second" id="fid-non" type="button">Plus tard</button>
 </div>
 
+<div class="fid" id="fid-signer" hidden role="dialog" aria-modal="true" aria-labelledby="fsg-titre">
+  <strong id="fsg-titre">Confirmer la signature</strong>
+  <p id="fsg-texte"></p>
+  <button class="principal" id="fsg-oui" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5v3.5h-1M9.5 15.5a3.5 3.5 0 0 0 5 0"/></svg><span id="fsg-oui-txt">Signer avec Face ID</span></button>
+  <button class="second" id="fsg-non" type="button">Annuler</button>
+</div>
 <div class="fid" id="mic" hidden role="dialog" aria-modal="true" aria-labelledby="mic-titre">
   <strong id="mic-titre">Note vocale</strong>
   <p id="mic-texte"></p>
@@ -99,7 +105,7 @@
   if (COMPAT) ['jeton', 'etat', 'faceid'].forEach(function (k) { try { var v = localStorage.getItem(COMPAT + '.' + k); if (v != null && lsGet(k) == null) lsSet(k, v); } catch (e) {} });
   var envoyer = function (m) { if (COMPAT && m.adya) m[COMPAT] = m.adya; if (app) app.postMessage(m, origineApp); };
   /* Petit journal de diagnostic (affiché dans Mon espace › Connexion avec Face ID) : ce que cette page reçoit et garde. */
-  var VERSION = 'a2026-10-16';
+  var VERSION = 'a2026-10-20';
   function diag(x) { try { var a = JSON.parse(lsGet('diag') || '[]'); var d = new Date(); a.push(('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + ' ' + d.toTimeString().slice(0, 5) + ' · ' + x); lsSet('diag', JSON.stringify(a.slice(-15))); } catch (e) {} }
   function journal() { try { return JSON.parse(lsGet('diag') || '[]'); } catch (e) { return []; } }
   diag('ouverture (' + VERSION + ') · connexion gardée : ' + (lsGet('jeton') ? 'oui' : 'non') + (window.navigator.standalone ? ' · icône' : ' · navigateur'));
@@ -123,7 +129,7 @@
   function etatGarde() { try { return JSON.parse(lsGet('etat') || 'null'); } catch (e) { return null; } }
   var MICRO = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
   var Reco = window.SpeechRecognition || window.webkitSpeechRecognition;
-  function annoncer() { envoyer({ adya: 'porte', webauthn: webauthn, libelle: LIB, actif: lsGet('faceid') === '1', jeton: lsGet('jeton'), etat: etatGarde(), v: VERSION, diag: journal(), micro: MICRO, dictee: !!Reco }); }
+  function annoncer() { envoyer({ adya: 'porte', webauthn: webauthn, libelle: LIB, actif: lsGet('faceid') === '1', signature: true, jeton: lsGet('jeton'), etat: etatGarde(), v: VERSION, diag: journal(), micro: MICRO, dictee: !!Reco }); }
 
   /* ---- Note vocale : enregistrée ici, puis transmise à l'application, qui l'envoie dans le Drive du groupe ---- */
   var mic = { mode: null, z: null, max: 180, flux: null, rec: null, morceaux: [], t0: 0, tic: null, blob: null, type: '', duree: 0, reco: null, texte: '' };
@@ -241,6 +247,7 @@
     else if (m.adya === 'session') { lsSet('jeton', typeof m.jeton === 'string' && m.jeton ? m.jeton : null); if (!m.jeton) lsSet('etat', null); diag('connexion ' + (m.jeton ? 'reçue' : 'effacée') + ' · relue : ' + (lsGet('jeton') ? 'oui' : 'non')); }
     else if (m.adya === 'etat') { if (m.g && m.g.j && m.g.j === lsGet('jeton')) { try { localStorage.setItem('adya.' + GROUPE + '.etat', JSON.stringify(m.g)); } catch (e) { diag('situation trop lourde pour être gardée'); } } }
     else if (m.adya === 'diag') { diag(String(m.t || '').slice(0, 120)); }
+    else if (m.adya === 'signature' && typeof m.defi === 'string') signerOuvrir(m);
     else if (m.adya === 'micro' && MICRO && typeof m.z === 'string') micOuvrir('note', m.z.slice(0, 60), m.max);
     else if (m.adya === 'dictee' && Reco) micOuvrir('dictee', null, 600);
   });
@@ -278,6 +285,27 @@
         envoyer({ adya: 'faceid-assertion', id: b64u(c.rawId), clientDataJSON: b64u(c.response.clientDataJSON), authenticatorData: b64u(c.response.authenticatorData), signature: b64u(c.response.signature) });
       })
       .catch(function (e) { envoyer({ adya: 'faceid-erreur', message: erreur(e) }); });
+  });
+
+  /* Signature d'une fiche : Face ID confirme que c'est bien le membre qui signe (au toucher, comme pour la connexion). */
+  var aSigner = null;
+  function signerOuvrir(m) {
+    aSigner = m.defi;
+    $('fsg-texte').textContent = (String(m.titre || 'Votre fiche').slice(0, 80)) + ' : ' + LIB + ' confirme que c’est bien vous qui signez.';
+    $('fsg-oui-txt').textContent = 'Signer avec ' + LIB;
+    $('fid-voile').hidden = false; $('fid-signer').hidden = false; $('fsg-oui').focus();
+  }
+  function signerFermer() { $('fid-voile').hidden = true; $('fid-signer').hidden = true; aSigner = null; }
+  $('fsg-non').addEventListener('click', function () { signerFermer(); envoyer({ adya: 'faceid-erreur', message: 'Signature annulée.', but: 'signature' }); });
+  $('fsg-oui').addEventListener('click', function () {
+    var d = aSigner; signerFermer(); if (!d) return;
+    var cle = lsGet('cle'), opts = { challenge: deB64u(d), rpId: RP, userVerification: 'required', timeout: 60000 };
+    if (cle) opts.allowCredentials = [{ type: 'public-key', id: deB64u(cle) }];
+    navigator.credentials.get({ publicKey: opts })
+      .then(function (c) {
+        envoyer({ adya: 'faceid-signature', id: b64u(c.rawId), clientDataJSON: b64u(c.response.clientDataJSON), authenticatorData: b64u(c.response.authenticatorData), signature: b64u(c.response.signature) });
+      })
+      .catch(function (e) { var n = e && e.name; envoyer({ adya: 'faceid-erreur', message: n === 'NotAllowedError' || n === 'AbortError' ? LIB + ' annulé : vous pouvez aussi signer avec votre code.' : erreur(e), but: 'signature' }); });
   });
 
   /* Activation sur cet appareil (depuis Mon espace) : création de la clé, protégée par Face ID. */
