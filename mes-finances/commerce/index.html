@@ -363,6 +363,8 @@ body{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 9%,var(--bg)
 .art .txt span{font-size:11.5px;line-height:1.3}
 
 .art .txt span b.prix{display:inline;font-size:11.5px;color:var(--ink2);font-weight:700;-webkit-line-clamp:unset}
+
+.sitef{flex-wrap:wrap}.coche.petit{flex:1 1 100%;font-size:12.5px}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -1202,7 +1204,9 @@ function boutique_(docs) {
 }
 const sitesActifs_ = function (b) { return b.sites.filter(function (x) { return x.actif !== false; }); };
 /** Site d'un vendeur (le premier site actif s'il n'en a pas, ou si le sien a été fermé). */
-function siteDe_(b, mb) { const a = sitesActifs_(b); return (mb && mb.site && a.some(function (x) { return x.id === mb.site; })) ? mb.site : (a[0] || b.sites[0]).id; }
+/** Sites de vente (un dépôt ou une réserve n'a ni ventes ni vendeur). */
+const sitesVente_ = function (b) { const v = sitesActifs_(b).filter(function (x) { return !x.depot; }); return v.length ? v : sitesActifs_(b); };
+function siteDe_(b, mb) { const a = sitesVente_(b); return (mb && mb.site && a.some(function (x) { return x.id === mb.site; })) ? mb.site : (a[0] || b.sites[0]).id; }
 const prefixe_ = function (docs, p) { return Object.keys(docs).filter(function (k) { return k.indexOf(p) === 0; }); };
 function tousRes_(docs) { return prefixe_(docs, 'res/').sort().map(function (k) { return docs[k].data; }); }
 
@@ -1360,6 +1364,7 @@ function appliquer_(docs, mb, op, d) {
     o.s = patron ? (d.s ? siteOk(String(d.s)) : siteDe_(b, null)) : siteDe_(b, mb);
     let message = '', avert = [];
     if (t === 'v') {
+      if ((b.sites.filter(function (x) { return x.id === o.s; })[0] || {}).depot) throw refus_('On ne vend pas depuis un dépôt : choisissez un site de vente, ou transférez d’abord la marchandise.');
       const L = Array.isArray(d.l) ? d.l : [];
       if (!L.length || L.length > 150) throw refus_('Le panier est vide.');
       o.l = L.map(function (x) {
@@ -1587,19 +1592,23 @@ function appliquer_(docs, mb, op, d) {
         if (sitesActifs_(b).length < 2) throw refus_('Il faut au moins un site.');
         if (equipe_(docs).some(function (v) { return v.actif && v.site === x.id; })) throw refus_('Des vendeurs sont rattachés à ce site : rattachez-les d’abord à un autre site.');
       }
-      majB({ sites: b.sites.map(function (y) { return y.id === x.id ? Object.assign({}, y, { nom: nom, actif: actif }) : y; }) });
+      if (actif && d.depot != null && !!d.depot !== !!x.depot) {
+        if (d.depot && equipe_(docs).some(function (v) { return v.actif && v.site === x.id; })) throw refus_('Des vendeurs sont rattachés à ce site : rattachez-les d’abord à un autre site.');
+        if (d.depot && !sitesActifs_(b).some(function (y) { return y.id !== x.id && !y.depot; })) throw refus_('Il faut au moins un site de vente.');
+      }
+      majB({ sites: b.sites.map(function (y) { return y.id === x.id ? Object.assign({}, y, { nom: nom, actif: actif }, d.depot != null ? { depot: !!d.depot } : {}) : y; }) });
       journal_('Site modifié', nom + (actif ? '' : ' (fermé)'));
       return { message: actif ? 'Site enregistré' : '« ' + nom + ' » est fermé' };
     }
     if (sitesActifs_(b).length >= 20) throw refus_('Vingt sites au plus.');
-    majB({ sites: b.sites.concat([{ id: 's' + Utilities.getUuid().slice(0, 6), nom: nom, actif: true }]) });
+    majB({ sites: b.sites.concat([Object.assign({ id: 's' + Utilities.getUuid().slice(0, 6), nom: nom, actif: true }, d.depot ? { depot: true } : {})]) });
     journal_('Site ajouté', nom);
     return { message: '« ' + nom + ' » ajouté' };
   }
   if (op === 'equipe-site') {
     const eq = equipe_(docs), mbr = eq.filter(function (x) { return x.id === d.id && x.actif; })[0];
     if (!mbr) throw refus_('Vendeur introuvable.');
-    if (!sitesActifs_(b).some(function (y) { return y.id === d.site; })) throw refus_('Site introuvable.');
+    if (!sitesVente_(b).some(function (y) { return y.id === d.site; })) throw refus_('Choisissez un site de vente (pas un dépôt).');
     poserDoc_(docs, 'config/equipe', { membres: eq.map(function (x) { return x.id === mbr.id ? Object.assign({}, x, { site: String(d.site) }) : x; }) });
     return { message: mbr.nom + ' est rattaché(e) à ' + b.sites.filter(function (y) { return y.id === d.site; })[0].nom };
   }
@@ -1612,7 +1621,7 @@ function appliquer_(docs, mb, op, d) {
       if (eq.filter(function (x) { return x.actif; }).length >= CONFIG.MAX_VENDEURS) throw refus_('Dix vendeurs au plus.');
       if (eq.some(function (x) { return x.actif && x.nom.toLowerCase() === nom.toLowerCase(); })) throw refus_('« ' + nom + ' » existe déjà.');
       mbr = { id: 'v' + Utilities.getUuid().slice(0, 6), nom: nom, role: 'vendeur', actif: true, cree: aujourdhui_(),
-        site: d.site && sitesActifs_(b).some(function (y) { return y.id === d.site; }) ? String(d.site) : siteDe_(b, null) };
+        site: d.site && sitesVente_(b).some(function (y) { return y.id === d.site; }) ? String(d.site) : siteDe_(b, null) };
       poserDoc_(docs, 'config/equipe', { membres: eq.concat([mbr]) });
     } else {
       mbr = eq.filter(function (x) { return x.id === d.id && x.actif; })[0];
@@ -1928,7 +1937,7 @@ function restaurer() {
   Logger.log('Restauration faite. Classeur utilisé : ' + f.getUrl());
 }
 
-/* Boutique FICTIVE pour le banc d'essai et la démonstration : « Alimentation Awa », deux sites (Cocody, Yopougon), 4 mois d'activité simulée.
+/* Boutique FICTIVE pour le banc d'essai et la démonstration : « Alimentation Awa », deux sites (Cocody, Yopougon) et une réserve, 4 mois d'activité simulée.
    Aucune donnée réelle : articles, prix, clients et montants sont inventés pour l'exemple. */
 function remplirDemo(nbJours) {
   nbJours = nbJours || 120;
@@ -1958,19 +1967,22 @@ function remplirDemo(nbJours) {
   // Deux sites fictifs : Cocody (Koffi, le patron y vend aussi) et Yopougon (Mariam), plus petit
   const SITES = [{ id: 'p', nom: 'Cocody', vend: 'vkoffi', f: 1, loyer: 75000, sal: ['Koffi', 60000], bal: { esp: 150000, wave: 80000, om: 20000 } },
                  { id: 's2', nom: 'Yopougon', vend: 'vmariam', f: 0.6, loyer: 45000, sal: ['Mariam', 50000], bal: { esp: 60000, wave: 20000, om: 0 } }];
+  const DEPOT = { id: 'd1', nom: 'Réserve (chez Awa)' };   // dépôt : reçoit les gros achats et approvisionne les boutiques
   const b = boutique_(docs);
-  const soldesSites = {}; SITES.forEach(function (x) { soldesSites[x.id] = Object.assign({}, x.bal); });
+  const soldesSites = { d1: { esp: 50000 } }; SITES.forEach(function (x) { soldesSites[x.id] = Object.assign({}, x.bal); });
   poserDoc_(docs, 'config/boutique', Object.assign({}, b, { nom: 'Alimentation Awa', debut: debut, soldes: {}, soldesSites: soldesSites, perm: { credit: true, depense: true, libre: true },
-    sites: SITES.map(function (x) { return { id: x.id, nom: x.nom, actif: true }; }),
+    sites: SITES.map(function (x) { return { id: x.id, nom: x.nom, actif: true }; }).concat([{ id: DEPOT.id, nom: DEPOT.nom, actif: true, depot: true }]),
     moyens: b.moyens.map(function (m) { return Object.assign({}, m, { actif: m.id !== 'banque' && m.id !== 'moov' }); }) }));
   poserDoc_(docs, 'config/equipe', { membres: [{ id: 'vkoffi', nom: 'Koffi', role: 'vendeur', actif: true, cree: debut, site: 'p' }, { id: 'vmariam', nom: 'Mariam', role: 'vendeur', actif: true, cree: debut, site: 's2' }] });
   PropertiesService.getScriptProperties().setProperty('code:vkoffi', hacher_('246810'));
   PropertiesService.getScriptProperties().setProperty('code:vmariam', hacher_('135790'));
   const arts = {}, stock = {}, bal = {};
   SITES.forEach(function (x) { stock[x.id] = {}; bal[x.id] = Object.assign({ mtn: 0 }, x.bal); });
+  stock.d1 = {}; bal.d1 = { esp: 50000, wave: 0, om: 0, mtn: 0 };
   A.forEach(function (x) {
     if (!x[8] && x[0] === 'pain') return;
     const s0s = {}; SITES.forEach(function (st) { s0s[st.id] = Math.round(x[5] * st.f); stock[st.id][x[0]] = s0s[st.id]; });
+    s0s.d1 = Math.round(x[5] * 0.8); stock.d1[x[0]] = s0s.d1;
     arts[x[0]] = { nom: x[1], rayon: x[2], pv: x[3], pa: x[4], s0s: s0s, seuil: x[6], unite: x[7], actif: true }; poserDoc_(docs, 'art/' + x[0], arts[x[0]]);
   });
   const clients = [['c1', 'Maman Adjoua', '07 00 00 00 01', 0], ['c2', 'Moussa (atelier)', '05 00 00 00 02', 12000], ['c3', 'Tantie Brigitte', '01 00 00 00 03', 0], ['c4', 'Ibrahim', '07 00 00 00 04', 0], ['c5', 'Restaurant Le Bon Goût', '05 00 00 00 05', 0]];
@@ -1988,11 +2000,22 @@ function remplirDemo(nbJours) {
     const ops = [], dj = new Date(d + 'T12:00:00Z').getUTCDay(), dateMs = Date.parse(d + 'T00:00:00Z'), avance = (Date.parse(d) - Date.parse(debut)) / (nbJours * 864e5);
     const fin = d === auj ? Math.min(21, maintenant) : 21, jm = Number(d.slice(8));
     const op = function (o, h) { if (d === auj && h > fin) return o; n++; o.i = 'o' + (dateMs / 1000).toString(36) + n.toString(36); o.h = hNum(h); o.ts = dateMs + Math.round(h * 3600e3); mouvement(o); ops.push(o); return o; };
-    // Transfert de marchandises de Cocody vers Yopougon, le mercredi
-    if (dj === 3 && d !== auj) {
-      const L = ids.filter(function (a) { return stock.s2[a] <= arts[a].seuil * 0.9 && stock.p[a] > arts[a].seuil * 3; }).map(function (a) { const q = Math.round(arts[a].seuil * 1.5); stock.p[a] -= q; stock.s2[a] += q; return [a, q]; });
-      if (L.length) op({ t: 'm', l: L, de: 'p', vers: 's2', s: 'p', par: CONFIG.PATRON }, 8.5);
+    // Le 1er et le 16 : gros achat livré à la réserve, payé avec l'argent envoyé depuis Cocody
+    if ((jm === 1 || jm === 16) && d !== auj) {
+      const L = ids.filter(function (a) { return stock.d1[a] < arts[a].seuil * 2 && a !== 'oeufs'; }).map(function (a) { const q = arts[a].seuil * 4 - stock.d1[a]; stock.d1[a] += q; return [a, q, arts[a].pa]; }).filter(function (x) { return x[1] > 0; });
+      if (L.length) {
+        const v = L.reduce(function (t, x) { return t + x[1] * x[2]; }, 0), envoi = Math.max(0, Math.ceil((v - bal.d1.wave) / 10000) * 10000);
+        if (envoi && bal.p.wave >= envoi) op({ t: 't', s: 'p', sv: 'd1', de: 'wave', m: 'wave', v: envoi, par: CONFIG.PATRON, n: 'Pour le gros achat de la réserve' }, 7);
+        const o = { t: 'a', l: L, v: v, f: 'f1', par: CONFIG.PATRON, s: 'd1', m: 'wave' };
+        if (bal.d1.wave < v) { o.cr = v - Math.max(0, bal.d1.wave); dettes.f1 += o.cr; o.m = bal.d1.wave > 0 ? 'wave' : ''; }
+        op(o, 7.2);
+      }
     }
+    // Le mercredi : la réserve approvisionne les boutiques
+    if (dj === 3 && d !== auj) SITES.forEach(function (S) {
+      const L = ids.filter(function (a) { return stock[S.id][a] <= arts[a].seuil * S.f * 1.2 && stock.d1[a] > 0; }).map(function (a) { const q = Math.min(stock.d1[a], Math.round(arts[a].seuil * 2 * S.f)); stock.d1[a] -= q; stock[S.id][a] += q; return [a, q]; }).filter(function (x) { return x[1] > 0; });
+      if (L.length) op({ t: 'm', l: L, de: 'd1', vers: S.id, s: 'd1', par: CONFIG.PATRON }, 8.5);
+    });
     SITES.forEach(function (S) {
       const st = stock[S.id], bs = bal[S.id];
       const payer = function (v) { return bs.esp >= v + 20000 ? 'esp' : bs.wave >= v ? 'wave' : bs.om >= v ? 'om' : null; };
@@ -2197,7 +2220,8 @@ function deriver(){
   }
   const nomDe=(liste,id,def)=>((liste||[]).find(x=>x.id===id)||{}).nom||def;
   const sites=(B.sites||[]).filter(x=>x.actif!==false);
-  D={B,equipe,arts,tiers,res,jours,stocks,soldesMoy,soldesTi,sites,
+  const sitesVente=sites.filter(x=>!x.depot).length?sites.filter(x=>!x.depot):sites;
+  D={B,equipe,arts,tiers,res,jours,stocks,soldesMoy,soldesTi,sites,sitesVente,depots:sites.filter(x=>x.depot),
     multi:patron()&&sites.length>1,
     resV:patron()?MC.vue(res,state.site||null):res,
     nomSite:id=>((B.sites||[]).find(x=>x.id===(id||'p'))||{}).nom||'',
@@ -2499,7 +2523,7 @@ function render(){
 /** Choix du site (patron, plusieurs sites) : Caisse, Stock et Chiffres montrent le site choisi ou tous les sites. */
 function renderSites(){
   const nav=$('sitesNav'),voir=!!(D&&D.multi&&['caisse','stock','stats'].includes(state.tab));nav.hidden=!voir;if(!voir)return;
-  nav.innerHTML=[['','Tous les sites']].concat(D.sites.map(x=>[x.id,x.nom])).map(([id,l])=>`<button class="chip" type="button" data-site="${esc(id)}" aria-pressed="${state.site===id}">${esc(l)}</button>`).join('');
+  nav.innerHTML=[['','Tous les sites']].concat(D.sites.map(x=>[x.id,(x.depot?'📦 ':'')+x.nom])).map(([id,l])=>`<button class="chip" type="button" data-site="${esc(id)}" aria-pressed="${state.site===id}">${esc(l)}</button>`).join('');
 }
 $('sitesNav').addEventListener('click',e=>{const b=e.target.closest('[data-site]');if(!b)return;state.site=b.dataset.site;saveUi();deriver();render();});
 function renderStatus(){
@@ -2703,7 +2727,7 @@ function renderStats(){
   hlist($('stHeures'),hs.map(h=>({label:(+h)+' h – '+(+h+1)+' h',v:c.hr[h],color:'var(--rev)',pct:pct(c.hr[h],c.ca)})));
   // Par site (tous les sites regardés ensemble)
   $('stPanSites').hidden=!(D.multi&&!state.site);
-  if(D.multi&&!state.site){const L=D.sites.map(x=>({x,c:MC.chiffres(MC.cumuler(MC.vue(D.res,x.id).filter(r=>r.d>=d0&&r.d<=d1)))}));
+  if(D.multi&&!state.site){const L=D.sitesVente.map(x=>({x,c:MC.chiffres(MC.cumuler(MC.vue(D.res,x.id).filter(r=>r.d>=d0&&r.d<=d1)))}));
     hlist($('stSites'),L.sort((a,b)=>b.c.ca-a.c.ca).map(o=>({label:o.x.nom,v:o.c.ca,color:'var(--rev)',txt:cmp(o.c.ca),pct:pct(o.c.ca,c.ca)+' · bénéfice '+cmp(o.c.benefice),
       clic:()=>{state.site=o.x.id;saveUi();deriver();render();scrollTo(0,0);},
       tip:()=>`<b>${esc(o.x.nom)}</b>`+trow('var(--rev)','Chiffre d’affaires',F(o.c.ca))+trow('','Ventes',o.c.n)+trow('var(--good)','Bénéfice estimé',F(o.c.benefice))+trow('','Dépenses',F(o.c.charges))+(o.c.ec?trow('','Écarts de caisse',sgn(o.c.ec)+' F'):'')})));}
@@ -2765,13 +2789,15 @@ function renderReglages(){
         <form class="ligneform" data-rg="theme-perso" style="align-items:center"><label class="coche">Principale <input type="color" name="acc" value="${perso?perso.acc:'#0f6b4f'}"></label><label class="coche">Accent <input type="color" name="acc2" value="${perso?perso.acc2:'#e0a93b'}"></label><button class="btn small primary" type="submit">Appliquer</button></form></details>`;
     const tous=(B.sites||[]);
     $('rgSites').innerHTML=`<h3>Sites</h3><p>Plusieurs points de vente ? Ajoutez un site par boutique : chacun a sa caisse, son stock et ses vendeurs. Les articles, les prix et les clients restent communs.</p>
-      <div class="ops">${tous.filter(x=>x.actif!==false).map(x=>`<form class="op ligneform" data-rg="site" data-id="${esc(x.id)}"><input name="nom" value="${esc(x.nom)}" maxlength="40" aria-label="Nom du site"><button class="btn small" type="submit">Renommer</button>${D.sites.length>1?`<button class="btn small danger" type="button" data-a="site-fermer" data-id="${esc(x.id)}">Fermer</button>`:''}</form>`).join('')}</div>
-      <form class="ligneform" data-rg="site"><input name="nom" placeholder="Nouveau site (ex. Marché de Cocody)" maxlength="40"><button class="btn small primary" type="submit">Ajouter</button></form>`;
-    const choixSite=(nom,sel)=>`<select name="${nom}" aria-label="Site">${D.sites.map(x=>`<option value="${esc(x.id)}"${x.id===sel?' selected':''}>${esc(x.nom)}</option>`).join('')}</select>`;
+      <div class="ops">${tous.filter(x=>x.actif!==false).map(x=>`<form class="op ligneform sitef" data-rg="site" data-id="${esc(x.id)}"><input name="nom" value="${esc(x.nom)}" maxlength="40" aria-label="Nom du site"><button class="btn small" type="submit">Renommer</button>${D.sites.length>1?`<button class="btn small danger" type="button" data-a="site-fermer" data-id="${esc(x.id)}">Fermer</button>`:''}
+        <label class="coche petit"><input type="checkbox" data-depot="${esc(x.id)}"${x.depot?' checked':''}> 📦 Dépôt ou réserve (on y reçoit et range la marchandise, sans y vendre)</label></form>`).join('')}</div>
+      <form class="ligneform sitef" data-rg="site"><input name="nom" placeholder="Nouveau site (ex. Marché de Cocody, Réserve)" maxlength="40"><button class="btn small primary" type="submit">Ajouter</button>
+        <label class="coche petit"><input type="checkbox" name="depot"> 📦 C'est un dépôt ou une réserve</label></form>`;
+    const choixSite=(nom,sel)=>`<select name="${nom}" aria-label="Site">${D.sitesVente.map(x=>`<option value="${esc(x.id)}"${x.id===sel?' selected':''}>${esc(x.nom)}</option>`).join('')}</select>`;
     const eq=D.equipe.filter(x=>x.actif),perm=B.perm||{};
     $('rgEquipe').innerHTML=`<h3>Équipe</h3><p>Chaque vendeur a son propre code. Il note les ventes et le comptage de la caisse, sans voir les chiffres de la boutique. Ses opérations portent son nom.</p>
-      ${eq.length?`<div class="ops">${eq.map(m=>`<div class="op"><span class="c"><b>${esc(m.nom)}</b></span><span class="act"><button class="btn small" type="button" data-a="eq-code" data-id="${esc(m.id)}">Nouveau code</button><button class="btn small danger" type="button" data-a="eq-retirer" data-id="${esc(m.id)}">Retirer</button></span><span class="s">depuis le ${esc(fcourt(m.cree))}${D.multi?` · <select data-eqsite="${esc(m.id)}" aria-label="Site de ${esc(m.nom)}">${D.sites.map(x=>`<option value="${esc(x.id)}"${x.id===(D.sites.some(y=>y.id===m.site)?m.site:D.sites[0].id)?' selected':''}>${esc(x.nom)}</option>`).join('')}</select>`:''}</span></div>`).join('')}</div>`:'<p class="cap">Aucun vendeur pour l\'instant.</p>'}
-      <form class="ligneform" data-rg="vendeur"><input name="nom" placeholder="Prénom du vendeur" maxlength="40">${D.multi?choixSite('site',state.site||D.sites[0].id):''}<button class="btn small primary" type="submit">Ajouter</button></form>
+      ${eq.length?`<div class="ops">${eq.map(m=>`<div class="op"><span class="c"><b>${esc(m.nom)}</b></span><span class="act"><button class="btn small" type="button" data-a="eq-code" data-id="${esc(m.id)}">Nouveau code</button><button class="btn small danger" type="button" data-a="eq-retirer" data-id="${esc(m.id)}">Retirer</button></span><span class="s">depuis le ${esc(fcourt(m.cree))}${D.multi?` · <select data-eqsite="${esc(m.id)}" aria-label="Site de ${esc(m.nom)}">${D.sitesVente.map(x=>`<option value="${esc(x.id)}"${x.id===(D.sitesVente.some(y=>y.id===m.site)?m.site:D.sitesVente[0].id)?' selected':''}>${esc(x.nom)}</option>`).join('')}</select>`:''}</span></div>`).join('')}</div>`:'<p class="cap">Aucun vendeur pour l\'instant.</p>'}
+      <form class="ligneform" data-rg="vendeur"><input name="nom" placeholder="Prénom du vendeur" maxlength="40">${D.multi?choixSite('site',D.sitesVente.some(x=>x.id===state.site)?state.site:D.sitesVente[0].id):''}<button class="btn small primary" type="submit">Ajouter</button></form>
       <b style="font-size:14px">Ce que les vendeurs peuvent faire</b>
       <label class="coche"><input type="checkbox" data-perm="credit"${perm.credit?' checked':''}> Vendre à crédit (et créer un client)</label>
       <label class="coche"><input type="checkbox" data-perm="depense"${perm.depense!==false?' checked':''}> Noter des dépenses</label>
@@ -2806,7 +2832,7 @@ $('v-reglages').addEventListener('submit',async e=>{
   try{
     if(k==='nom')await ecrire('reglages-nom',{nom:f.elements.nom.value});
     else if(k==='theme-perso'){await ecrire('reglages-theme',{theme:{acc:f.elements.acc.value,acc2:f.elements.acc2.value}});}
-    else if(k==='site'){if(await ecrire('reglages-site',{id:f.dataset.id||'',nom:f.elements.nom.value})&&!f.dataset.id)f.reset();}
+    else if(k==='site'){if(await ecrire('reglages-site',Object.assign({id:f.dataset.id||'',nom:f.elements.nom.value},f.dataset.id?{}:{depot:!!(f.elements.depot&&f.elements.depot.checked)}))&&!f.dataset.id)f.reset();}
     else if(k==='vendeur'){const nom=f.elements.nom.value.trim();if(!nom){toast('Indiquez le prénom.');return;}const r=await ecrire('equipe-ajouter',{nom,site:f.elements.site?f.elements.site.value:''});if(r&&r.code){f.reset();montrerCode(r.code);}}
     else if(k==='moyen'){if(await ecrire('reglages-moyen',{nom:f.elements.nom.value}))f.reset();}
     else if(k==='charge'){if(await ecrire('reglages-charge',{id:f.dataset.id||'',nom:f.elements.nom.value})){ui.chargeEdit=null;renderReglages();}}
@@ -2817,6 +2843,7 @@ $('v-reglages').addEventListener('change',async e=>{
   const x=e.target;
   if(x.dataset.perm!=null){const v={};document.querySelectorAll('[data-perm]').forEach(c=>v[c.dataset.perm]=c.checked);x.disabled=true;if(!await ecrire('reglages-perm',v))x.checked=!x.checked;x.disabled=false;}
   else if(x.dataset.moyen!=null){x.disabled=true;if(!await ecrire('reglages-moyen',{id:x.dataset.moyen,actif:x.checked}))x.checked=!x.checked;x.disabled=false;}
+  else if(x.dataset.depot){const st=D.B.sites.find(y=>y.id===x.dataset.depot);x.disabled=true;if(!await ecrire('reglages-site',{id:st.id,nom:st.nom,depot:x.checked}))x.checked=!x.checked;x.disabled=false;}
   else if(x.dataset.eqsite){x.disabled=true;await ecrire('equipe-site',{id:x.dataset.eqsite,site:x.value});x.disabled=false;}
   else if(x.id==='crMensuel'){x.disabled=true;if(!await ecrire('reglages-email',{emailMensuel:x.checked}))x.checked=!x.checked;x.disabled=false;}
 });
@@ -2893,10 +2920,13 @@ function champsAutres(){
 }
 const autres=()=>{const o={n:valeur('n')};const d=valeur('d');if(d&&d!==auj())o.d=d;const sc=choix('s');if(sc)o.s=sc;return o;};
 /** Site de l'opération (patron, plusieurs sites) : par défaut le site regardé, sinon le premier. */
-const siteDefaut=()=>state.site||(D.sites[0]||{}).id||'p';
-function siteChoix(nom,lib,sel){if(!D.multi)return '';nom=nom||'s';sel=sel||siteDefaut();
-  return `<div class="field"><label>${lib||'Site'}</label><div class="chips" data-choix="${nom}">${D.sites.map(x=>`<button type="button" class="chip" data-v="${esc(x.id)}" aria-pressed="${x.id===sel}">${esc(x.nom)}</button>`).join('')}</div></div>`;}
-const siteChoisi=()=>D.multi?(choix('s')||siteDefaut()):(patron()?null:null);
+const siteDefaut=()=>state.site||(D.sitesVente[0]||{}).id||'p';
+const siteVenteDefaut=()=>D.sitesVente.some(x=>x.id===state.site)?state.site:(D.sitesVente[0]||{}).id||'p';
+/** Site qui reçoit la marchandise : le dépôt s'il y en a un, sinon le site regardé. */
+const siteReceptionDefaut=()=>D.depots.some(x=>x.id===state.site)?state.site:(D.depots[0]||{}).id||siteDefaut();
+function siteChoix(nom,lib,sel,liste){if(!D.multi)return '';nom=nom||'s';sel=sel||siteDefaut();liste=liste||D.sites;
+  return `<div class="field"><label>${lib||'Site'}</label><div class="chips" data-choix="${nom}">${liste.map(x=>`<button type="button" class="chip" data-v="${esc(x.id)}" aria-pressed="${x.id===sel}">${x.depot?'📦 ':''}${esc(x.nom)}</button>`).join('')}</div></div>`;}
+const siteChoisi=()=>D.multi?(choix('s')||siteDefaut()):null;
 let SP=null;const stockA=(a,site)=>{if(!D.multi||!site)return D.stocks[a]||0;SP=SP||D.stocksParSite();return (SP[site]||{})[a]||0;};
 const pied=(lib)=>`<div class="msg bad" id="fMsg" hidden></div><div class="actions"><button type="button" class="btn" data-f="fermer">Annuler</button><button type="submit" class="btn primary">${lib}</button></div>`;
 
@@ -2909,7 +2939,7 @@ function feuilleVente(preArt){
     const reste=Object.keys(D.arts).filter(a=>D.arts[a].actif!==false&&!pop.includes(a)).sort((x,y)=>D.arts[x].nom.localeCompare(D.arts[y].nom,'fr'));
     return pop.concat(reste);})();
   SP=null;
-  ouvrir(`<h2>Nouvelle vente</h2>${siteChoix()}
+  ouvrir(`<h2>Nouvelle vente</h2>${siteChoix(null,null,siteVenteDefaut(),D.sitesVente)}
     ${ordre.length?'<input type="search" id="vQ" placeholder="Chercher un article…" autocomplete="off" aria-label="Chercher un article">':''}
     <div class="artgrid" id="vArts"></div>
     <div class="panier" id="vPanier"></div>
@@ -3056,7 +3086,7 @@ function feuillePlus(){
 function feuilleAchat(preArt){
   const arts=Object.keys(D.arts).filter(a=>D.arts[a].actif!==false).sort((x,y)=>D.arts[x].nom.localeCompare(D.arts[y].nom,'fr'));
   const L=[];
-  ouvrir(`<h2>Réception de marchandises</h2>${siteChoix(null,'Reçu au site')}
+  ouvrir(`<h2>Réception de marchandises</h2>${siteChoix(null,'Reçu à',siteReceptionDefaut())}${patron()&&!D.depots.length?'<p class="cap">Vous recevez la marchandise chez vous ou dans une réserve, avant de la répartir ? Ajoutez un <b>dépôt</b> dans Réglages → Sites.</p>':''}
     <div class="field"><label>Fournisseur</label><select name="four"><option value="">Sans fournisseur</option>${optionsTiers('f','',true)}<option value="__nouveau">+ Nouveau fournisseur…</option></select></div>
     <div class="row2" id="aNouveau" hidden><div class="field"><label>Nom</label><input name="aNom" maxlength="60"></div><div class="field"><label>Téléphone</label><input name="aTel" inputmode="tel" maxlength="25"></div></div>
     <div id="aLignes" class="panier"></div>
@@ -3099,11 +3129,12 @@ function feuilleAchat(preArt){
 
 // ----- Transfert de marchandises entre sites -----
 function feuilleMarchandises(preArt){
+  const pre=preArt&&typeof preArt==='object'?preArt:null;if(pre)preArt=null;
   if(!D.multi){toast('Ajoutez d\'abord un deuxième site dans Réglages.');return;}
   const arts=Object.keys(D.arts).filter(a=>D.arts[a].actif!==false).sort((x,y)=>D.arts[x].nom.localeCompare(D.arts[y].nom,'fr'));
   if(!arts.length){toast('Aucun article.');return;}
   const L=[];SP=D.stocksParSite();
-  const de0=siteDefaut(),vers0=(D.sites.find(x=>x.id!==de0)||{}).id;
+  const de0=pre?pre.de:(D.depots[0]||{}).id||siteDefaut(),vers0=pre?pre.vers:(D.sitesVente.find(x=>x.id!==de0)||{}).id;
   ouvrir(`<h2>Transfert de marchandises</h2><p class="cap">Des articles quittent un site pour un autre : le stock baisse au départ et monte à l'arrivée. Rien ne change pour la boutique entière.</p>
     ${siteChoix('de','Depuis le site',de0)}${siteChoix('vers','Vers le site',vers0)}
     <div id="mLignes" class="panier"></div><button type="button" class="btn small" id="mPlus">+ Ajouter un article</button>
@@ -3120,7 +3151,7 @@ function feuilleMarchandises(preArt){
   f.addEventListener('change',e=>{if(e.target.dataset.ma!=null){L[+e.target.dataset.ma].a=e.target.value;lignes();}});
   f.addEventListener('input',e=>{if(e.target.dataset.mq!=null)L[+e.target.dataset.mq].q=lireQte(e.target.value)||0;});
   f.addEventListener('choix',lignes);
-  ajouter(preArt);
+  if(pre){pre.l.forEach(x=>L.push({a:x.a,q:x.q}));lignes();}else ajouter(preArt);
 }
 
 // ----- Articles -----
@@ -3247,7 +3278,7 @@ function montrerCode(c){
 // ================= actions communes =================
 const OUVRIR={vente:b=>feuilleVente(b.dataset.art),depense:()=>feuilleDepense(),encaissement:b=>feuilleReglement('c',b.dataset.tiersId),paiement:b=>feuilleReglement('f',b.dataset.tiersId),
   comptage:()=>feuilleComptage(),plus:()=>feuillePlus(),achat:b=>feuilleAchat(b.dataset.art),retrait:()=>feuilleArgent('w'),apport:()=>feuilleArgent('x'),transfert:()=>feuilleTransfert(),
-  'achat-conseil':()=>feuilleAchat(CONSEIL_ACHAT||undefined),  'stock-perte':()=>choisirArticlePerte(),marchandises:b=>feuilleMarchandises(b.dataset.art),article:()=>feuilleArticle(),'article-modifier':b=>feuilleArticle(b.dataset.art),inventaire:b=>feuilleStock(b.dataset.art,'inventaire'),perte:b=>feuilleStock(b.dataset.art,'perte'),
+  'achat-conseil':()=>feuilleAchat(CONSEIL_ACHAT||undefined),'transfert-conseil':b=>feuilleMarchandises(CONSEIL_TRANSFERT[b.dataset.site]),  'stock-perte':()=>choisirArticlePerte(),marchandises:b=>feuilleMarchandises(b.dataset.art),article:()=>feuilleArticle(),'article-modifier':b=>feuilleArticle(b.dataset.art),inventaire:b=>feuilleStock(b.dataset.art,'inventaire'),perte:b=>feuilleStock(b.dataset.art,'perte'),
   tiers:b=>feuilleTiers(b.dataset.type||state.crType),'tiers-modifier':b=>feuilleTiers(b.dataset.type,b.dataset.tiersId)};
 document.addEventListener('click',async e=>{
   const f=e.target.closest('[data-f]');
@@ -3466,7 +3497,7 @@ $('btnAssist').addEventListener('click',ouvrirAssistant);
 
 // ================= CONSEILS : propositions concrètes, classées par urgence, expliquées par les chiffres =================
 // Calculés sur le téléphone à partir des résumés quotidiens. Ce sont des suggestions prudentes : la décision reste au patron.
-let CONSEIL_ACHAT=null;   // lignes de réapprovisionnement proposées (bouton « Préparer la réception »)
+let CONSEIL_ACHAT=null,CONSEIL_TRANSFERT={};   // lignes de réapprovisionnement proposées (bouton « Préparer la réception »)
 const arrondir25=v=>Math.ceil(v/25)*25;
 /** Liste des conseils pour un site (null : toute la boutique). Chaque conseil : { p (priorité), ic, titre, texte (HTML), actions (HTML) }. */
 function conseils(site){
@@ -3480,21 +3511,38 @@ function conseils(site){
     const st=MC.stocks(D.arts,D.res,s||null),v=MC.cumuler(MC.vue(D.res,s||null).filter(r=>r.d>d30)).art;
     return actifs.map(id=>{const q30=(v[id]||[0])[0],rythme=q30/30,stock=st[id]||0;if(rythme<=0)return null;
       const jours=stock/rythme;if(jours>=7&&!(D.arts[id].seuil&&stock<=D.arts[id].seuil))return null;
-      const q=Math.max(1,Math.ceil(rythme*14-Math.max(0,stock)));return {id,q,jours,stock,cout:q*(D.arts[id].pa||0),ca:(v[id]||[0,0])[1],lib};})
+      const q=Math.max(1,Math.ceil(rythme*14-Math.max(0,stock)));return {id,q,jours,stock,ca:(v[id]||[0,0])[1],lib,site:s||null};})
       .filter(Boolean);
   };
   let R=[];
-  if(D.multi&&!site)D.sites.forEach(x=>R=R.concat(reappro(x.id,x.nom)));else R=reappro(site,'');
+  if(D.multi&&!site)D.sitesVente.forEach(x=>R=R.concat(reappro(x.id,x.nom)));else if(!D.depots.some(x=>x.id===site))R=reappro(site,'');
+  const auDepot={};D.depots.forEach(x=>{const st=MC.stocks(D.arts,D.res,x.id);Object.keys(st).forEach(a=>{if(st[a]>0)auDepot[a]=(auDepot[a]||0)+st[a];});});
   R.sort((a,b)=>a.jours-b.jours||b.ca-a.ca);
-  if(R.length){
-    const urgent=R.filter(x=>x.stock<=0).length,budget=R.reduce((s,x)=>s+x.cout,0);
-    CONSEIL_ACHAT=(D.multi&&!site)?null:R.map(x=>({a:x.id,q:x.q}));
-    L.push({p:urgent?95:80,ic:'🛒',titre:`Racheter ${pluriel(R.length,'article')}${ls}`,
+  // Ce que le dépôt peut fournir est transféré ; le reste est à racheter (livré au dépôt s'il y en a un)
+  const dispo=Object.assign({},auDepot),T={},A={};
+  R.forEach(x=>{const d=D.depots.length&&x.site?Math.min(dispo[x.id]||0,x.q):0;
+    if(d>0){dispo[x.id]-=d;(T[x.site]||(T[x.site]=[])).push({x,q:d});}
+    if(x.q-d>0){const y=A[x.id]||(A[x.id]={id:x.id,q:0,urgent:false,jours:x.jours,sites:[]});y.q+=x.q-d;y.urgent=y.urgent||x.stock<=0;y.jours=Math.min(y.jours,x.jours);if(x.lib)y.sites.push(x.lib);}});
+  const fin=x=>x.stock<=0?' (fini)':' (reste '+(x.jours<1?'moins d’un jour':'≈ '+pluriel(Math.round(x.jours),'jour'))+')';
+  CONSEIL_TRANSFERT={};
+  Object.keys(T).forEach(sid=>{const lst=T[sid],urg=lst.some(o=>o.x.stock<=0);
+    CONSEIL_TRANSFERT[sid]={de:D.depots[0].id,vers:sid,l:lst.map(o=>({a:o.x.id,q:o.q}))};
+    L.push({p:urg?96:82,ic:'🚚',titre:`Approvisionner ${D.nomSite(sid)} depuis le dépôt`,
+      texte:'La marchandise est déjà au dépôt, pas besoin de racheter : '+listeFr(lst.slice(0,6).map(o=>`${iconeArt(D.arts[o.x.id])} ${esc(D.arts[o.x.id].nom)} : <b>${fq(o.q)}</b>${fin(o.x)}`))+(lst.length>6?'…':'')+'.',
+      actions:`<button type="button" class="btn small primary" data-f="transfert-conseil" data-site="${esc(sid)}">Préparer le transfert</button>`});});
+  const AL=Object.values(A).sort((a,b)=>(b.urgent-a.urgent)||a.jours-b.jours);
+  if(AL.length){
+    const urgent=AL.filter(x=>x.urgent).length,budget=AL.reduce((t,x)=>t+x.q*(D.arts[x.id].pa||0),0);
+    const possible=D.depots.length||!(D.multi&&!site);
+    CONSEIL_ACHAT=possible?AL.map(x=>({a:x.id,q:x.q})):null;
+    L.push({p:urgent?95:80,ic:'🛒',titre:`Racheter ${pluriel(AL.length,'article')}${ls}`,
       texte:(urgent?`<b>${pluriel(urgent,'article')} déjà ${urgent>1?'finis':'fini'}</b> : chaque jour sans stock, ce sont des ventes perdues. `:'')+
-        'Pour tenir deux semaines au rythme des 30 derniers jours : '+listeFr(R.slice(0,6).map(x=>`${iconeArt(D.arts[x.id])} ${esc(D.arts[x.id].nom)}${x.lib&&D.multi?' à '+esc(x.lib):''} : <b>${fq(x.q)}</b>${x.stock<=0?' (fini)':' (reste '+(x.jours<1?'moins d’un jour':'≈ '+pluriel(Math.round(x.jours),'jour'))+')'}`))+(R.length>6?'…':'')+
-        (budget?`. Budget à prévoir : <b>${F(budget)}</b> au dernier prix d’achat.`:'.'),
+        'Pour tenir deux semaines au rythme des 30 derniers jours'+(D.depots.length?', en comptant ce qui reste au dépôt':'')+' : '+
+        listeFr(AL.slice(0,6).map(x=>`${iconeArt(D.arts[x.id])} ${esc(D.arts[x.id].nom)} : <b>${fq(x.q)}</b>${x.sites.length&&D.multi?' (pour '+[...new Set(x.sites)].map(esc).join(' et ')+')':''}`))+(AL.length>6?'…':'')+
+        (budget?`. Budget à prévoir : <b>${F(budget)}</b> au dernier prix d’achat`:'')+(D.depots.length?', livré au dépôt.':'.'),
       actions:CONSEIL_ACHAT?'<button type="button" class="btn small primary" data-f="achat-conseil">Préparer la réception</button>':'<span class="cap" style="margin:0">Choisissez un site en haut de l’écran pour préparer sa réception.</span>'});
   }
+
 
   // 2. Clients à relancer (dette de plus de 14 jours)
   const dus=Object.keys(D.tiers).filter(id=>D.tiers[id].type==='c'&&(D.soldesTi[id]||0)>0).map(id=>{const a=MC.anciennete(id,D.soldesTi[id],D.res);return {id,s:D.soldesTi[id],j:a==='depart'?999:a?ecartJours(a,t):0};})
