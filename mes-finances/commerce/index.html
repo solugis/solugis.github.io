@@ -361,6 +361,8 @@ body{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 9%,var(--bg)
 .art .txt{gap:1px;line-height:1.25}
 .art .txt b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13.5px;line-height:1.22}
 .art .txt span{font-size:11.5px;line-height:1.3}
+
+.art .txt span b.prix{display:inline;font-size:11.5px;color:var(--ink2);font-weight:700;-webkit-line-clamp:unset}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -2923,7 +2925,7 @@ function feuilleVente(preArt){
     const qn=norm(($('vQ')||{}).value||'');
     const ids=(qn?ordre.filter(a=>norm(D.arts[a].nom).split(/[\s,'’()-]+/).some(w=>w.startsWith(qn))||norm(D.arts[a].nom).includes(qn)):ordre).slice(0,qn?40:12);
     $('vArts').innerHTML=ids.map(a=>{const x=D.arts[a],s=stockA(a,siteChoisi()),n=(V.l.find(l=>l.a===a)||{}).q;
-      return `<div role="button" tabindex="0" class="art${n?' pris':''}" data-va="${esc(a)}"><span class="ic">${iconeArt(x)}</span><span class="txt"><b>${esc(x.nom)}</b><span>${x.pv?fmt(x.pv):'sans prix'} · <i class="${s<=0?'neg':''}">${fq(s)} en stock</i></span></span>${n?`<em>${fq(n)}</em>`:''}</div>`;}).join('')
+      return `<div role="button" tabindex="0" class="art${n?' pris':''}" data-va="${esc(a)}"><span class="ic">${iconeArt(x)}</span><span class="txt"><b>${esc(x.nom)}</b><span><b class="prix">${x.pv?F(x.pv):'sans prix'}</b> · <i class="${s<=0?'neg':''}">${s<=0?'rupture':'reste '+fq(s)}</i></span></span>${n?`<em>${fq(n)}</em>`:''}</div>`;}).join('')
       +(libre?'<div role="button" tabindex="0" class="art libre" data-va="_libre"><span class="txt"><b>Montant libre</b><span>hors liste</span></span></div>':'')
       +(!ordre.length&&!libre?'<p class="cap">Aucun article : le patron doit d\'abord les ajouter dans Stock.</p>':'');
   };
