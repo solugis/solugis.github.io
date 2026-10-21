@@ -347,6 +347,10 @@ body{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 9%,var(--bg)
 .conseilJour .rowbtn,.conseil .rowbtn{margin:2px 0 0}
 .conseilJour>.btn{justify-self:start}
 .conseil{background:var(--surface);border-radius:10px;padding:9px 10px;margin-top:8px;display:grid;gap:4px;font-size:13.5px}
+
+/* flux d'argent : entrées en vert, sorties en rouge */
+.op .a.pos{color:var(--good-text)}.op .a.neg{color:var(--bad-text)}
+.kpi:not(.hero) .v.pos{color:var(--good-text)}.kpi:not(.hero) .v.neg{color:var(--bad-text)}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -2455,7 +2459,7 @@ function hlist(host,items,opts={}){
     row.innerHTML=`<span class="n">${esc(it.label)}</span><span class="t"><span class="b" style="width:${Math.abs(it.v)/max*100}%;background:${it.color}"></span></span><span class="val"><b>${it.txt!=null?it.txt:cmp(Math.abs(it.v))}</b>${it.pct!=null?` · ${it.pct}`:''}</span>`;
     if(it.tip)bindTip(row,it.tip);host.appendChild(row);}
 }
-const kpi=(l,v,h,o={})=>`<div class="kpi${o.hero?' hero':''}${o.clic?' clic':''}"${o.clic?` data-a="${o.clic}"`:''}><span class="l">${l}</span><span class="v">${v}${o.unite===false?'':'<small>FCFA</small>'}</span>${o.pill?`<span class="pill ${o.pill[0]}">${o.pill[1]}</span>`:''}${h?`<span class="h">${h}</span>`:''}</div>`;
+const kpi=(l,v,h,o={})=>`<div class="kpi${o.hero?' hero':''}${o.clic?' clic':''}"${o.clic?` data-a="${o.clic}"`:''}><span class="l">${l}</span><span class="v${o.signe>0?' pos':o.signe<0?' neg':''}">${v}${o.unite===false?'':'<small>FCFA</small>'}</span>${o.pill?`<span class="pill ${o.pill[0]}">${o.pill[1]}</span>`:''}${h?`<span class="h">${h}</span>`:''}</div>`;
 
 // ================= onglets, rendu =================
 const VUES={caisse:()=>renderCaisse(),stock:()=>renderStock(),credits:()=>renderCredits(),stats:()=>renderStats(),reglages:()=>renderReglages()};
@@ -2501,7 +2505,7 @@ function ligneOp(o,d){
   const meta=[o.h,o.t==='t'||o.t==='m'?null:o.cr&&o.cr===o.v?'à crédit':D.nomMoyen(o.m),o.cl||o.f?D.nomTiers(o.cl||o.f):null,patron()&&o.par?D.nomMembre(o.par):null,D.multi&&!state.site&&o.t!=='m'?D.nomSite(o.s):null].filter(Boolean);
   return `<div class="op${o.an?' annulee':''}" data-op="${esc(o.i)}" data-d="${d}" role="button" tabindex="0">
     <span class="c"><b>${LIB_T[o.t]}</b>${libelleOp(o)?' · '+esc(libelleOp(o)):''}</span>
-    <span class="a ${sg>0||o.t==='c'&&o.ec>0?'pos':''}">${montant}</span>
+    <span class="a ${o.an?'':sg>0||o.t==='c'&&o.ec>0?'pos':sg<0||o.t==='c'&&o.ec<0?'neg':''}">${montant}</span>
     <span class="s">${meta.map(esc).join(' · ')}${o.cr&&o.cr<o.v?` · <span class="badge warn">${fmt(o.cr)} à crédit</span>`:''}${o.an?' · <span class="badge warn">annulée</span>':''}${o.t==='c'&&!patron()?' · espèces comptées':''}</span></div>`;
 }
 function renderCaisse(){
@@ -2516,8 +2520,8 @@ function renderCaisse(){
     const charges=c.charges;
     $('cxKpis').innerHTML=kpi('Ventes',fmt(c.ca),c.n?`${pluriel(c.n,'vente')} · panier moyen ${F(c.panier)}`:'Aucune vente',{hero:1,pill:c.crV?['warn',fmt(c.crV)+' F à crédit']:null})
       +kpi('Dépenses',fmt(charges+c.ach),c.ach?`dont ${F(c.ach)} d'achats de marchandises`:'')
-      +kpi('Bénéfice estimé',sgn(c.benefice),c.sansPa?'ventes sans prix d\'achat comptées en entier':'marge des ventes − dépenses',{pill:c.benefice<0?['bad','▼']:null})
-      +(c.enc||c.ret?kpi(c.enc?'Encaissé (crédits)':'Retraits personnels',fmt(c.enc||c.ret),c.enc&&c.ret?`retraits personnels : ${F(c.ret)}`:''):kpi('Écart de caisse',c.ec?sgn(c.ec):'aucun',c.ec?'comptage du jour':'',{unite:!!c.ec,pill:c.ec<0?['bad','manque']:c.ec>0?['warn','surplus']:null}));
+      +kpi('Bénéfice estimé',sgn(c.benefice),c.sansPa?'ventes sans prix d\'achat comptées en entier':'marge des ventes − dépenses',{signe:c.benefice,pill:c.benefice<0?['bad','▼']:null})
+      +(c.enc||c.ret?kpi(c.enc?'Encaissé (crédits)':'Retraits personnels',fmt(c.enc||c.ret),c.enc&&c.ret?`retraits personnels : ${F(c.ret)}`:''):kpi('Écart de caisse',c.ec?sgn(c.ec):'aucun',c.ec?'comptage du jour':'',{signe:c.ec,unite:!!c.ec,pill:c.ec<0?['bad','manque']:c.ec>0?['warn','surplus']:null}));
   }else{
     const parMoy=Object.keys(c.vm).filter(m=>c.vm[m]).map(m=>`${D.nomMoyen(m)} ${F(c.vm[m])}`).join(' · ');
     $('cxKpis').innerHTML=kpi('Mes ventes du jour',fmt(c.ca),c.n?pluriel(c.n,'vente')+(parMoy?' · '+parMoy:''):'Aucune vente pour l\'instant',{hero:1})+kpi('Encaissements clients',fmt(c.enc),'')+kpi('Dépenses notées',fmt(c.charges),'');
@@ -2649,7 +2653,7 @@ function renderStats(){
     :`${cap1(esc(libPeriode(b)))} : <b>${F(c.ca)}</b> de ventes${p&&p.ca?` (${c.ca>=p.ca?'+':'−'}${Math.abs(Math.round((c.ca-p.ca)/p.ca*100))} %${esc(vs)})`:''}, ${c.benefice>=0?'pour un bénéfice estimé de':'avec une perte estimée de'} <b>${F(Math.abs(c.benefice))}</b>.`;
   const kp=[
     kpi('Chiffre d’affaires',fmt(c.ca),p&&p.ca?`${F(p.ca)}${esc(vs)}`:'',{hero:1,pill:p?evoPill(c.ca,p.ca):null}),
-    kpi('Bénéfice estimé',sgn(c.benefice),`marge ${F(c.marge)} − dépenses ${F(c.charges)}${c.pertes?' − pertes '+F(c.pertes):''}`,{pill:c.benefice<0?['bad','Perte']:p?evoPill(c.benefice,p.benefice):null}),
+    kpi('Bénéfice estimé',sgn(c.benefice),`marge ${F(c.marge)} − dépenses ${F(c.charges)}${c.pertes?' − pertes '+F(c.pertes):''}`,{signe:c.benefice,pill:c.benefice<0?['bad','Perte']:p?evoPill(c.benefice,p.benefice):null}),
     kpi('Nombre de ventes',fmt(c.n),c.n?'panier moyen '+F(c.panier):'',{unite:false,pill:p?evoPill(c.n,p.n):null}),
     kpi('Marge sur les articles',c.tauxMarge!=null?(Math.round(c.tauxMarge*1000)/10).toLocaleString('fr-FR')+' %':'—',c.sansPa?F(c.sansPa)+' de ventes sans prix d\'achat':'des ventes, prix d\'achat déduit',{unite:false}),
     kpi('Dépenses de la boutique',fmt(c.charges),c.ca?pct(c.charges,c.ca)+' du chiffre d\'affaires':''),
