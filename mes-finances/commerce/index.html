@@ -225,7 +225,10 @@ body.role-vendeur .patron{display:none!important}
 .actionsCaisse .grand{grid-column:1/-1;padding:15px;font-size:17px}
 @media (min-width:760px){.actionsCaisse{grid-template-columns:repeat(4,1fr)}.actionsCaisse .grand{grid-column:span 4}}
 .soldes{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:6px}
-.soldes div{background:var(--surface2);border-radius:10px;padding:8px 10px;display:grid}
+.soldes>div,.soldes>button{background:var(--surface2);border-radius:10px;padding:8px 10px;display:grid;align-content:start;gap:1px;min-width:0}
+.soldes>button{border:0;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.soldes small{font-size:11.5px;color:var(--ink2)}
+.soldes.parsite{margin-top:10px}.soldes.parsite>button{border:1px solid var(--line)}
 .soldes span{font-size:12px;color:var(--muted)}.soldes b{font-size:17px;font-variant-numeric:tabular-nums}
 .soldes .tot{background:var(--ink);color:var(--surface)}.soldes .tot span{color:inherit;opacity:.75}
 #cxSoldes{margin-bottom:12px}
@@ -287,6 +290,63 @@ details.autre[open] summary{margin-bottom:8px}
 .sheet .kv{font-size:14px}
 .sheet h3{margin-top:4px}
 .tabs{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:1fr}
+
+/* ===== Thèmes : la couleur principale (--acc) et la couleur d'accent (--acc2) sont choisies par le patron (Réglages > Apparence) ===== */
+:root{--acc:#0f6b4f;--acc2:#e0a93b;--acc-ink:#ffffff;--acc2-ink:#1d1606;--acc-txt:var(--acc)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--acc-txt:color-mix(in srgb,var(--acc) 55%,#ffffff)}}
+:root[data-theme="dark"]{--acc-txt:color-mix(in srgb,var(--acc) 55%,#ffffff)}
+body{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 9%,var(--bg)) 0,var(--bg) 260px) no-repeat,var(--bg)}
+.eyebrow#eyebrow{color:var(--acc-txt);font-weight:700}
+#title{color:var(--acc-txt)}
+.btn.primary{background:var(--acc);color:var(--acc-ink)}
+.kpi.hero{background:linear-gradient(135deg,var(--acc),color-mix(in srgb,var(--acc) 72%,#000));color:var(--acc-ink)}
+.kpi.hero .l,.kpi.hero .h,.kpi.hero .v small{color:color-mix(in srgb,var(--acc-ink) 78%,transparent)}
+.chip[aria-pressed="true"],.ct-chips .chip[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink)}
+.seg button[aria-pressed="true"]{color:var(--acc-txt)}
+.tabs button[aria-selected="true"]{color:var(--acc-txt)}
+.fab{background:var(--acc2);color:var(--acc2-ink)}.fab svg{stroke:var(--acc2-ink)}
+.soldes .tot{background:var(--acc);color:var(--acc-ink)}
+.art.pris{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+.art em{background:var(--acc2);color:var(--acc2-ink)}
+.kpi{border-top:3px solid color-mix(in srgb,var(--acc2) 70%,transparent)}
+.kpi.hero{border-top:0}
+.panel>h3,.card>h3{color:var(--acc-txt)}
+.rayon{color:var(--acc-txt)}
+.alerte{background:color-mix(in srgb,var(--acc2) 22%,var(--surface))}
+.login-box h1{color:var(--acc-txt)}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.theme{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px;text-align:left;cursor:pointer;display:grid;gap:6px;font:inherit;color:var(--ink)}
+.theme[aria-pressed="true"]{outline:2px solid var(--acc);outline-offset:1px}
+.theme .pastilles{display:flex;gap:4px}.theme .pastilles i{width:22px;height:22px;border-radius:6px;display:block}
+.theme b{font-size:14px}.theme small{font-size:11.5px;color:var(--muted);line-height:1.3}
+
+/* icônes des articles */
+.ic{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:color-mix(in srgb,var(--acc2) 18%,var(--surface2));font-size:18px;line-height:1;margin-right:8px;vertical-align:middle;flex:none}
+.ic.grand{width:46px;height:46px;font-size:28px;border-radius:12px}
+.op .c .ic{width:26px;height:26px;font-size:16px}
+.art{grid-template-columns:auto 1fr;column-gap:6px;align-items:center}.art .ic{grid-row:span 2;width:32px;height:32px;margin:0}.art b,.art span:not(.ic){grid-column:2}
+.art.libre{grid-template-columns:1fr}
+.ficheart{display:flex;align-items:center;gap:4px}
+.choixic{border:1px dashed var(--acc);cursor:pointer;margin:0}
+.icgrille{display:flex;flex-wrap:wrap;gap:4px;background:var(--surface2);border-radius:12px;padding:8px}
+.icb{border:0;background:var(--surface);border-radius:8px;width:40px;height:40px;font-size:22px;cursor:pointer}
+
+/* assistant */
+.btn.assist{justify-self:start;background:color-mix(in srgb,var(--acc2) 30%,var(--surface));color:var(--ink);border:1px solid color-mix(in srgb,var(--acc2) 60%,transparent);padding:8px 14px;border-radius:999px;font-size:14px}
+.discu{display:grid;gap:8px;max-height:46vh;overflow-y:auto;padding:4px 2px}
+.bulle{max-width:88%;padding:9px 12px;border-radius:14px;font-size:14.5px;line-height:1.45}
+.bulle.moi{justify-self:end;background:var(--acc);color:var(--acc-ink);border-bottom-right-radius:4px}
+.bulle.elle{justify-self:start;background:var(--surface2);color:var(--ink);border-bottom-left-radius:4px}
+.bulle.elle .btn.lien{padding:2px 4px;font-size:12.5px}
+#suggestions .chip{font-size:12.5px;padding:6px 10px}
+
+/* conseils */
+.conseilJour{background:linear-gradient(135deg,color-mix(in srgb,var(--acc2) 26%,var(--surface)),var(--surface));border:1px solid color-mix(in srgb,var(--acc2) 55%,transparent);border-radius:14px;padding:12px 14px;display:grid;gap:6px;margin-bottom:12px;font-size:14px}
+.conseilJour .cd-tete{display:flex;justify-content:space-between;align-items:center;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc-txt);font-weight:700}
+.conseilJour .cd-texte{color:var(--ink2);line-height:1.45}
+.conseilJour .rowbtn,.conseil .rowbtn{margin:2px 0 0}
+.conseilJour>.btn{justify-self:start}
+.conseil{background:var(--surface);border-radius:10px;padding:9px 10px;margin-top:8px;display:grid;gap:4px;font-size:13.5px}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -320,6 +380,7 @@ details.autre[open] summary{margin-bottom:8px}
     <span class="eyebrow" id="eyebrow">Mes finances Commerce</span>
     <h1 id="title">Ma boutique</h1>
     <div class="status" id="status">Chargement des données…</div>
+    <button class="btn assist" id="btnAssist" type="button">💬 Poser une question sur mes chiffres</button>
   </header>
   <nav class="periods sitesnav" id="sitesNav" aria-label="Site" hidden></nav>
 
@@ -332,6 +393,7 @@ details.autre[open] summary{margin-bottom:8px}
         <button class="btn small" type="button" id="jSuiv" aria-label="Jour suivant">›</button>
         <input type="date" id="jDate" aria-label="Choisir un jour" hidden>
       </div>
+      <div class="conseilJour" id="cxConseil" hidden></div>
       <div class="kpis" id="cxKpis"></div>
       <div class="actionsCaisse" id="cxActions"></div>
       <div class="panel" id="cxSoldes" hidden></div>
@@ -397,6 +459,7 @@ details.autre[open] summary{margin-bottom:8px}
     <section class="view" id="v-reglages" hidden>
       <div class="card" id="rgMoi"></div>
       <div class="card patron" id="rgBoutique"></div>
+      <div class="card patron" id="rgTheme"></div>
       <div class="card patron" id="rgSites"></div>
       <div class="card patron" id="rgEquipe"></div>
       <div class="card patron" id="rgMoyens"></div>
@@ -1170,9 +1233,9 @@ function etatVendeur_(docs, m) {
   const depuis30 = decalerJour_(auj, -30), art30 = MC.cumuler(MC.vue(res.filter(function (r) { return r.d >= depuis30; }), site)).art;
   return {
     populaires: Object.keys(art30).filter(function (a) { return a !== '_libre'; }).sort(function (x, y) { return art30[y][0] - art30[x][0]; }).slice(0, 24),
-    boutique: { nom: b.nom, moyens: b.moyens.filter(function (x) { return x.actif; }), charges: b.charges, perm: b.perm },
+    boutique: { nom: b.nom, moyens: b.moyens.filter(function (x) { return x.actif; }), charges: b.charges, perm: b.perm, theme: b.theme || null },
     site: { id: site, nom: (b.sites.filter(function (x) { return x.id === site; })[0] || {}).nom || '', plusieurs: sitesActifs_(b).length > 1 },
-    articles: prefixe_(docs, 'art/').filter(function (k) { return docs[k].data.actif !== false; }).map(function (k) { const a = docs[k].data, id = k.slice(4); return { id: id, nom: a.nom, rayon: a.rayon || '', pv: a.pv, unite: a.unite || '', stock: stocks[id] || 0, seuil: a.seuil || 0 }; }),
+    articles: prefixe_(docs, 'art/').filter(function (k) { return docs[k].data.actif !== false; }).map(function (k) { const a = docs[k].data, id = k.slice(4); return { id: id, nom: a.nom, rayon: a.rayon || '', pv: a.pv, unite: a.unite || '', stock: stocks[id] || 0, seuil: a.seuil || 0, ic: a.ic || '' }; }),
     clients: prefixe_(docs, 'tiers/').filter(function (k) { const t = docs[k].data; return t.type === 'c' && t.actif !== false; }).map(function (k) { const t = docs[k].data, id = k.slice(6); return { id: id, nom: t.nom, tel: t.tel || '', solde: soldes[id] || 0 }; }),
     ops: ops
   };
@@ -1421,6 +1484,7 @@ function appliquer_(docs, mb, op, d) {
     if (!nom) throw refus_('Indiquez le nom de l’article.');
     if (prefixe_(docs, 'art/').some(function (k) { return k !== 'art/' + id && docs[k].data.actif !== false && docs[k].data.nom.toLowerCase() === nom.toLowerCase(); })) throw refus_('« ' + nom + ' » existe déjà.');
     const a = Object.assign({}, avant || { s0: 0 }, { nom: nom, rayon: txt_(d.rayon, 40), unite: txt_(d.unite, 15), actif: d.actif !== false });
+    if (d.ic != null) { const ic = String(d.ic).trim(); if (ic && !/^[^\p{L}\p{N}<>&"'\s]{1,16}$/u.test(ic)) throw refus_('Icône invalide.'); if (ic) a.ic = ic; else delete a.ic; }
     a.pv = d.pv === '' || d.pv == null ? null : montant_(d.pv, 'Prix de vente');
     a.pa = d.pa === '' || d.pa == null ? null : montant_(d.pa, 'Prix d’achat');
     const seuil = Math.round(+(d.seuil || 0) * 1000) / 1000; a.seuil = isFinite(seuil) && seuil > 0 ? seuil : 0;
@@ -1452,6 +1516,15 @@ function appliquer_(docs, mb, op, d) {
   exigerPatron();
   const majB = function (n) { poserDoc_(docs, 'config/boutique', Object.assign({}, b, n)); };
   if (op === 'reglages-nom') { const nom = txt_(d.nom, 60); if (!nom) throw refus_('Indiquez le nom de la boutique.'); majB({ nom: nom }); return { message: 'Nom enregistré' }; }
+  if (op === 'reglages-theme') {
+    const PRESETS = ['emeraude', 'ocean', 'soleil', 'wax', 'beaute', 'marche', 'sante', 'nuit'], hex = /^#[0-9a-fA-F]{6}$/;
+    let th = d.theme;
+    if (typeof th === 'string') { if (PRESETS.indexOf(th) < 0) throw refus_('Thème inconnu.'); }
+    else if (th && hex.test(th.acc || '') && hex.test(th.acc2 || '')) th = { nom: 'Personnalisé', acc: th.acc.toLowerCase(), acc2: th.acc2.toLowerCase() };
+    else throw refus_('Couleurs invalides.');
+    majB({ theme: th });
+    return { message: 'Couleurs enregistrées' };
+  }
   if (op === 'reglages-email') { majB({ emailMensuel: !!d.emailMensuel }); return { message: d.emailMensuel ? 'Compte rendu mensuel activé' : 'Compte rendu mensuel désactivé' }; }
   if (op === 'reglages-perm') { majB({ perm: { credit: !!d.credit, depense: !!d.depense, libre: !!d.libre } }); return { message: 'Droits des vendeurs enregistrés' }; }
   if (op === 'reglages-soldes') {
@@ -1951,7 +2024,7 @@ function remplirDemo(nbJours) {
           op(o, 7.5);
         });
       }
-      if (S.id === 'p') ['f1', 'f2'].forEach(function (f) { if (dettes[f] > 0 && dj === 6) { const m = payer(dettes[f]); if (m) { op({ t: 'p', f: f, v: dettes[f], m: m, par: CONFIG.PATRON, s: S.id }, 12); dettes[f] = 0; } } });
+      ['f1', 'f2'].forEach(function (f) { if (dettes[f] > 0 && (dj === 6 || dj === 3)) { const m = bs.wave >= bs.esp ? 'wave' : 'esp', v = Math.min(dettes[f], Math.max(0, Math.floor((bs[m] - 30000) / 1000) * 1000)); if (v > 0) { op({ t: 'p', f: f, v: v, m: m, par: CONFIG.PATRON, s: S.id }, 12); dettes[f] -= v; } } });
       // Retrait personnel du patron (à Cocody) ; dépôts et retraits Mobile Money selon les espèces
       if (S.id === 'p' && dj === 6 && bs.esp > 80000) op({ t: 'w', v: 20000 + Math.round(hasard() * 4) * 5000, m: 'esp', par: CONFIG.PATRON, n: 'Dépenses de la maison', s: S.id }, 20.5);
       if (bs.esp > 250000 * S.f) op({ t: 't', de: 'esp', m: 'wave', v: Math.round((bs.esp - 150000 * S.f) / 10000) * 10000, par: CONFIG.PATRON, s: S.id }, 13);
@@ -2021,16 +2094,59 @@ const norm=x=>String(x||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(
 const cap1=x=>x.charAt(0).toUpperCase()+x.slice(1);
 const lireMontant=v=>+String(v||'').replace(/\D/g,'')||0;
 const lireQte=v=>{const q=+String(v||'').replace(/\s/g,'').replace(',','.');return isFinite(q)?q:NaN;};
-const pluriel=(n,mot,motP)=>n+' '+(n>1?(motP||mot+'s'):mot);
+const pluriel=(n,mot,motP)=>(Number.isInteger(n)?nf.format(n):n)+' '+(n>1?(motP||mot+'s'):mot);
 /** Quantité et unité : « 58 bouteilles », « 2,5 kg ». */
 const fUnite=(q,u)=>fq(q)+(u?' '+(Math.abs(q)>=2&&!/^(kg|g|l|cl|ml|m|cm)$/i.test(u)&&!/[sxz]$/i.test(u)?u+'s':u):'');
+
+// ================= thèmes (couleurs choisies par le patron selon son commerce) =================
+const THEMES={
+  emeraude:{nom:'Émeraude',acc:'#0f6b4f',acc2:'#e0a93b',pour:'Polyvalent, la couleur de Mes finances'},
+  ocean:{nom:'Océan',acc:'#1d5fa8',acc2:'#f2a541',pour:'Boutiques, quincailleries, électronique'},
+  soleil:{nom:'Soleil',acc:'#c2410c',acc2:'#f6c343',pour:'Maquis, restaurants, boulangeries'},
+  wax:{nom:'Wax',acc:'#6b21a8',acc2:'#f59e0b',pour:'Mode, pagnes, couture'},
+  beaute:{nom:'Beauté',acc:'#be185d',acc2:'#f9a8d4',pour:'Salons de coiffure, cosmétiques, parfums'},
+  marche:{nom:'Marché',acc:'#3f6212',acc2:'#eab308',pour:'Vivriers, fruits et légumes, alimentation'},
+  sante:{nom:'Santé',acc:'#0e7490',acc2:'#5eead4',pour:'Pharmacies, parapharmacie, optique'},
+  nuit:{nom:'Nuit et or',acc:'#1f2937',acc2:'#d4af37',pour:'Commerces haut de gamme, bijouterie'}};
+/** Texte foncé ou clair selon la couleur de fond. */
+const encre=hex=>{const n=parseInt(hex.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255;return (r*299+g*587+b*114)/1000>150?'#1d1606':'#ffffff';};
+function appliquerTheme(t){
+  let th=THEMES.emeraude;
+  if(t&&typeof t==='object'&&/^#[0-9a-f]{6}$/i.test(t.acc||'')&&/^#[0-9a-f]{6}$/i.test(t.acc2||''))th=t;else if(THEMES[t])th=THEMES[t];
+  const r=document.documentElement.style,sombre=matchMedia('(prefers-color-scheme: dark)').matches;
+  r.setProperty('--acc',th.acc);r.setProperty('--acc2',th.acc2);r.setProperty('--acc-ink',encre(th.acc));r.setProperty('--acc2-ink',encre(th.acc2));
+  r.setProperty('--rev',sombre?`color-mix(in srgb,${th.acc} 55%,#ffffff)`:th.acc);r.setProperty('--tres',sombre?`color-mix(in srgb,${th.acc} 55%,#ffffff)`:th.acc);
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=th.acc;
+  try{localStorage.setItem('mfc-theme',JSON.stringify(t||'emeraude'));}catch(e){}
+}
+try{appliquerTheme(JSON.parse(localStorage.getItem('mfc-theme')||'"emeraude"'));}catch(e){appliquerTheme('emeraude');}
+
+// ================= icônes des articles (choisies par le patron, sinon devinées d'après le nom) =================
+const ICONES_MOTS=[['riz','🍚'],['huile','🫒'],['eau','💧'],['soda','🥤'],['coca','🥤'],['fanta','🥤'],['sucrerie','🥤'],['jus','🧃'],['biere','🍺'],['vin','🍷'],['lait','🥛'],['yaourt','🥛'],
+  ['sucre','🍬'],['bonbon','🍬'],['chocolat','🍫'],['cafe','☕'],['the','🍵'],['biscuit','🍪'],['gateau','🍰'],['pain','🍞'],['farine','🌾'],['sel','🧂'],['cube','🧂'],['assaisonnement','🧂'],['maggi','🧂'],['epice','🧂'],
+  ['tomate','🍅'],['oignon','🧅'],['ail','🧄'],['piment','🌶️'],['sardine','🐟'],['poisson','🐟'],['thon','🐟'],['maquereau','🐟'],['viande','🥩'],['boeuf','🥩'],['poulet','🍗'],['oeuf','🥚'],['œuf','🥚'],
+  ['haricot','🫘'],['arachide','🥜'],['pois','🫘'],['spaghetti','🍝'],['pate','🍝'],['macaroni','🍝'],['banane','🍌'],['plantain','🍌'],['igname','🍠'],['manioc','🍠'],['attieke','🍚'],['pomme de terre','🥔'],['mais','🌽'],
+  ['fromage','🧀'],['beurre','🧈'],['miel','🍯'],['savon','🧼'],['lessive','🧺'],['omo','🧺'],['javel','🧴'],['papier','🧻'],['mouchoir','🧻'],['dentifrice','🪥'],['brosse','🪥'],['bougie','🕯️'],['allumette','🔥'],
+  ['gaz','🔥'],['pile','🔋'],['ampoule','💡'],['telephone','📱'],['credit','📱'],['cigarette','🚬'],['couche','🍼'],['biberon','🍼'],['parfum','🌸'],['creme','🧴'],['lotion','🧴'],['pommade','🧴'],['shampo','🧴'],
+  ['maquillage','💄'],['rouge','💄'],['meche','💇'],['perruque','💇'],['tissu','🧵'],['pagne','🧵'],['wax','🧵'],['fil','🧵'],['chemise','👕'],['tee','👕'],['robe','👗'],['pantalon','👖'],['chaussure','👟'],['sandale','🩴'],
+  ['sac','👜'],['montre','⌚'],['bijou','💍'],['collier','📿'],['medicament','💊'],['comprime','💊'],['sirop','💊'],['cahier','📒'],['stylo','🖊️'],['ciment','🧱'],['fer','🔩'],['clou','🔩'],['outil','🔧'],['peinture','🎨'],
+  ['essence','⛽'],['carburant','⛽'],['plat','🍛'],['garba','🍛'],['repas','🍛'],['sandwich','🥪'],['glace','🍦'],['fruit','🍎'],['legume','🥬'],['salade','🥬']];
+const ICONES_RAYON=[['boisson','🥤'],['epicerie','🛒'],['hygiene','🧼'],['frais','🥬'],['beaute','🧴'],['mode','👗'],['quincaillerie','🔧'],['pharma','💊'],['restaur','🍛']];
+const ICONES_CHOIX='🍚 🫒 💧 🥤 🧃 🍺 🥛 🍬 🍫 ☕ 🍵 🍪 🍞 🌾 🧂 🍅 🧅 🌶️ 🐟 🥩 🍗 🥚 🫘 🥜 🍝 🍌 🍠 🌽 🍎 🥬 🧀 🍯 🍛 🥪 🍦 🧼 🧺 🧴 🧻 🪥 🕯️ 🔥 🔋 💡 📱 🍼 🌸 💄 💇 🧵 👕 👗 👖 👟 👜 ⌚ 💍 💊 📒 🖊️ 🧱 🔩 🔧 🎨 ⛽ 🎁 📦 🛒'.split(' ');
+function iconeAuto(nom,rayon){
+  const n=' '+norm(nom).replace(/[^a-zœ0-9 ]+/g,' ')+' ';
+  for(const [m,ic] of ICONES_MOTS)if(n.includes(' '+norm(m)))return ic;
+  const r=norm(rayon);for(const [m,ic] of ICONES_RAYON)if(r.includes(m))return ic;
+  return '📦';
+}
+const iconeArt=a=>a?(a.ic||iconeAuto(a.nom,a.rayon)):'📦';
 
 // ================= état =================
 // Patron : S.docs (documents du classeur reçus du serveur, complétés à chaque synchronisation partielle).
 // Vendeur : S.articles, S.clients, S.ops (ses opérations du jour), S.boutique — préparés par le serveur.
 const S={docs:{},vieux:{},depuis:0,v:null,membre:null,licence:null,faceid:[],debutDetail:'',urlClasseur:'',email:'',
   articles:[],clients:[],ops:[],boutique:null,populaires:[],site:null};
-let CHARGE=false,D=null;
+let CHARGE=false,D=null,ui_theme='';
 const patron=()=>!!(S.membre&&S.membre.role==='patron');
 // state.site : site regardé par le patron ('' = tous les sites)
 const state={tab:'caisse',jour:null,crType:'c',crTous:false,periode:'mois',plage:null,artTri:'ca',stFiltre:'tous',site:''};
@@ -2076,6 +2192,7 @@ function deriver(){
     nomTiers:id=>(tiers[id]||{}).nom||'',
     nomMembre:id=>id==='patron'?(MF.proprietaire||'Patron'):nomDe(equipe,id,S.membre&&S.membre.id===id?S.membre.nom:'')};
   D.resDe=d=>D.resV.find(r=>r.d===d)||null;
+  if(CHARGE&&JSON.stringify(B.theme||'emeraude')!==ui_theme){ui_theme=JSON.stringify(B.theme||'emeraude');appliquerTheme(B.theme||'emeraude');}
   /** Stock d'un article dans chaque site (patron). */
   D.stocksParSite=()=>{const o={};sites.forEach(x=>o[x.id]=MC.stocks(arts,res,x.id));return o;};
   return D;
@@ -2423,6 +2540,7 @@ function renderCaisse(){
   }
   $('cxTitreOps').textContent=patron()?(d===today?'Opérations du jour':'Opérations de la journée'):'Mes opérations du jour';
   const L=ops.filter(o=>!patron()||MC.duSite(o,state.site)).sort((a,b)=>(b.ts||0)-(a.ts||0)||(b.h<a.h?-1:1));
+  renderConseilDuJour();
   $('cxOps').innerHTML=L.length?L.map(o=>ligneOp(o,d)).join(''):`<div class="empty">${d===today?'Rien de noté pour l\'instant. Touchez <b>+ Vente</b> pour commencer.':'Aucune opération ce jour-là.'}</div>`;
 }
 $('cxSoldes').addEventListener('click',e=>{const b=e.target.closest('[data-site]');if(!b)return;state.site=b.dataset.site;saveUi();deriver();render();});
@@ -2451,7 +2569,7 @@ function renderStock(){
   $('stListe').innerHTML=ids.map(id=>{const a=D.arts[id],s=D.stocks[id]||0,e=etatStock(id),v=v30[id]?v30[id][0]:0;
     const jr=P&&v>0&&s>0?Math.round(s/(v/30)):null;
     let h='';if(!qn&&f==='tous'&&(a.rayon||'')!==rayon){rayon=a.rayon||'';h+=`<div class="rayon">${esc(rayon||'Sans rayon')}</div>`;}
-    return h+`<div class="op" data-art="${esc(id)}" role="button" tabindex="0"><span class="c"><b>${esc(a.nom)}</b></span>
+    return h+`<div class="op" data-art="${esc(id)}" role="button" tabindex="0"><span class="c"><span class="ic">${iconeArt(a)}</span><b>${esc(a.nom)}</b></span>
       <span class="a stk ${e}">${esc(fUnite(s,a.unite))}</span>
       <span class="s">${a.pv?F(a.pv):'<span class="badge warn">sans prix</span>'}${P&&a.pa?' · achat '+F(a.pa):''}${P&&!a.pa?' · <span class="badge">prix d\'achat ?</span>':''}${e==='rupture'?' · <span class="badge warn">rupture</span>':e==='bas'?' · <span class="badge warn">à commander</span>':''}${jr!=null?` · ≈ ${jr} jour${jr>1?'s':''} de stock`:''}</span></div>`;}).join('')||`<div class="empty">${Object.keys(D.arts).length?'Aucun article ne correspond.':P?'Aucun article pour l\'instant. Ajoutez vos articles avec leur prix et leur stock.':'Le patron n\'a pas encore ajouté d\'articles.'}</div>`;
   $('stBoutons').innerHTML=P?'<button class="btn primary" type="button" data-f="article">+ Nouvel article</button><button class="btn" type="button" data-f="achat">Réception de marchandises</button>'+(D.multi?'<button class="btn" type="button" data-f="marchandises">Transfert entre sites</button>':''):'';
@@ -2501,6 +2619,7 @@ function bornes(p){
 function precedente(p,b){
   const [d0,d1]=b;
   if(p==='tout')return null;
+  if(p==='semaine')return [decaler(d0,-7),decaler(d1,-7)];
   if(p==='moisP')return [decalerMois(d0,-1),decaler(d0,-1)];
   if(p==='mois')return [decalerMois(d0,-1),decalerMois(d1,-1)];
   if(p==='trim')return [decalerMois(d0,-3),decalerMois(d1,-3)];
@@ -2550,7 +2669,7 @@ function renderStats(){
   const ix={q:0,ca:1,mrg:2}[state.artTri];
   const arts=Object.keys(c.art).map(a=>({a,x:c.art[a]})).filter(o=>o.x[ix]>0).sort((u,v)=>v.x[ix]-u.x[ix]);
   hlist($('stArts'),arts.slice(0,12).map(o=>{const nom=o.a==='_libre'?'Ventes sans article':D.nomArt(o.a),sansPa=o.a!=='_libre'&&!(D.arts[o.a]||{}).pa;
-    return {label:nom+(state.artTri==='mrg'&&sansPa?' (prix d\'achat ?)':''),v:o.x[ix],color:'var(--rev)',txt:state.artTri==='q'?fq(o.x[0])+((D.arts[o.a]||{}).unite?' '+D.arts[o.a].unite:''):cmp(o.x[ix]),pct:state.artTri==='ca'?pct(o.x[1],c.ca):state.artTri==='mrg'&&o.x[1]?pct(o.x[2],o.x[1])+' de marge':null,
+    return {label:(o.a==='_libre'?'✏️':iconeArt(D.arts[o.a]))+' '+nom+(state.artTri==='mrg'&&sansPa?' (prix d\'achat ?)':''),v:o.x[ix],color:'var(--rev)',txt:state.artTri==='q'?fq(o.x[0])+((D.arts[o.a]||{}).unite?' '+D.arts[o.a].unite:''):cmp(o.x[ix]),pct:state.artTri==='ca'?pct(o.x[1],c.ca):state.artTri==='mrg'&&o.x[1]?pct(o.x[2],o.x[1])+' de marge':null,
       clic:o.a!=='_libre'&&D.arts[o.a]?()=>ficheArticle(o.a):null,
       tip:()=>`<b>${esc(nom)}</b>`+trow('','Quantité',fq(o.x[0]))+trow('var(--rev)','Chiffre d’affaires',F(o.x[1]))+(sansPa?'':trow('var(--good)','Marge',F(o.x[2])))};}));
   // Dépenses par catégorie
@@ -2578,7 +2697,8 @@ function renderStats(){
 }
 function constats(c,p,b,pb,arts,moyJ,nj){
   const L=[];if(!c.n)return L;
-  if(p&&p.ca)L.push(`Le chiffre d'affaires ${c.ca>=p.ca?'progresse':'recule'} de <b>${Math.abs(Math.round((c.ca-p.ca)/p.ca*100))} %</b> par rapport ${esc(comparatif(pb))}${p.n?` ; le panier moyen passe de ${F(p.panier)} à <b>${F(c.panier)}</b>`:''}.`);
+  if(p&&p.ca){const e=Math.round((c.ca-p.ca)/p.ca*100);
+    L.push((e===0?`Le chiffre d'affaires est <b>stable</b> par rapport ${esc(comparatif(pb))}`:`Le chiffre d'affaires ${e>0?'progresse':'recule'} de <b>${Math.abs(e)} %</b> par rapport ${esc(comparatif(pb))}`)+(p.n?` ; le panier moyen passe de ${F(p.panier)} à <b>${F(c.panier)}</b>`:'')+'.');}
   const vrais=arts.filter(o=>o.a!=='_libre');
   if(vrais.length>=4){const top=vrais.slice().sort((u,v)=>v.x[1]-u.x[1]).slice(0,3),part=top.reduce((s,o)=>s+o.x[1],0);
     L.push(`Vos 3 meilleurs articles (${top.map(o=>esc(D.nomArt(o.a))).join(', ')}) font <b>${pct(part,c.ca)}</b> du chiffre d'affaires : veillez à ne jamais en manquer.`);}
@@ -2622,6 +2742,11 @@ function renderReglages(){
   if(P){
     $('rgBoutique').innerHTML=`<h3>Boutique</h3><form class="ligneform" data-rg="nom"><input name="nom" value="${esc(B.nom||'')}" maxlength="60" aria-label="Nom de la boutique"><button class="btn small primary" type="submit">Enregistrer</button></form>
       <p class="cap">Suivi depuis le ${B.debut?fjour(B.debut,1):'—'}.</p>`;
+    const thc=B.theme||'emeraude',perso=typeof thc==='object'?thc:null;
+    $('rgTheme').innerHTML=`<h3>Apparence</h3><p>Choisissez les couleurs de l'application selon votre commerce. Elles changent aussi chez vos vendeurs.</p>
+      <div class="themes">${Object.keys(THEMES).map(k=>{const t=THEMES[k];return `<button type="button" class="theme" data-a="theme" data-id="${k}" aria-pressed="${thc===k}"><span class="pastilles"><i style="background:${t.acc}"></i><i style="background:${t.acc2}"></i></span><b>${esc(t.nom)}</b><small>${esc(t.pour)}</small></button>`;}).join('')}</div>
+      <details class="autre"${perso?' open':''}><summary>Couleurs personnalisées (par exemple celles de votre enseigne)</summary>
+        <form class="ligneform" data-rg="theme-perso" style="align-items:center"><label class="coche">Principale <input type="color" name="acc" value="${perso?perso.acc:'#0f6b4f'}"></label><label class="coche">Accent <input type="color" name="acc2" value="${perso?perso.acc2:'#e0a93b'}"></label><button class="btn small primary" type="submit">Appliquer</button></form></details>`;
     const tous=(B.sites||[]);
     $('rgSites').innerHTML=`<h3>Sites</h3><p>Plusieurs points de vente ? Ajoutez un site par boutique : chacun a sa caisse, son stock et ses vendeurs. Les articles, les prix et les clients restent communs.</p>
       <div class="ops">${tous.filter(x=>x.actif!==false).map(x=>`<form class="op ligneform" data-rg="site" data-id="${esc(x.id)}"><input name="nom" value="${esc(x.nom)}" maxlength="40" aria-label="Nom du site"><button class="btn small" type="submit">Renommer</button>${D.sites.length>1?`<button class="btn small danger" type="button" data-a="site-fermer" data-id="${esc(x.id)}">Fermer</button>`:''}</form>`).join('')}</div>
@@ -2664,6 +2789,7 @@ $('v-reglages').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target,k=f.dataset.rg,btn=f.querySelector('[type=submit]');if(btn)btn.disabled=true;
   try{
     if(k==='nom')await ecrire('reglages-nom',{nom:f.elements.nom.value});
+    else if(k==='theme-perso'){await ecrire('reglages-theme',{theme:{acc:f.elements.acc.value,acc2:f.elements.acc2.value}});}
     else if(k==='site'){if(await ecrire('reglages-site',{id:f.dataset.id||'',nom:f.elements.nom.value})&&!f.dataset.id)f.reset();}
     else if(k==='vendeur'){const nom=f.elements.nom.value.trim();if(!nom){toast('Indiquez le prénom.');return;}const r=await ecrire('equipe-ajouter',{nom,site:f.elements.site?f.elements.site.value:''});if(r&&r.code){f.reset();montrerCode(r.code);}}
     else if(k==='moyen'){if(await ecrire('reglages-moyen',{nom:f.elements.nom.value}))f.reset();}
@@ -2783,12 +2909,12 @@ function feuilleVente(preArt){
     const qn=norm(($('vQ')||{}).value||'');
     const ids=(qn?ordre.filter(a=>norm(D.arts[a].nom).split(/[\s,'’()-]+/).some(w=>w.startsWith(qn))||norm(D.arts[a].nom).includes(qn)):ordre).slice(0,qn?40:12);
     $('vArts').innerHTML=ids.map(a=>{const x=D.arts[a],s=stockA(a,siteChoisi()),n=(V.l.find(l=>l.a===a)||{}).q;
-      return `<button type="button" class="art${n?' pris':''}" data-va="${esc(a)}"><b>${esc(x.nom)}</b><span>${x.pv?fmt(x.pv):'sans prix'} · <i class="${s<=0?'neg':''}">${fq(s)} en stock</i></span>${n?`<em>${fq(n)}</em>`:''}</button>`;}).join('')
+      return `<button type="button" class="art${n?' pris':''}" data-va="${esc(a)}"><span class="ic">${iconeArt(x)}</span><b>${esc(x.nom)}</b><span>${x.pv?fmt(x.pv):'sans prix'} · <i class="${s<=0?'neg':''}">${fq(s)} en stock</i></span>${n?`<em>${fq(n)}</em>`:''}</button>`;}).join('')
       +(libre?'<button type="button" class="art libre" data-va="_libre"><b>Montant libre</b><span>hors liste</span></button>':'')
       +(!ordre.length&&!libre?'<p class="cap">Aucun article : le patron doit d\'abord les ajouter dans Stock.</p>':'');
   };
   const panier=()=>{
-    $('vPanier').innerHTML=V.l.map((x,i)=>x.a?`<div class="pl"><span class="pn">${esc(D.nomArt(x.a))}</span>
+    $('vPanier').innerHTML=V.l.map((x,i)=>x.a?`<div class="pl"><span class="pn">${iconeArt(D.arts[x.a])} ${esc(D.nomArt(x.a))}</span>
       <span class="pq"><button type="button" class="btn small" data-pq="${i}" data-d="-1" aria-label="Moins">−</button><input value="${fq(x.q)}" inputmode="decimal" data-qi="${i}" aria-label="Quantité"><button type="button" class="btn small" data-pq="${i}" data-d="1" aria-label="Plus">+</button></span>
       <span class="pp">× ${P?`<input class="mt" value="${fmt(x.pu)}" inputmode="numeric" data-pi="${i}" aria-label="Prix unitaire">`:fmt(x.pu)}</span><b class="pt" data-pt="${i}">${fmt(x.q*x.pu)}</b></div>`
       :`<div class="pl libre"><input placeholder="Libellé (facultatif)" value="${esc(x.lib||'')}" data-li="${i}" maxlength="60"><input class="mt" placeholder="Montant" value="${x.pu?fmt(x.pu):''}" inputmode="numeric" data-pi="${i}"><button type="button" class="btn small danger" data-pr="${i}" aria-label="Retirer">×</button></div>`).join('');
@@ -2937,7 +3063,8 @@ function feuilleAchat(preArt){
   f.addEventListener('click',e=>{const r=e.target.closest('[data-ar]');if(r){L.splice(+r.dataset.ar,1);lignes();}});
   f.addEventListener('change',e=>{const t=e.target;if(t.dataset.aa!=null){const x=L[+t.dataset.aa];x.a=t.value;x.pu=D.arts[t.value].pa||x.pu;lignes();}maj();});
   f.addEventListener('input',e=>{const t=e.target;if(t.dataset.aq!=null)L[+t.dataset.aq].q=lireQte(t.value)||0;if(t.dataset.ap!=null)L[+t.dataset.ap].pu=lireMontant(t.value);maj();});
-  if(preArt)ajouterLigne(preArt);else maj();
+  if(Array.isArray(preArt)){preArt.forEach(x=>{if(D.arts[x.a])L.push({a:x.a,q:x.q,pu:D.arts[x.a].pa||0});});lignes();}
+  else if(preArt)ajouterLigne(preArt);else maj();
   async function envoi(){
     const l=L.filter(x=>x.q>0);
     if(L.length&&l.length!==L.length){erreurFeuille('Indiquez la quantité de chaque article.');return;}
@@ -2984,7 +3111,9 @@ function feuilleMarchandises(preArt){
 function feuilleArticle(id){
   const a=id?D.arts[id]:{},rayons=[...new Set(Object.values(D.arts).map(x=>x.rayon).filter(Boolean))].sort((x,y)=>x.localeCompare(y,'fr'));
   ouvrir(`<h2>${id?'Modifier l\'article':'Nouvel article'}</h2>${id?'':siteChoix(null,'Le stock actuel indiqué ci-dessous est au site')}
-    <div class="field"><label>Nom</label><input name="nom" maxlength="60" value="${esc(a.nom||'')}" placeholder="Ex. Riz parfumé 5 kg"></div>
+    <div class="field"><label>Nom</label><div class="ligneform"><button type="button" class="ic grand choixic" id="icBtn" aria-label="Choisir l'icône">${iconeArt(a)}</button><input name="nom" maxlength="60" value="${esc(a.nom||'')}" placeholder="Ex. Riz parfumé 5 kg"></div></div>
+    <input type="hidden" name="ic" value="${esc(a.ic||'')}">
+    <div class="icgrille" id="icGrille" hidden><button type="button" class="chip" data-ic="">Automatique</button>${ICONES_CHOIX.map(e=>`<button type="button" class="icb" data-ic="${e}">${e}</button>`).join('')}</div>
     <div class="row2"><div class="field"><label>Prix de vente</label><input name="pv" class="mt" inputmode="numeric" value="${a.pv?fmt(a.pv):''}" placeholder="0"></div>
       <div class="field"><label>Prix d'achat</label><input name="pa" class="mt" inputmode="numeric" value="${a.pa?fmt(a.pa):''}" placeholder="Pour calculer la marge"></div></div>
     <div class="row2"><div class="field"><label>Rayon</label><input name="rayon" list="rayons" maxlength="40" value="${esc(a.rayon||'')}" placeholder="Ex. Boissons"><datalist id="rayons">${rayons.map(r=>`<option value="${esc(r)}">`).join('')}</datalist></div>
@@ -2994,14 +3123,18 @@ function feuilleArticle(id){
     ${pied(id?'Enregistrer':'Ajouter l\'article')}`,async()=>{
       const nom=valeur('nom');if(!nom){erreurFeuille('Indiquez le nom de l\'article.');return;}
       const s0=lireQte(valeur('s0')||'0'),seuil=lireQte(valeur('seuil')||'0');if(isNaN(s0)||isNaN(seuil)){erreurFeuille('Quantité invalide.');return;}
-      const data={id:id||'',nom,pv:valeur('pv')?lireMontant(valeur('pv')):'',pa:valeur('pa')?lireMontant(valeur('pa')):'',rayon:valeur('rayon'),unite:valeur('unite'),seuil,actif:a.actif!==false};
+      const data={id:id||'',nom,ic:valeur('ic'),pv:valeur('pv')?lireMontant(valeur('pv')):'',pa:valeur('pa')?lireMontant(valeur('pa')):'',rayon:valeur('rayon'),unite:valeur('unite'),seuil,actif:a.actif!==false};
       if(!id){data.s0=s0;if(D.multi)data.s=siteChoisi();}
       if(await ecrire('article',data,erreurFeuille)){if(id)ficheArticle(id);else fermer();}});
+  const majIc=()=>{$('icBtn').textContent=valeur('ic')||iconeAuto(valeur('nom'),valeur('rayon'));};
+  $('icBtn').addEventListener('click',()=>{$('icGrille').hidden=!$('icGrille').hidden;});
+  $('icGrille').addEventListener('click',e=>{const b=e.target.closest('[data-ic]');if(!b)return;champ('ic').value=b.dataset.ic;$('icGrille').hidden=true;majIc();});
+  $('sheet').addEventListener('input',e=>{if(e.target.name==='nom'||e.target.name==='rayon')majIc();});
 }
 function ficheArticle(id){
   const a=D.arts[id],P=patron(),s=D.stocks[id]||0,v30=P?(ventesArticles(30)[id]||[0,0,0]):null,e=etatStock(id);
   const jr=v30&&v30[0]>0&&s>0?Math.round(s/(v30[0]/30)):null;
-  ouvrir(`<h2>${esc(a.nom)}</h2>${a.rayon?`<p class="cap">${esc(a.rayon)}</p>`:''}
+  ouvrir(`<div class="ficheart"><span class="ic grand">${iconeArt(a)}</span><h2>${esc(a.nom)}</h2></div>${a.rayon?`<p class="cap">${esc(a.rayon)}</p>`:''}
     <div class="mini"><div><span>En stock</span><b class="${e!=='ok'?'neg':''}">${esc(fUnite(s,a.unite))}</b>${a.seuil?`<small>alerte sous ${fq(a.seuil)}</small>`:''}</div>
       <div><span>Prix de vente</span><b>${a.pv?F(a.pv):'—'}</b></div>
       ${P?`<div><span>Prix d'achat</span><b>${a.pa?F(a.pa):'—'}</b>${a.pa&&a.pv?`<small>marge ${pct(a.pv-a.pa,a.pv)}</small>`:''}</div>
@@ -3098,7 +3231,7 @@ function montrerCode(c){
 // ================= actions communes =================
 const OUVRIR={vente:b=>feuilleVente(b.dataset.art),depense:()=>feuilleDepense(),encaissement:b=>feuilleReglement('c',b.dataset.tiersId),paiement:b=>feuilleReglement('f',b.dataset.tiersId),
   comptage:()=>feuilleComptage(),plus:()=>feuillePlus(),achat:b=>feuilleAchat(b.dataset.art),retrait:()=>feuilleArgent('w'),apport:()=>feuilleArgent('x'),transfert:()=>feuilleTransfert(),
-  'stock-perte':()=>choisirArticlePerte(),marchandises:b=>feuilleMarchandises(b.dataset.art),article:()=>feuilleArticle(),'article-modifier':b=>feuilleArticle(b.dataset.art),inventaire:b=>feuilleStock(b.dataset.art,'inventaire'),perte:b=>feuilleStock(b.dataset.art,'perte'),
+  'achat-conseil':()=>feuilleAchat(CONSEIL_ACHAT||undefined),  'stock-perte':()=>choisirArticlePerte(),marchandises:b=>feuilleMarchandises(b.dataset.art),article:()=>feuilleArticle(),'article-modifier':b=>feuilleArticle(b.dataset.art),inventaire:b=>feuilleStock(b.dataset.art,'inventaire'),perte:b=>feuilleStock(b.dataset.art,'perte'),
   tiers:b=>feuilleTiers(b.dataset.type||state.crType),'tiers-modifier':b=>feuilleTiers(b.dataset.type,b.dataset.tiersId)};
 document.addEventListener('click',async e=>{
   const f=e.target.closest('[data-f]');
@@ -3116,10 +3249,13 @@ document.addEventListener('click',async e=>{
   else if(k==='st-bas'){$('stFiltre').value='bas';renderStock();}
   else if(k==='op-annuler'){if(!armer('Confirmer l\'annulation'))return;a.disabled=true;if(await ecrire('annuler',{d:a.dataset.d,i:a.dataset.i},erreurFeuille))ficheOp(a.dataset.d,a.dataset.i);else a.disabled=false;}
   else if(k==='art-actif'){const x=D.arts[a.dataset.id];if(x.actif!==false&&!armer('Confirmer le retrait'))return;a.disabled=true;
-    if(await ecrire('article',{id:a.dataset.id,nom:x.nom,pv:x.pv||'',pa:x.pa||'',rayon:x.rayon||'',unite:x.unite||'',seuil:x.seuil||0,actif:x.actif===false}))ficheArticle(a.dataset.id);else a.disabled=false;}
+    if(await ecrire('article',{id:a.dataset.id,nom:x.nom,ic:x.ic||'',pv:x.pv||'',pa:x.pa||'',rayon:x.rayon||'',unite:x.unite||'',seuil:x.seuil||0,actif:x.actif===false}))ficheArticle(a.dataset.id);else a.disabled=false;}
   else if(k==='tiers-retirer'){if(!armer('Confirmer le retrait'))return;const t=D.tiers[a.dataset.id];a.disabled=true;if(await ecrire('tiers',{id:a.dataset.id,type:t.type,nom:t.nom,tel:t.tel||'',actif:false}))fermer();else a.disabled=false;}
   else if(k==='eq-code'){if(!armer('Confirmer : nouveau code'))return;a.disabled=true;const r=await ecrire('equipe-code',{id:a.dataset.id});a.disabled=false;if(r&&r.code)montrerCode(r.code);}
   else if(k==='eq-retirer'){if(!armer('Confirmer le retrait'))return;a.disabled=true;if(!await ecrire('equipe-retirer',{id:a.dataset.id}))a.disabled=false;}
+  else if(k==='theme'){appliquerTheme(a.dataset.id);await ecrire('reglages-theme',{theme:a.dataset.id});}
+  else if(k==='conseil-suivant'){ui.conseilDecal=(ui.conseilDecal||0)+1;renderConseilDuJour();}
+  else if(k==='conseils-tous'){ouvrirAssistant();poser('Que me conseilles-tu ?');}
   else if(k==='soldes-site'){ui.siteSoldes=a.dataset.id;renderReglages();}
   else if(k==='site-fermer'){if(!armer('Confirmer la fermeture'))return;const x=D.B.sites.find(y=>y.id===a.dataset.id);a.disabled=true;if(!await ecrire('reglages-site',{id:x.id,nom:x.nom,actif:false}))a.disabled=false;else if(state.site===x.id){state.site='';saveUi();deriver();render();}}
   else if(k==='charge'){ui.chargeEdit=ui.chargeEdit===a.dataset.id||!a.dataset.id?null:a.dataset.id;renderReglages();}
@@ -3127,6 +3263,312 @@ document.addEventListener('click',async e=>{
 });
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[role=button][tabindex]')){e.preventDefault();e.target.click();}});
 $('fab').addEventListener('click',()=>feuilleVente());
+
+// ================= ASSISTANT : questions en langage courant, réponses en phrases simples =================
+// Tout est calculé sur le téléphone, à partir des chiffres déjà présents : aucune donnée n'est envoyée ailleurs.
+const MOIS_N=['janvier','fevrier','mars','avril','mai','juin','juillet','aout','septembre','octobre','novembre','decembre'];
+const contient=(n,...mots)=>mots.some(m=>n.includes(m));
+/** Période citée dans la question ({b:[début, fin], lib}) ; null si aucune. */
+function periodeDe(n){
+  const t=auj(),lundi=decaler(t,-((new Date(t+'T12:00:00').getDay()+6)%7)),m1=t.slice(0,8)+'01';
+  if(contient(n,'avant-hier','avant hier')){const d=decaler(t,-2);return {b:[d,d],lib:'avant-hier'};}
+  if(contient(n,'hier')){const d=decaler(t,-1);return {b:[d,d],lib:'hier'};}
+  if(contient(n,'aujourd','ce jour','today'))return {b:[t,t],lib:'aujourd’hui'};
+  if(contient(n,'semaine derniere','semaine passee'))return {b:[decaler(lundi,-7),decaler(lundi,-1)],lib:'la semaine dernière',t:'semaine'};
+  if(contient(n,'cette semaine','la semaine'))return {b:[lundi,t],lib:'cette semaine',t:'semaine'};
+  if(contient(n,'mois dernier','mois passe'))return {b:[decalerMois(m1,-1),decaler(m1,-1)],lib:'le mois dernier',t:'moisP'};
+  if(contient(n,'trimestre')){const mm=+t.slice(5,7),q=mm-((mm-1)%3);return {b:[t.slice(0,5)+String(q).padStart(2,'0')+'-01',t],lib:'ce trimestre'};}
+  if(contient(n,'annee derniere','an dernier','annee passee')){const y=+t.slice(0,4)-1;return {b:[y+'-01-01',y+'-12-31'],lib:'l’an dernier'};}
+  if(contient(n,'cette annee','depuis janvier','l\'annee','cette an'))return {b:[t.slice(0,4)+'-01-01',t],lib:'cette année'};
+  const j=n.match(/(\d+)\s*(derniers?\s*)?jours/);if(j){const k=Math.min(366,Math.max(1,+j[1]));return {b:[decaler(t,-(k-1)),t],lib:'ces '+k+' derniers jours'};}
+  for(let i=0;i<12;i++)if(new RegExp('\\b'+MOIS_N[i]+'\\b').test(n)){
+    let y=+t.slice(0,4);const ya=n.match(/\b(20\d\d)\b/);if(ya)y=+ya[1];else if(i+1>+t.slice(5,7))y--;
+    const d0=y+'-'+String(i+1).padStart(2,'0')+'-01';let d1=decaler(decalerMois(d0,1),-1);if(d1>t)d1=t;
+    return {b:[d0,d1],lib:'en '+MNL[i]+(y!==new Date().getFullYear()?' '+y:''),t:d1===t?'mois':'moisP'};}
+  if(contient(n,'ce mois','du mois'))return {b:[m1,t],lib:'ce mois-ci',t:'mois'};
+  return null;
+}
+/** Article cité dans la question (le nom le mieux reconnu). */
+function articleDe(n){
+  let best=null,score=0;
+  for(const id in D.arts){const a=D.arts[id];if(a.actif===false)continue;
+    const mots=norm(a.nom).split(/[^a-z0-9œ]+/).filter(w=>w.length>=3&&!/^\d/.test(w));
+    const sc=mots.filter(w=>n.includes(w)).reduce((s,w)=>s+w.length,0);
+    if(sc>score){score=sc;best=id;}}
+  return score>=3?best:null;
+}
+function tiersDe(n,type){
+  let best=null,score=0;
+  for(const id in D.tiers){const t=D.tiers[id];if(type&&t.type!==type)continue;
+    const mots=norm(t.nom).split(/[^a-z0-9]+/).filter(w=>w.length>=3);const sc=mots.filter(w=>n.includes(w)).reduce((s,w)=>s+w.length,0);
+    if(sc>score){score=sc;best=id;}}
+  return score>=3?best:null;
+}
+function siteDe(n){if(!D.multi)return null;const x=D.sites.find(s=>n.includes(norm(s.nom)));return x?x.id:null;}
+const chiffresEntre=(b,site)=>MC.chiffres(MC.cumuler(MC.vue(D.res,site||null).filter(r=>r.d>=b[0]&&r.d<=b[1])));
+const listeFr=L=>L.length<2?L.join(''):L.slice(0,-1).join(', ')+' et '+L[L.length-1];
+const QUESTIONS_PATRON=['Que me conseilles-tu ?','Combien j’ai vendu aujourd’hui ?','Quel est mon bénéfice ce mois ?','Qui me doit de l’argent ?','Quels articles dois-je commander ?','Quel article se vend le mieux ?','Combien d’argent j’ai en caisse ?','Comment va la boutique ce mois ?','Quel est mon meilleur jour ?'];
+const QUESTIONS_VENDEUR=['Combien j’ai vendu aujourd’hui ?','Quels articles sont presque finis ?','Qui doit de l’argent ?','Combien reste-t-il de riz ?'];
+
+function repondre(q){
+  const n=' '+norm(q).replace(/[’']/g,' ').replace(/[?!.,;:]/g,' ').replace(/\s+/g,' ')+' ',P=patron();
+  const per=periodeDe(n),site=P?(siteDe(n)||state.site||null):null,ls=site&&D.multi?' à '+D.nomSite(site):'';
+  const art=articleDe(n);
+  const exemples=()=>'Vous pouvez me demander par exemple : '+(P?QUESTIONS_PATRON:QUESTIONS_VENDEUR).slice(0,4).map(x=>'« '+x+' »').join(', ')+'.';
+  if(n.trim().length<2||contient(n,' aide ',' bonjour',' salut',' bonsoir',' merci'))
+    return contient(n,'merci')?'Avec plaisir. Je reste là si vous avez une autre question.':'Bonjour ! Je réponds à vos questions sur les ventes, le bénéfice, le stock, la caisse et les crédits. '+exemples();
+
+  // Conseils et propositions
+  if(P&&contient(n,'conseil','suggestion','suggere','propos','idee','ameliorer','que faire','que dois je faire','gagner plus','augmenter','progresser','aide moi'))return texteConseils(site);
+  // Stock d'un article, articles à commander
+  if(art&&contient(n,'stock','reste','combien de','il y a','il me reste','encore','quantite')&&!contient(n,'vendu','vente','rapporte','benefice','marge')){
+    const a=D.arts[art],s=D.stocks[art]||0,v30=P?(MC.cumuler(MC.vue(D.res,site).filter(r=>r.d>decaler(auj(),-30))).art[art]||[0])[0]:0;
+    let r=`Il reste <b>${esc(fUnite(s,a.unite))}</b> de ${esc(a.nom)}${ls}.`;
+    if(s<=0)r+=' C’est en rupture : il faut en racheter.';else if(a.seuil&&s<=a.seuil)r+=' C’est sous le seuil d’alerte : pensez à en commander.';
+    if(v30>0&&s>0){const j=Math.round(s/(v30/30));r+=` Au rythme actuel, cela fait environ <b>${pluriel(j,'jour')}</b> de vente.`;}
+    if(P&&D.multi&&!site){const sp=D.stocksParSite();r+=' Par site : '+D.sites.map(x=>`${esc(x.nom)} ${fq(sp[x.id][art]||0)}`).join(', ')+'.';}
+    return r;
+  }
+  if(contient(n,'commander','rupture','manque','presque fini','bientot fini','epuise','racheter','acheter quoi','reapprovision','finis')){
+    const ids=Object.keys(D.arts).filter(id=>D.arts[id].actif!==false&&etatStock(id)!=='ok').sort((a,b)=>(D.stocks[a]||0)-(D.stocks[b]||0));
+    if(!ids.length)return `Rien à commander pour l’instant${ls} : aucun article n’est en rupture ni sous son seuil d’alerte.`;
+    return `${pluriel(ids.length,'article')} à commander${ls} : `+listeFr(ids.slice(0,8).map(id=>`${esc(D.arts[id].nom)} (${(D.stocks[id]||0)<=0?'fini':'reste '+fq(D.stocks[id])})`))+(ids.length>8?'…':'')+'. Le détail est dans l’onglet Stock, filtre « À commander ».';
+  }
+  // Crédits
+  if(contient(n,' dois ',' je dois','fournisseur','a payer','payer qui')&&!contient(n,'me doit','me doivent')&&P){
+    const ids=Object.keys(D.tiers).filter(id=>D.tiers[id].type==='f'&&(D.soldesTi[id]||0)>0).sort((a,b)=>D.soldesTi[b]-D.soldesTi[a]);
+    if(!ids.length)return 'Vous ne devez rien à vos fournisseurs.';
+    return `Vous devez <b>${F(ids.reduce((s,id)=>s+D.soldesTi[id],0))}</b> à ${pluriel(ids.length,'fournisseur')} : `+listeFr(ids.slice(0,5).map(id=>`${esc(D.tiers[id].nom)} : ${F(D.soldesTi[id])}`))+'.';
+  }
+  const cl=tiersDe(n,'c');
+  if(cl&&contient(n,'doit','dette','credit','combien','reste')){const t=D.tiers[cl],s=D.soldesTi[cl]||0;
+    return s>0?`${esc(t.nom)} vous doit <b>${F(s)}</b>.`+(P?(()=>{const a=MC.anciennete(cl,s,D.res);return a&&a!=='depart'?` La plus ancienne somme date du ${fcourt(a)} (${pluriel(ecartJours(a,auj()),'jour')}).`:'';})():'')+(t.tel?' Vous pouvez lui envoyer un rappel par WhatsApp depuis sa fiche, dans l’onglet Crédits.':''):`${esc(t.nom)} ne vous doit rien.`;}
+  if(contient(n,'me doit','me doivent','doit de l','doivent','credit','dette','impaye','pas paye')){
+    const ids=Object.keys(D.tiers).filter(id=>D.tiers[id].type==='c'&&(D.soldesTi[id]||0)>0).sort((a,b)=>D.soldesTi[b]-D.soldesTi[a]);
+    if(!ids.length)return 'Personne ne vous doit d’argent en ce moment.';
+    return `${pluriel(ids.length,'client')} vous ${ids.length>1?'doivent':'doit'} au total <b>${F(ids.reduce((s,id)=>s+D.soldesTi[id],0))}</b>. Les plus grosses sommes : `+listeFr(ids.slice(0,5).map(id=>`${esc(D.tiers[id].nom)} : ${F(D.soldesTi[id])}`))+'.';
+  }
+  // Vendeur : seulement ses ventes du jour
+  if(!P){
+    if(contient(n,'vendu','vente','recette','chiffre','combien')){const r=MC.chiffres(MC.resumerJour(auj(),S.ops||[]));
+      return r.n?`Aujourd’hui, vous avez fait <b>${pluriel(r.n,'vente')}</b> pour <b>${F(r.ca)}</b>.`+(Object.keys(r.vm).length?' Dont '+listeFr(Object.keys(r.vm).filter(m=>r.vm[m]).map(m=>`${F(r.vm[m])} en ${D.nomMoyen(m)}`))+'.':''):'Vous n’avez pas encore fait de vente aujourd’hui.';}
+    return 'Les chiffres de la boutique (bénéfice, caisse, dépenses) sont réservés au patron. Je peux vous dire vos ventes du jour, le stock d’un article, les articles à commander et ce que doivent les clients.';
+  }
+  // Caisse et soldes
+  if(contient(n,'caisse','espece','liquide','wave','orange money','mtn','moov','solde','combien d argent','argent disponible','en banque')&&!contient(n,'vendu','vente','pris pour moi','retrait')){
+    const L=D.moyens.map(m=>[m.nom,D.soldesMoy[m.id]||0]).filter(x=>x[1]),tot=L.reduce((s,x)=>s+x[1],0);
+    return `En ce moment${ls}, il y a <b>${F(tot)}</b> au total : `+listeFr(L.map(x=>`${F(x[1])} en ${esc(x[0])}`))+'. C’est ce que disent les opérations notées : comptez la caisse le soir pour vérifier les espèces.';
+  }
+  // Retraits personnels
+  if(contient(n,'retrait','j ai pris','pris pour moi','pour moi','ma poche')){const p=per||{b:[auj().slice(0,8)+'01',auj()],lib:'ce mois-ci',t:'mois'},c=chiffresEntre(p.b,site);
+    return `${cap1(p.lib)}${ls}, vous avez pris <b>${F(c.ret)}</b> pour vous. Le bénéfice estimé est de ${F(c.benefice)}.`+(c.ret>Math.max(0,c.benefice)?' Vous avez pris plus que ce que la boutique a gagné : à la longue, elle s’appauvrit.':' Vous avez pris moins que le bénéfice : la boutique garde de quoi grandir.');}
+  // Dépenses
+  if(contient(n,'depense','charge','frais','sorti','loyer','electricite')&&!contient(n,'vendu')){const p=per||{b:[auj().slice(0,8)+'01',auj()],lib:'ce mois-ci',t:'mois'},c=chiffresEntre(p.b,site);
+    const top=Object.keys(c.dep).filter(k=>c.dep[k]).sort((a,b)=>c.dep[b]-c.dep[a]).slice(0,3);
+    return c.charges?`${cap1(p.lib)}${ls}, les dépenses de la boutique font <b>${F(c.charges)}</b>`+(c.ca?`, soit ${pct(c.charges,c.ca)} de ce que vous avez vendu`:'')+'. Les plus grosses : '+listeFr(top.map(k=>`${esc(D.nomCharge(k))} (${F(c.dep[k])})`))+'.'+(c.ach?` Vous avez aussi acheté ${F(c.ach)} de marchandises.`:''):`Aucune dépense notée ${p.lib}${ls}.`;}
+  // Sites, vendeurs
+  if(D.multi&&contient(n,'site','boutique marche le mieux','quelle boutique','comparer')){const p=per||{b:[auj().slice(0,8)+'01',auj()],lib:'ce mois-ci',t:'mois'};
+    const L=D.sites.map(x=>({x,c:chiffresEntre(p.b,x.id)})).sort((a,b)=>b.c.ca-a.c.ca);
+    return `${cap1(p.lib)} : `+listeFr(L.map(o=>`${esc(o.x.nom)} a vendu ${F(o.c.ca)} (bénéfice ${F(o.c.benefice)})`))+`. <b>${esc(L[0].x.nom)}</b> est en tête.`;}
+  if(contient(n,'vendeur','vendeuse','qui vend','employe')){const p=per||{b:[auj().slice(0,8)+'01',auj()],lib:'ce mois-ci',t:'mois'},c=chiffresEntre(p.b,site);
+    const L=Object.keys(c.vd).sort((a,b)=>c.vd[b][1]-c.vd[a][1]);if(!L.length)return `Aucune vente ${p.lib}${ls}.`;
+    return `${cap1(p.lib)}${ls} : `+listeFr(L.map(m=>`${esc(D.nomMembre(m)||'ancien vendeur')} ${F(c.vd[m][1])} (${pluriel(c.vd[m][0],'vente')})`))+'.';}
+  // Jours et heures
+  if(contient(n,'meilleur jour','quel jour','jour de la semaine','jours ou')){const p=per||{b:[decaler(auj(),-89),auj()],lib:'ces trois derniers mois'};
+    const sj=Array(7).fill(0),nj=Array(7).fill(0);MC.vue(D.res,site).filter(r=>r.d>=p.b[0]&&r.d<=p.b[1]&&r.n).forEach(r=>{const w=(new Date(r.d+'T12:00:00').getDay()+6)%7;sj[w]+=r.ca;nj[w]++;});
+    const moy=sj.map((v,i)=>nj[i]?v/nj[i]:0);if(!moy.some(Boolean))return 'Pas encore assez de ventes pour le dire.';
+    const J=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],o=moy.map((v,i)=>[v,i]).filter(x=>x[0]).sort((a,b)=>b[0]-a[0]);
+    return `Sur ${p.lib}${ls}, votre meilleur jour est le <b>${J[o[0][1]]}</b> (${F(o[0][0])} en moyenne) et le plus calme le ${J[o[o.length-1][1]]} (${F(o[o.length-1][0])}).`;}
+  if(contient(n,'heure','moment de la journee','affluence','pointe')){const p=per||{b:[decaler(auj(),-29),auj()],lib:'ces 30 derniers jours'},c=chiffresEntre(p.b,site);
+    const hs=Object.keys(c.hr).sort((a,b)=>c.hr[b]-c.hr[a]);if(!hs.length)return 'Pas encore assez de ventes pour le dire.';
+    return `Sur ${p.lib}${ls}, vous vendez le plus vers <b>${listeFr(hs.slice(0,3).map(h=>(+h)+' h'))}</b>. Soyez bien approvisionné et présent à ces heures-là.`;}
+  // Articles qui marchent, qui dorment
+  if(contient(n,'ne se vend','se vendent pas','pas vendu','ne marche pas','ne marchent pas','dort','dorment','moins vendu','invendu','trop de stock')){
+    const v30=MC.cumuler(MC.vue(D.res,site).filter(r=>r.d>decaler(auj(),-30))).art;
+    const ids=Object.keys(D.arts).filter(id=>D.arts[id].actif!==false&&(D.stocks[id]||0)>0&&!(v30[id]&&v30[id][0]));
+    return ids.length?`${pluriel(ids.length,'article')} en stock ${ids.length>1?'ne se sont':'ne s’est'} pas vendu${ids.length>1?'s':''} depuis 30 jours${ls} : `+listeFr(ids.slice(0,6).map(id=>esc(D.arts[id].nom)))+'. Pensez à une promotion ou à les mettre en avant.':'Tous les articles en stock se sont vendus ces 30 derniers jours.';}
+  if(contient(n,'plus vendu','se vend le mieux','marche le mieux','meilleur article','meilleurs articles','top','plus de succes','qui marche')){
+    const p=per||{b:[auj().slice(0,8)+'01',auj()],lib:'ce mois-ci',t:'mois'},c=chiffresEntre(p.b,site),ix=contient(n,'rapporte','marge','benefice')?2:1;
+    const L=Object.keys(c.art).filter(a=>a!=='_libre'&&D.arts[a]&&c.art[a][ix]>0).sort((a,b)=>c.art[b][ix]-c.art[a][ix]).slice(0,3);
+    return L.length?`${cap1(p.lib)}${ls}, ${ix===2?'les articles qui rapportent le plus':'les articles qui se vendent le mieux'} : `+listeFr(L.map(a=>`${iconeArt(D.arts[a])} <b>${esc(D.nomArt(a))}</b> (${F(c.art[a][ix])}${ix===1?', '+fq(c.art[a][0])+' vendus':''})`))+'. Veillez à ne jamais en manquer.':`Aucune vente ${p.lib}${ls}.`;}
+  // Un article : ventes et marge
+  if(art&&contient(n,'vendu','vente','rapporte','marge','benefice','gagne')){const p=per||{b:[auj().slice(0,8)+'01',auj()],lib:'ce mois-ci',t:'mois'},c=chiffresEntre(p.b,site),x=c.art[art],a=D.arts[art];
+    if(!x)return `Aucune vente de ${esc(a.nom)} ${p.lib}${ls}.`;
+    return `${cap1(p.lib)}${ls}, vous avez vendu <b>${esc(fUnite(x[0],a.unite))}</b> de ${esc(a.nom)} pour ${F(x[1])}`+(a.pa?`, ce qui vous a rapporté environ <b>${F(x[2])}</b> (${pct(x[2],x[1])} de marge).`:'. Indiquez son prix d’achat pour connaître ce qu’il rapporte.');}
+  // Bénéfice
+  if(contient(n,'benefice','gagne','gain','profit','marge','rapporte','perte','perdu')){const p=per||{b:[auj().slice(0,8)+'01',auj()],lib:'ce mois-ci',t:'mois'},c=chiffresEntre(p.b,site);
+    if(!c.n&&!c.charges)return `Aucune opération ${p.lib}${ls}.`;
+    let r=`${cap1(p.lib)}${ls}, vous avez vendu <b>${F(c.ca)}</b>. Ces marchandises vous avaient coûté environ ${F(c.cogs)}. Vos dépenses font ${F(c.charges)}${c.pertes?' et les pertes de stock '+F(c.pertes):''}. `;
+    r+=c.benefice>=0?`Il vous reste donc un <b>bénéfice d’environ ${F(c.benefice)}</b>.`:`La boutique a donc <b>perdu environ ${F(-c.benefice)}</b>.`;
+    if(c.sansPa)r+=` Attention : ${F(c.sansPa)} de ventes portent sur des articles sans prix d’achat ; le bénéfice réel est un peu plus bas.`;
+    return r;}
+  // Ventes
+  if(contient(n,'vendu','vente','recette','chiffre','encaisse','gagne aujourd','combien j ai fait','rentre')){const p=per||{b:[auj(),auj()],lib:'aujourd’hui'},c=chiffresEntre(p.b,site);
+    if(!c.n)return `Aucune vente ${p.lib}${ls}.`;
+    let r=`${cap1(p.lib)}${ls}, vous avez fait <b>${pluriel(c.n,'vente')}</b> pour <b>${F(c.ca)}</b>, soit ${F(c.panier)} par client en moyenne.`;
+    if(c.crV)r+=` Dont ${F(c.crV)} à crédit.`;
+    if(p.b[0]!==p.b[1]||p.b[0]!==auj()){const pb=precedente(p.t||'plage',p.b),q=chiffresEntre(pb,site);if(q.ca){const e=Math.round((c.ca-q.ca)/q.ca*100);const que=pb[0]===pb[1]?'que le '+fjour(pb[0]):moisEntier(pb)?'qu’en '+libPeriode(pb):'que la période '+libPeriode(pb);r+=e===0?` C’est autant ${que} (${F(q.ca)}).`:` C’est ${e>0?'<b>mieux</b>':'<b>moins bien</b>'} ${que} (${F(q.ca)}, ${e>0?'+':'−'}${Math.abs(e)} %).`;}}
+    return r;}
+  // Bilan, conseils
+  if(contient(n,'comment va','bilan','resume','comment ca va','situation','point')){const p=per||{b:[auj().slice(0,8)+'01',auj()],lib:'ce mois-ci',t:'mois'},c=chiffresEntre(p.b,site);
+    const pb=precedente(p.t||'plage',p.b),q=chiffresEntre(pb,site),arts=Object.keys(c.art).map(a=>({a,x:c.art[a]})).sort((u,v)=>v.x[1]-u.x[1]);
+    const nj=Array(7).fill(0),sj=Array(7).fill(0);MC.vue(D.res,site).filter(r=>r.d>=p.b[0]&&r.d<=p.b[1]&&r.n).forEach(r=>{const w=(new Date(r.d+'T12:00:00').getDay()+6)%7;sj[w]+=r.ca;nj[w]++;});
+    const L=constats(c,q,p.b,pb,arts,sj.map((v,i)=>nj[i]?v/nj[i]:0),nj).slice(0,3);
+    return `${cap1(p.lib)}${ls} : ventes <b>${F(c.ca)}</b>, bénéfice estimé <b>${F(c.benefice)}</b>. `+(L.length?'À retenir : '+L.map(x=>x.replace(/<\/?b>/g,'')).join(' '):'');}
+  return 'Je n’ai pas bien compris. '+exemples();
+}
+
+// ----- la feuille de discussion -----
+const DISCU=[];
+function ouvrirAssistant(){
+  const P=patron();
+  ouvrir(`<h2>💬 Posez votre question</h2><p class="cap">Je réponds à partir des chiffres de ${P?'la boutique':'vos ventes'}. Touchez une question ou écrivez la vôtre (vous pouvez aussi dicter avec le micro du clavier).</p>
+    <div class="discu" id="discu"></div>
+    <div class="ct-chips" id="suggestions">${(P?QUESTIONS_PATRON:QUESTIONS_VENDEUR).map(x=>`<button type="button" class="chip" data-q="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+    <div class="ligneform"><input name="question" placeholder="Ex. Combien j’ai vendu hier ?" maxlength="200" autocomplete="off"><button class="btn primary" type="submit">Demander</button></div>
+    <div class="menu"><button type="button" class="btn" data-f="fermer">Fermer</button></div>`,async()=>{const q=valeur('question');if(!q)return;champ('question').value='';poser(q);});
+  const f=$('sheet');
+  f.addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(b){poser(b.dataset.q);return;}const l=e.target.closest('[data-lire]');if(l)lire(+l.dataset.lire);});
+  afficherDiscu();
+}
+function poser(q){
+  let r;try{r=repondre(q);}catch(e){r='Je n’ai pas pu calculer la réponse. Réessayez autrement.';}
+  DISCU.push({q,r});if(DISCU.length>30)DISCU.shift();afficherDiscu();
+}
+function afficherDiscu(){
+  const z=$('discu');if(!z)return;
+  z.innerHTML=DISCU.map((x,i)=>`<div class="bulle moi">${esc(x.q)}</div><div class="bulle elle">${x.r}${'speechSynthesis' in window?` <button type="button" class="btn small lien" data-lire="${i}" aria-label="Écouter la réponse">🔊 Écouter</button>`:''}</div>`).join('')||'<div class="bulle elle">Bonjour ! Que voulez-vous savoir ?</div>';
+  const der=z.lastElementChild;if(der)der.scrollIntoView({block:'nearest'});
+}
+/** Lecture à voix haute (voix française du téléphone). */
+function lire(i){
+  const x=DISCU[i];if(!x||!('speechSynthesis' in window))return;
+  const t=x.r.replace(/<[^>]+>/g,'').replace(/(\d)[\s\u00a0\u202f](?=\d{3}\b)/g,'$1').replace(/(\d) F\b/g,'$1 francs').replace(/ %/g,' pour cent').replace(/\p{Extended_Pictographic}/gu,'');
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=0.95;speechSynthesis.speak(u);
+}
+$('btnAssist').addEventListener('click',ouvrirAssistant);
+
+// ================= CONSEILS : propositions concrètes, classées par urgence, expliquées par les chiffres =================
+// Calculés sur le téléphone à partir des résumés quotidiens. Ce sont des suggestions prudentes : la décision reste au patron.
+let CONSEIL_ACHAT=null;   // lignes de réapprovisionnement proposées (bouton « Préparer la réception »)
+const arrondir25=v=>Math.ceil(v/25)*25;
+/** Liste des conseils pour un site (null : toute la boutique). Chaque conseil : { p (priorité), ic, titre, texte (HTML), actions (HTML) }. */
+function conseils(site){
+  if(!patron()||!D.res.length)return [];
+  const L=[],t=auj(),m1=t.slice(0,8)+'01',RV=MC.vue(D.res,site||null),d30=decaler(t,-30);
+  const c30=MC.chiffres(MC.cumuler(RV.filter(r=>r.d>d30))),ls=site&&D.multi?' ('+D.nomSite(site)+')':'';
+  const actifs=Object.keys(D.arts).filter(id=>D.arts[id].actif!==false);
+
+  // 1. Réapprovisionnement : ce qui sera fini dans moins d'une semaine, quantité pour tenir deux semaines
+  const reappro=(s,lib)=>{
+    const st=MC.stocks(D.arts,D.res,s||null),v=MC.cumuler(MC.vue(D.res,s||null).filter(r=>r.d>d30)).art;
+    return actifs.map(id=>{const q30=(v[id]||[0])[0],rythme=q30/30,stock=st[id]||0;if(rythme<=0)return null;
+      const jours=stock/rythme;if(jours>=7&&!(D.arts[id].seuil&&stock<=D.arts[id].seuil))return null;
+      const q=Math.max(1,Math.ceil(rythme*14-Math.max(0,stock)));return {id,q,jours,stock,cout:q*(D.arts[id].pa||0),ca:(v[id]||[0,0])[1],lib};})
+      .filter(Boolean);
+  };
+  let R=[];
+  if(D.multi&&!site)D.sites.forEach(x=>R=R.concat(reappro(x.id,x.nom)));else R=reappro(site,'');
+  R.sort((a,b)=>a.jours-b.jours||b.ca-a.ca);
+  if(R.length){
+    const urgent=R.filter(x=>x.stock<=0).length,budget=R.reduce((s,x)=>s+x.cout,0);
+    CONSEIL_ACHAT=(D.multi&&!site)?null:R.map(x=>({a:x.id,q:x.q}));
+    L.push({p:urgent?95:80,ic:'🛒',titre:`Racheter ${pluriel(R.length,'article')}${ls}`,
+      texte:(urgent?`<b>${pluriel(urgent,'article')} déjà ${urgent>1?'finis':'fini'}</b> : chaque jour sans stock, ce sont des ventes perdues. `:'')+
+        'Pour tenir deux semaines au rythme des 30 derniers jours : '+listeFr(R.slice(0,6).map(x=>`${iconeArt(D.arts[x.id])} ${esc(D.arts[x.id].nom)}${x.lib&&D.multi?' à '+esc(x.lib):''} : <b>${fq(x.q)}</b>${x.stock<=0?' (fini)':' (reste '+(x.jours<1?'moins d’un jour':'≈ '+pluriel(Math.round(x.jours),'jour'))+')'}`))+(R.length>6?'…':'')+
+        (budget?`. Budget à prévoir : <b>${F(budget)}</b> au dernier prix d’achat.`:'.'),
+      actions:CONSEIL_ACHAT?'<button type="button" class="btn small primary" data-f="achat-conseil">Préparer la réception</button>':'<span class="cap" style="margin:0">Choisissez un site en haut de l’écran pour préparer sa réception.</span>'});
+  }
+
+  // 2. Clients à relancer (dette de plus de 14 jours)
+  const dus=Object.keys(D.tiers).filter(id=>D.tiers[id].type==='c'&&(D.soldesTi[id]||0)>0).map(id=>{const a=MC.anciennete(id,D.soldesTi[id],D.res);return {id,s:D.soldesTi[id],j:a==='depart'?999:a?ecartJours(a,t):0};})
+    .filter(x=>x.j>=14).sort((a,b)=>b.s*b.j-a.s*a.j);
+  if(dus.length){const tot=dus.reduce((s,x)=>s+x.s,0);
+    L.push({p:Math.min(90,55+Math.round(tot/c30.ca*200||0)),ic:'📞',titre:`Relancer ${pluriel(dus.length,'client')}`,
+      texte:`<b>${F(tot)}</b> vous sont dus depuis plus de deux semaines. Cet argent manque dans la caisse pour racheter du stock. Commencez par `+listeFr(dus.slice(0,3).map(x=>`${esc(D.tiers[x.id].nom)} (${F(x.s)}, ${x.j===999?'depuis le début du suivi':'depuis '+pluriel(x.j,'jour')})`))+'.',
+      actions:dus.slice(0,3).filter(x=>D.tiers[x.id].tel).map(x=>{const tt=D.tiers[x.id];return `<a class="btn small" target="_blank" rel="noopener" href="https://wa.me/${waNumero(tt.tel)}?text=${encodeURIComponent(`Bonjour ${tt.nom}, c'est ${D.B.nom||'la boutique'}. Petit rappel : il reste ${F(x.s)} à régler. Merci et bonne journée !`)}">WhatsApp ${esc(tt.nom.split(' ')[0])}</a>`;}).join('')});}
+
+  // 3. Prix à revoir : articles qui se vendent bien mais rapportent peu
+  const taux=actifs.filter(id=>D.arts[id].pa&&D.arts[id].pv>D.arts[id].pa).map(id=>(D.arts[id].pv-D.arts[id].pa)/D.arts[id].pv).sort((a,b)=>a-b);
+  const med=taux.length?taux[Math.floor(taux.length/2)]:0.2,cible=Math.max(0.15,med);
+  const faibles=actifs.map(id=>{const a=D.arts[id],x=c30.art[id];if(!a.pa||!a.pv||!x||x[1]<c30.ca*0.03)return null;const r=(a.pv-a.pa)/a.pv;if(r>=Math.min(0.1,cible-0.05)&&r>=cible-0.08)return null;
+    const np=Math.min(arrondir25(a.pa/(1-cible)),arrondir25(a.pv*1.1));if(np<=a.pv)return null;   // hausse limitée à 10 %
+    return {id,r,np,gain:Math.round((np-a.pv)*x[0])};}).filter(Boolean).sort((a,b)=>b.gain-a.gain);
+  if(faibles.length)L.push({p:60,ic:'🏷️',titre:'Revoir des prix',
+    texte:`La marge habituelle de vos articles est d’environ ${Math.round(cible*100)} %. `+listeFr(faibles.slice(0,3).map(x=>`${iconeArt(D.arts[x.id])} ${esc(D.arts[x.id].nom)} ne rapporte que ${Math.round(x.r*100)} % : à <b>${F(x.np)}</b> au lieu de ${F(D.arts[x.id].pv)}, vous gagneriez environ ${F(x.gain)} de plus par mois au même rythme`))+'. Vérifiez d’abord les prix des concurrents, ou cherchez un fournisseur moins cher.',
+    actions:faibles.slice(0,3).map(x=>`<button type="button" class="btn small" data-f="article-modifier" data-art="${esc(x.id)}">Prix de ${esc(D.arts[x.id].nom.split(' ')[0])}</button>`).join('')});
+
+  // 4. Stock qui dort
+  const dorment=actifs.filter(id=>(D.stocks[id]||0)>0&&!(c30.art[id]&&c30.art[id][0])),val=dorment.reduce((s,id)=>s+(D.stocks[id]||0)*(D.arts[id].pa||0),0);
+  if(dorment.length&&RV.length>=30)L.push({p:val>50000?55:40,ic:'💤',titre:'Écouler le stock qui dort',
+    texte:`${listeFr(dorment.slice(0,4).map(id=>`${iconeArt(D.arts[id])} ${esc(D.arts[id].nom)}`))}${dorment.length>4?'…':''} ${dorment.length>1?'n’ont':'n’a'} rien vendu depuis 30 jours`+(val?` : <b>${F(val)}</b> d’argent immobilisé`:'')+'. Une petite remise (10 %), une mise en avant près de la caisse ou un lot avec un article qui marche peut libérer cet argent.'});
+
+  // 5. Dépenses en hausse (mois en cours contre les mêmes jours du mois précédent)
+  const cm=MC.chiffres(MC.cumuler(RV.filter(r=>r.d>=m1))),pm=MC.chiffres(MC.cumuler(RV.filter(r=>r.d>=decalerMois(m1,-1)&&r.d<=decalerMois(t,-1))));
+  const hausses=Object.keys(cm.dep).map(k=>({k,v:cm.dep[k],a:pm.dep[k]||0})).filter(x=>x.v-x.a>=5000&&x.v>x.a*1.3).sort((a,b)=>(b.v-b.a)-(a.v-a.a));
+  if(hausses.length)L.push({p:50,ic:'📈',titre:'Des dépenses augmentent',
+    texte:'Depuis le début du mois, comparé aux mêmes jours du mois dernier : '+listeFr(hausses.slice(0,3).map(x=>`${esc(D.nomCharge(x.k))} ${F(x.v)} au lieu de ${F(x.a)}`))+'. Vérifiez si c’est normal (facture exceptionnelle, hausse de prix) ou s’il y a moyen de réduire.'});
+
+  // 6. Retraits personnels supérieurs au bénéfice
+  if(cm.ret>Math.max(0,cm.benefice)&&cm.ret>0)L.push({p:70,ic:'👛',titre:'Retraits personnels trop élevés',
+    texte:`Ce mois-ci, vous avez pris <b>${F(cm.ret)}</b> pour vous alors que la boutique a gagné environ ${F(cm.benefice)}. La différence vient du stock ou de la caisse : à la longue, la boutique n’aura plus de quoi racheter. Essayez de vous fixer un montant par semaine, inférieur au bénéfice.`});
+
+  // 7. Écarts de caisse répétés (30 derniers jours), par site
+  const ecarts={};
+  Object.keys(D.jours).filter(d=>d>d30).forEach(d=>(D.jours[d]||[]).forEach(o=>{if(o.t==='c'&&!o.an&&o.ec<0&&MC.duSite(o,site)){const k=(o.s||'p')+'|'+o.par;const e=ecarts[k]||(ecarts[k]={s:o.s||'p',par:o.par,n:0,v:0});e.n++;e.v+=o.ec;}}));
+  const E=Object.values(ecarts).filter(e=>e.n>=3||e.v<=-5000).sort((a,b)=>a.v-b.v);
+  if(E.length)L.push({p:75,ic:'🔍',titre:'Des manques dans la caisse',
+    texte:'Ces 30 derniers jours : '+listeFr(E.slice(0,3).map(e=>`${pluriel(e.n,'comptage')} en manque pour ${F(-e.v)} (${esc(D.nomMembre(e.par)||'?')}${D.multi?', '+esc(D.nomSite(e.s)):''})`))+'. Vérifiez que chaque vente et chaque dépense est bien notée, et comptez la caisse avec la personne avant qu’elle parte.'});
+
+  // 8. Fin du mois : projection au rythme actuel
+  const jEcoules=ecartJours(m1,t)+1,jMois=new Date(+t.slice(0,4),+t.slice(5,7),0).getDate();
+  const moisPrec=MC.chiffres(MC.cumuler(RV.filter(r=>r.d>=decalerMois(m1,-1)&&r.d<m1)));
+  if(jEcoules>=5&&jEcoules<jMois&&moisPrec.ca){const proj=Math.round(cm.ca/jEcoules*jMois/1000)*1000,e=Math.round((proj-moisPrec.ca)/moisPrec.ca*100);
+    L.push({p:e<=-10?65:30,ic:e<0?'🎯':'🚀',titre:e<0?'Le mois s’annonce moins bon':'Le mois s’annonce bien',
+      texte:`Au rythme actuel, le mois devrait finir vers <b>${F(proj)}</b> de ventes, contre ${F(moisPrec.ca)} le mois dernier (${e>=0?'+':'−'}${Math.abs(e)} %).`+(e<0?` Il manque environ ${F(Math.round((moisPrec.ca-proj)/Math.max(1,jMois-jEcoules)/500)*500)} de ventes par jour pour faire aussi bien : misez sur vos meilleurs articles et vos meilleurs jours.`:' Continuez ainsi, et gardez du stock sur vos meilleurs articles.')});}
+
+  // 9. Beaucoup de ventes à crédit
+  if(c30.ca&&c30.crV/c30.ca>0.1)L.push({p:58,ic:'🧾',titre:'Beaucoup de ventes à crédit',
+    texte:`${pct(c30.crV,c30.ca)} des ventes de ces 30 jours sont à crédit (${F(c30.crV)}). Fixez une limite par client, et demandez un acompte pour les gros montants.`});
+
+  // 10. Beaucoup d'espèces dans la caisse : sécurité
+  const esp=site?(MC.soldesMoyens(D.B,D.res,site).esp||0):(D.soldesMoy.esp||0);
+  if(esp>300000)L.push({p:45,ic:'🔒',titre:'Beaucoup d’espèces en caisse',
+    texte:`Il y a environ <b>${F(esp)}</b> en espèces${ls}. Pour limiter les risques de vol ou de perte, déposez une partie sur Wave, Orange Money ou à la banque (Autre opération → Transfert).`});
+
+  // 11. Fournisseurs à payer depuis longtemps
+  const fdu=Object.keys(D.tiers).filter(id=>D.tiers[id].type==='f'&&(D.soldesTi[id]||0)>0).map(id=>{const a=MC.anciennete(id,D.soldesTi[id],D.res);return {id,s:D.soldesTi[id],j:a==='depart'?999:a?ecartJours(a,t):0};}).filter(x=>x.j>=30);
+  if(fdu.length)L.push({p:48,ic:'🤝',titre:'Fournisseurs en attente',
+    texte:`Vous devez ${listeFr(fdu.slice(0,3).map(x=>`${F(x.s)} à ${esc(D.tiers[x.id].nom)} depuis ${x.j===999?'le début du suivi':pluriel(x.j,'jour')}`))}. Payer à temps garde la confiance du fournisseur et de meilleurs prix.`});
+
+  // 12. Organisation : jours et heures de pointe
+  if(c30.n>=60){const hs=Object.keys(c30.hr).sort((a,b)=>c30.hr[b]-c30.hr[a]).slice(0,2).map(Number).sort((a,b)=>a-b);
+    const sj=Array(7).fill(0),nj=Array(7).fill(0);RV.filter(r=>r.d>decaler(t,-60)&&r.n).forEach(r=>{const w=(new Date(r.d+'T12:00:00').getDay()+6)%7;sj[w]+=r.ca;nj[w]++;});
+    const moy=sj.map((v,i)=>nj[i]?v/nj[i]:0),J=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'],b=moy.indexOf(Math.max(...moy));
+    L.push({p:20,ic:'⏰',titre:'Être prêt aux bons moments',
+      texte:`Vos ventes se concentrent vers ${listeFr(hs.map(h=>h+' h'))} et le ${J[b]} est votre meilleur jour. Soyez présent et bien approvisionné à ces moments-là ; les heures calmes servent au rangement et aux achats.`});}
+
+  // 13. Articles sans prix d'achat
+  const sansPa=actifs.filter(id=>!D.arts[id].pa);
+  if(sansPa.length)L.push({p:35,ic:'✍️',titre:'Compléter les prix d’achat',
+    texte:`${pluriel(sansPa.length,'article')} n’${sansPa.length>1?'ont':'a'} pas de prix d’achat (${listeFr(sansPa.slice(0,3).map(id=>esc(D.arts[id].nom)))}${sansPa.length>3?'…':''}) : le bénéfice et les conseils de prix sont moins justes.`});
+
+  return L.sort((a,b)=>b.p-a.p);
+}
+function texteConseils(site){
+  const L=conseils(site);
+  if(!L.length)return 'Rien d’urgent : le stock tient, personne ne doit depuis longtemps et les dépenses sont stables. Continuez ainsi !';
+  return `Voici mes ${L.length>5?'5 principales ':''}propositions, de la plus urgente à la moins urgente :`+L.slice(0,5).map(c=>`<div class="conseil"><b>${c.ic} ${esc(c.titre)}</b><div>${c.texte}</div>${c.actions?`<div class="rowbtn">${c.actions}</div>`:''}</div>`).join('');
+}
+/** Conseil du jour (Caisse, patron) : un des trois plus utiles, qui change chaque jour. */
+function renderConseilDuJour(){
+  const z=$('cxConseil');if(!z)return;
+  const L=patron()&&!state.jour?conseils(state.site||null):[];
+  if(!L.length){z.hidden=true;return;}
+  const top=L.slice(0,3),c=top[(new Date().getDate()+(ui.conseilDecal||0))%top.length];
+  z.hidden=false;
+  z.innerHTML=`<div class="cd-tete"><span>💡 Le conseil du jour</span><button type="button" class="btn small lien" data-a="conseil-suivant">Autre conseil</button></div><b>${c.ic} ${esc(c.titre)}</b><div class="cd-texte">${c.texte}</div>${c.actions?`<div class="rowbtn">${c.actions}</div>`:''}<button type="button" class="btn small" data-a="conseils-tous">Voir tous les conseils (${L.length})</button>`;
+}
 
 // ================= démarrage =================
 async function demarrer(){
