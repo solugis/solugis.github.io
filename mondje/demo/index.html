@@ -242,6 +242,43 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .cs-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
 .cs-form{display:grid;grid-template-columns:1fr auto;gap:8px}
 .cs-form input{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--ink);min-width:0}
+
+/* ===== Thèmes de MonDjè (Données > Apparence) : propre à MonDjè, ajouté après style.css (commun avec Ataya) =====
+   --acc : couleur principale ; --acc2 : couleur d'accent ; --acc-ink / --acc2-ink : texte posé dessus. */
+:root{--acc:#170E08;--acc2:#D9B77A;--acc-ink:#ffffff;--acc2-ink:#1d1606;--acc-txt:var(--acc);--hero-neg:#ffb4b4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--acc-txt:color-mix(in srgb,var(--acc) 45%,#ffffff)}}
+:root[data-theme="dark"]{--acc-txt:color-mix(in srgb,var(--acc) 45%,#ffffff)}
+body{background:linear-gradient(180deg,color-mix(in srgb,var(--acc2) 16%,var(--bg)) 0,var(--bg) 280px) no-repeat,var(--bg)}
+header.top .eyebrow{color:var(--acc-txt);font-weight:700}
+.btn.primary{background:var(--acc);color:var(--acc-ink)}
+.chip[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink)}
+.tabs button[aria-selected="true"]{color:var(--acc-txt)}
+.fab{background:var(--acc2);color:var(--acc2-ink)}.fab svg{stroke:var(--acc2-ink)}
+.kpi.hero{background:linear-gradient(135deg,var(--acc),color-mix(in srgb,var(--acc) 70%,#000));color:var(--acc-ink);border-color:transparent}
+.kpi.hero .l,.kpi.hero .h,.kpi.hero .v small{color:color-mix(in srgb,var(--acc-ink) 72%,transparent)}
+.kpi.hero .v.neg-hero{color:var(--hero-neg)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .kpi.hero{border:1px solid color-mix(in srgb,var(--acc2) 35%,transparent)}}
+.cs-bulle.moi{background:var(--acc);color:var(--acc-ink)}
+.btn.cs-btn{display:inline-flex;align-items:center;gap:8px;padding:4px 14px 4px 4px;border-color:color-mix(in srgb,var(--acc2) 60%,var(--line));background:color-mix(in srgb,var(--acc2) 14%,var(--surface))}
+.avatar{display:inline-block;flex:none;border-radius:50%;overflow:hidden;line-height:0}.avatar svg{width:100%;height:100%;display:block}
+.cs-head h2{display:flex;align-items:center;gap:10px}
+.cs-ligne{display:flex;gap:8px;align-items:flex-start;max-width:94%}.cs-ligne .cs-bulle{max-width:100%}
+/* icônes des catégories et des postes */
+.ic{display:inline-block;width:1.45em;text-align:center;margin-right:4px;flex:none}
+.ic-choix{display:flex;flex-wrap:wrap;gap:4px}
+.ic-choix button{border:1px solid var(--line);background:var(--surface2);border-radius:8px;font-size:18px;width:38px;height:38px;cursor:pointer;padding:0}
+.ic-choix button[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 35%,transparent)}
+/* apparence */
+.th-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.th{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 10px;cursor:pointer;text-align:left;font:500 13.5px var(--font);color:var(--ink)}
+.th[aria-pressed="true"]{border-color:var(--acc);box-shadow:0 0 0 2px color-mix(in srgb,var(--acc) 30%,transparent)}
+.th .pastille{width:28px;height:28px;border-radius:50%;flex:none;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.th-perso{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:14px;color:var(--ink2)}
+.th-perso input[type=color]{width:44px;height:34px;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--surface)}
+.th-perso label{display:inline-flex;align-items:center;gap:6px}
+.ic-det summary{cursor:pointer;font-size:14px;color:var(--ink2);list-style:none;padding:4px 0}.ic-det summary::-webkit-details-marker{display:none}.ic-det[open] summary{margin-bottom:6px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"],:root:not([data-theme="light"]) .btn.primary,:root:not([data-theme="light"]) .cs-bulle.moi{background:var(--acc2);color:var(--acc2-ink)}}
+.ic svg{width:1.3em;height:1.3em;vertical-align:-.28em}.ic-choix button svg{width:24px;height:24px;vertical-align:middle}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -275,7 +312,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
     <span class="eyebrow">MonDjè · FCFA</span>
     <h1 id="title">MonDjè</h1>
     <div class="status" id="status">Chargement des données…</div>
-    <button class="btn cs-btn" id="btnConseil" type="button">💬 Mon conseiller</button>
+    <button class="btn cs-btn" id="btnConseil" type="button">Mon conseiller</button>
   </header>
   <nav class="periods" id="filters" aria-label="Période"></nav>
   <div class="rangebox" id="rangeBox" hidden>
@@ -361,6 +398,10 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
         <div class="row2"><div class="field"><label for="dpMontant">Montant (FCFA)</label><input id="dpMontant" inputmode="numeric" placeholder="0"></div>
         <div class="field"><label for="dpDate">À la date du</label><input id="dpDate" type="date"></div></div>
         <button class="btn primary" id="dpBtn" type="submit">Enregistrer le solde de départ</button></form>
+      <div class="card" id="cardTheme"><h3>Apparence</h3>
+        <p>Choisissez les couleurs de l'application, selon vos goûts. Elles s'appliquent aussi à vos autres appareils.</p>
+        <div class="th-liste" id="thListe"></div>
+        <div class="th-perso"><span>Ou vos propres couleurs :</span><label>principale <input type="color" id="thAcc"></label><label>accent <input type="color" id="thAcc2"></label><button class="btn small" id="thPerso" type="button">Appliquer</button></div></div>
       <div class="card" id="cardBud"><h3>Budgets et alertes</h3>
         <p>Fixez un montant à ne pas dépasser chaque mois pour les postes que vous voulez surveiller. L'aperçu vous prévient quand vous approchez de la limite, quand vous la dépassez, ou quand le rythme du mois risque de la faire dépasser. Laissez vide pour ne pas suivre un poste.</p>
         <div class="field"><label for="budSeuil">Me prévenir à partir de</label><select id="budSeuil"><option value="70">70 % du budget</option><option value="75">75 % du budget</option><option value="80">80 % du budget</option><option value="90">90 % du budget</option><option value="100">100 % (seulement en cas de dépassement)</option></select></div>
@@ -432,7 +473,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 </form>
 <div class="sheet cs-sheet" id="csSheet" hidden role="dialog" aria-label="Mon conseiller">
   <div class="grab"></div>
-  <div class="cs-head"><h2>💬 Mon conseiller</h2><button class="btn small" id="csFermer" type="button">Fermer</button></div>
+  <div class="cs-head"><h2><span id="csAvatar"></span>Mon conseiller</h2><button class="btn small" id="csFermer" type="button">Fermer</button></div>
   <p class="cap">Je réponds à partir de vos chiffres, calculés sur ce téléphone : rien n'est envoyé ailleurs. Touchez une question ou écrivez la vôtre (vous pouvez aussi dicter avec le micro du clavier).</p>
   <div class="cs-discu" id="csDiscu" aria-live="polite"></div>
   <div class="cs-chips" id="csChips"></div>
@@ -1055,6 +1096,7 @@ function exigerActif_() { if (etatLicence_().mode === 'consultation') throw refu
  *    config/etat       { startBal, source, finMM, importe, par, drive: { id, modifiedTime } }
  *    config/app        { emailMensuel }
  *    config/budgets    { postes: { <poste>: montant mensuel }, seuil: % d'alerte } (budgets et alertes)
+ *    config/icones     { postes: { <poste>: emoji }, cats: { <catégorie>: emoji } } (icônes choisies)
  *    faceid/moi/<clé>  appareils autorisés pour Face ID
  * ================================================================ */
 let SS_CACHE = null;
@@ -1128,7 +1170,7 @@ function apiEtat(jeton, opts) {
   const base = { v: v, licence: etatLicence_(), doitChanger: PropertiesService.getScriptProperties().getProperty('changer') === '1', maintenant: new Date().toISOString() };
   if (opts && opts.v && opts.v === v) { base.inchange = true; return base; }
   const docs = lireDocsRapide_();
-  const S = Object.assign(base, { mm: {}, saisies: {}, cats: null, etat: null, budgets: null, faceid: [] });
+  const S = Object.assign(base, { mm: {}, saisies: {}, cats: null, etat: null, budgets: null, icones: null, faceid: [] });
   Object.keys(docs).forEach(function (k) {
     const s = k.split('/'), d = docs[k].data;
     if (s[0] === 'mm') S.mm[s[1]] = d;
@@ -1136,6 +1178,7 @@ function apiEtat(jeton, opts) {
     else if (k === 'config/categories') S.cats = d;
     else if (k === 'config/etat') S.etat = d;
     else if (k === 'config/budgets') S.budgets = d;
+    else if (k === 'config/icones') S.icones = d;
     else if (s[0] === 'faceid') S.faceid.push({ cle: k, appareil: d.appareil, cree: d.cree, dernier: d.dernier });
   });
   S.app = cfgApp_(docs);
@@ -1148,7 +1191,7 @@ function apiEtat(jeton, opts) {
 /** Toutes les modifications faites depuis l'application passent ici. */
 function apiEcrire(jeton, opId, op, data) {
   session_(jeton);
-  if (op !== 'reglages') exigerActif_();
+  if (op !== 'reglages' && op !== 'theme') exigerActif_();
   const cache = CacheService.getScriptCache();
   if (opId && cache.get('op:' + opId)) return apiEtat(jeton);   // même opération déjà enregistrée (nouvel essai après coupure)
   const lock = LockService.getScriptLock();
@@ -1257,6 +1300,21 @@ function appliquer_(docs, op, d) {
     poserDoc_(docs, 'config/etat', Object.assign({}, e, { startBal: v, debut: d.d || null }));
     journal_('Solde de départ', v + (d.d ? ' au ' + d.d : ''));
     return 'Solde de départ enregistré';
+  }
+  if (op === 'icone') {
+    const nom = txt_(d.nom, 60), ic = txt_(d.ic, 16), cle = d.type === 'poste' ? 'postes' : 'cats';
+    if (!nom || (ic && ic !== 'tirelire' && (/[A-Za-z0-9<>&"']/.test(ic) || ic.length > 16))) throw refus_('Icône invalide.');   // 'tirelire' : icône dessinée
+    const I = Object.assign({ postes: {}, cats: {} }, docs['config/icones'] ? docs['config/icones'].data : {});
+    if (ic) I[cle][nom] = ic; else delete I[cle][nom];
+    poserDoc_(docs, 'config/icones', I);
+    return ic ? 'Icône enregistrée' : 'Icône automatique rétablie';
+  }
+  if (op === 'theme') {
+    const t = d.theme;
+    const ok = (typeof t === 'string' && /^[a-z]{2,20}$/.test(t)) || (t && typeof t === 'object' && /^#[0-9a-f]{6}$/i.test(t.acc || '') && /^#[0-9a-f]{6}$/i.test(t.acc2 || ''));
+    if (!ok) throw refus_('Thème invalide.');
+    poserDoc_(docs, 'config/app', Object.assign(cfgApp_(docs), { theme: typeof t === 'string' ? t : { acc: t.acc, acc2: t.acc2 } }));
+    return 'Couleurs enregistrées';
   }
   if (op === 'budgets') {
     const postes = {}, P = d.postes || {};
@@ -1722,13 +1780,69 @@ function monthRange(a,b){const out=[];let [y,m]=a.split('-').map(Number);const [
 const daysBetween=(a,b)=>Math.round((new Date(a+'T00:00:00')-new Date(b+'T00:00:00'))/864e5);
 
 // ================= état =================
-const S={mm:{},saisies:{},cats:null,etat:null,budgets:null,faceid:[],app:{},loaded:{mm:0}};
+const S={mm:{},saisies:{},cats:null,etat:null,budgets:null,icones:null,faceid:[],app:{},loaded:{mm:0}};
 let CHARGE=false;   // vrai dès que des données (gardées ou reçues) sont affichées
 let rows=[],MKEYS=[],MONTHS=[],MONTHS_L=[],NM=0,LAST=-1,MULTI=false,PERIODS=[],NQ=0,byMonth=[],ALL=null,START_BAL=0,D0='',D1='',PARTIAL=false;
 let catMaps={inc:new Map(),dep:new Map(),ren:new Map()};
 const state={tab:'apercu',sel:[],group:null,shown:50,sens:'dep'};
 try{const s=JSON.parse(localStorage.getItem('mf-app')||'{}');if(s.tab)state.tab=s.tab;if(Array.isArray(s.sel))state.sel=s.sel;else if(s.period&&s.period!=='all')state.sel=[s.period];}catch(e){}
 const saveUi=()=>{try{localStorage.setItem('mf-app',JSON.stringify({tab:state.tab,sel:state.sel}));}catch(e){}};
+// ================= thèmes (Données > Apparence) =================
+const THEMES={
+  cauri:{nom:'Cauri',acc:'#170E08',acc2:'#D9B77A',pour:'Noir et or, les couleurs de MonDjè'},
+  emeraude:{nom:'Émeraude',acc:'#0f6b4f',acc2:'#e0a93b',pour:'Vert profond et or'},
+  ocean:{nom:'Océan',acc:'#1d5fa8',acc2:'#f2a541',pour:'Bleu et orangé'},
+  nuit:{nom:'Bleu nuit',acc:'#1e3a5f',acc2:'#d4af37',pour:'Bleu nuit et or'},
+  soleil:{nom:'Soleil',acc:'#c2410c',acc2:'#f6c343',pour:'Orange et jaune'},
+  prune:{nom:'Prune',acc:'#6b21a8',acc2:'#f59e0b',pour:'Violet et ambre'},
+  rose:{nom:'Rose',acc:'#be185d',acc2:'#f9a8d4',pour:'Framboise et rose'},
+  lagon:{nom:'Lagon',acc:'#0e7490',acc2:'#5eead4',pour:'Bleu canard et turquoise'},
+  ardoise:{nom:'Ardoise',acc:'#334155',acc2:'#94a3b8',pour:'Gris sobre'}};
+/** Texte foncé ou clair selon la couleur de fond. */
+const encre=hex=>{const n=parseInt(hex.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255;return (r*299+g*587+b*114)/1000>150?'#1d1606':'#ffffff';};
+const themeValide=t=>(t&&typeof t==='object'&&/^#[0-9a-f]{6}$/i.test(t.acc||'')&&/^#[0-9a-f]{6}$/i.test(t.acc2||''))?t:(THEMES[t]?t:'cauri');
+function appliquerTheme(t){
+  t=themeValide(t);const th=typeof t==='object'?t:THEMES[t],r=document.documentElement.style,clair=encre(th.acc)!=='#ffffff';
+  r.setProperty('--acc',th.acc);r.setProperty('--acc2',th.acc2);r.setProperty('--acc-ink',encre(th.acc));r.setProperty('--acc2-ink',encre(th.acc2));
+  r.setProperty('--hero-neg',clair?'#9b1c1c':'#ffb4b4');
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=th.acc;
+  try{localStorage.setItem('mf-theme',JSON.stringify(t));}catch(e){}
+  return t;
+}
+let THEME=appliquerTheme((()=>{try{return JSON.parse(localStorage.getItem('mf-theme')||'"cauri"');}catch(e){return 'cauri';}})());
+
+// ================= icônes des catégories et des postes (choisies, sinon devinées d'après le nom) =================
+const ICONES_MOTS=[['remboursement recu','↩️'],['loyer percu','🏘️'],['loyers percus','🏘️'],['gain','🏆'],['emprunt','🏦'],['aide familiale','🤲'],
+  ['marche','🧺'],['supermarche','🛒'],['boulangerie','🥖'],['pain','🥖'],['eau minerale','💧'],['snack','🥤'],['boisson','🥤'],['restaurant','🍽️'],['maquis','🍽️'],['restauration','🍽️'],['alimentation','🛒'],['nourriture','🛒'],['course','🛒'],
+  ['menagere','🧹'],['nounou','🧹'],['gardien','💂'],['personnel','🧹'],
+  ['loyer','🏠'],['entretien et reparation','🔧'],['reparation','🔧'],['equipement','🛋️'],['meuble','🛋️'],['logement','🏠'],['maison','🏠'],['electricite','💡'],['cie','💡'],['energie','⚡'],['gaz','🔥'],['eau','💧'],['sodeci','💧'],
+  ['carburant','⛽'],['essence','⛽'],['taxi','🚕'],['woro','🚕'],['gbaka','🚌'],['bus','🚌'],['vehicule','🚗'],['voiture','🚗'],['moto','🛵'],['livraison','📦'],['transport','🚕'],
+  ['pharmacie','💊'],['medicament','💊'],['consultation','🩺'],['soins','🩺'],['hopital','🏥'],['assurance','🛡️'],['sante','💊'],
+  ['vetement','👕'],['chaussure','👟'],['habillement','👗'],['habit','👗'],['pagne','👗'],['coiffure','💇'],['hygiene','🧴'],['beaute','💄'],['bien-etre','🧘'],
+  ['scolarite','🎓'],['fourniture','✏️'],['education','🎓'],['ecole','🎓'],['enfant','🧒'],['parents','👪'],['famille','👪'],
+  ['telephone','📱'],['forfait','📱'],['credit','📱'],['internet','🌐'],['abonnement tv','📺'],['television','📺'],['canal','📺'],['telecom','📱'],
+  ['sortie','🎉'],['voyage','✈️'],['sport','⚽'],['loisir','🎉'],['cinema','🎬'],
+  ['eglise','⛪'],['mosquee','🕌'],['cadeau','🎁'],['dons','🎁'],['don','🎁'],['mariage','💍'],['bapteme','👶'],['funerailles','🕊️'],['ceremonie','💐'],['cotisation','🤝'],['relation','🤝'],['amis','🤝'],
+  ['frais bancaires','🏦'],['banque','🏦'],['mobile money','📲'],['wave','📲'],['orange money','📲'],['frais de mission','🧳'],['mission','🧳'],['frais pro','🧳'],['frais','🧾'],['impot','🏛️'],['taxe','🏛️'],
+  ['divers','🛍️'],['achat','🛍️'],['projet','🚀'],['investissement','📈'],['business','🏪'],['commerce','🏪'],
+  ['pari','🎲'],['jeu','🎲'],['tontine','👥'],['epargne','tirelire'],['retrait','tirelire'],['remboursement de dette','💳'],['dette','💳'],['pret','🤲'],
+  ['salaire','💼'],['prime','🏆'],['vente','🏪'],['prestation','🧾'],['activite','🏪'],['aide','🤲'],['soutien','🤲'],['bourse','🎓'],['subvention','🎓'],['coupon','🎟️'],['revenu','💰'],['report','↪️']];
+const ICONES_CHOIX='🛒 🧺 🥖 🍽️ 🥤 🏠 🔧 🛋️ 💡 ⚡ 🔥 💧 ⛽ 🚕 🚌 🚗 🛵 📦 💊 🩺 🏥 🛡️ 👕 👗 👟 💇 💄 🧴 🎓 ✏️ 🧒 👪 🧹 📱 🌐 📺 🎉 ✈️ ⚽ 🎬 ⛪ 🕌 🎁 💍 👶 🕊️ 🤝 🏦 📲 🧾 🏛️ 🛍️ 🚀 📈 🏪 🎲 👥 tirelire 💳 🤲 💼 🏆 🧳 💰 🐶 🌱 ❤️ ⭐'.split(' ');
+const icNorm=s=>' '+norm(s).replace(/[^a-z0-9-]+/g,' ')+' ';
+function iconeAuto(nom){const n=icNorm(nom);for(const [m,ic] of ICONES_MOTS)if(n.includes(' '+m))return ic;return '';}
+/** Icône d'un poste : choisie, sinon devinée. */
+const iconePoste=g=>(S.icones&&S.icones.postes&&S.icones.postes[g])||iconeAuto(g)||'•';
+/** Icône d'une catégorie : choisie, sinon devinée d'après son nom, sinon celle de son poste. */
+const iconeCat=(c,g)=>(S.icones&&S.icones.cats&&S.icones.cats[c])||iconeAuto(c)||iconePoste(g||cls(c,-1));
+// Icônes dessinées (pas d'emoji qui convienne) : la tirelire de l'épargne, sans cochon
+const IC_SVG={tirelire:`<svg aria-hidden="true" viewBox="4 1.5 24 29"><defs><linearGradient id="tlC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E39A55"/><stop offset="1" stop-color="#B9652B"/></linearGradient><radialGradient id="tlP" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#FFE08A"/><stop offset="1" stop-color="#E0A92E"/></radialGradient></defs><path d="M5 18.5 C5 13.5 9.5 12 16 12 C22.5 12 27 13.5 27 18.5 L27 24.5 C27 28.5 22.5 30 16 30 C9.5 30 5 28.5 5 24.5 Z" fill="url(#tlC)"/><ellipse cx="16" cy="14.6" rx="9.6" ry="2.6" fill="#9C4F1F" opacity=".35"/><rect x="11.5" y="13.6" width="9" height="2" rx="1" fill="#4A2410"/><path d="M8.5 20 C8.5 17.5 10.5 16.8 12 16.8" stroke="#F6C08A" stroke-width="1.3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="16" cy="7.2" r="5.2" fill="url(#tlP)" stroke="#B07B12" stroke-width="1"/><path d="M16 4.6 V9.8" stroke="#B07B12" stroke-width="1.2" stroke-linecap="round"/><path d="M16 12.8 V13.6" stroke="#B07B12" stroke-width=".8" stroke-dasharray="0.6 0.6"/></svg>`};
+const IC_TEXTE={tirelire:'🪙'};   // dans les listes déroulantes, qui n'affichent que du texte
+const icH=ic=>`<span class="ic" aria-hidden="true">${IC_SVG[ic]||ic}</span>`;
+const icT=ic=>IC_TEXTE[ic]||ic;
+
+// ================= le conseiller (avatar : homme en costume) =================
+const AVATAR=`<svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="avFd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3E3C0"/><stop offset="1" stop-color="#D9B77A"/></linearGradient><clipPath id="avRond"><circle cx="32" cy="32" r="32"/></clipPath></defs><circle cx="32" cy="32" r="32" fill="url(#avFd)"/><g clip-path="url(#avRond)"><path d="M8 66 C9 50 18 44 32 43 C46 44 55 50 56 66 Z" fill="#1E2A44"/><path d="M25 44 L32 56 L39 44 C36 43 28 43 25 44 Z" fill="#FFFFFF"/><path d="M30.4 46.5 L33.6 46.5 L34.6 49 L32 58 L29.4 49 Z" fill="#B8322A"/><path d="M30.2 44.6 L33.8 44.6 L33.6 46.8 L30.4 46.8 Z" fill="#8F241E"/><path d="M25 44 L21.5 46 L28 58 L31 54 Z" fill="#2B3A5E"/><path d="M39 44 L42.5 46 L36 58 L33 54 Z" fill="#2B3A5E"/><path d="M41 49 L46 49" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/><rect x="28" y="35" width="8" height="9" rx="3" fill="#7A4A2E"/><ellipse cx="20.6" cy="26.5" rx="2.4" ry="3.2" fill="#7A4A2E"/><ellipse cx="43.4" cy="26.5" rx="2.4" ry="3.2" fill="#7A4A2E"/><ellipse cx="32" cy="26" rx="11.5" ry="13" fill="#8A5636"/><path d="M20.6 23 C20.6 13 26 10.5 32 10.5 C38 10.5 43.4 13 43.4 23 C42 19.5 39.5 17.6 32 17.6 C24.5 17.6 22 19.5 20.6 23 Z" fill="#1A120B"/><ellipse cx="27.6" cy="26" rx="1.3" ry="1.5" fill="#1A120B"/><ellipse cx="36.4" cy="26" rx="1.3" ry="1.5" fill="#1A120B"/><path d="M25.4 22.6 Q27.6 21.6 29.6 22.4 M34.4 22.4 Q36.4 21.6 38.6 22.6" stroke="#1A120B" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M28.2 32.4 Q32 35.2 35.8 32.4" stroke="#4A2A18" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M31 28.5 Q32 30.6 33 28.5" stroke="#6E4128" stroke-width="1" fill="none" stroke-linecap="round"/></g></svg>`;
+const avatar=t=>`<span class="avatar" style="width:${t}px;height:${t}px">${AVATAR}</span>`;
 function fdate(d){if(!d)return '';const [y,m,dd]=d.split('-');return (+dd===1?'1er':+dd)+' '+MN[+m-1]+(MULTI?' '+y:'');}
 const fdateY=d=>d?(MULTI?fdate(d):fdate(d)+' '+d.slice(0,4)):'';
 const mIdx=k=>MKEYS.indexOf(k.slice(0,7));
@@ -1902,7 +2016,7 @@ function hlist(host,items,opts={}){
   if(!items.length){host.innerHTML='<div class="cap" style="padding:6px">Rien sur cette période.</div>';return;}
   for(const it of items){const row=document.createElement(opts.static?'div':'button');row.className='hrow'+(opts.static?' static':'');
     if(!opts.static){row.type='button';row.setAttribute('aria-pressed',state.group===it.key);}
-    row.innerHTML=`<span class="n">${esc(it.label)}</span><span class="t"><span class="b" style="width:${Math.abs(it.v)/max*100}%;background:${it.color}"></span></span><span class="val"><b>${cmp(Math.abs(it.v))}</b>${it.pct!=null?` · ${it.pct}`:''}</span>`;
+    row.innerHTML=`<span class="n">${it.ic?icH(it.ic):''}${esc(it.label)}</span><span class="t"><span class="b" style="width:${Math.abs(it.v)/max*100}%;background:${it.color}"></span></span><span class="val"><b>${cmp(Math.abs(it.v))}</b>${it.pct!=null?` · ${it.pct}`:''}</span>`;
     if(it.tip)bindTip(row,it.tip);
     if(!opts.static)row.addEventListener('click',()=>{state.group=state.group===it.key?null:it.key;state.shown=50;renderPostes();renderOps();});
     host.appendChild(row);}
@@ -2014,16 +2128,16 @@ function renderSizes(){
 }
 function renderPostes(){
   const list=rows.filter(inPeriod);const a=agg(list);
-  const cg=Object.entries(a.byG).filter(([g,v])=>v<0&&!FIN_OUT.includes(g)).map(([g,v])=>({key:g,label:g,v,color:g===A_CLASSER?'var(--warn)':'var(--dep)'})).sort((x,y)=>x.v-y.v);
+  const cg=Object.entries(a.byG).filter(([g,v])=>v<0&&!FIN_OUT.includes(g)).map(([g,v])=>({key:g,label:g,ic:iconePoste(g),v,color:g===A_CLASSER?'var(--warn)':'var(--dep)'})).sort((x,y)=>x.v-y.v);
   const ct=cg.reduce((s,x)=>s-x.v,0);
   cg.forEach(x=>{x.pct=pct(-x.v,ct);x.tip=()=>`<b>${esc(x.label)}</b>`+trow('var(--dep)','Montant',fmt(-x.v)+' F')+trow('','Part',x.pct)+trow('','Opérations',list.filter(r=>r.g===x.key).length);});
   hlist($('depList'),cg);$('depCap').textContent=`${fmt(ct)} F sur la période${PARIS()?', paris compris':''}. Touchez un poste pour le détail.`;
-  const fo=FIN_OUT.map(g=>({key:g,label:g,v:a.byG[g]||0,color:'var(--repay)'})).filter(x=>x.v);
+  const fo=FIN_OUT.map(g=>({key:g,label:g,ic:iconePoste(g),v:a.byG[g]||0,color:'var(--repay)'})).filter(x=>x.v);
   hlist($('finOutList'),fo,{max:Math.max(1,...cg.map(x=>-x.v),...fo.map(x=>-x.v))});
-  const inc=[...new Set(list.filter(r=>r.v>0&&(MC.estPropre(r)||r.g===BET_IN)).map(r=>r.g))].map(g=>({key:g,label:g,v:a.byG[g]||0,color:'var(--rev)'})).filter(x=>x.v).sort((x,y)=>y.v-x.v);
+  const inc=[...new Set(list.filter(r=>r.v>0&&(MC.estPropre(r)||r.g===BET_IN)).map(r=>r.g))].map(g=>({key:g,label:g,ic:iconePoste(g),v:a.byG[g]||0,color:'var(--rev)'})).filter(x=>x.v).sort((x,y)=>y.v-x.v);
   const it=inc.reduce((s,x)=>s+x.v,0);inc.forEach(x=>x.pct=pct(x.v,it));
   const ac=a.byG[A_CLASSER]>0?[{key:A_CLASSER,label:A_CLASSER,v:a.byG[A_CLASSER],color:'var(--warn)'}]:[];
-  const fi=FIN_IN.map(g=>({key:g,label:g,v:a.byG[g]||0,color:'var(--borrow)'})).filter(x=>x.v);
+  const fi=FIN_IN.map(g=>({key:g,label:g,ic:iconePoste(g),v:a.byG[g]||0,color:'var(--borrow)'})).filter(x=>x.v);
   const im=Math.max(1,...inc.map(x=>x.v),...fi.map(x=>x.v));
   hlist($('revList'),inc.concat(ac),{max:im});hlist($('finInList'),fi,{max:im});
   $('revCap').textContent=`${fmt(it)} F de revenus propres${PARIS()?' et gains de paris':''}`;$('panelParis').hidden=!PARIS();
@@ -2033,9 +2147,9 @@ function renderPostes(){
   if(!g){det.innerHTML='<div class="cap">Aucun poste.</div>';return;}
   const cats=Object.values(a.byC).filter(c=>c.g===g).sort((x,y)=>Math.abs(y.v)-Math.abs(x.v));
   const tot=cats.reduce((s,c)=>s+Math.abs(c.v),0),n=cats.reduce((s,c)=>s+c.n,0);
-  det.innerHTML=`<span class="eyebrow">${state.group?'Poste choisi':'Premier poste de dépenses'}</span><h3><span>${esc(g)}</span><span class="num">${fmt(tot)} F</span></h3><div class="meta">${n} opération${n>1?'s':''} · moyenne ${n?fmt(tot/n):0} F <button class="btn small" id="seeOps" type="button">Voir les opérations</button>${state.group?'<button class="btn small" id="clearG" type="button">Retirer</button>':''}</div><div class="hlist" id="detList"></div><div class="chart" id="detMonths" style="margin-top:8px"></div>`;
+  det.innerHTML=`<span class="eyebrow">${state.group?'Poste choisi':'Premier poste de dépenses'}</span><h3><span>${icH(iconePoste(g))}${esc(g)}</span><span class="num">${fmt(tot)} F</span></h3><div class="meta">${n} opération${n>1?'s':''} · moyenne ${n?fmt(tot/n):0} F <button class="btn small" id="seeOps" type="button">Voir les opérations</button>${state.group?'<button class="btn small" id="clearG" type="button">Retirer</button>':''}</div><div class="hlist" id="detList"></div><div class="chart" id="detMonths" style="margin-top:8px"></div>`;
   const col=(a.byG[g]||0)<0?(FIN_OUT.includes(g)?'var(--repay)':'var(--dep)'):(FIN_IN.includes(g)?'var(--borrow)':'var(--rev)');
-  hlist($('detList'),cats.map(c=>({key:c.c,label:c.c,v:c.v,color:col,pct:c.n+' op.',tip:()=>`<b>${esc(c.c)}</b>`+trow(col,'Montant',fmt(Math.abs(c.v))+' F')+trow('','Opérations',c.n)+trow('','Moyenne',fmt(Math.abs(c.v)/c.n)+' F')})),{static:1});
+  hlist($('detList'),cats.map(c=>({key:c.c,label:c.c,ic:iconeCat(c.c,g),v:c.v,color:col,pct:c.n+' op.',tip:()=>`<b>${esc(c.c)}</b>`+trow(col,'Montant',fmt(Math.abs(c.v))+' F')+trow('','Opérations',c.n)+trow('','Moyenne',fmt(Math.abs(c.v)/c.n)+' F')})),{static:1});
   monthColumns($('detMonths'),[{label:g,color:col,vals:MKEYS.map((_,i)=>Math.abs(rows.filter(r=>r.m===i&&r.g===g).reduce((s,r)=>s+r.v,0)))}],{h:160,aria:'Évolution du poste',noClick:1});
   $('seeOps').addEventListener('click',()=>{state.group=g;$('fGroup').value=g;setTab('ops');renderOps();});
   const c=$('clearG');if(c)c.addEventListener('click',()=>{state.group=null;renderPostes();renderOps();});
@@ -2125,7 +2239,7 @@ function renderSynth(qRaw,qn,flt,l){
 }
 function opRow(r){
   const b=r.p?`<span class="badge${r.p==='non_retrouvee'?' warn':''}">${r.p==='non_retrouvee'?'Saisie · à vérifier':'Saisie · en attente'}</span>`:'';
-  return `<div class="op${r.sid&&!r.p?' repli':''}"${r.sid&&!r.p?' data-op="1"':''}><span class="c">${esc(r.c)}</span><span class="a${r.v>0?' pos':r.v<0?' neg':''}">${sgn(r.v)}</span>
+  return `<div class="op${r.sid&&!r.p?' repli':''}"${r.sid&&!r.p?' data-op="1"':''}><span class="c">${icH(iconeCat(r.c,r.g))}${esc(r.c)}</span><span class="a${r.v>0?' pos':r.v<0?' neg':''}">${sgn(r.v)}</span>
     <span class="s">${fdate(r.d)} · ${esc(r.g)}${r.note?' · '+esc(r.note):''} ${b}</span><span></span>
     ${r.sid?`<span class="act"><button class="btn small danger" type="button" data-del="${esc(r.sid)}">Supprimer</button>${r.p==='non_retrouvee'?`<button class="btn small" type="button" data-keep="${esc(r.sid)}">Garder</button>`:''}</span>`:''}</div>`;
 }
@@ -2327,7 +2441,7 @@ function renderBudgets(){
   box.hidden=false;
   box.innerHTML=`<h3>Budgets de ${libMk(e.mk)}</h3><p class="cap">${e.jour?`Jour ${e.jour} sur ${e.nj}`:'Mois à venir'} · alerte à ${SEUIL()} % du budget · opérations notées jusqu'ici${modeSaisie()?'':', saisies en attente comprises'}.</p>`+
     (al.length?`<div class="bud-al">${al.map(x=>`<p>${x.etat==='depasse'?'⛔':'⚠️'}&nbsp; ${texteAlerte(x)}</p>`).join('')}</div>`:`<p class="bud-ok">✓ Tous vos budgets sont respectés pour l'instant.</p>`)+
-    e.L.map(x=>`<div class="bud-row"><span class="n">${esc(x.p)}</span><span class="t"><span class="b" style="width:${Math.min(100,x.taux)}%;background:${COUL_BUD[x.etat]}"></span></span><span class="val"><b class="${x.v>x.b?'neg':''}">${cmp(x.v)}</b> / ${cmp(x.b)}</span></div>`).join('');
+    e.L.map(x=>`<div class="bud-row"><span class="n">${icH(iconePoste(x.p))}${esc(x.p)}</span><span class="t"><span class="b" style="width:${Math.min(100,x.taux)}%;background:${COUL_BUD[x.etat]}"></span></span><span class="val"><b class="${x.v>x.b?'neg':''}">${cmp(x.v)}</b> / ${cmp(x.b)}</span></div>`).join('');
 }
 // Réglage des budgets (onglet Données)
 let budSale=false;   // montants modifiés, pas encore enregistrés
@@ -2336,7 +2450,7 @@ function renderCardBudgets(){
   const B=BUD(),moy=moyennes3();
   const P=postesBudget().sort((a,b)=>(moy[b]||0)-(moy[a]||0)||a.localeCompare(b,'fr'));
   $('budSeuil').value=String(SEUIL());
-  $('budListe').innerHTML=P.length?P.map(p=>`<div class="bud-ed"><span><b>${esc(p)}</b><small>${moy[p]?'≈ '+cmp(moy[p])+' F par mois (3 derniers mois)':'pas de dépense récente'}</small></span><input inputmode="numeric" data-bud="${esc(p)}" data-moy="${Math.round(moy[p]||0)}" placeholder="aucun" value="${B[p]?nf.format(B[p]):''}" aria-label="Budget mensuel ${esc(p)}"></div>`).join(''):'<p class="cap">Les postes apparaîtront dès vos premières dépenses.</p>';
+  $('budListe').innerHTML=P.length?P.map(p=>`<div class="bud-ed"><span><b>${icH(iconePoste(p))}${esc(p)}</b><small>${moy[p]?'≈ '+cmp(moy[p])+' F par mois (3 derniers mois)':'pas de dépense récente'}</small></span><input inputmode="numeric" data-bud="${esc(p)}" data-moy="${Math.round(moy[p]||0)}" placeholder="aucun" value="${B[p]?nf.format(B[p]):''}" aria-label="Budget mensuel ${esc(p)}"></div>`).join(''):'<p class="cap">Les postes apparaîtront dès vos premières dépenses.</p>';
 }
 const arrondiBudget=v=>{const pas=v>=20000?5000:1000;return Math.ceil(v/pas)*pas;};
 $('budListe').addEventListener('input',e=>{const i=e.target.closest('[data-bud]');if(!i)return;budSale=true;const d=i.value.replace(/\D/g,'');i.value=d?nf.format(+d):'';});
@@ -2535,7 +2649,7 @@ function poser(q){
 }
 function afficherDiscu(){
   const z=$('csDiscu');
-  z.innerHTML=DISCU.map((x,i)=>`<div class="cs-bulle moi">${esc(x.q)}</div><div class="cs-bulle elle">${x.r}${'speechSynthesis' in window?` <button type="button" class="cs-lire" data-lire="${i}" aria-label="Écouter la réponse">🔊 Écouter</button>`:''}</div>`).join('')||'<div class="cs-bulle elle">Bonjour ! Posez-moi une question sur votre argent, ou touchez « Que me conseilles-tu ? ».</div>';
+  z.innerHTML=DISCU.map((x,i)=>`<div class="cs-bulle moi">${esc(x.q)}</div><div class="cs-ligne">${avatar(30)}<div class="cs-bulle elle">${x.r}${'speechSynthesis' in window?` <button type="button" class="cs-lire" data-lire="${i}" aria-label="Écouter la réponse">🔊 Écouter</button>`:''}</div></div>`).join('')||`<div class="cs-ligne">${avatar(30)}<div class="cs-bulle elle">Bonjour ! Je suis votre conseiller. Posez-moi une question sur votre argent, ou touchez « Que me conseilles-tu ? ».</div></div>`;
   const der=z.lastElementChild;if(der)der.scrollIntoView({block:'nearest'});
 }
 /** Lecture à voix haute (voix française du téléphone). */
@@ -2544,6 +2658,7 @@ function lire(i){
   const t=x.r.replace(/<li>/g,'. ').replace(/<[^>]+>/g,'').replace(/(\d)[\s  ](?=\d{3}\b)/g,'$1').replace(/(\d) F\b/g,'$1 francs').replace(/(\d) k\b/g,'$1 mille').replace(/(\d) M\b/g,'$1 millions').replace(/ %/g,' pour cent').replace(/\p{Extended_Pictographic}/gu,'');
   speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=0.95;speechSynthesis.speak(u);
 }
+$('btnConseil').innerHTML=avatar(30)+'Mon conseiller';$('csAvatar').innerHTML=avatar(40);
 $('btnConseil').addEventListener('click',ouvrirConseiller);
 $('csFermer').addEventListener('click',fermerConseiller);
 $('scrim').addEventListener('click',fermerConseiller);
@@ -2574,8 +2689,8 @@ function fillCats(){
   rows.forEach(r=>{if((r.v>0)===rev&&r.d>=since)freq[r.c]=(freq[r.c]||0)+1;});
   const top=usable.map(p=>p[0]).filter(c=>freq[c]).sort((a,b)=>freq[b]-freq[a]).slice(0,8);
   const byPoste={};usable.forEach(([c,g])=>(byPoste[g]||(byPoste[g]=[])).push(c));
-  $('fCat').innerHTML=(top.length?`<optgroup label="Fréquentes">${top.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')}</optgroup>`:'')+
-    Object.keys(byPoste).sort((a,b)=>a.localeCompare(b,'fr')).map(g=>`<optgroup label="${esc(g)}">${byPoste[g].sort((a,b)=>a.localeCompare(b,'fr')).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('')}</optgroup>`).join('')+
+  $('fCat').innerHTML=(top.length?`<optgroup label="Fréquentes">${top.map(c=>`<option value="${esc(c)}">${icT(iconeCat(c,cls(c,rev?1:-1)))} ${esc(c)}</option>`).join('')}</optgroup>`:'')+
+    Object.keys(byPoste).sort((a,b)=>a.localeCompare(b,'fr')).map(g=>`<optgroup label="${icT(iconePoste(g))} ${esc(g)}">${byPoste[g].sort((a,b)=>a.localeCompare(b,'fr')).map(c=>`<option value="${esc(c)}">${icT(iconeCat(c,g))} ${esc(c)}</option>`).join('')}</optgroup>`).join('')+
     '<option value="__new">Nouvelle catégorie…</option>';
   const postes=[...new Set(usable.map(p=>p[1]))].sort((a,b)=>a.localeCompare(b,'fr'));
   $('fNewPoste').innerHTML=postes.map(p=>`<option>${esc(p)}</option>`).join('');
@@ -2642,7 +2757,8 @@ function messageErreur(e){
 function appliquerEtat(e,deCache){
   ui.doitChanger=!!e.doitChanger;if(e.licence){ui.licence=e.licence;S.licence=e.licence;}
   if(e.inchange){ui.depuisCache=null;ui.hors=false;const g=lsGet('etat',null);if(g&&g.j===SESSION.jeton){g.le=Date.now();lsSet('etat',g);versPorte({mf:'etat',g});}renderStatus();majEcran();return;}
-  S.mm=e.mm||{};S.saisies=e.saisies||{};S.cats=e.cats||null;S.etat=e.etat||null;S.faceid=e.faceid||[];S.budgets=e.budgets||null;S.app=e.app||{};S.urlClasseur=e.urlClasseur||'';S.email=e.email||'';
+  S.mm=e.mm||{};S.saisies=e.saisies||{};S.cats=e.cats||null;S.etat=e.etat||null;S.faceid=e.faceid||[];S.budgets=e.budgets||null;S.icones=e.icones||null;S.app=e.app||{};
+  if(S.app.theme&&JSON.stringify(themeValide(S.app.theme))!==JSON.stringify(THEME))THEME=appliquerTheme(S.app.theme);S.urlClasseur=e.urlClasseur||'';S.email=e.email||'';
   S.loaded.mm=1;CHARGE=true;ui.v=e.v;
   if(!deCache){ui.depuisCache=null;ui.hors=false;if(SESSION.jeton){const g={j:SESSION.jeton,le:Date.now(),s:e};lsSet('etat',g);versPorte({mf:'etat',g});}}
   schedule();majEcran();
@@ -2729,7 +2845,19 @@ function renderReglages(){
   $('crMensuel').checked=S.app.emailMensuel!==false;$('crEmail').textContent=S.email||'l\'adresse du compte Google';
   const a=$('lienClasseur');a.hidden=!S.urlClasseur;if(S.urlClasseur)a.href=S.urlClasseur;
   $('lienInstall').textContent=String(MF.lienPorte||'').replace(/^https:\/\//,'')||'l\'adresse de l\'application';
+  renderTheme();
 }
+// Apparence : thèmes prêts à l'emploi ou couleurs personnelles (gardées dans le classeur, donc sur tous les appareils)
+function renderTheme(){
+  const cle=typeof THEME==='string'?THEME:null,th=cle?THEMES[cle]:THEME;
+  $('thListe').innerHTML=Object.entries(THEMES).map(([k,t])=>`<button type="button" class="th" data-th="${k}" aria-pressed="${k===cle}" title="${esc(t.pour)}"><span class="pastille" style="background:linear-gradient(135deg,${t.acc} 50%,${t.acc2} 50%)"></span>${esc(t.nom)}</button>`).join('');
+  if(document.activeElement!==$('thAcc')&&document.activeElement!==$('thAcc2')){$('thAcc').value=th.acc;$('thAcc2').value=th.acc2;}
+  $('thPerso').setAttribute('aria-pressed',!cle);
+}
+async function choisirTheme(t){const avant=THEME;THEME=appliquerTheme(t);renderTheme();
+  if(!await ecrire('theme',{theme:THEME},'Couleurs enregistrées')){THEME=appliquerTheme(avant);renderTheme();}}
+$('thListe').addEventListener('click',e=>{const b=e.target.closest('[data-th]');if(b)choisirTheme(b.dataset.th);});
+$('thPerso').addEventListener('click',()=>choisirTheme({acc:$('thAcc').value,acc2:$('thAcc2').value}));
 $('dpMontant').addEventListener('input',e=>{const neg=/^\s*[-−]/.test(e.target.value);const d=e.target.value.replace(/\D/g,'');e.target.value=d?(neg?'−':'')+nf.format(+d):(neg?'−':'');});
 $('dpForm').addEventListener('submit',async ev=>{ev.preventDefault();const t=$('dpMontant').value,neg=/^\s*[-−]/.test(t),v=+(t.replace(/\D/g,'')||0)*(neg?-1:1);
   const b=$('dpBtn');b.disabled=true;await ecrire('solde-depart',{v,d:$('dpDate').value||null});b.disabled=false;});
@@ -2750,8 +2878,13 @@ document.addEventListener('click',async e=>{
 ui.ctSens='dep';ui.ctEdit=null;let ctSig='';
 const ctListe=()=>((ui.ctSens==='rev'?S.cats?.revenus:S.cats?.depenses)||[]).filter(([c,g])=>g!=='Report');
 const ctPostes=()=>[...new Set(ctListe().map(x=>x[1]))].sort((a,b)=>a.localeCompare(b,'fr'));
+/** Choix de l'icône d'une catégorie ou d'un poste (↺ : revenir à l'icône devinée). */
+function choixIcone(type,nom,act){
+  const perso=type==='poste'?S.icones?.postes?.[nom]:S.icones?.cats?.[nom];
+  return `<details class="ic-det"><summary>Icône : ${icH(act)} <u>changer</u></summary><div class="ic-choix" data-type="${type}" data-nom="${esc(nom)}" role="group" aria-label="Icône">${ICONES_CHOIX.map(ic=>`<button type="button" data-ic="${ic}" aria-pressed="${ic===act}"${IC_SVG[ic]?' aria-label="Tirelire"':''}>${IC_SVG[ic]||ic}</button>`).join('')}${perso?'<button type="button" data-ic="" title="Icône automatique" aria-label="Icône automatique">↺</button>':''}</div></details>`;
+}
 function renderCats(force){
-  const sig=JSON.stringify([S.cats,ui.ctSens,ui.ctEdit]);if(!force&&sig===ctSig)return;ctSig=sig;
+  const sig=JSON.stringify([S.cats,S.icones,ui.ctSens,ui.ctEdit]);if(!force&&sig===ctSig)return;ctSig=sig;
   $('ctDep').setAttribute('aria-pressed',ui.ctSens==='dep');$('ctRev').setAttribute('aria-pressed',ui.ctSens==='rev');
   const L=ctListe(),postes=ctPostes(),rev=ui.ctSens==='rev';
   const usage=c=>rows.filter(r=>r.c===c&&(r.v>0)===rev).length;
@@ -2759,12 +2892,12 @@ function renderCats(force){
   $('catsList').innerHTML=postes.map(p=>{
     const cs=L.filter(x=>x[1]===p).map(x=>x[0]).sort((a,b)=>a.localeCompare(b,'fr'));
     const reserve=MC.RESERVES.includes(p);
-    let h=`<div class="ct-poste"><b>${esc(p)}</b>${reserve?'<span class="cap">poste de calcul</span>':`<button class="btn small" type="button" data-ct="poste" data-p="${esc(p)}">Renommer</button>`}</div>`;
-    if(ui.ctEdit==='p:'+p)h+=`<form class="ct-edit" data-ctf="poste" data-p="${esc(p)}"><input name="nom" value="${esc(p)}" maxlength="60" aria-label="Nouveau nom du poste"><div class="row"><button class="btn small primary" type="submit">Enregistrer</button><button class="btn small" type="button" data-ct="fermer">Annuler</button></div></form>`;
-    h+=`<div class="ct-chips">${cs.map(c=>`<button class="chip" type="button" data-ct="cat" data-c="${esc(c)}" aria-pressed="${ui.ctEdit==='c:'+c}">${esc(c)}</button>`).join('')}</div>`;
+    let h=`<div class="ct-poste"><b>${icH(iconePoste(p))}${esc(p)}</b>${`<button class="btn small" type="button" data-ct="poste" data-p="${esc(p)}">${reserve?'Icône':'Modifier'}</button>`}</div>`;
+    if(ui.ctEdit==='p:'+p)h+=`<form class="ct-edit" data-ctf="poste" data-p="${esc(p)}">${choixIcone('poste',p,iconePoste(p))}${reserve?'<span class="cap" style="margin:0">Poste de calcul : son nom ne se change pas.</span><input name="nom" type="hidden" value="'+esc(p)+'">':`<input name="nom" value="${esc(p)}" maxlength="60" aria-label="Nouveau nom du poste">`}<div class="row"><button class="btn small primary" type="submit">Enregistrer</button><button class="btn small" type="button" data-ct="fermer">Annuler</button></div></form>`;
+    h+=`<div class="ct-chips">${cs.map(c=>`<button class="chip" type="button" data-ct="cat" data-c="${esc(c)}" aria-pressed="${ui.ctEdit==='c:'+c}">${icH(iconeCat(c,p))}${esc(c)}</button>`).join('')}</div>`;
     const ed=cs.find(c=>ui.ctEdit==='c:'+c);
     if(ed!=null){const n=usage(ed);h+=`<form class="ct-edit" data-ctf="cat" data-c="${esc(ed)}"><span class="cap" style="margin:0">${n?`${n} opération${n>1?'s':''} dans cette catégorie : un nouveau nom s'applique aussi à elles.`:'Aucune opération dans cette catégorie.'}</span>
-      <input name="nom" value="${esc(ed)}" maxlength="60" aria-label="Nom de la catégorie"><select name="poste" aria-label="Poste">${optPostes(p)}</select><input name="nouveauPoste" placeholder="Nom du nouveau poste" maxlength="60" hidden>
+      ${choixIcone('cat',ed,iconeCat(ed,p))}<input name="nom" value="${esc(ed)}" maxlength="60" aria-label="Nom de la catégorie"><select name="poste" aria-label="Poste">${optPostes(p)}</select><input name="nouveauPoste" placeholder="Nom du nouveau poste" maxlength="60" hidden>
       <div class="row"><button class="btn small primary" type="submit">Enregistrer</button><button class="btn small" type="button" data-ct="fermer">Annuler</button>${n?'':`<button class="btn small danger" type="button" data-ct="retirer" data-c="${esc(ed)}">Retirer</button>`}</div></form>`;}
     return h;}).join('')||'<p class="cap">Aucune catégorie pour l\'instant.</p>';
   if(document.activeElement!==$('caNom')){$('caPoste').innerHTML=optPostes(postes[0]);$('caNouveauPoste').hidden=true;}
@@ -2773,6 +2906,8 @@ $('ctDep').addEventListener('click',()=>{ui.ctSens='dep';ui.ctEdit=null;renderCa
 $('ctRev').addEventListener('click',()=>{ui.ctSens='rev';ui.ctEdit=null;renderCats();});
 $('cardCats').addEventListener('change',e=>{const s=e.target;if(s.tagName!=='SELECT')return;const f=s.closest('form');const champ=f&&(f.querySelector('[name=nouveauPoste]')||(f.id==='catAjout'?$('caNouveauPoste'):null));if(champ)champ.hidden=s.value!=='__nouveau';});
 $('cardCats').addEventListener('click',async e=>{
+  const ic=e.target.closest('[data-ic]');if(ic){const z=ic.closest('.ic-choix');ic.disabled=true;
+    if(await ecrire('icone',{type:z.dataset.type,nom:z.dataset.nom,ic:ic.dataset.ic},ic.dataset.ic?'Icône enregistrée':'Icône automatique rétablie'))renderCats(true);else ic.disabled=false;return;}
   const b=e.target.closest('[data-ct]');if(!b)return;const a=b.dataset.ct;
   if(a==='cat'){ui.ctEdit=ui.ctEdit==='c:'+b.dataset.c?null:'c:'+b.dataset.c;renderCats();}
   else if(a==='poste'){ui.ctEdit='p:'+b.dataset.p;renderCats();}
@@ -2787,7 +2922,7 @@ $('cardCats').addEventListener('submit',async e=>{
       if(!nom||!poste){toast('Indiquez le nom de la catégorie et son poste.');return;}
       if(ctListe().some(x=>x[0]===nom)){toast('« '+nom+' » existe déjà.');return;}
       if(await ecrire('categorie',{c:nom,poste,revenu:rev})){$('caNom').value='';renderCats(true);}return;}
-    if(f.dataset.ctf==='poste'){const nouveau=f.elements.nom.value.trim();if(nouveau&&nouveau!==f.dataset.p&&await ecrire('poste-renommer',{poste:f.dataset.p,nouveau,revenu:rev})){ui.ctEdit=null;renderCats(true);}return;}
+    if(f.dataset.ctf==='poste'){const nouveau=f.elements.nom.value.trim();if(nouveau===f.dataset.p){ui.ctEdit=null;renderCats(true);return;}if(nouveau&&await ecrire('poste-renommer',{poste:f.dataset.p,nouveau,revenu:rev})){ui.ctEdit=null;renderCats(true);}return;}
     if(f.dataset.ctf==='cat'){const ancien=f.dataset.c,nom=f.elements.nom.value.trim();let poste=f.elements.poste.value;if(poste==='__nouveau')poste=f.elements.nouveauPoste.value.trim();
       if(!nom||!poste){toast('Indiquez un nom et un poste.');return;}
       const actuel=(ctListe().find(x=>x[0]===ancien)||[])[1];let ok=true;
