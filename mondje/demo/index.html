@@ -129,6 +129,8 @@ input,select,textarea{font:16px var(--font);color:var(--ink);background:var(--su
 .op .s{font-size:12px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .op .a{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
 .op .a.pos{color:var(--good-text)}
+.neg,.op .a.neg,.kpi:not(.hero) .v.neg{color:var(--bad-text)}
+.kpi.hero .v.neg-hero,.tip .neg{color:color-mix(in srgb,var(--bad) 72%,var(--surface))}
 .op .act{grid-column:1/-1;display:flex;gap:8px;margin-top:4px}
 .badge{font-size:10.5px;font-weight:600;letter-spacing:.03em;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--rev) 15%,transparent);color:var(--ink2)}
 .badge.warn{background:color-mix(in srgb,var(--warn) 25%,transparent);color:var(--warn-text)}
@@ -213,6 +215,33 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 .ct-chips .chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink)}
 .ct-edit{background:var(--surface2);border-radius:10px;padding:10px;display:grid;gap:8px;margin-top:8px}
 .ct-edit .row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* budgets et alertes */
+.panel.bud{margin-bottom:12px;display:grid;gap:6px}
+.bud-al{display:grid;gap:4px;background:color-mix(in srgb,var(--warn) 14%,var(--surface));border-radius:10px;padding:8px 10px}
+.bud-al p,.bud-ok{margin:0;font-size:13.5px;color:var(--ink2)}.bud-al p{padding-left:1.5em;text-indent:-1.5em}.bud-al b{color:var(--ink)}.bud-al b.neg{color:var(--bad-text)}
+.bud-row{display:grid;grid-template-columns:minmax(90px,150px) 1fr auto;gap:8px;align-items:center;font-size:13.5px;padding:3px 0}
+.bud-row .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bud-row .t{height:10px;background:var(--surface2);border-radius:5px;overflow:hidden;position:relative}
+.bud-row .b{position:absolute;inset:0 auto 0 0;border-radius:5px;min-width:2px}
+.bud-row .val{font-variant-numeric:tabular-nums;color:var(--ink2);white-space:nowrap;font-size:13px}.bud-row .val b{color:var(--ink)}.bud-row .val b.neg{color:var(--bad-text)}
+.bud-ed{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.bud-ed span{display:grid;font-size:14px}.bud-ed small{font-size:12px;color:var(--muted)}
+.bud-ed input{font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2);color:var(--ink);width:100%}
+/* mon conseiller */
+.btn.cs-btn{justify-self:start;margin-top:4px;border-radius:999px;padding:8px 14px;font-size:14px;background:var(--surface);border:1px solid var(--line)}
+.cs-sheet{display:grid;gap:10px;max-width:720px;margin:0 auto}
+.cs-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.cs-head h2{margin:0}
+.cs-discu{display:grid;gap:8px;max-height:46vh;overflow-y:auto;padding:2px}
+.cs-bulle{max-width:88%;padding:9px 12px;border-radius:14px;font-size:14.5px;line-height:1.45}
+.cs-bulle.moi{justify-self:end;background:var(--ink);color:var(--surface);border-bottom-right-radius:4px}
+.cs-bulle.elle{justify-self:start;background:var(--surface2);color:var(--ink);border-bottom-left-radius:4px}
+.cs-bulle .neg{color:var(--bad-text)}
+.cs-liste{margin:6px 0;padding-left:20px;display:grid;gap:6px}
+.cs-lire{border:0;background:none;color:var(--ink2);font:500 12.5px var(--font);padding:2px 4px;cursor:pointer;text-decoration:underline}
+.cs-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.cs-form{display:grid;grid-template-columns:1fr auto;gap:8px}
+.cs-form input{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface2);color:var(--ink);min-width:0}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -246,6 +275,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
     <span class="eyebrow">MonDjè · FCFA</span>
     <h1 id="title">MonDjè</h1>
     <div class="status" id="status">Chargement des données…</div>
+    <button class="btn cs-btn" id="btnConseil" type="button">💬 Mon conseiller</button>
   </header>
   <nav class="periods" id="filters" aria-label="Période"></nav>
   <div class="rangebox" id="rangeBox" hidden>
@@ -258,6 +288,7 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
 
   <main>
     <section class="view" id="v-apercu">
+      <div class="panel bud" id="budgets" hidden></div>
       <p class="thesis" id="thesis"></p>
       <div class="kpis" id="kpis"></div>
       <div class="grid2">
@@ -330,6 +361,11 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
         <div class="row2"><div class="field"><label for="dpMontant">Montant (FCFA)</label><input id="dpMontant" inputmode="numeric" placeholder="0"></div>
         <div class="field"><label for="dpDate">À la date du</label><input id="dpDate" type="date"></div></div>
         <button class="btn primary" id="dpBtn" type="submit">Enregistrer le solde de départ</button></form>
+      <div class="card" id="cardBud"><h3>Budgets et alertes</h3>
+        <p>Fixez un montant à ne pas dépasser chaque mois pour les postes que vous voulez surveiller. L'aperçu vous prévient quand vous approchez de la limite, quand vous la dépassez, ou quand le rythme du mois risque de la faire dépasser. Laissez vide pour ne pas suivre un poste.</p>
+        <div class="field"><label for="budSeuil">Me prévenir à partir de</label><select id="budSeuil"><option value="70">70 % du budget</option><option value="75">75 % du budget</option><option value="80">80 % du budget</option><option value="90">90 % du budget</option><option value="100">100 % (seulement en cas de dépassement)</option></select></div>
+        <div id="budListe"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px"><button class="btn" id="budProposer" type="button">Proposer des montants</button><button class="btn primary" id="budBtn" type="button">Enregistrer les budgets</button></div></div>
       <div class="card" id="cardCats"><h3>Mes catégories</h3>
         <p>Rangez vos dépenses et vos revenus à votre façon : créez une catégorie ou un poste, renommez, déplacez. Touchez une catégorie pour la modifier.</p>
         <div class="seg" role="group" aria-label="Sens"><button type="button" id="ctDep" aria-pressed="true">Dépenses</button><button type="button" id="ctRev" aria-pressed="false">Revenus</button></div>
@@ -394,6 +430,14 @@ a.btn{text-decoration:none;display:inline-flex;align-items:center}
   <div class="msg bad" id="formMsg" hidden></div>
   <div class="actions"><button type="button" class="btn" id="btnCancel">Annuler</button><button type="submit" class="btn primary" id="btnSave">Enregistrer</button></div>
 </form>
+<div class="sheet cs-sheet" id="csSheet" hidden role="dialog" aria-label="Mon conseiller">
+  <div class="grab"></div>
+  <div class="cs-head"><h2>💬 Mon conseiller</h2><button class="btn small" id="csFermer" type="button">Fermer</button></div>
+  <p class="cap">Je réponds à partir de vos chiffres, calculés sur ce téléphone : rien n'est envoyé ailleurs. Touchez une question ou écrivez la vôtre (vous pouvez aussi dicter avec le micro du clavier).</p>
+  <div class="cs-discu" id="csDiscu" aria-live="polite"></div>
+  <div class="cs-chips" id="csChips"></div>
+  <form class="cs-form" id="csForm" autocomplete="off"><input id="csQ" placeholder="Ex. Combien j’ai dépensé en transport ?" maxlength="200" aria-label="Votre question"><button class="btn primary" type="submit">Demander</button></form>
+</div>
 <div class="toast" id="toast" role="status"></div>
 <div class="tip" id="tip"></div>
 
@@ -1010,6 +1054,7 @@ function exigerActif_() { if (etatLicence_().mode === 'consultation') throw refu
  *    config/categories { revenus: [[catégorie, poste]], depenses: [[catégorie, poste]], renommer: [[ancien, nouveau]] }
  *    config/etat       { startBal, source, finMM, importe, par, drive: { id, modifiedTime } }
  *    config/app        { emailMensuel }
+ *    config/budgets    { postes: { <poste>: montant mensuel }, seuil: % d'alerte } (budgets et alertes)
  *    faceid/moi/<clé>  appareils autorisés pour Face ID
  * ================================================================ */
 let SS_CACHE = null;
@@ -1083,13 +1128,14 @@ function apiEtat(jeton, opts) {
   const base = { v: v, licence: etatLicence_(), doitChanger: PropertiesService.getScriptProperties().getProperty('changer') === '1', maintenant: new Date().toISOString() };
   if (opts && opts.v && opts.v === v) { base.inchange = true; return base; }
   const docs = lireDocsRapide_();
-  const S = Object.assign(base, { mm: {}, saisies: {}, cats: null, etat: null, faceid: [] });
+  const S = Object.assign(base, { mm: {}, saisies: {}, cats: null, etat: null, budgets: null, faceid: [] });
   Object.keys(docs).forEach(function (k) {
     const s = k.split('/'), d = docs[k].data;
     if (s[0] === 'mm') S.mm[s[1]] = d;
     else if (s[0] === 'saisies') S.saisies[s[1]] = Object.assign({}, d, { id: s[1] });
     else if (k === 'config/categories') S.cats = d;
     else if (k === 'config/etat') S.etat = d;
+    else if (k === 'config/budgets') S.budgets = d;
     else if (s[0] === 'faceid') S.faceid.push({ cle: k, appareil: d.appareil, cree: d.cree, dernier: d.dernier });
   });
   S.app = cfgApp_(docs);
@@ -1211,6 +1257,19 @@ function appliquer_(docs, op, d) {
     poserDoc_(docs, 'config/etat', Object.assign({}, e, { startBal: v, debut: d.d || null }));
     journal_('Solde de départ', v + (d.d ? ' au ' + d.d : ''));
     return 'Solde de départ enregistré';
+  }
+  if (op === 'budgets') {
+    const postes = {}, P = d.postes || {};
+    Object.keys(P).slice(0, 60).forEach(function (p) {
+      const v = Math.round(+P[p]);
+      if (!txt_(p, 60) || p === 'Report' || !isFinite(v) || v < 0 || v > 1e10) throw refus_('Budget invalide.');
+      if (v > 0) postes[txt_(p, 60)] = v;
+    });
+    const seuil = Math.round(+d.seuil || 80);
+    if (seuil < 50 || seuil > 100) throw refus_('Seuil d’alerte invalide.');
+    poserDoc_(docs, 'config/budgets', { postes: postes, seuil: seuil });
+    journal_('Budgets', Object.keys(postes).length + ' poste(s), alerte à ' + seuil + ' %');
+    return Object.keys(postes).length ? 'Budgets enregistrés' : 'Budgets retirés';
   }
   if (op === 'reglages') {
     poserDoc_(docs, 'config/app', Object.assign(cfgApp_(docs), { emailMensuel: !!d.emailMensuel }));
@@ -1556,7 +1615,7 @@ function restaurer() {
 
 try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf('mf.') === 0) localStorage.removeItem(k); }); } catch (e) {}
 installer();
-/* Démonstration publique : profil FICTIF (« Aya », comptable à Abidjan), 12 mois d'opérations générées,
+/* Démonstration publique : profil FICTIF (« Aya », comptable à Abidjan), 12 mois d'opérations générées (et le mois en cours jusqu'à aujourd'hui),
    datés par rapport au jour d'ouverture. Aucune donnée réelle. Rien n'est conservé. */
 function remplirDemo() {
   var graine = 20261013;
@@ -1604,6 +1663,13 @@ function remplirDemo() {
     if (m === 7) op(jour(16), 'Tontine (reçue)', 150000);
     if (m === 8) op(jour(18), 'Équipement de la maison', -95000, 'Réfrigérateur');
   }
+  // Mois en cours, jusqu'à aujourd'hui : de quoi montrer les budgets et leurs alertes
+  var y0 = auj.getFullYear(), m0 = auj.getMonth(), ici = function (j, c, v, note) { var d = new Date(y0, m0, j, 12); if (d <= auj) ops.push({ d: iso(d), c: c, v: v, note: note || '' }); };
+  ici(2, 'Loyer', -120000); ici(3, 'Crédit et forfait téléphone', -10000); ici(4, 'Ménagère, nounou', -35000); ici(6, 'Tontine (versement)', -25000);
+  ici(4, 'Coiffure', -12000); ici(8, 'Électricité', -19000); ici(9, 'Eau', -6500); ici(14, 'Aide aux parents', -30000);
+  for (var w2 = 0; w2 < 5; w2++) { ici(1 + w2 * 7, 'Marché', -entre(14000, 18000)); ici(3 + w2 * 7, 'Supermarché', -entre(7000, 10000)); ici(5 + w2 * 7, 'Restaurant, maquis', -entre(3000, 6000)); }
+  for (var j2 = 1; j2 <= 31; j2 += 3) ici(j2, 'Taxi, woro-woro', -entre(1500, 2200));
+  for (var k2 = 2; k2 <= 31; k2 += 6) ici(k2, 'Boulangerie', -entre(800, 1500));
   var docs = lireDocs_();
   ops.sort(function (a, b) { return a.d < b.d ? -1 : 1; });
   var sh = ss_().getSheetByName(F_DONNEES), n = new Date(), lignes = [];
@@ -1613,7 +1679,8 @@ function remplirDemo() {
   });
   sh.getRange(sh.getLastRow() + 1, 1, lignes.length, 5).setValues(lignes);
   var d2 = lireDocs_();
-  poserDoc_(d2, 'config/etat', Object.assign({}, d2['config/etat'].data, { startBal: 85000, debut: iso(debut) }));
+  poserDoc_(d2, 'config/etat', Object.assign({}, d2['config/etat'].data, { startBal: 285000, debut: iso(debut) }));
+  poserDoc_(d2, 'config/budgets', { postes: { 'Alimentation': 110000, 'Transport': 15000, 'Restauration': 20000, 'Beauté': 10000, 'Loisirs': 20000 }, seuil: 80 });
   ecrireLisibles_(lireDocs_());
   return ops.length;
 }
@@ -1645,6 +1712,7 @@ function cmp(v){const a=Math.abs(v),s=v<0?'−':'';
   if(a>=1e3) return s+Math.round(a/1e3).toLocaleString('fr-FR')+' k';
   return s+fmt(a);}
 const sgn=v=>(v>0?'+':v<0?'−':'')+fmt(Math.abs(v));
+const rouge=(v,t)=>v<0?`<span class="neg">${t}</span>`:t;   // sommes négatives en rouge
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pct=(v,t)=>t?(Math.round(v/t*1000)/10).toLocaleString('fr-FR')+' %':'–';
 const dkey=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -1654,7 +1722,7 @@ function monthRange(a,b){const out=[];let [y,m]=a.split('-').map(Number);const [
 const daysBetween=(a,b)=>Math.round((new Date(a+'T00:00:00')-new Date(b+'T00:00:00'))/864e5);
 
 // ================= état =================
-const S={mm:{},saisies:{},cats:null,etat:null,faceid:[],app:{},loaded:{mm:0}};
+const S={mm:{},saisies:{},cats:null,etat:null,budgets:null,faceid:[],app:{},loaded:{mm:0}};
 let CHARGE=false;   // vrai dès que des données (gardées ou reçues) sont affichées
 let rows=[],MKEYS=[],MONTHS=[],MONTHS_L=[],NM=0,LAST=-1,MULTI=false,PERIODS=[],NQ=0,byMonth=[],ALL=null,START_BAL=0,D0='',D1='',PARTIAL=false;
 let catMaps={inc:new Map(),dep:new Map(),ren:new Map()};
@@ -1824,7 +1892,7 @@ function treasury(host){
   const mv=e=>{const b=svg.getBoundingClientRect();const px=(e.clientX-b.left)/b.width*W;
     const i=Math.max(0,Math.min(endI,Math.round((px-L)/(W-L-R)*endI)));const d=days[i];
     cross.setAttribute('x1',x(i));cross.setAttribute('x2',x(i));cross.setAttribute('opacity',1);dot.setAttribute('cx',x(i));dot.setAttribute('cy',y(d.v));dot.setAttribute('opacity',1);
-    showTip(e,`<b>${fdate(d.d)}</b>`+trow('var(--tres)','Trésorerie',fmt(d.v)+' F'));};
+    showTip(e,`<b>${fdate(d.d)}</b>`+trow('var(--tres)','Trésorerie',rouge(d.v,fmt(d.v)+' F')));};
   hit.addEventListener('pointermove',mv);hit.addEventListener('pointerdown',mv);
   hit.addEventListener('pointerleave',e=>{if(e.pointerType!=='mouse')return;cross.setAttribute('opacity',0);dot.setAttribute('opacity',0);hideTip();});
   return {min:days[minI],max:days[maxI],end:days[endI]};
@@ -1860,7 +1928,7 @@ function render(){
   const empty=!rows.length;
   if(empty){$('thesis').innerHTML='';$('kpis').innerHTML=`<div class="panel empty" style="grid-column:1/-1">${S.loaded.mm?(modeSaisie()?'Aucune opération pour l\'instant. Touchez <b>Ajouter</b> pour noter votre première dépense ou recette, et indiquez votre solde de départ dans l\'onglet <b>Données</b>.':'Aucune donnée pour l\'instant. Ouvrez l\'onglet <b>Données</b> pour importer votre export Money Manager, ou ajoutez une opération.'):'Chargement…'}</div>`;}
   else{const a=agg(rows.filter(inPeriod));renderKpis(a);renderThesis(a);renderCharts();renderHeat();renderDow();renderSizes();}
-  renderPostes();renderOps();renderConstats();renderDonnees();
+  renderBudgets();renderPostes();renderOps();renderConstats();renderDonnees();
 }
 function renderStatus(){
   const st=$('status');if(!CHARGE){st.innerHTML=statutReseau()||'Chargement des données…';return;}
@@ -1892,7 +1960,7 @@ function renderKpis(a){
     PARIS()?{l:'Paris sportifs (net)',v:a.bets,s:1,h:`${cmp(a.betOut)} misés · ${cmp(a.betIn)} gagnés`,pill:a.bets<0?['bad','▼ Perte']:a.bets>0?['good','▲ Gain']:null}
       :{l:'Mis de côté',v:-(a.byG['Épargne']||0),h:per(-(a.byG['Épargne']||0))||'épargne et tontine',pill:(a.byG['Épargne']||0)<0?['good','▲ Épargne']:null},
     {l:'Endettement net',v:netDebt,s:1,h:`${cmp(a.borrow)} empruntés · ${cmp(a.repay)} remboursés`,pill:netDebt>0?['bad','▲ En hausse']:netDebt<0?['good','▼ En baisse']:null}];
-  $('kpis').innerHTML=k.map(x=>`<div class="kpi${x.hero?' hero':''}"><span class="l">${x.l}</span><span class="v">${x.s?sgn(x.v):fmt(x.v)}<small>FCFA</small></span>${x.pill?`<span class="pill ${x.pill[0]}">${x.pill[1]}</span>`:''}<span class="h">${x.h}</span></div>`).join('');
+  $('kpis').innerHTML=k.map(x=>`<div class="kpi${x.hero?' hero':''}"><span class="l">${x.l}</span><span class="v${x.v<0?(x.hero?' neg-hero':' neg'):''}">${x.s?sgn(x.v):fmt(x.v)}<small>FCFA</small></span>${x.pill?`<span class="pill ${x.pill[0]}">${x.pill[1]}</span>`:''}<span class="h">${x.h}</span></div>`).join('');
 }
 function renderThesis(a){
   const p=curPeriod();
@@ -1959,7 +2027,7 @@ function renderPostes(){
   const im=Math.max(1,...inc.map(x=>x.v),...fi.map(x=>x.v));
   hlist($('revList'),inc.concat(ac),{max:im});hlist($('finInList'),fi,{max:im});
   $('revCap').textContent=`${fmt(it)} F de revenus propres${PARIS()?' et gains de paris':''}`;$('panelParis').hidden=!PARIS();
-  $('betCap').textContent=`${fmt(a.betOut)} F misés, ${fmt(a.betIn)} F gagnés : résultat ${sgn(a.bets)} F`;
+  $('betCap').innerHTML=`${fmt(a.betOut)} F misés, ${fmt(a.betIn)} F gagnés : résultat ${rouge(a.bets,sgn(a.bets)+' F')}`;
   monthColumns($('chBets'),[{label:'Gains',color:'var(--borrow)',vals:byMonth.map(m=>m.betIn)},{label:'Mises',color:'var(--dep)',vals:byMonth.map(m=>-m.betOut)}],{aria:'Paris sportifs',stack:1,h:200,extra:i=>trow('','Résultat',sgn(byMonth[i].bets))});
   const g=state.group||(cg[0]&&cg[0].key);const det=$('detail');
   if(!g){det.innerHTML='<div class="cap">Aucun poste.</div>';return;}
@@ -2057,7 +2125,7 @@ function renderSynth(qRaw,qn,flt,l){
 }
 function opRow(r){
   const b=r.p?`<span class="badge${r.p==='non_retrouvee'?' warn':''}">${r.p==='non_retrouvee'?'Saisie · à vérifier':'Saisie · en attente'}</span>`:'';
-  return `<div class="op${r.sid&&!r.p?' repli':''}"${r.sid&&!r.p?' data-op="1"':''}><span class="c">${esc(r.c)}</span><span class="a${r.v>0?' pos':''}">${sgn(r.v)}</span>
+  return `<div class="op${r.sid&&!r.p?' repli':''}"${r.sid&&!r.p?' data-op="1"':''}><span class="c">${esc(r.c)}</span><span class="a${r.v>0?' pos':r.v<0?' neg':''}">${sgn(r.v)}</span>
     <span class="s">${fdate(r.d)} · ${esc(r.g)}${r.note?' · '+esc(r.note):''} ${b}</span><span></span>
     ${r.sid?`<span class="act"><button class="btn small danger" type="button" data-del="${esc(r.sid)}">Supprimer</button>${r.p==='non_retrouvee'?`<button class="btn small" type="button" data-keep="${esc(r.sid)}">Garder</button>`:''}</span>`:''}</div>`;
 }
@@ -2118,7 +2186,7 @@ function renderConstats(){
   const dep=a.cur+a.betOut,rev=a.own+a.betIn;
   let t=`${Lib}, les dépenses courantes (<b>${F(dep)}</b>${PARIS()?', paris compris':''}) ${a.solde<0?'dépassent':'restent sous'} les revenus propres${PARIS()?' et gains':''} (<b>${F(rev)}</b>) : ${a.solde<0?'déficit':'excédent'} de <b>${F(Math.abs(a.solde))}</b>${nMois>1.5?`, soit ≈ ${F(Math.abs(a.solde)/nMois)} par mois`:''}.`;
   if(ms.length>1){const sm=ms.map(i=>({i,s:byMonth[i].solde}));const nd=sm.filter(x=>x.s<0).length;const w=sm.reduce((x,y)=>y.s<x.s?y:x),bst=sm.reduce((x,y)=>y.s>x.s?y:x);
-    t+=` ${nd} mois sur ${ms.length} en déficit ; le plus difficile : <b>${MONTHS_L[w.i]}</b> (${w.s<0?'':'+'}${cmp(w.s)} F)${bst.s>0?`, le meilleur : ${MONTHS_L[bst.i]} (+${cmp(bst.s)} F)`:''}.`;}
+    t+=` ${nd} mois sur ${ms.length} en déficit ; le plus difficile : <b>${MONTHS_L[w.i]}</b> (${rouge(w.s,(w.s<0?'':'+')+cmp(w.s)+' F')})${bst.s>0?`, le meilleur : ${MONTHS_L[bst.i]} (+${cmp(bst.s)} F)`:''}.`;}
   if(b)t+=` ${LibB} : ${b.solde<0?'déficit':'excédent'} de ${F(Math.abs(b.solde))} — ${a.solde>b.solde?'<b>c\'est mieux</b>':'<b>c\'est moins bien</b>'}.`;
   I.push(['bad',a.solde<0?'Déficit de fonctionnement':'Excédent de fonctionnement',t]);
   if(a.solde>=0)I[0][0]='good';
@@ -2128,7 +2196,7 @@ function renderConstats(){
       `Revenus propres : ${F(b.own)} → <b>${F(a.own)}</b>${evoTxt(a.own,b.own)}. Dépenses courantes : ${F(b.cur)} → <b>${F(a.cur)}</b>${evoTxt(a.cur,b.cur)}. Emprunts : ${F(b.borrow)} → ${F(a.borrow)}.`]);}
   else if(new Set(ms.map(i=>MKEYS[i].slice(0,4))).size>1){const ys=[...new Set(ms.map(i=>MKEYS[i].slice(0,4)))];
     I.push(['tres','Année par année',ys.map(y=>{const yi=ms.filter(i=>MKEYS[i].startsWith(y));const g=agg(rows.filter(r=>yi.includes(r.m)));const nm=joursDans(yi)/30.44;
-      return `<b>${y}</b> (${yi.length} mois) : solde ≈ ${sgn(Math.round(g.solde/nm/1000))} k F par mois, dépenses courantes ≈ ${F(g.cur/nm)} par mois`;}).join(' ; ')+'.']);}
+      return `<b>${y}</b> (${yi.length} mois) : solde ≈ ${rouge(g.solde,sgn(Math.round(g.solde/nm/1000))+' k F')} par mois, dépenses courantes ≈ ${F(g.cur/nm)} par mois`;}).join(' ; ')+'.']);}
   // 3. postes
   const post=Object.entries(a.byG).filter(([g,v])=>v<0&&!FIN_OUT.includes(g)).map(([g,v])=>[g,-v]).sort((x,y)=>y[1]-x[1]);
   if(post.length){const tot=post.reduce((s,x)=>s+x[1],0);
@@ -2153,7 +2221,7 @@ function renderConstats(){
   // 7. trésorerie
   const td=tresDays().filter(d=>ms.includes(d.m));
   if(td.length){const mn=td.reduce((x,y)=>y.v<x.v?y:x),mx=td.reduce((x,y)=>y.v>x.v?y:x),en=td[td.length-1];
-    I.push(['tres','Trésorerie',`Plus haut : <b>${F(mx.v)}</b> le ${fdate(mx.d)} ; plus bas : <b>${F(mn.v)}</b> le ${fdate(mn.d)} ; solde au ${fdate(en.d)} : <b>${fmt(en.v)} F</b>.`]);}
+    I.push(['tres','Trésorerie',`Plus haut : <b>${F(mx.v)}</b> le ${fdate(mx.d)} ; plus bas : <b>${rouge(mn.v,F(mn.v))}</b> le ${fdate(mn.d)} ; solde au ${fdate(en.d)} : <b>${rouge(en.v,fmt(en.v)+' F')}</b>.`]);}
   // 8. alimentation
   const al=L.filter(r=>r.g==='Alimentation'&&r.v<0);
   if(al.length){const tot=-al.reduce((s,r)=>s+r.v,0);const bal=b?-(b.byG['Alimentation']||0):null;
@@ -2166,7 +2234,7 @@ function renderConstats(){
   if(fee>=2000)I.push(['muted','Frais de transfert (estimation)',`≈ <b>${fn} envois</b> au montant « rond + 1 % » : environ <b>${F(fee)}</b> de frais Mobile Money.`]);
   // 11. reports
   const ec=reportChecks().filter(c=>c.ecart&&ms.includes(c.i));
-  if(ec.length)I.push(['muted','Relevés incomplets',ec.map(c=>`report de <b>${MONTHS_L[c.i]}</b> : écart de ${sgn(c.ecart)} F`).join(' ; ')+'. Des opérations manquent sans doute dans Money Manager ; la trésorerie est recalée sur chaque report.']);
+  if(ec.length)I.push(['muted','Relevés incomplets',ec.map(c=>`report de <b>${MONTHS_L[c.i]}</b> : écart de ${rouge(c.ecart,sgn(c.ecart)+' F')}`).join(' ; ')+'. Des opérations manquent sans doute dans Money Manager ; la trésorerie est recalée sur chaque report.']);
   $('constCap').textContent=`Période : ${libSel(p)}${partiel?` (jusqu'au ${fdate(D1)})`:''}${cp&&b?` · comparée à ${cp.court}${aDate}`:''}. Changez de période en haut pour recalculer.`;
   box.innerHTML=I.map(([c,t,x])=>`<div class="ins"><span class="tag"><i style="background:var(--${c})"></i>${t}</span><p>${x}</p></div>`).join('');
   // pistes
@@ -2198,7 +2266,7 @@ function renderDonnees(){
     const postesR=[...new Set((S.cats?.revenus||[]).map(p=>p[1]))].filter(p=>p!=='Report').sort((a,b)=>a.localeCompare(b,'fr'));
     $('classerList').innerHTML=unk.map((r,i)=>{const tot=rows.filter(x=>x.g===A_CLASSER&&x.c===r.c&&(x.v>0)===(r.v>0)).reduce((s,x)=>s+x.v,0);
       const opts=(r.v>0?postesR:postes);
-      return `<div class="classer"><div><b>${esc(r.c)}</b> <span class="cap">${r.v>0?'revenu':'dépense'} · ${sgn(tot)} F</span></div><div class="row"><select id="cl${i}" aria-label="Poste pour ${esc(r.c)}">${opts.map(p=>`<option${p===(['Relations','Divers','Achats & divers'].find(x=>opts.includes(x))||opts[0])?' selected':''}>${esc(p)}</option>`).join('')}</select><button class="btn small primary" type="button" data-cl="${i}">Classer</button></div></div>`;}).join('');
+      return `<div class="classer"><div><b>${esc(r.c)}</b> <span class="cap">${r.v>0?'revenu':'dépense'} · ${rouge(tot,sgn(tot)+' F')}</span></div><div class="row"><select id="cl${i}" aria-label="Poste pour ${esc(r.c)}">${opts.map(p=>`<option${p===(['Relations','Divers','Achats & divers'].find(x=>opts.includes(x))||opts[0])?' selected':''}>${esc(p)}</option>`).join('')}</select><button class="btn small primary" type="button" data-cl="${i}">Classer</button></div></div>`;}).join('');
     $('classerList').querySelectorAll('[data-cl]').forEach(b=>b.addEventListener('click',async()=>{const r=unk[+b.dataset.cl];const p=$('cl'+b.dataset.cl).value;b.disabled=true;
       if(!await ecrire('categorie',{c:r.c,poste:p,revenu:r.v>0}))b.disabled=false;}));}
   const nr=rows.filter(r=>r.p==='non_retrouvee');$('cardNonRetro').hidden=!nr.length;$('nonRetroList').innerHTML=nr.map(opRow).join('');
@@ -2211,8 +2279,276 @@ function renderDonnees(){
   $('driveTitre').textContent=modeSaisie()?'Importer depuis Money Manager (facultatif)':'Mettre à jour depuis Google Drive';
   $('btnDrive').disabled=!SESSION.jeton||!!ui.import;
   renderReglages();
+  renderCardBudgets();
   renderCats();
 }
+
+// ================= budgets et alertes =================
+// Un montant à ne pas dépasser chaque mois, par poste de dépenses (config/budgets). L'aperçu prévient
+// quand le seuil d'alerte est atteint, quand le budget est dépassé, ou quand le rythme du mois le fera dépasser.
+const BUD=()=>(S.budgets&&S.budgets.postes)||{};
+const SEUIL=()=>(S.budgets&&S.budgets.seuil)||80;
+const libMk=mk=>MNL[+mk.slice(5)-1]+' '+mk.slice(0,4);
+/** Postes de dépenses qui peuvent avoir un budget (hors épargne, remboursements, prêts, report). */
+function postesBudget(){
+  const P=new Set((S.cats?.depenses||[]).map(x=>x[1]));rows.forEach(r=>{if(r.v<0)P.add(r.g);});
+  return [...P].filter(p=>p&&p!=='Report'&&p!==A_CLASSER&&!FIN_OUT.includes(p));
+}
+/** Dépense moyenne par mois et par poste sur les 3 derniers mois complets (repère pour fixer un budget). */
+function moyennes3(){
+  const mk=dkey(new Date()).slice(0,7),ms=MKEYS.map((k,i)=>[k,i]).filter(([k])=>k<mk).slice(-3).map(x=>x[1]);
+  const out={};if(!ms.length)return out;
+  rows.forEach(r=>{if(r.v<0&&ms.includes(r.m)&&r.g!=='Report')out[r.g]=(out[r.g]||0)-r.v/ms.length;});
+  return out;
+}
+/** État des budgets pour le mois mk (par défaut le mois en cours). */
+function etatBudgets(mk){
+  const t=dkey(new Date());mk=mk||t.slice(0,7);
+  const [y,m]=mk.split('-').map(Number),nj=new Date(y,m,0).getDate();
+  const jour=t.slice(0,7)===mk?+t.slice(8):(mk<t.slice(0,7)?nj:0);
+  const dep={};rows.forEach(r=>{if(r.v<0&&r.g!=='Report'&&r.d.slice(0,7)===mk)dep[r.g]=(dep[r.g]||0)-r.v;});
+  const B=BUD(),seuil=SEUIL();
+  const L=Object.keys(B).map(p=>{const b=B[p],v=dep[p]||0,taux=b?v/b*100:0,proj=jour>=7&&jour<nj?v/jour*nj:v;
+    const etat=v>b?'depasse':taux>=seuil?'alerte':proj>b*1.05?'risque':'ok';
+    return {p,b,v,taux,proj,etat,reste:b-v,jr:nj-jour};}).sort((a,b)=>b.taux-a.taux);
+  return {mk,jour,nj,L};
+}
+function texteAlerte(x){
+  if(x.etat==='depasse')return `<b>${esc(x.p)}</b> : budget dépassé de <b class="neg">${F(x.v-x.b)}</b> (${F(x.v)} dépensés pour ${F(x.b)}).`;
+  if(x.etat==='alerte')return x.reste<500?`<b>${esc(x.p)}</b> : budget entièrement utilisé${x.jr>0?`, avec encore ${x.jr} jour${x.jr>1?'s':''} à tenir`:''}.`:`<b>${esc(x.p)}</b> : ${Math.round(x.taux)} % du budget atteint ; il reste <b>${F(x.reste)}</b>${x.jr>0?` pour ${x.jr} jour${x.jr>1?'s':''}`:''}.`;
+  if(x.etat==='risque')return `<b>${esc(x.p)}</b> : au rythme actuel, ≈ <b>${F(x.proj)}</b> à la fin du mois, au-delà du budget de ${F(x.b)}.`;
+  return '';
+}
+const COUL_BUD={ok:'var(--good)',alerte:'var(--warn)',risque:'var(--warn)',depasse:'var(--bad)'};
+function renderBudgets(){
+  const box=$('budgets');const e=etatBudgets();
+  if(!e.L.length||!rows.length){box.hidden=true;box.innerHTML='';return;}
+  const al=e.L.filter(x=>x.etat!=='ok');
+  box.hidden=false;
+  box.innerHTML=`<h3>Budgets de ${libMk(e.mk)}</h3><p class="cap">${e.jour?`Jour ${e.jour} sur ${e.nj}`:'Mois à venir'} · alerte à ${SEUIL()} % du budget · opérations notées jusqu'ici${modeSaisie()?'':', saisies en attente comprises'}.</p>`+
+    (al.length?`<div class="bud-al">${al.map(x=>`<p>${x.etat==='depasse'?'⛔':'⚠️'}&nbsp; ${texteAlerte(x)}</p>`).join('')}</div>`:`<p class="bud-ok">✓ Tous vos budgets sont respectés pour l'instant.</p>`)+
+    e.L.map(x=>`<div class="bud-row"><span class="n">${esc(x.p)}</span><span class="t"><span class="b" style="width:${Math.min(100,x.taux)}%;background:${COUL_BUD[x.etat]}"></span></span><span class="val"><b class="${x.v>x.b?'neg':''}">${cmp(x.v)}</b> / ${cmp(x.b)}</span></div>`).join('');
+}
+// Réglage des budgets (onglet Données)
+let budSale=false;   // montants modifiés, pas encore enregistrés
+function renderCardBudgets(){
+  if(budSale||$('cardBud').contains(document.activeElement))return;
+  const B=BUD(),moy=moyennes3();
+  const P=postesBudget().sort((a,b)=>(moy[b]||0)-(moy[a]||0)||a.localeCompare(b,'fr'));
+  $('budSeuil').value=String(SEUIL());
+  $('budListe').innerHTML=P.length?P.map(p=>`<div class="bud-ed"><span><b>${esc(p)}</b><small>${moy[p]?'≈ '+cmp(moy[p])+' F par mois (3 derniers mois)':'pas de dépense récente'}</small></span><input inputmode="numeric" data-bud="${esc(p)}" data-moy="${Math.round(moy[p]||0)}" placeholder="aucun" value="${B[p]?nf.format(B[p]):''}" aria-label="Budget mensuel ${esc(p)}"></div>`).join(''):'<p class="cap">Les postes apparaîtront dès vos premières dépenses.</p>';
+}
+const arrondiBudget=v=>{const pas=v>=20000?5000:1000;return Math.ceil(v/pas)*pas;};
+$('budListe').addEventListener('input',e=>{const i=e.target.closest('[data-bud]');if(!i)return;budSale=true;const d=i.value.replace(/\D/g,'');i.value=d?nf.format(+d):'';});
+$('budSeuil').addEventListener('change',()=>{budSale=true;});
+$('budProposer').addEventListener('click',()=>{let n=0;
+  $('budListe').querySelectorAll('[data-bud]').forEach(i=>{const m=+i.dataset.moy;if(!i.value&&m>0){i.value=nf.format(arrondiBudget(m));n++;}});
+  budSale=true;toast(n?`${n} montant${n>1?'s':''} proposé${n>1?'s':''} d'après vos 3 derniers mois : ajustez, puis enregistrez.`:'Rien à proposer : les postes sans budget n\'ont pas de dépense récente.');});
+$('budBtn').addEventListener('click',async()=>{const postes={};
+  $('budListe').querySelectorAll('[data-bud]').forEach(i=>{const v=+(i.value.replace(/\D/g,'')||0);if(v>0)postes[i.dataset.bud]=v;});
+  const b=$('budBtn');b.disabled=true;const ok=await ecrire('budgets',{postes,seuil:+$('budSeuil').value});b.disabled=false;
+  if(ok){budSale=false;renderCardBudgets();}});
+
+// ================= mon conseiller : questions en langage courant, observations et conseils =================
+// Tout est calculé sur le téléphone, à partir des chiffres déjà présents : aucune donnée n'est envoyée ailleurs.
+const MOIS_N=MNL.map(norm);
+const contient=(n,...mots)=>mots.some(m=>n.includes(m));
+const listeFr=L=>L.length<2?L.join(''):L.slice(0,-1).join(', ')+' et '+L[L.length-1];
+const QUESTIONS=['Que me conseilles-tu ?','Où en sont mes budgets ?','Combien j’ai dépensé ce mois ?','Où part mon argent ?','Comment s’est passé le mois dernier ?','Est-ce que j’épargne assez ?','Combien j’ai dépensé en transport cette année ?','Quelle est ma plus grosse dépense ?','Combien me reste-t-il ?'];
+/** Mois « en cours » pour le conseiller : celui d'aujourd'hui s'il a des opérations, sinon le dernier mois connu. */
+function moisCourant(){const i=MKEYS.indexOf(dkey(new Date()).slice(0,7));return i>=0?i:LAST;}
+const libMs=ms=>ms.length===NM&&NM>1?'depuis le début du suivi':contigu(ms)?libMois(ms):'sur la période choisie';
+/** Période citée dans la question : { ms: indices de mois, lib } ; null si aucune. */
+function periodeQ(n){
+  const ic=moisCourant(),y=+dkey(new Date()).slice(0,4);
+  const parAn=a=>MKEYS.map((k,i)=>[k,i]).filter(([k])=>+k.slice(0,4)===a).map(x=>x[1]);
+  if(contient(n,'mois dernier','mois passe','mois precedent')){const k=dkey(new Date(new Date().getFullYear(),new Date().getMonth()-1,1)).slice(0,7),i=MKEYS.indexOf(k);return i>=0?{ms:[i],lib:libMois([i])}:null;}
+  const nm=n.match(/(\d+)\s*derniers?\s*mois/);if(nm){const k=Math.max(1,Math.min(NM,+nm[1]));const ms=[];for(let i=Math.max(0,ic-k+1);i<=ic;i++)ms.push(i);return {ms,lib:'ces '+k+' derniers mois'};}
+  if(contient(n,'trimestre')){const mm=+MKEYS[ic].slice(5),q0=mm-((mm-1)%3);const ms=[];for(let i=ic-(mm-q0);i<=ic;i++)if(i>=0)ms.push(i);return {ms,lib:'ce trimestre'};}
+  if(contient(n,'annee derniere','an dernier','annee passee','l an passe')){const ms=parAn(y-1);return ms.length?{ms,lib:'en '+(y-1)}:null;}
+  if(contient(n,'cette annee','depuis janvier','cette an')){const ms=parAn(y);return ms.length?{ms,lib:'cette année'}:null;}
+  if(contient(n,'depuis le debut','en tout','au total','tout le temps','toujours'))return {ms:MKEYS.map((_,i)=>i),lib:'depuis le début du suivi'};
+  for(let i=0;i<12;i++)if(new RegExp('\\b'+MOIS_N[i]+'\\b').test(n)){
+    const ya=n.match(/\b(20\d\d)\b/);let a=ya?+ya[1]:y;if(!ya&&i+1>+dkey(new Date()).slice(5,7))a--;
+    const j=MKEYS.indexOf(a+'-'+String(i+1).padStart(2,'0'));return j>=0?{ms:[j],lib:libMois([j])}:{ms:[],lib:'en '+MNL[i]+' '+a};}
+  const ya=n.match(/\b(20\d\d)\b/);if(ya){const ms=parAn(+ya[1]);return {ms,lib:'en '+ya[1]};}
+  if(contient(n,'ce mois','du mois','mois en cours','ce moi'))return {ms:[ic],lib:libMois([ic])};
+  return null;
+}
+/** Les mêmes nombre de mois juste avant (pour comparer). */
+function avant(ms){if(!ms.length||!contigu(ms))return null;const n=ms.length,f=ms[0];if(f-n<0)return null;const p=[];for(let i=f-n;i<f;i++)p.push(i);return p;}
+const SYNONYMES=[['nourriture','Alimentation'],['manger','Alimentation'],['bouffe','Alimentation'],['course','Alimentation'],['marche','Alimentation'],
+  ['transport','Transport'],['deplacement','Transport'],['taxi','Transport'],['carburant','Transport'],['essence','Transport'],
+  ['pari','Paris sportifs'],['mise','Paris sportifs'],['sante','Santé'],['medicament','Santé'],['pharmacie','Santé'],
+  ['ecole','Éducation'],['scolarite','Éducation'],['loyer','Logement'],['maison','Logement'],['sortie','Loisirs'],['loisir','Loisirs'],
+  ['restaurant','Restauration'],['maquis','Restauration'],['famille','Famille'],['relation','Relations']];
+const MOTS_VIDES=['mois','annee','frais','autre','autres','divers','pour','avec','dans','plus','total','depense','depenses','revenu','revenus','argent','recu','recus','recue','reçue','les','des','une','par'];
+/** Poste (r.g) ou catégorie (r.c) citée dans la question. */
+function sujetQ(n){
+  const groupes=[...new Set(rows.map(r=>r.g))].filter(g=>g!=='Report'),cats=[...new Set(rows.map(r=>r.c))];
+  let best=null,score=0;
+  const essayer=(nom,type)=>{const mots=norm(nom).split(/[^a-z0-9]+/).filter(w=>w.length>=3&&!MOTS_VIDES.includes(w));const sc=mots.filter(w=>new RegExp('\\b'+w).test(n)).reduce((s,w)=>s+w.length,0);
+    if(sc>score||(sc===score&&sc&&type==='g')){score=sc;best={type,nom};}};
+  groupes.forEach(g=>essayer(g,'g'));cats.forEach(c=>essayer(c,'c'));
+  if(score>=4)return best;
+  for(const [m,g] of SYNONYMES)if(n.includes(m)&&groupes.includes(g))return {type:'g',nom:g};
+  return null;
+}
+const dansMs=ms=>rows.filter(r=>ms.includes(r.m));
+const depSujet=(L,s)=>-L.filter(r=>r.v<0&&(s.type==='g'?r.g===s.nom:r.c===s.nom)).reduce((t,r)=>t+r.v,0);
+function compare(v,vb,libB,sens){ // sens < 0 : une baisse est une bonne nouvelle (dépenses)
+  if(!vb)return '';const e=Math.round((v-vb)/vb*100);
+  const que=libB.startsWith('en ')?'qu’'+libB:'que '+libB;
+  if(Math.abs(e)<5)return ` C'est à peu près autant ${que} (${F(vb)}).`;
+  const bien=(e<0)===(sens<0);
+  return ` C'est <b>${e>0?'plus':'moins'}</b> ${que} (${F(vb)}, <span class="${bien?'down':'up'}">${e>0?'+':'−'}${Math.abs(e)} %</span>).`;
+}
+
+function repondre(q){
+  const n=' '+norm(q).replace(/[’']/g,' ').replace(/[?!.,;:]/g,' ').replace(/\s+/g,' ')+' ';
+  const exemples=()=>'Vous pouvez me demander par exemple : '+QUESTIONS.slice(0,4).map(x=>'« '+x+' »').join(', ')+'.';
+  if(n.trim().length<2||contient(n,' aide ',' bonjour',' salut',' bonsoir',' merci',' coucou'))
+    return contient(n,'merci')?'Avec plaisir. Je reste là si vous avez une autre question.':'Bonjour ! Je réponds à vos questions sur vos dépenses, vos revenus, vos budgets, votre épargne et vos dettes, et je vous donne mes observations. '+exemples();
+  if(!rows.length)return 'Je n’ai pas encore de chiffres. Notez quelques opérations (bouton « Ajouter »), puis reposez-moi la question.';
+  const per=periodeQ(n),suj=sujetQ(n);
+  if(per&&!per.ms.length)return `Je n’ai aucune opération ${per.lib}.`;
+  const P=per||{ms:[moisCourant()],lib:libMois([moisCourant()])},L=dansMs(P.ms),a=agg(L);
+  const pb=avant(P.ms),B=pb?agg(dansMs(pb)):null,libB=pb?libMs(pb):'';
+  const partiel=P.ms.includes(LAST)&&PARTIAL&&!modeSaisie()?` (chiffres jusqu’au ${fdate(D1)})`:'';
+
+  // 1. Conseils, observations
+  if(contient(n,'conseil','suggestion','suggere','que faire','que dois je','ameliorer','astuce','observation','ton avis','recommand','economiser','faire mieux','aide moi'))return texteConseils();
+  // 2. Budgets
+  if(contient(n,'budget','plafond','limite','alerte','depasse')){
+    const e=etatBudgets();
+    if(!e.L.length){const moy=moyennes3(),top=Object.entries(moy).filter(([g])=>postesBudget().includes(g)).sort((x,y)=>y[1]-x[1]).slice(0,4);
+      return 'Vous n’avez pas encore fixé de budget.'+(top.length?` D’après vos 3 derniers mois, je vous propose par exemple : ${listeFr(top.map(([g,v])=>`<b>${esc(g)}</b> ${F(arrondiBudget(v))}`))} par mois.`:'')+' Fixez-les dans l’onglet <b>Données</b>, carte « Budgets et alertes » (le bouton « Proposer des montants » les remplit pour vous).';}
+    const L2=suj&&suj.type==='g'?e.L.filter(x=>x.p===suj.nom):e.L;
+    if(suj&&!L2.length)return `Vous n’avez pas de budget pour « ${esc(suj.nom)} ». Ajoutez-le dans l’onglet <b>Données</b>, carte « Budgets et alertes ».`;
+    const al=L2.filter(x=>x.etat!=='ok');
+    return `En ${libMk(e.mk)} (jour ${e.jour||0} sur ${e.nj}) : `+(al.length?al.map(texteAlerte).join(' '):'')+
+      (L2.filter(x=>x.etat==='ok').length?` ${al.length?'Ailleurs, ':''}tout va bien : ${listeFr(L2.filter(x=>x.etat==='ok').map(x=>`${esc(x.p)} ${cmp(x.v)} sur ${cmp(x.b)}`))}.`:'');}
+  // 3. Plus grosses dépenses, dernière dépense
+  if(contient(n,'plus grosse depense','plus grosses depenses','grosse depense','plus gros achat','plus cher')){
+    const big=L.filter(r=>r.v<0&&!FIN_OUT.includes(r.g)&&(!suj||(suj.type==='g'?r.g===suj.nom:r.c===suj.nom))).sort((x,y)=>x.v-y.v).slice(0,3);
+    if(!big.length)return `Aucune dépense ${P.lib}.`;
+    return `${cap1(P.lib)}, vos plus grosses dépenses : ${listeFr(big.map(r=>`<b>${esc(r.c)}</b> ${F(-r.v)} le ${fdateY(r.d)}${r.note?' ('+esc(r.note)+')':''}`))}.`;}
+  if(contient(n,'derniere depense','dernier achat','derniere operation')){const r=[...rows].reverse().find(x=>x.v<0&&x.g!=='Report');
+    return r?`Votre dernière dépense : <b>${esc(r.c)}</b>, ${F(-r.v)} le ${fdateY(r.d)}${r.note?' ('+esc(r.note)+')':''}.`:'Aucune dépense notée.';}
+  // 4. Où part l'argent
+  if(contient(n,'ou part','ou va','ou passe','plus gros poste','depense le plus','premier poste','repartition','postes')){
+    const post=Object.entries(a.byG).filter(([g,v])=>v<0&&!FIN_OUT.includes(g)).map(([g,v])=>[g,-v]).sort((x,y)=>y[1]-x[1]);const tot=post.reduce((s,x)=>s+x[1],0);
+    if(!post.length)return `Aucune dépense ${P.lib}.`;
+    return `${cap1(P.lib)}${partiel}, sur ${F(tot)} de dépenses courantes, l’argent est parti d’abord en ${listeFr(post.slice(0,3).map(([g,v])=>`<b>${esc(g)}</b> (${F(v)}, ${pct(v,tot)})`))}.`;}
+  // 5. Épargne
+  if(contient(n,'epargn','mis de cote','mettre de cote','economie','tontine')){
+    if(!per){const c=moisComplets().slice(-3);if(c.length)return repondreEpargne(agg(dansMs(c)),{ms:c,lib:libMois(c)},'');}
+    return repondreEpargne(a,P,partiel);}
+  // 6. Dettes
+  if(contient(n,'dette','emprunt','rembours','credit','je dois','prete')){
+    const net=a.borrow-a.repay;
+    if(!a.borrow&&!a.repay)return `Aucun emprunt ni remboursement ${P.lib}.`;
+    return `${cap1(P.lib)}, vous avez emprunté <b>${F(a.borrow)}</b> et remboursé <b>${F(a.repay)}</b> : votre dette nette ${net>0?'<b class="neg">augmente</b>':'<b>baisse</b>'} de ${F(Math.abs(net))}.`+(net>0?' Remboursez d’abord la dette la plus coûteuse, sans réemprunter pour le faire.':'');}
+  // 7. Paris
+  if(contient(n,' pari','paris sportif',' mise','1xbet','betclic','premier bet')){
+    if(!a.betOut&&!a.betIn)return `Aucun pari ${P.lib}.`;
+    return `${cap1(P.lib)}, vous avez misé <b>${F(a.betOut)}</b> et gagné ${F(a.betIn)} : ${a.bets<0?`une perte de <b class="neg">${F(-a.bets)}</b>`:`un gain de <b>${F(a.bets)}</b>`}.`+(a.bets<0?' Sur la durée, les paris coûtent plus qu’ils ne rapportent : un plafond mensuel (onglet Données, Budgets) aide à les tenir.':'');}
+  // 8. Trésorerie, ce qui reste
+  if(contient(n,'tresorerie','combien il me reste','combien me reste','il me reste','argent disponible','sur mon compte','en caisse','mon solde actuel')){
+    const td=tresDays();if(!td.length)return 'Je ne connais pas encore votre trésorerie : indiquez votre solde de départ dans l’onglet Données.';
+    const en=td[td.length-1],moyDep=ALL.cur/Math.max(1,NM);
+    return `Au ${fdateY(en.d)}, votre trésorerie est de <b>${rouge(en.v,F(en.v))}</b>.`+(moyDep&&en.v>=0?` Cela couvre environ ${(en.v/moyDep).toLocaleString('fr-FR',{maximumFractionDigits:1})} mois de dépenses courantes.`:'');}
+  // 9. Revenus
+  if(contient(n,'revenu','gagne','salaire','entree','recu','touche')&&!contient(n,'depense')){
+    const src=Object.entries(a.byG).filter(([g,v])=>v>0&&!FIN_IN.includes(g)&&g!=='Report').sort((x,y)=>y[1]-x[1]);
+    return `${cap1(P.lib)}${partiel}, vos revenus propres font <b>${F(a.own)}</b>`+(src.length>1?`, surtout ${listeFr(src.slice(0,3).map(([g,v])=>`${esc(g)} (${F(v)})`))}`:'')+'.'+(B?compare(a.own,B.own,libB,1):'');}
+  // 10. Bilan
+  if(contient(n,'bilan','solde','excedent','deficit','comment ca va','comment je m en sors','situation','le point','comment s est passe','comment va','resume')){
+    let r=`${cap1(P.lib)}${partiel}, vos revenus propres (${F(a.own)}) ${a.solde<0?'n’ont pas couvert':'ont couvert'} vos dépenses courantes (${F(a.cur+a.betOut)}) : ${a.solde<0?`déficit de <b class="neg">${F(-a.solde)}</b>`:`excédent de <b>${F(a.solde)}</b>`}.`;
+    if(B)r+=` ${cap1(libB)} : ${B.solde<0?'déficit':'excédent'} de ${F(Math.abs(B.solde))} — ${a.solde>B.solde?'<b>c’est mieux</b>':'<b>c’est moins bien</b>'}.`;
+    const post=Object.entries(a.byG).filter(([g,v])=>v<0&&!FIN_OUT.includes(g)).sort((x,y)=>x[1]-y[1]);if(post[0])r+=` Premier poste : ${esc(post[0][0])} (${F(-post[0][1])}).`;
+    return r;}
+  // 11. Dépenses (d'un poste, d'une catégorie ou en tout)
+  if(suj||contient(n,'depense','depenser','coute','paye','achete','sorti','combien')){
+    if(suj){const v=depSujet(L,suj),nb=L.filter(r=>r.v<0&&(suj.type==='g'?r.g===suj.nom:r.c===suj.nom)).length;
+      if(!v)return `Aucune dépense « ${esc(suj.nom)} » ${P.lib}.`;
+      let r=`${cap1(P.lib)}${partiel}, vous avez dépensé <b>${F(v)}</b> en ${esc(suj.nom)} (${nb} opération${nb>1?'s':''}${P.ms.length>1?`, ≈ ${F(v/P.ms.length)} par mois`:''}).`;
+      if(pb)r+=compare(v,depSujet(dansMs(pb),suj),libB,-1);
+      if(suj.type==='g'){const det={};L.filter(r2=>r2.v<0&&r2.g===suj.nom).forEach(r2=>det[r2.c]=(det[r2.c]||0)-r2.v);const t=Object.entries(det).sort((x,y)=>y[1]-x[1]);if(t.length>1)r+=` Surtout : ${listeFr(t.slice(0,3).map(([c,x])=>`${esc(c)} (${F(x)})`))}.`;}
+      const b=BUD()[suj.nom];if(b&&P.ms.length===1&&MKEYS[P.ms[0]]===dkey(new Date()).slice(0,7))r+=` Votre budget est de ${F(b)} : ${v>b?`<b class="neg">dépassé de ${F(v-b)}</b>`:`il reste ${F(b-v)}`}.`;
+      return r;}
+    let r=`${cap1(P.lib)}${partiel}, vos dépenses courantes font <b>${F(a.cur)}</b>`+(a.betOut?` (plus ${F(a.betOut)} de paris)`:'')+'.';
+    if(B)r+=compare(a.cur,B.cur,libB,-1);
+    return r;}
+  return 'Je n’ai pas bien compris. '+exemples();
+}
+
+/** Mois complets connus (hors mois en cours et dernier mois partiel). */
+function moisComplets(){const mk=dkey(new Date()).slice(0,7);return MKEYS.map((k,i)=>[k,i]).filter(([k,i])=>k<mk&&!(PARTIAL&&i===LAST)).map(x=>x[1]);}
+function repondreEpargne(a,P,partiel){
+  const ep=-(a.byG['Épargne']||0),taux=a.own?ep/a.own*100:0,nm=P.ms.length;
+  let r=`${cap1(P.lib)}${partiel}, vous avez mis de côté <b>${F(ep)}</b>`+(nm>1?` (≈ ${F(ep/nm)} par mois)`:'')+(a.own?`, soit <b>${Math.round(taux)} %</b> de vos revenus propres (${F(a.own)}).`:'.');
+  r+=taux>=20?' C’est très bien : continuez ainsi.':taux>=10?' C’est un bon niveau ; 15 à 20 % vous donneraient plus de marge.':a.own?` Visez au moins 10 %, soit ≈ <b>${F(arrondiBudget(a.own/nm*0.1))}</b> par mois, versés dès l’arrivée du salaire.`:'';
+  if(a.solde-ep>5000*nm)r+=` Après cette épargne, il restait encore ${F(a.solde-ep)} non affectés, qui pourraient la rejoindre.`;
+  return r;
+}
+/** Observations et conseils, classés du plus important au moins important. */
+function texteConseils(){
+  const C=[];
+  // budgets du mois
+  const e=etatBudgets();e.L.filter(x=>x.etat!=='ok').forEach(x=>C.push([x.etat==='depasse'?100:x.etat==='alerte'?90:80,texteAlerte(x)]));
+  // les 3 derniers mois complets (ou moins), comparés aux 3 d'avant
+  const comp=moisComplets();
+  const ms=comp.slice(-3),nm=ms.length;
+  if(nm){
+    const a=agg(dansMs(ms)),pv=comp.slice(-6,-3),b=pv.length?agg(dansMs(pv)):null,lib=libMois(ms);
+    const sm=a.solde/nm,dep=(a.cur+a.betOut)/nm,own=a.own/nm;
+    if(a.solde<0)C.push([95,`<b>Vous dépensez plus que vous ne gagnez</b> : ${lib}, ≈ <b class="neg">${F(-sm)}</b> de déficit par mois. Pour revenir à l’équilibre, ramenez les dépenses courantes à ≈ ${F(own)} par mois (contre ${F(dep)}).`]);
+    else{const ep=-(a.byG['Épargne']||0)/nm,libre=sm-ep;
+      C.push([60,`<b>Bonne nouvelle</b> : ${lib}, vos revenus couvrent vos dépenses${ep>0?` et vous épargnez ≈ ${F(ep)} par mois`:''}.`+(libre>5000?` Il reste encore ≈ ${F(libre)} par mois sans destination : programmez un versement ${ep>0?'supplémentaire ':''}d’environ <b>${F(arrondiBudget(libre*0.5))}</b> vers l’épargne le jour du salaire, avant de dépenser.`:'')]);
+      if(own&&ep/own<0.1)C.push([70,`<b>Épargne faible</b> : ${F(ep)} par mois, soit ${Math.round(ep/own*100)} % de vos revenus propres. Visez 10 %, soit ≈ ${F(arrondiBudget(own*0.1))} par mois.`]);}
+    if(b){const ch=Object.keys(a.byG).filter(g=>a.byG[g]<0&&!FIN_OUT.includes(g)).map(g=>{const x=-a.byG[g]/nm,y=-(b.byG[g]||0)/pv.length;return [g,x,y];})
+        .filter(([,x,y])=>y>0&&x-y>=15000&&(x-y)/y>=0.2).sort((u,v)=>(v[1]-v[2])-(u[1]-u[2]));
+      ch.slice(0,2).forEach(([g,x,y])=>C.push([75,`<b>« ${esc(g)} » augmente</b> : ≈ ${F(x)} par mois ${lib}, contre ${F(y)} les 3 mois d’avant (+${Math.round((x-y)/y*100)} %).`+(BUD()[g]?'':` Un budget de ${F(arrondiBudget(y))} vous aiderait à le tenir.`)]));}
+    if(a.betOut)C.push([a.bets<0?85:50,`<b>Paris sportifs</b> : ${F(a.betOut)} misés ${lib}${a.bets<0?`, pour une perte de <b class="neg">${F(-a.bets)}</b>. Fixez-vous un plafond mensuel, ou arrêtez`:', avec un gain cette fois ; prudence, la tendance s’inverse souvent'}.`]);
+    if(a.borrow-a.repay>0)C.push([80,`<b>Votre dette augmente</b> de ${F(a.borrow-a.repay)} ${lib}. Remboursez d’abord la dette la plus coûteuse, sans réemprunter pour le faire.`]);
+    const td=tresDays();if(td.length&&dep>0){const en=td[td.length-1].v;
+      if(en<dep)C.push([en<0?92:72,`<b>Trésorerie juste</b> : ${rouge(en,F(en))} au ${fdateY(td[td.length-1].d)}, moins d’un mois de dépenses courantes. Constituez peu à peu une réserve d’au moins ${F(arrondiBudget(dep))} (un mois de dépenses).`]);}
+  }
+  if(!Object.keys(BUD()).length&&rows.length)C.push([55,`<b>Fixez des budgets</b> pour vos principaux postes : je vous préviendrai en approchant de la limite. Onglet <b>Données</b>, carte « Budgets et alertes », bouton « Proposer des montants ».`]);
+  if(!C.length)return 'Rien d’inquiétant dans vos chiffres pour l’instant. Continuez à noter vos opérations : mes observations deviendront plus précises.';
+  C.sort((x,y)=>y[0]-x[0]);
+  return 'Voici mes observations et conseils :<ol class="cs-liste">'+C.slice(0,5).map(x=>`<li>${x[1]}</li>`).join('')+'</ol><small class="cap">Ce sont des repères de gestion de budget, pas des conseils de placement.</small>';
+}
+
+// ----- la discussion -----
+const DISCU=[];
+function ouvrirConseiller(){
+  if(!SESSION.jeton){toast('Connectez-vous d\'abord.');return;}
+  $('csChips').innerHTML=QUESTIONS.map(x=>`<button type="button" class="chip" data-q="${esc(x)}">${esc(x)}</button>`).join('');
+  $('scrim').hidden=false;$('csSheet').hidden=false;afficherDiscu();
+}
+function fermerConseiller(){$('csSheet').hidden=true;if($('sheet').hidden)$('scrim').hidden=true;try{speechSynthesis.cancel();}catch(e){}}
+function poser(q){
+  let r;try{r=repondre(q);}catch(e){r='Je n’ai pas pu calculer la réponse. Reformulez votre question autrement.';}
+  DISCU.push({q,r});if(DISCU.length>30)DISCU.shift();afficherDiscu();
+}
+function afficherDiscu(){
+  const z=$('csDiscu');
+  z.innerHTML=DISCU.map((x,i)=>`<div class="cs-bulle moi">${esc(x.q)}</div><div class="cs-bulle elle">${x.r}${'speechSynthesis' in window?` <button type="button" class="cs-lire" data-lire="${i}" aria-label="Écouter la réponse">🔊 Écouter</button>`:''}</div>`).join('')||'<div class="cs-bulle elle">Bonjour ! Posez-moi une question sur votre argent, ou touchez « Que me conseilles-tu ? ».</div>';
+  const der=z.lastElementChild;if(der)der.scrollIntoView({block:'nearest'});
+}
+/** Lecture à voix haute (voix française du téléphone). */
+function lire(i){
+  const x=DISCU[i];if(!x||!('speechSynthesis' in window))return;
+  const t=x.r.replace(/<li>/g,'. ').replace(/<[^>]+>/g,'').replace(/(\d)[\s  ](?=\d{3}\b)/g,'$1').replace(/(\d) F\b/g,'$1 francs').replace(/(\d) k\b/g,'$1 mille').replace(/(\d) M\b/g,'$1 millions').replace(/ %/g,' pour cent').replace(/\p{Extended_Pictographic}/gu,'');
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.rate=0.95;speechSynthesis.speak(u);
+}
+$('btnConseil').addEventListener('click',ouvrirConseiller);
+$('csFermer').addEventListener('click',fermerConseiller);
+$('scrim').addEventListener('click',fermerConseiller);
+$('csSheet').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(b){poser(b.dataset.q);return;}const l=e.target.closest('[data-lire]');if(l)lire(+l.dataset.lire);});
+$('csForm').addEventListener('submit',e=>{e.preventDefault();const q=$('csQ').value.trim();if(!q)return;$('csQ').value='';poser(q);});
 
 // ================= onglets =================
 function setTab(t){state.tab=t;saveUi();document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!=='v-'+t);
@@ -2306,7 +2642,7 @@ function messageErreur(e){
 function appliquerEtat(e,deCache){
   ui.doitChanger=!!e.doitChanger;if(e.licence){ui.licence=e.licence;S.licence=e.licence;}
   if(e.inchange){ui.depuisCache=null;ui.hors=false;const g=lsGet('etat',null);if(g&&g.j===SESSION.jeton){g.le=Date.now();lsSet('etat',g);versPorte({mf:'etat',g});}renderStatus();majEcran();return;}
-  S.mm=e.mm||{};S.saisies=e.saisies||{};S.cats=e.cats||null;S.etat=e.etat||null;S.faceid=e.faceid||[];S.app=e.app||{};S.urlClasseur=e.urlClasseur||'';S.email=e.email||'';
+  S.mm=e.mm||{};S.saisies=e.saisies||{};S.cats=e.cats||null;S.etat=e.etat||null;S.faceid=e.faceid||[];S.budgets=e.budgets||null;S.app=e.app||{};S.urlClasseur=e.urlClasseur||'';S.email=e.email||'';
   S.loaded.mm=1;CHARGE=true;ui.v=e.v;
   if(!deCache){ui.depuisCache=null;ui.hors=false;if(SESSION.jeton){const g={j:SESSION.jeton,le:Date.now(),s:e};lsSet('etat',g);versPorte({mf:'etat',g});}}
   schedule();majEcran();
