@@ -279,15 +279,15 @@ header.top .eyebrow{color:var(--acc-txt);font-weight:700}
 .ic-det summary{cursor:pointer;font-size:14px;color:var(--ink2);list-style:none;padding:4px 0}.ic-det summary::-webkit-details-marker{display:none}.ic-det[open] summary{margin-bottom:6px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"],:root:not([data-theme="light"]) .btn.primary,:root:not([data-theme="light"]) .cs-bulle.moi{background:var(--acc2);color:var(--acc2-ink)}}
 .ic svg{width:1.3em;height:1.3em;vertical-align:-.28em}.ic-choix button svg{width:24px;height:24px;vertical-align:middle}
-.sons-reglage{display:grid;gap:6px;margin-top:8px}.sons-reglage label{font-size:13px;font-weight:600;color:var(--ink2)}.sons-reglage .row{display:flex;gap:8px}.sons-reglage select{flex:1 1 auto;width:0;min-width:0}
-/* iPhone : pas de glissement de gauche à droite (et les champs en 16 px évitent le zoom automatique de Safari) */
-html,body{overflow-x:hidden;overscroll-behavior-x:none}
+.sons-reglage{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;margin-top:8px}.sons-reglage label{font-size:13px;font-weight:600;color:var(--ink2)}.sons-reglage .row{display:flex;gap:8px}.sons-reglage .row{min-width:0}.sons-reglage select{flex:1 1 auto;width:0;min-width:0;max-width:100%}
+/* iPhone : champs en 16 px, sinon Safari zoome et l'écran glisse ensuite de gauche à droite.
+   (Pas d'overflow-x:hidden sur html/body : dans le cadre de la page d'accueil, l'iPhone ne réagissait plus aux touchers sur la barre du bas.) */
 .bud-ed input,.cs-form input{font-size:16px}
 /* cartes repliables de l'onglet Données */
 .volet-tete{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;margin:-4px 0}
 .volet-btn{width:32px;height:32px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--surface2);color:var(--ink2);font:500 20px/1 var(--font);cursor:pointer;padding:0}
 .card.volet.ferme>:not(.volet-tete){display:none!important}
-.card,.card>*{min-width:0}
+.card{grid-template-columns:minmax(0,1fr)}.card,.card>*{min-width:0}   /* une carte ne dépasse jamais l'écran (Safari garde la largeur naturelle des listes) */
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -1935,7 +1935,8 @@ function audio(force){
   return AC;
 }
 /** Joue un son (ouverture, onglet, enregistre, reponse) ; amb : ambiance imposée (bouton « Écouter »). */
-function son(nom,i,amb){
+function son(nom,i,amb){try{sonSansRisque(nom,i,amb);}catch(e){}}   // un son ne doit jamais bloquer l'application
+function sonSansRisque(nom,i,amb){
   const ac=audio(!!amb);if(!ac)return;
   const go=()=>{if(nom==='ouverture'&&!amb){if(ouvertureJouee)return;ouvertureJouee=true;}SONS_MDJ.jouer(ac,nom,amb||SONS,i);};
   if(ac.state==='running')go();else ac.resume().then(()=>{if(ac.state==='running')go();}).catch(()=>{});
@@ -2804,7 +2805,7 @@ $('csForm').addEventListener('submit',e=>{e.preventDefault();const q=$('csQ').va
 // ================= onglets =================
 function setTab(t){state.tab=t;saveUi();document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!=='v-'+t);
   document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===t));hideTip();scrollTo({top:0});}
-document.querySelectorAll('.tabs button').forEach((b,i)=>b.addEventListener('click',()=>{if(state.tab!==b.dataset.v)son('onglet',i);setTab(b.dataset.v);}));
+document.querySelectorAll('.tabs button').forEach((b,i)=>b.addEventListener('click',()=>{const nouveau=state.tab!==b.dataset.v;setTab(b.dataset.v);if(nouveau)son('onglet',i);}));
 $('rClose').addEventListener('click',()=>{$('rangeBox').hidden=true;});
 $('rApply').addEventListener('click',()=>{let a=$('rFrom').value,b=$('rTo').value;if(a>b)[a,b]=[b,a];state.sel=['r:'+a+':'+b];$('rangeBox').hidden=true;setPeriod();});
 $('q').addEventListener('input',()=>{state.shown=50;renderOps();});
