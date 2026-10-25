@@ -279,10 +279,15 @@ header.top .eyebrow{color:var(--acc-txt);font-weight:700}
 .ic-det summary{cursor:pointer;font-size:14px;color:var(--ink2);list-style:none;padding:4px 0}.ic-det summary::-webkit-details-marker{display:none}.ic-det[open] summary{margin-bottom:6px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"],:root:not([data-theme="light"]) .btn.primary,:root:not([data-theme="light"]) .cs-bulle.moi{background:var(--acc2);color:var(--acc2-ink)}}
 .ic svg{width:1.3em;height:1.3em;vertical-align:-.28em}.ic-choix button svg{width:24px;height:24px;vertical-align:middle}
-.coche-son{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--ink2);margin-top:6px}.coche-son input{width:22px;height:22px;flex:none;margin-top:1px}
+.sons-reglage{display:grid;gap:6px;margin-top:8px}.sons-reglage label{font-size:13px;font-weight:600;color:var(--ink2)}.sons-reglage .row{display:flex;gap:8px}.sons-reglage select{flex:1 1 auto;width:0;min-width:0}
 /* iPhone : pas de glissement de gauche à droite (et les champs en 16 px évitent le zoom automatique de Safari) */
 html,body{overflow-x:hidden;overscroll-behavior-x:none}
 .bud-ed input,.cs-form input{font-size:16px}
+/* cartes repliables de l'onglet Données */
+.volet-tete{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;margin:-4px 0}
+.volet-btn{width:32px;height:32px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--surface2);color:var(--ink2);font:500 20px/1 var(--font);cursor:pointer;padding:0}
+.card.volet.ferme>:not(.volet-tete){display:none!important}
+.card,.card>*{min-width:0}
 #lienClasseur,#btnDeco,#btnChanger,#fidCard{display:none!important}</style>
 </head>
 <body data-ecran="connexion">
@@ -406,7 +411,9 @@ html,body{overflow-x:hidden;overscroll-behavior-x:none}
         <p>Choisissez les couleurs de l'application, selon vos goûts. Elles s'appliquent aussi à vos autres appareils.</p>
         <div class="th-liste" id="thListe"></div>
         <div class="th-perso"><span>Ou vos propres couleurs :</span><label>principale <input type="color" id="thAcc"></label><label>accent <input type="color" id="thAcc2"></label><button class="btn small" id="thPerso" type="button">Appliquer</button></div>
-        <label class="coche-son"><input type="checkbox" id="sonsOn"><span>Sons de l'application : pièces dans la tirelire à l'ouverture et à chaque enregistrement, petite note en changeant d'onglet. En mode silencieux, l'iPhone reste muet.</span></label></div>
+        <div class="sons-reglage"><label for="sonsAmb">Sons de l'application</label>
+          <div class="row"><select id="sonsAmb"><option value="halo">Halo : ouverture futuriste, « bip » de caisse</option><option value="tirelire">Tirelire : pièces, « ka-ching » de tiroir-caisse</option><option value="doux">Doux : très discrets</option><option value="aucun">Aucun son</option></select><button class="btn small" id="sonsEcouter" type="button">▶︎ Écouter</button></div>
+          <span class="cap">À l'ouverture, à chaque opération enregistrée et en changeant d'onglet. En mode silencieux, l'iPhone reste muet.</span></div></div>
       <div class="card" id="cardBud"><h3>Budgets et alertes</h3>
         <p>Fixez un montant à ne pas dépasser chaque mois pour les postes que vous voulez surveiller. L'aperçu vous prévient quand vous approchez de la limite, quand vous la dépassez, ou quand le rythme du mois risque de la faire dépasser. Laissez vide pour ne pas suivre un poste.</p>
         <div class="field"><label for="budSeuil">Me prévenir à partir de</label><select id="budSeuil"><option value="70">70 % du budget</option><option value="75">75 % du budget</option><option value="80">80 % du budget</option><option value="90">90 % du budget</option><option value="100">100 % (seulement en cas de dépassement)</option></select></div>
@@ -1762,6 +1769,106 @@ function montrerErreur(msg){var st=document.getElementById('status');if(st)st.in
 window.addEventListener('error',function(e){montrerErreur(e.message||'erreur inconnue');});
 window.addEventListener('unhandledrejection',function(e){var r=e.reason;montrerErreur((r&&(r.message||r.code))||r);});
 try{
+/* Sons de MonDjè, fabriqués sur le téléphone (Web Audio, aucun fichier).
+   Un seul fichier pour l'application (inséré par app/build.py) et la page d'accueil (sons.js publié à côté de index.html).
+   Trois ambiances : « halo » (par défaut), « tirelire », « doux » ; « aucun » coupe tout.
+   SONS_MDJ.jouer(ac, nom, ambiance, i) — nom : ouverture, onglet (i = numéro de l'onglet), enregistre, reponse. */
+var SONS_MDJ = (function () {
+  var AMBIANCES = ['halo', 'tirelire', 'doux'];
+  function sortie(ac, g, vers) { var n = ac.createGain(); n.gain.value = g; n.connect(vers || ac.destination); return n; }
+  // Écho léger : donne de l'espace au halo
+  function echo(ac, g) {
+    var entree = ac.createGain(), d = ac.createDelay(1), fb = ac.createGain(), mouille = ac.createGain(), f = ac.createBiquadFilter();
+    d.delayTime.value = 0.19; fb.gain.value = 0.32; mouille.gain.value = g; f.type = 'lowpass'; f.frequency.value = 2200;
+    entree.connect(ac.destination); entree.connect(d); d.connect(f); f.connect(fb); fb.connect(d); f.connect(mouille); mouille.connect(ac.destination);
+    return entree;
+  }
+  // Note à partiels : parts = [[multiple, volume, durée], …]
+  function note(ac, t, f, parts, g, vers, forme) {
+    var out = sortie(ac, g, vers);
+    parts.forEach(function (p) {
+      var o = ac.createOscillator(), e = ac.createGain(); o.type = forme || 'sine'; o.frequency.value = f * p[0];
+      e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(p[1], t + 0.004); e.gain.exponentialRampToValueAtTime(0.0001, t + p[2]);
+      o.connect(e); e.connect(out); o.start(t); o.stop(t + p[2] + 0.05);
+    });
+  }
+  function bruit(ac, t, duree, g, f0, f1, q, vers) {   // souffle filtré (balayage de f0 à f1)
+    var n = Math.floor(ac.sampleRate * duree), b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0);
+    for (var i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+    var s = ac.createBufferSource(), f = ac.createBiquadFilter(), e = ac.createGain(); s.buffer = b;
+    f.type = 'bandpass'; f.Q.value = q || 1.2; f.frequency.setValueAtTime(f0, t); f.frequency.exponentialRampToValueAtTime(f1, t + duree);
+    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + duree * 0.45); e.gain.linearRampToValueAtTime(0, t + duree);
+    s.connect(f); f.connect(e); e.connect(vers || ac.destination); s.start(t); s.stop(t + duree + 0.02);
+  }
+  // Nappe montante : oscillateurs légèrement désaccordés, filtre qui s'ouvre
+  function nappe(ac, t, freqs, duree, g, vers) {
+    var f = ac.createBiquadFilter(), e = ac.createGain(); f.type = 'lowpass'; f.Q.value = 3;
+    f.frequency.setValueAtTime(260, t); f.frequency.exponentialRampToValueAtTime(2600, t + duree * 0.55); f.frequency.exponentialRampToValueAtTime(900, t + duree);
+    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + duree * 0.4); e.gain.exponentialRampToValueAtTime(0.0001, t + duree);
+    f.connect(e); e.connect(vers || ac.destination);
+    freqs.forEach(function (fr) { [-6, 0, 7].forEach(function (cents) {
+      var o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = fr; o.detune.value = cents;
+      var m = ac.createGain(); m.gain.value = 1 / (freqs.length * 3); o.connect(m); m.connect(f); o.start(t); o.stop(t + duree + 0.05);
+    }); });
+  }
+  function tok(ac, t, g, haut, bas) {   // coup sourd (pot en terre cuite, tiroir)
+    var o = ac.createOscillator(), e = ac.createGain(); o.frequency.setValueAtTime(haut || 220, t); o.frequency.exponentialRampToValueAtTime(bas || 120, t + 0.1);
+    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + 0.004); e.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+    o.connect(e); e.connect(ac.destination); o.start(t); o.stop(t + 0.22);
+  }
+  var GAMME = [262, 294, 330, 392, 440];   // do, ré, mi, sol, la (une note par onglet, registre médium)
+  var PIECE = [[1, 1, 0.45], [2.76, 0.4, 0.25], [5.4, 0.2, 0.14]];
+  var BOIS = [[1, 1, 0.22], [3.9, 0.25, 0.05]];
+  var CLOCHE = [[1, 1, 0.9], [2.4, 0.35, 0.5], [3.9, 0.15, 0.25]];
+  var SONS = {
+    halo: {
+      ouverture: function (ac, t) {   // halo futuriste : nappe qui s'ouvre, souffle, scintillement, écho
+        var ec = echo(ac, 0.3);
+        nappe(ac, t, [131, 196, 330, 494], 2.2, 0.4, ec);
+        bruit(ac, t, 1.1, 0.09, 350, 3200, 0.9, ec);
+        note(ac, t + 0.55, 1047, [[1, 1, 1.5]], 0.05, ec); note(ac, t + 0.7, 1568, [[1, 1, 1.3]], 0.035, ec);
+      },
+      onglet: function (ac, t, i) {   // bulle feutrée qui monte légèrement
+        var f = GAMME[i || 0], o = ac.createOscillator(), e = ac.createGain(), lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400;
+        o.frequency.setValueAtTime(f * 0.85, t); o.frequency.exponentialRampToValueAtTime(f, t + 0.06);
+        e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(0.07, t + 0.01); e.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+        o.connect(lp); lp.connect(e); e.connect(ac.destination); o.start(t); o.stop(t + 0.25);
+      },
+      enregistre: function (ac, t) {   // « bip » du lecteur de caisse
+        var o = ac.createOscillator(), e = ac.createGain(), lp = ac.createBiquadFilter(); o.type = 'square'; o.frequency.value = 1245; lp.type = 'lowpass'; lp.frequency.value = 2600;
+        e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(0.09, t + 0.005); e.gain.setValueAtTime(0.09, t + 0.11); e.gain.linearRampToValueAtTime(0, t + 0.13);
+        o.connect(lp); lp.connect(e); e.connect(ac.destination); o.start(t); o.stop(t + 0.15);
+      },
+      reponse: function (ac, t) { var ec = echo(ac, 0.25); note(ac, t, 523, [[1, 1, 0.6]], 0.06, ec); note(ac, t + 0.12, 659, [[1, 1, 0.7]], 0.06, ec); }
+    },
+    tirelire: {
+      ouverture: function (ac, t) {   // trois pièces dans le pot, puis un accord de kalimba (une octave plus bas qu'avant)
+        note(ac, t, 1319, PIECE, 0.18); note(ac, t + 0.16, 1175, PIECE, 0.16); note(ac, t + 0.3, 1568, PIECE, 0.14); tok(ac, t + 0.42, 0.24);
+        [262, 330, 392].forEach(function (f, k) { note(ac, t + 0.5 + k * 0.08, f, [[1, 1, 1.4], [5.95, 0.2, 0.1]], 0.13); });
+      },
+      onglet: function (ac, t, i) { note(ac, t, GAMME[i || 0], BOIS, 0.08); },   // marimba
+      enregistre: function (ac, t) {   // « ka-ching » : le tiroir-caisse, puis la sonnette
+        bruit(ac, t, 0.06, 0.12, 1800, 900, 2); tok(ac, t + 0.02, 0.15, 180, 110);
+        note(ac, t + 0.09, 1568, CLOCHE, 0.09); note(ac, t + 0.09, 2093, CLOCHE, 0.05);
+      },
+      reponse: function (ac, t) { note(ac, t, 392, [[1, 1, 1], [5.95, 0.2, 0.1]], 0.08); note(ac, t + 0.12, 523, [[1, 1, 1], [5.95, 0.2, 0.1]], 0.08); }
+    },
+    doux: {
+      ouverture: function (ac, t) { note(ac, t, 392, CLOCHE, 0.08); note(ac, t + 0.22, 523, CLOCHE, 0.08); },
+      onglet: function (ac, t) { tok(ac, t, 0.05, 200, 150); },
+      enregistre: function (ac, t) { note(ac, t, 660, [[1, 1, 0.12]], 0.05); note(ac, t + 0.12, 880, [[1, 1, 0.14]], 0.05); },
+      reponse: function (ac, t) { note(ac, t, 523, [[1, 1, 0.5]], 0.05); }
+    }
+  };
+  return {
+    AMBIANCES: AMBIANCES,
+    jouer: function (ac, nom, ambiance, i) {
+      var a = SONS[ambiance] || SONS.halo, f = a[nom]; if (!f) return;
+      try { f(ac, ac.currentTime + 0.02, i); } catch (e) {}
+    }
+  };
+})();
+
 // ================= constantes & format =================
 const MN=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
 const MNL=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
@@ -1817,42 +1924,24 @@ function appliquerTheme(t){
 let THEME=appliquerTheme((()=>{try{return JSON.parse(localStorage.getItem('mf-theme')||'"cauri"');}catch(e){return 'cauri';}})());
 
 // ================= sons (Données › Apparence ; réglage gardé sur cet appareil) =================
-// Fabriqués sur le téléphone (aucun fichier) : des pièces qui tombent dans la tirelire en terre cuite,
-// et des notes de kalimba, comme la musique de la vidéo. Sur iPhone, ils se taisent en mode silencieux.
-let SONS=lsGet('sons',true)!==false,AC=null,ouvertureJouee=false;
-function audio(){
-  if(!SONS)return null;
+// Le moteur SONS_MDJ (porte/sons.js, ajouté par app/build.py) fabrique les sons sur le téléphone, sans fichier.
+// Ambiances : halo (par défaut), tirelire, doux, ou aucun. Sur iPhone, ils se taisent en mode silencieux.
+const ambianceSons=()=>{const v=lsGet('sons','halo');return v===false?'aucun':v===true?'halo':(SONS_MDJ.AMBIANCES.concat('aucun').includes(v)?v:'halo');};
+let SONS=ambianceSons(),AC=null,ouvertureJouee=false;
+function audio(force){
+  if(SONS==='aucun'&&!force)return null;
   try{if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();try{if(navigator.audioSession)navigator.audioSession.type='ambient';}catch(e){}}
     if(AC.state==='suspended')AC.resume();}catch(e){return null;}
   return AC;
 }
-function noteSon(ac,t,f,parts,g,sortie){   // parts : [multiple de la fréquence, volume, durée]
-  const out=ac.createGain();out.gain.value=g;out.connect(sortie||ac.destination);
-  for(const [m,a,d] of parts){const o=ac.createOscillator(),e=ac.createGain();o.type='sine';o.frequency.value=f*m;
-    e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(a,t+.003);e.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(e);e.connect(out);o.start(t);o.stop(t+d+.05);}
+/** Joue un son (ouverture, onglet, enregistre, reponse) ; amb : ambiance imposée (bouton « Écouter »). */
+function son(nom,i,amb){
+  const ac=audio(!!amb);if(!ac)return;
+  const go=()=>{if(nom==='ouverture'&&!amb){if(ouvertureJouee)return;ouvertureJouee=true;}SONS_MDJ.jouer(ac,nom,amb||SONS,i);};
+  if(ac.state==='running')go();else ac.resume().then(()=>{if(ac.state==='running')go();}).catch(()=>{});
 }
-const PIECE=[[1,1,.5],[2.76,.5,.28],[5.4,.3,.16],[8.93,.16,.09]];    // métal : partiels inharmoniques
-const KALIMBA=[[1,1,1.3],[5.95,.25,.12],[2,.12,.4]];
-function tokSon(ac,t,g){   // la pièce touche le fond du pot en terre cuite
-  const o=ac.createOscillator(),e=ac.createGain();o.frequency.setValueAtTime(260,t);o.frequency.exponentialRampToValueAtTime(140,t+.1);
-  e.gain.setValueAtTime(0,t);e.gain.linearRampToValueAtTime(g,t+.004);e.gain.exponentialRampToValueAtTime(.0001,t+.18);o.connect(e);e.connect(ac.destination);o.start(t);o.stop(t+.22);
-}
-const NOTES_ONGLETS=[1047,1175,1319,1568,1760];   // do, ré, mi, sol, la (gamme pentatonique)
-function son(nom,i){
-  const ac=audio();if(!ac)return;
-  if(ac.state==='running')jouer(ac,nom,i);else ac.resume().then(()=>{if(ac.state==='running')jouer(ac,nom,i);}).catch(()=>{});
-}
-function jouer(ac,nom,i){
-  const t=ac.currentTime+.02;
-  if(nom==='ouverture'){if(ouvertureJouee)return;ouvertureJouee=true;      // trois pièces dans la tirelire, puis un accord doux
-    noteSon(ac,t,2637,PIECE,.2);noteSon(ac,t+.16,2349,PIECE,.17);noteSon(ac,t+.3,3136,PIECE,.15);tokSon(ac,t+.42,.22);
-    [523,659,784].forEach((f,k)=>noteSon(ac,t+.5+k*.08,f,KALIMBA,.11));}
-  else if(nom==='onglet')noteSon(ac,t,NOTES_ONGLETS[i||0],[[1,1,.35],[5.95,.2,.06]],.045);
-  else if(nom==='piece'){noteSon(ac,t,2794,PIECE,.18);tokSon(ac,t+.09,.2);}            // une opération enregistrée
-  else if(nom==='reponse'){noteSon(ac,t,784,KALIMBA,.06);noteSon(ac,t+.12,1047,KALIMBA,.06);}   // le conseiller répond
-}
-// Ouverture : sans geste de l'utilisateur, le téléphone refuse le son ; il joue alors au premier toucher.
-['touchend','click'].forEach(ev=>document.addEventListener(ev,()=>{if(SONS)audio();},{capture:true,passive:true}));   // un toucher autorise le son (Safari : touchend ou click)
+// Sans geste de l'utilisateur, le téléphone refuse le son : l'ouverture joue alors au premier toucher.
+['touchend','click'].forEach(ev=>document.addEventListener(ev,()=>{if(SONS!=='aucun')audio();},{capture:true,passive:true}));
 function ouvertureAuPremierToucher(){
   const t0=Date.now(),go=()=>{document.removeEventListener('click',go,true);document.removeEventListener('touchend',go,true);if(!ouvertureJouee&&Date.now()-t0<10000)son('ouverture');};
   document.addEventListener('click',go,true);document.addEventListener('touchend',go,true);
@@ -2755,7 +2844,7 @@ $('sheet').addEventListener('submit',async e=>{
   if(c==='__new'){c=$('fNewCat').value.trim();if(!c){m.hidden=false;m.textContent='Donnez un nom à la nouvelle catégorie.';return;}}
   const btn=$('btnSave');btn.disabled=true;
   const ok=await ecrire('saisie',{d,c,v:rev?v:-v,note:$('fNote').value.trim(),poste:$('fCat').value==='__new'?$('fNewPoste').value:null},null,msg=>{m.hidden=false;m.textContent=msg;});
-  if(ok)son('piece');
+  if(ok)son('enregistre');
   btn.disabled=false;if(ok)closeSheet();
 });
 
@@ -2901,12 +2990,13 @@ function renderTheme(){
   $('thListe').innerHTML=Object.entries(THEMES).map(([k,t])=>`<button type="button" class="th" data-th="${k}" aria-pressed="${k===cle}" title="${esc(t.pour)}"><span class="pastille" style="background:linear-gradient(135deg,${t.acc} 50%,${t.acc2} 50%)"></span>${esc(t.nom)}</button>`).join('');
   if(document.activeElement!==$('thAcc')&&document.activeElement!==$('thAcc2')){$('thAcc').value=th.acc;$('thAcc2').value=th.acc2;}
   $('thPerso').setAttribute('aria-pressed',!cle);
-  $('sonsOn').checked=SONS;
+  $('sonsAmb').value=SONS;
 }
 async function choisirTheme(t){const avant=THEME;THEME=appliquerTheme(t);renderTheme();
   if(!await ecrire('theme',{theme:THEME},'Couleurs enregistrées')){THEME=appliquerTheme(avant);renderTheme();}}
 $('thListe').addEventListener('click',e=>{const b=e.target.closest('[data-th]');if(b)choisirTheme(b.dataset.th);});
-$('sonsOn').addEventListener('change',e=>{SONS=e.target.checked;lsSet('sons',SONS);versPorte({mf:'sons',actif:SONS});if(SONS)son('piece');toast(SONS?'Sons activés.':'Sons coupés.');});
+$('sonsAmb').addEventListener('change',e=>{SONS=e.target.value;lsSet('sons',SONS);versPorte({mf:'sons',ambiance:SONS});if(SONS!=='aucun')son('ouverture',0,SONS);toast(SONS==='aucun'?'Sons coupés.':'Ambiance « '+e.target.selectedOptions[0].textContent.split(' :')[0]+' ».');});
+$('sonsEcouter').addEventListener('click',()=>{const a=$('sonsAmb').value==='aucun'?'halo':$('sonsAmb').value;son('ouverture',0,a);setTimeout(()=>son('onglet',1,a),2300);setTimeout(()=>son('onglet',3,a),2700);setTimeout(()=>son('enregistre',0,a),3300);});
 $('thPerso').addEventListener('click',()=>choisirTheme({acc:$('thAcc').value,acc2:$('thAcc2').value}));
 $('dpMontant').addEventListener('input',e=>{const neg=/^\s*[-−]/.test(e.target.value);const d=e.target.value.replace(/\D/g,'');e.target.value=d?(neg?'−':'')+nf.format(+d):(neg?'−':'');});
 $('dpForm').addEventListener('submit',async ev=>{ev.preventDefault();const t=$('dpMontant').value,neg=/^\s*[-−]/.test(t),v=+(t.replace(/\D/g,'')||0)*(neg?-1:1);
@@ -2923,6 +3013,23 @@ document.addEventListener('click',async e=>{
   else if(a.dataset.a==='fid-retirer'){if(a.dataset.armed!=='1'){a.dataset.armed='1';a.textContent='Confirmer';return;}a.disabled=true;
     try{appliquerEtat(await appel('apiRetirerFaceID',SESSION.jeton,a.dataset.k));toast('Appareil retiré.');if(!(S.faceid||[]).length)versPorte({mf:'faceid-oublie'});}catch(err){toast(messageErreur(err));a.disabled=false;}}
 });
+
+// ================= cartes repliables (onglet Données) =================
+// Un toucher sur le titre d'une carte la replie ou la déplie (− / +) ; le choix est gardé sur cet appareil.
+// Repliées par défaut, sauf « Vos données » et les cartes qui demandent une action (catégories à classer, saisies à vérifier).
+const VOLETS=lsGet('volets',{})||{};
+function amenagerVolets(){
+  document.querySelectorAll('#v-donnees > .card').forEach((c,k)=>{
+    const h=c.querySelector(':scope > h3');if(!h)return;
+    const cle=c.id||'carte'+k,ouvert=cle in VOLETS?VOLETS[cle]:(k===0||c.id==='cardClasser'||c.id==='cardNonRetro');
+    const tete=document.createElement('div'),b=document.createElement('button');tete.className='volet-tete';
+    b.type='button';b.className='volet-btn';b.setAttribute('aria-label','Replier ou déplier');
+    c.insertBefore(tete,h);tete.append(h,b);c.classList.add('volet');
+    const poser=o=>{c.classList.toggle('ferme',!o);b.textContent=o?'−':'+';b.setAttribute('aria-expanded',o);};poser(ouvert);
+    tete.addEventListener('click',()=>{const o=c.classList.contains('ferme');poser(o);VOLETS[cle]=o;lsSet('volets',VOLETS);});
+  });
+}
+amenagerVolets();
 
 // ================= mes catégories (onglet Données) =================
 ui.ctSens='dep';ui.ctEdit=null;let ctSig='';
@@ -3010,7 +3117,7 @@ window.addEventListener('message',e=>{
   if(!ORIGINE_PORTE||e.origin!==ORIGINE_PORTE||!e.data||typeof e.data.mf!=='string')return;
   const m=e.data;
   if(m.mf==='porte-prete'){versPorte({mf:'bonjour'});return;}
-  if(m.mf==='porte'){versPorte({mf:'sons',actif:SONS});
+  if(m.mf==='porte'){versPorte({mf:'sons',ambiance:SONS});
     ui.porte={webauthn:!!m.webauthn,libelle:String(m.libelle||'Face ID').slice(0,40),actif:!!m.actif};porteEtat=null;
     // Sur iPhone, le stockage du cadre Google peut être effacé entre deux ouvertures : la page d'accueil garde la connexion.
     if(!SESSION.jeton&&typeof m.jeton==='string'&&m.jeton){
