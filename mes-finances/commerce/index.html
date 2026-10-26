@@ -57,7 +57,7 @@ header.top{display:grid;gap:6px;margin-bottom:12px}
 .chip{flex:none;border:0;background:var(--chip);color:var(--ink);font:500 13px var(--font);padding:7px 12px;border-radius:999px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink)}
 .rangebox{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:-6px 0 10px;font-size:13.5px;color:var(--ink2)}
-.rangebox select{flex:1 1 120px;font-size:15px;padding:7px 9px}
+.rangebox select{flex:1 1 120px;font-size:16px;padding:7px 9px}
 .selhint{font-size:12px;color:var(--muted);margin:-6px 0 12px}
 .selhint b{color:var(--ink2);font-weight:600}
 .sep{flex:none;width:1px;background:var(--line);margin:4px 2px}
@@ -312,7 +312,7 @@ details.autre[open] summary{margin-bottom:8px}
 .coupures b{text-align:right;font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
 @media (max-width:420px){.coupures{grid-template-columns:1fr}}
 .code{font:700 40px var(--font);letter-spacing:.18em;text-align:center;padding:14px;background:var(--surface2);border-radius:14px;font-variant-numeric:tabular-nums}
-.ligneform{display:flex;gap:8px}.ligneform input{flex:1}
+.ligneform{display:flex;gap:8px}.ligneform input:not([type=checkbox]){flex:1}
 .grille2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .mini .du{color:var(--warn-text)}
 .sheet .kv{font-size:14px}
