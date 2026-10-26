@@ -1801,15 +1801,20 @@ var SONS_MDJ = (function () {
     s.connect(f); f.connect(e); e.connect(vers || ac.destination); s.start(t); s.stop(t + duree + 0.02);
   }
   // Nappe montante : oscillateurs légèrement désaccordés, filtre qui s'ouvre
-  function nappe(ac, t, freqs, duree, g, vers) {
+  function nappe(ac, t, freqs, duree, g, vers, f0, f1, f2) {
     var f = ac.createBiquadFilter(), e = ac.createGain(); f.type = 'lowpass'; f.Q.value = 3;
-    f.frequency.setValueAtTime(260, t); f.frequency.exponentialRampToValueAtTime(2600, t + duree * 0.55); f.frequency.exponentialRampToValueAtTime(900, t + duree);
+    f.frequency.setValueAtTime(f0 || 260, t); f.frequency.exponentialRampToValueAtTime(f1 || 2600, t + duree * 0.55); f.frequency.exponentialRampToValueAtTime(f2 || 900, t + duree);
     e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + duree * 0.4); e.gain.exponentialRampToValueAtTime(0.0001, t + duree);
     f.connect(e); e.connect(vers || ac.destination);
     freqs.forEach(function (fr) { [-6, 0, 7].forEach(function (cents) {
       var o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = fr; o.detune.value = cents;
       var m = ac.createGain(); m.gain.value = 1 / (freqs.length * 3); o.connect(m); m.connect(f); o.start(t); o.stop(t + duree + 0.05);
     }); });
+  }
+  function halo(ac, t, f, duree, g, vers) {   // note tenue qui apparaît en douceur, légèrement vibrée
+    var o = ac.createOscillator(), e = ac.createGain(), v = ac.createOscillator(), vg = ac.createGain(); o.frequency.value = f; v.frequency.value = 5.5; vg.gain.value = f * 0.004;
+    v.connect(vg); vg.connect(o.frequency); e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(g, t + duree * 0.35); e.gain.exponentialRampToValueAtTime(0.0001, t + duree);
+    o.connect(e); e.connect(vers || ac.destination); o.start(t); v.start(t); o.stop(t + duree + 0.05); v.stop(t + duree + 0.05);
   }
   function tok(ac, t, g, haut, bas) {   // coup sourd (pot en terre cuite, tiroir)
     var o = ac.createOscillator(), e = ac.createGain(); o.frequency.setValueAtTime(haut || 220, t); o.frequency.exponentialRampToValueAtTime(bas || 120, t + 0.1);
@@ -1822,11 +1827,12 @@ var SONS_MDJ = (function () {
   var CLOCHE = [[1, 1, 0.9], [2.4, 0.35, 0.5], [3.9, 0.15, 0.25]];
   var SONS = {
     halo: {
-      ouverture: function (ac, t) {   // halo futuriste : nappe qui s'ouvre, souffle, scintillement, écho
-        var ec = echo(ac, 0.3);
-        nappe(ac, t, [131, 196, 330, 494], 2.2, 0.4, ec);
-        bruit(ac, t, 1.1, 0.09, 350, 3200, 0.9, ec);
-        note(ac, t + 0.55, 1047, [[1, 1, 1.5]], 0.05, ec); note(ac, t + 0.7, 1568, [[1, 1, 1.3]], 0.035, ec);
+      ouverture: function (ac, t) {   // halo futuriste : nappe qui s'ouvre, souffle, scintillement, écho (registre médium, audible sur un haut-parleur de téléphone)
+        var ec = echo(ac, 0.32);
+        nappe(ac, t, [262, 392, 523, 784], 2.2, 0.42, ec, 600, 5200, 1800);
+        bruit(ac, t, 1.1, 0.14, 800, 5000, 0.9, ec);
+        halo(ac, t + 0.25, 1568, 1.8, 0.07, ec); halo(ac, t + 0.4, 2093, 1.6, 0.05, ec);
+        note(ac, t + 0.95, 1047, [[1, 1, 1.2], [2.4, 0.3, 0.5]], 0.09, ec);
       },
       onglet: function (ac, t, i) {   // bulle feutrée qui monte légèrement
         var f = GAMME[i || 0], o = ac.createOscillator(), e = ac.createGain(), lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1400;
@@ -1943,8 +1949,9 @@ function sonSansRisque(nom,i,amb){
 }
 // Sans geste de l'utilisateur, le téléphone refuse le son : l'ouverture joue alors au premier toucher.
 ['touchend','click'].forEach(ev=>document.addEventListener(ev,()=>{if(SONS!=='aucun')audio();},{capture:true,passive:true}));
-function ouvertureAuPremierToucher(){
-  const t0=Date.now(),go=()=>{document.removeEventListener('click',go,true);document.removeEventListener('touchend',go,true);if(!ouvertureJouee&&Date.now()-t0<10000)son('ouverture');};
+function ouvertureAuPremierToucher(){   // réessaie à chaque toucher tant que l'iPhone n'a pas laissé jouer le son (un défilement ne compte pas)
+  const t0=Date.now(),fin=()=>{document.removeEventListener('click',go,true);document.removeEventListener('touchend',go,true);},
+    go=()=>{if(ouvertureJouee||Date.now()-t0>30000){fin();return;}son('ouverture');};
   document.addEventListener('click',go,true);document.addEventListener('touchend',go,true);
 }
 
