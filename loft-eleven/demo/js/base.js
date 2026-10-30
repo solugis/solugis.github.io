@@ -292,8 +292,10 @@ var ICONES = {
   musique: '<path d="M9 18.5V6l11-2.5v12"/><circle cx="6.5" cy="18.5" r="2.5"/><circle cx="17.5" cy="15.5" r="2.5"/>'
 };
 function ic(nom, cls) { return '<svg class="ic' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONES[nom] || ICONES.info) + '</svg>'; }
-var MONOGRAMME = '<svg class="monogramme" viewBox="0 0 80 80" aria-hidden="true"><rect x="1.5" y="1.5" width="77" height="77" rx="3" fill="none" style="stroke:var(--accent)" stroke-width="1.2"/><rect x="6.5" y="6.5" width="67" height="67" rx="1.5" fill="none" style="stroke:var(--accent)" stroke-width=".5" opacity=".55"/>'
-  + '<path d="M23 21v38h17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M48 21v38M57 21v38" fill="none" style="stroke:var(--accent)" stroke-width="2.4"/></svg>';
+// Monogramme du logo Loft Eleven (L11 : le « 11 » sous un toit), redessiné en vectoriel le 30/10/2026 (outils/logo).
+var MONOGRAMME = '<svg class="monogramme" viewBox="470 90 1040 700" aria-hidden="true">'
+  + '<path fill="currentColor" d="M497 149 L690 149 L690 725 C760 727 830 713 875 683 C901 665 919 645 930 622 L930 744 Q930 768 902 769 L548 769 Q506 768 496 751 Q545 742 555 705 Q560 685 560 655 L562 310 C562 228 545 172 497 158 Z"/>'
+  + '<path style="fill:var(--logo-cuivre)" d="M1068 262 L1068 700 Q1071 742 1117 752 Q1117 764 1100 765 L958 765 Q944 764 942 754 Q956 744 958 715 L958 404 Q952 392 941 390 Q915 392 890 402 L889 391 Z M1214 259 L1328 316 L1328 702 Q1331 742 1377 752 Q1377 764 1360 765 L1188 765 Q1170 764 1170 752 Q1208 740 1211 700 L1212 330 Z M791 382 L1132 109 L1486 370 L1428 357 L1309 298 L1132 187 Z M1111 264 L1142 264 L1142 297 L1111 297 Z M1111 304 L1142 304 L1142 337 L1111 337 Z M1150 264 L1181 264 L1181 297 L1150 297 Z M1150 304 L1181 304 L1181 337 L1150 337 Z"/></svg>';
 var PALETTES = {
   saumon: { nom: 'Saumon & ivoire', sous: 'Douceur et élégance', couleurs: ['#FBF6F1', '#E08E79', '#2E2421'] },
   poudre: { nom: 'Rose poudré & champagne', sous: 'Plus discret, très feutré', couleurs: ['#FBF7F6', '#D3A29B', '#2C2426'] },
