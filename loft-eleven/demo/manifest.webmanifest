@@ -1,0 +1,17 @@
+{
+  "name": "Loft Eleven · Private Office",
+  "short_name": "Loft Eleven",
+  "description": "Bureau de direction numérique du groupe Loft Eleven.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F7F0EA",
+  "theme_color": "#FBF6F1",
+  "icons": [
+    { "src": "icones/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icones/icone-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icones/icone-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
