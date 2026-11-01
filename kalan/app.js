@@ -2,7 +2,7 @@
    Modes : démo (KALAN_CONFIG.api vide, données fictives locales), banc (serveur simulé), en ligne (adresse /exec du script). */
 (function () {
   'use strict';
-  var M = window.KM, KB = window.KB, C = window.KALAN_CONFIG || {};
+  var M = window.KM, KB = window.KB, C = window.KALAN_CONFIG || {}, N = window.MARQUE;
   var MODE = !C.api ? 'demo' : C.api === 'banc' ? 'banc' : 'ligne';
   var PFX = 'kalan.' + (MODE === 'ligne' ? 'app' : MODE) + '.';
   var PARAMS = new URLSearchParams(location.search);
@@ -73,7 +73,7 @@
   function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function riche(t) { return esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>'); }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
-  function auj() { return PARAMS.get('date') || M.iso(new Date()); }
+  function auj() { var d = PARAMS.get('date'); return d && /^\d{4}-\d{2}-\d{2}$/.test(d) ? d : M.iso(new Date()); }
   function attendre(ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); }
   function pluriel(n, mot, motP) { return n + ' ' + (n > 1 ? (motP || mot + 's') : mot); }
   function opt(L, v) { return L.map(function (o) { var val = Array.isArray(o) ? o[0] : o, lib = Array.isArray(o) ? o[1] : o; return '<option value="' + esc(val) + '"' + (String(val) === String(v) ? ' selected' : '') + '>' + esc(lib) + '</option>'; }).join(''); }
@@ -98,11 +98,26 @@
   function programme() { var o = {}; matieres().forEach(function (m) { o[m.id] = chapitres(m.id); }); return o; }
   function ctx() { return { auj: auj(), profil: profil(), matieres: matieres(), notes: tous('notes'), edt: tous('edt'), devoirs: tous('devoirs'), programme: programme(), cours: tous('cours'), fiches: tous('fiches') }; }
   function initialiserDonnees(prenom) {
-    poser('profil', { id: 'profil', prenom: prenom || '', classe: '3e', etablissement: '', annee: '2026-2027', trimestre: 1, bepc: '' });
+    poser('profil', { id: 'profil', prenom: prenom || '', classe: '', etablissement: '', annee: '2026-2027', trimestre: 1, bepc: '' });
     poser('reglages', { id: 'matieres', liste: KB.MATIERES.map(function (m) { return Object.assign({}, m); }) });
-    Object.keys(KB.PROGRAMME).forEach(function (m) { poser('programme', { id: m, chapitres: KB.PROGRAMME[m].map(function (t, i) { return { id: m + i, titre: t, etat: 'avenir' }; }) }); });
+    appliquerProgramme('');
   }
-  function pastilleMat(m, petit) { return '<span class="pm' + (petit ? ' petit' : '') + '" style="--c:' + m.couleur + '">' + ico(m.icone) + '</span>'; }
+  /* Classe choisie : matières du niveau (coefficients déjà réglés et matières ayant des notes conservés) et programme modèle. */
+  function modeleProgramme(classe) { return KB.PROGRAMMES[String(classe || '').trim()] || null; }
+  function appliquerProgramme(classe) {
+    var liste = KB.matieresPour(classe);
+    if (liste) {
+      var avant = matieres(), notes = tous('notes');
+      liste.forEach(function (m) { var a = avant.filter(function (x) { return x.id === m.id; })[0]; if (a) { m.coef = a.coef; m.nom = a.nom; } });
+      avant.forEach(function (a) { if (!liste.some(function (m) { return m.id === a.id; }) && notes.some(function (n) { return n.matiere === a.id; })) liste.push(a); });
+      poser('reglages', { id: 'matieres', liste: liste });
+    }
+    var mod = modeleProgramme(classe) || {};
+    matieres().forEach(function (m) { poser('programme', { id: m.id, chapitres: (mod[m.id] || []).map(function (t, i) { return { id: m.id + i, titre: t, etat: 'avenir' }; }) }); });
+  }
+  function programmeEntame() { return matieres().some(function (m) { return chapitres(m.id).some(function (c) { return c.etat && c.etat !== 'avenir'; }); }); }
+  function couleur(c) { return /^#[0-9a-f]{3,8}$/i.test(String(c)) ? c : '#8a94a6'; }
+  function pastilleMat(m, petit) { return '<span class="pm' + (petit ? ' petit' : '') + '" style="--c:' + couleur(m.couleur) + '">' + ico(m.icone) + '</span>'; }
 
   /* ================================================================== échanges avec le service Apps Script */
   var sync = { enCours: false, encore: false, etat: 'ok', minuterie: null };
@@ -138,14 +153,24 @@
     sync.enCours = true; majPastille();
     try {
       while (S.file.length) {
-        var lot = S.file.slice(0, 40), r = await appel('ecrire', { ops: lot }), faits = {};
+        var lot = [], taille = 0;
+        for (var i = 0; i < S.file.length && lot.length < (sync.unParUn ? 1 : 40); i++) { var t = JSON.stringify(S.file[i]).length; if (lot.length && taille + t > 800000) break; lot.push(S.file[i]); taille += t; }
+        var faits = {};
+        try { var r = await appel('ecrire', { ops: lot }); S.version = r.version; sync.ecrit = Date.now(); }
+        catch (x) {
+          if (x.code === 'reseau' || x.code === 'serveur' || x.code === 'session') throw x;
+          /* refus du service : on cherche l'élément en cause, on l'écarte (gardé dans « rejets ») et la file continue */
+          if (lot.length > 1) { sync.unParUn = true; continue; }
+          var rej = lireL('rejets', []); rej.push({ op: lot[0], erreur: x.message, quand: Date.now() }); ecrireL('rejets', rej.slice(-20));
+          toast('Un enregistrement n’a pas pu être envoyé : ' + x.message);
+        }
         lot.forEach(function (o) { faits[o.opId] = 1; });
         S.file = S.file.filter(function (o) { return !faits[o.opId]; });
-        S.version = r.version; S.maj = Date.now(); sauver();
+        S.maj = Date.now(); sauver();
       }
-      sync.etat = 'ok';
+      sync.unParUn = false; sync.etat = 'ok';
     } catch (e) {
-      if (e.code === 'session') { sync.enCours = false; return deconnecter('Ta session a expiré : entre de nouveau ton code.'); }
+      if (e.code === 'session') { sync.enCours = false; return deconnecter('Ta session a expiré : entre de nouveau ton code. Tes saisies sont gardées.'); }
       sync.etat = 'horsligne'; setTimeout(planifierSync, 20000);
     }
     sync.enCours = false; majPastille();
@@ -155,6 +180,7 @@
     if (MODE === 'demo' || !S.jeton) return;
     try {
       var r = await appel('etat', {}), data = r.data || {};
+      if (r.version < S.version && Date.now() - (sync.ecrit || 0) < 60000) { majPastille(); return; }   // réponse partie avant notre dernière écriture : on garde l'état local (au-delà d'une minute, on suit le service, même réinstallé)
       S.file.forEach(function (op) { data[op.col] = data[op.col] || {}; if (op.op === 'put') data[op.col][op.id] = op.doc; else delete data[op.col][op.id]; });
       S.data = data; S.version = r.version; S.maj = Date.now(); S.role = r.role || S.role; sauver();
       if (!doc('profil', 'profil')) initialiserDonnees(r.prenom);
@@ -172,8 +198,10 @@
     p.className = 'pastille ' + e;
     p.title = { demo: 'Démonstration', attente: 'Envoi en cours…', ok: 'À jour', horsligne: 'Hors ligne : tes saisies sont gardées et partiront dès que le réseau revient' }[e] || '';
   }
-  function deconnecter(msg) {
-    S.jeton = ''; S.data = null; S.file = []; sauver(); fermerModales(); demarrer(); if (msg) toast(msg);
+  function deconnecter(msg, toutEffacer) {
+    S.jeton = '';
+    if (toutEffacer) { S.data = null; S.file = []; S.version = 0; }   // déconnexion choisie : l'appareil est vidé
+    sauver(); fermerModales(); demarrer(); if (msg) toast(msg);
   }
 
   /* ================================================================== modales */
@@ -217,7 +245,7 @@
   /* ================================================================== porte (connexion) */
   function porte() {
     var choix = lireL('profilPorte', 'eleve');
-    document.getElementById('app').innerHTML = '<div class="porte"><div class="porte-haut">' + LOGO + '<h1>Kalan</h1><p>Ton espace pour réussir ta 3e</p></div>' +
+    document.getElementById('app').innerHTML = '<div class="porte"><div class="porte-haut">' + LOGO + '<h1>' + esc(N.appli) + '</h1><p>' + esc(N.devise) + '</p></div>' +
       '<form class="carte porte-form" autocomplete="on"><div class="choix-profil">' +
       '<button type="button" data-p="eleve" class="' + (choix === 'eleve' ? 'on' : '') + '">' + ico('personne') + '<span>Élève</span></button>' +
       '<button type="button" data-p="parent" class="' + (choix === 'parent' ? 'on' : '') + '">' + ico('parent') + '<span>Parent</span></button></div>' +
@@ -239,17 +267,17 @@
       try {
         var r = await appel('connexion', a);
         if (r.etape === 'nouveau') { etapeNouveau = true; $('.nouveau', f).hidden = false; err.classList.add('info'); err.textContent = 'Première connexion : choisis ton code personnel.'; f.nouveau.focus(); }
-        else { S.jeton = r.jeton; S.role = choix; S.data = null; sauver(); Sons.jouer('ouverture'); demarrer(); }
+        else { S.jeton = r.jeton; S.role = choix; sauver(); Sons.jouer('ouverture'); demarrer(); }
       } catch (x) { err.textContent = x.message; }
       btn.disabled = false; btn.classList.remove('charge');
     };
   }
 
   /* ================================================================== charpente */
-  var ONGLETS = [['accueil', 'Accueil', 'maison'], ['agenda', 'Agenda', 'calendrier'], ['notes', 'Notes', 'graphique'], ['cours', 'Cours', 'livre'], ['koro', 'Koro', 'bulle']];
+  var ONGLETS = [['accueil', 'Accueil', 'maison'], ['agenda', 'Agenda', 'calendrier'], ['notes', 'Notes', 'graphique'], ['cours', 'Cours', 'livre'], ['koro', N.conseillerOnglet, 'bulle']];
   function charpente() {
     document.getElementById('app').innerHTML =
-      '<header class="barre"><div class="marque">' + LOGO + '<b>Kalan</b>' + (MODE === 'demo' ? '<span class="badge-demo">Démo</span>' : '') + '</div>' +
+      '<header class="barre"><div class="marque">' + LOGO + '<b>' + esc(N.appli) + '</b>' + (MODE === 'demo' ? '<span class="badge-demo">Démo</span>' : '') + '</div>' +
       '<div class="barre-actions"><span id="pastille" class="pastille"></span><button class="btn-rond" id="btn-reglages" aria-label="Réglages">' + ico('reglages') + '</button></div></header>' +
       '<main id="vue"></main>' +
       '<nav class="onglets">' + ONGLETS.map(function (o, i) { return '<button data-vue="' + o[0] + '" data-i="' + i + '">' + ico(o[2]) + '<span>' + o[1] + '</span></button>'; }).join('') + '</nav>';
@@ -284,11 +312,11 @@
   }
   function ligneCours(c, maintenant) {
     var m = mat(c.matiere), enCours = maintenant && c.debut <= maintenant && maintenant < c.fin;
-    return '<div class="cours-ligne' + (enCours ? ' maintenant' : '') + '" style="--c:' + m.couleur + '"><div class="heures"><b>' + esc(c.debut.replace(':', 'h')) + '</b><span>' + esc(c.fin.replace(':', 'h')) + '</span></div><div class="trait"></div>' + pastilleMat(m, true) + '<div class="cours-txt"><b>' + esc(m.nom) + '</b><span>' + esc([c.salle ? 'Salle ' + c.salle : '', c.prof].filter(Boolean).join(' · ')) + (enCours ? ' <em>en ce moment</em>' : '') + '</span></div></div>';
+    return '<div class="cours-ligne' + (enCours ? ' maintenant' : '') + '" style="--c:' + couleur(m.couleur) + '"><div class="heures"><b>' + esc(c.debut.replace(':', 'h')) + '</b><span>' + esc(c.fin.replace(':', 'h')) + '</span></div><div class="trait"></div>' + pastilleMat(m, true) + '<div class="cours-txt"><b>' + esc(m.nom) + '</b><span>' + esc([c.salle ? 'Salle ' + c.salle : '', c.prof].filter(Boolean).join(' · ')) + (enCours ? ' <em>en ce moment</em>' : '') + '</span></div></div>';
   }
   function ligneDevoir(d) {
     var m = mat(d.matiere), j = M.ecart(auj(), d.pour), cl = d.fait ? 'fait' : j < 0 ? 'retard' : j <= 1 ? 'proche' : '';
-    return '<div class="devoir ' + cl + '" data-id="' + d.id + '"><button class="case" aria-label="Fait">' + ico('coche') + '</button><div class="devoir-txt" data-edit="' + d.id + '"><b>' + esc(d.titre) + '</b><span><i class="point" style="background:' + m.couleur + '"></i>' + esc(m.nom) + ' · ' + (j < 0 && !d.fait ? 'en retard, pour ' : 'pour ') + esc(M.quand(d.pour, auj())) + '</span></div></div>';
+    return '<div class="devoir ' + cl + '" data-id="' + d.id + '"><button class="case" aria-label="Fait">' + ico('coche') + '</button><div class="devoir-txt" data-edit="' + d.id + '"><b>' + esc(d.titre) + '</b><span><i class="point" style="background:' + couleur(m.couleur) + '"></i>' + esc(m.nom) + ' · ' + (j < 0 && !d.fait ? 'en retard, pour ' : 'pour ') + esc(M.quand(d.pour, auj())) + '</span></div></div>';
   }
   function brancherDevoirs(r) {
     $$('.devoir .case', r).forEach(function (b) { b.onclick = function (e) { e.stopPropagation(); var d = doc('devoirs', b.parentNode.dataset.id); if (!d) return; d.fait = !d.fait; poser('devoirs', d); Sons.jouer(d.fait ? 'coche' : 'onglet', 1); if (d.fait) toast('Bravo, un devoir de moins !'); dessiner(); }; });
@@ -296,7 +324,7 @@
   }
   function premiersPas(D) {
     if (MODE === 'demo' || lireL('premiersPasFini', false)) return '';
-    var E = [['Vérifier ton prénom et ta classe', !!D.profil.prenom && !/^Prénom/.test(D.profil.prenom), 'reglages'],
+    var E = [['Indiquer ton prénom et ta classe', !!D.profil.prenom && !/^Prénom/.test(D.profil.prenom) && !!D.profil.classe, 'reglages'],
       ['Remplir ton emploi du temps', D.edt.length > 0, 'agenda'],
       ['Recopier les coefficients du bulletin', !!(doc('reglages', 'matieres') || {}).verifie, 'reglages'],
       ['Noter tes devoirs', D.devoirs.length > 0, 'agenda/devoirs'],
@@ -317,27 +345,40 @@
     var dv = D.devoirs.filter(function (d) { return !d.fait; }).sort(function (a, b) { return a.pour < b.pour ? -1 : 1; });
     var dues = M.cartesDues(D.fiches, D.auj).length;
     var tousCh = []; Object.keys(D.programme).forEach(function (k) { tousCh = tousCh.concat(D.programme[k]); });
-    var prog = M.progression(tousCh), jb = p.bepc ? M.ecart(D.auj, p.bepc) : null;
+    var prog = M.progression(tousCh), jb = p.bepc ? M.ecart(D.auj, p.bepc) : null, nomEx = M.examen(p.classe);
     var salut = h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir';
     v.innerHTML =
       '<section class="hero"><div class="hero-txt"><p class="hero-date">' + esc(M.dateLongue(D.auj)) + '</p><h1>' + salut + (p.prenom ? ', ' + esc(p.prenom) : '') + ' !</h1></div>' +
       '<div class="hero-stats"><button data-aller="notes"><b>' + (gen == null ? '–' : M.nombre(gen)) + '</b><span>Moyenne T' + tri + '</span></button>' +
       '<button data-aller="agenda/devoirs"><b>' + dv.length + '</b><span>' + (dv.length > 1 ? 'Devoirs' : 'Devoir') + ' à faire</span></button>' +
-      (jb != null && jb >= 0 ? '<button data-aller="cours/programme"><b>J-' + jb + '</b><span>BEPC</span></button>' : '<button data-aller="cours/programme"><b>' + prog.pct + '%</b><span>Programme</span></button>') + '</div></section>' +
+      (jb != null && jb >= 0 ? '<button data-examen="1" aria-label="Modifier la date de l’examen"><b>J-' + jb + '</b><span>' + (nomEx === 'examen' ? 'Examen' : nomEx) + '</span></button>' : '<button data-aller="cours/programme"><b>' + prog.pct + '%</b><span>Programme</span></button>') + '</div></section>' +
       premiersPas(D) +
-      '<section class="carte koro-carte"><div class="koro-tete">' + AVATAR + '<div><b>Le conseil de Koro</b><span>Ton grand frère des études</span></div></div><p class="koro-txt niv-' + c0.niveau + '">' + ico(c0.icone) + '<span>' + riche(c0.texte) + '</span></p>' +
-      '<div class="rang-btn">' + (c0.action ? (c0.action.aller ? '<button class="btn sec" data-aller="' + c0.action.aller + '">' + esc(c0.action.lib) + '</button>' : '<button class="btn sec" data-question="' + esc(c0.action.question) + '">' + esc(c0.action.lib) + '</button>') : '') + '<button class="btn" data-aller="koro">' + ico('bulle') + ' Parler à Koro</button></div></section>' +
+      '<section class="carte koro-carte"><div class="koro-tete">' + AVATAR + '<div><b>Le conseil d’' + esc(N.conseiller) + '</b><span>' + esc(N.conseillerRole) + '</span></div></div><p class="koro-txt niv-' + c0.niveau + '">' + ico(c0.icone) + '<span>' + riche(c0.texte) + '</span></p>' +
+      '<div class="rang-btn">' + (c0.action ? (c0.action.aller ? '<button class="btn sec" data-aller="' + c0.action.aller + '">' + esc(c0.action.lib) + '</button>' : '<button class="btn sec" data-question="' + esc(c0.action.question) + '">' + esc(c0.action.lib) + '</button>') : '') + '<button class="btn" data-aller="koro">' + ico('bulle') + ' Parler à ' + esc(N.conseiller) + '</button></div></section>' +
       '<section class="carte"><div class="carte-tete"><h3>' + ico('calendrier') + esc(titreJour) + '</h3><button class="lien" data-aller="agenda">Semaine ' + ico('droite') + '</button></div>' +
       (cours.length ? '<div class="cours-liste">' + cours.map(function (c) { return ligneCours(c, maintenant); }).join('') + '</div>' : '<p class="vide">' + (D.edt.length ? 'Pas de cours. Profite pour réviser !' : 'Ton emploi du temps est vide.') + '</p>' + (D.edt.length ? '' : '<button class="btn sec" data-aller="agenda">' + ico('plus') + ' Remplir mon emploi du temps</button>')) + '</section>' +
       '<section class="carte"><div class="carte-tete"><h3>' + ico('crayon') + 'Devoirs à faire</h3><button class="lien" data-aller="agenda/devoirs">Tout voir ' + ico('droite') + '</button></div>' +
       (dv.length ? dv.slice(0, 4).map(ligneDevoir).join('') : '<p class="vide">Aucun devoir en attente.</p>') + '<button class="btn sec" id="ajout-devoir">' + ico('plus') + ' Noter un devoir</button></section>' +
       '<section class="carte revision"><div class="rev-ico">' + ico('cartes') + '</div><div><b>' + (dues ? pluriel(dues, 'carte') + ' à revoir' : 'Révisions à jour') + '</b><span>' + (dues ? 'Environ ' + Math.max(2, Math.ceil(dues / 3)) + ' minutes, c’est parti ?' : 'Fais une fiche à partir d’un cours pour avoir des cartes.') + '</span></div><button class="btn" data-aller="cours/' + (dues ? 'reviser' : 'cours') + '">' + (dues ? 'Réviser' : 'Mes cours') + '</button></section>' +
       '<section class="carte"><div class="carte-tete"><h3>' + ico('cible') + 'Programme de l’année</h3><button class="lien" data-aller="cours/programme">Détail ' + ico('droite') + '</button></div><div class="prog-resume">' + anneau(prog.pct) + '<div class="prog-barres">' +
-      D.matieres.filter(function (m) { return (D.programme[m.id] || []).length; }).slice(0, 5).map(function (m) { var q = M.progression(D.programme[m.id]); return '<div class="mini-barre"><span>' + esc(m.nom) + '</span><i><b style="width:' + q.pct + '%;background:' + m.couleur + '"></b></i></div>'; }).join('') + '</div></div></section>' +
+      D.matieres.filter(function (m) { return (D.programme[m.id] || []).length; }).slice(0, 5).map(function (m) { var q = M.progression(D.programme[m.id]); return '<div class="mini-barre"><span>' + esc(m.nom) + '</span><i><b style="width:' + q.pct + '%;background:' + couleur(m.couleur) + '"></b></i></div>'; }).join('') + '</div></div></section>' +
       (MODE === 'demo' ? '<p class="note-demo">' + ico('info') + 'Démonstration : élève et données fictives.</p>' : '');
     brancherActions(v); brancherDevoirs(v);
     $('#ajout-devoir', v).onclick = function () { formDevoir(null); };
     $$('[data-pas]', v).forEach(function (b) { b.onclick = function () { if (b.dataset.pas === 'reglages') reglages(); else aller(b.dataset.pas); }; });
+    $$('[data-examen]', v).forEach(function (b) { b.onclick = formExamen; });
+  }
+
+  /* Date de l'examen de fin d'année : modifiable à tout moment (report, erreur) ou effaçable. */
+  function formExamen() {
+    var p = profil(), nx = M.examen(p.classe), titre = 'Date ' + (nx === 'examen' ? 'de l’examen' : 'du ' + nx);
+    var r = ouvrirModale(titre, '<form class="formulaire">' + champ(titre, '<input name="date" type="date" value="' + esc(p.bepc || '') + '">') +
+      '<p class="aide">' + ico('info') + 'En cas de report ou d’erreur, change simplement la date ici : le compte à rebours et les conseils suivent.</p>' +
+      '<div class="rang-btn">' + (p.bepc ? '<button type="button" class="btn sec danger" id="effacer">' + ico('poubelle') + ' Effacer la date</button>' : '') + '<button class="btn" type="submit">' + ico('coche') + ' Enregistrer</button></div></form>');
+    var f = $('form', r);
+    function garder(v) { poser('profil', Object.assign({}, profil(), { id: 'profil', bepc: v })); Sons.jouer('enregistre'); toast(v ? 'Date enregistrée : ' + M.dateLongue(v).toLowerCase() + '.' : 'Date effacée.'); fermerModale(); }
+    f.onsubmit = function (e) { e.preventDefault(); garder(f.date.value); };
+    if ($('#effacer', r)) $('#effacer', r).onclick = function () { garder(''); };
   }
 
   /* ================================================================== AGENDA */
@@ -362,7 +403,7 @@
       var L2 = M.coursDuJour(D.edt, jSel);
       html += '<section class="carte"><h3 class="groupe">' + esc(M.JOURS[jSel]) + '</h3>' + (L2.length ? '<div class="cours-liste">' + L2.map(function (c) { return '<div class="cliquable" data-c="' + c.id + '">' + ligneCours(c) + '</div>'; }).join('') + '</div>' : '<p class="vide">Aucun cours ce jour-là.</p>') +
         '<button class="btn sec" id="ajout-cours">' + ico('plus') + ' Ajouter un cours le ' + esc(M.JOURS[jSel].toLowerCase()) + '</button></section>';
-      html += '<p class="aide">' + ico('info') + 'Touche un cours pour le modifier. Koro s’en sert chaque soir pour te dire quoi préparer.</p>';
+      html += '<p class="aide">' + ico('info') + 'Touche un cours pour le modifier. ' + esc(N.conseiller) + ' s’en sert chaque soir pour te dire quoi préparer.</p>';
       v.innerHTML = html;
       $$('[data-j]', v).forEach(function (b) { b.onclick = function () { NAV.jourEdt = +b.dataset.j; ecrireL('nav', NAV); Sons.jouer('onglet', +b.dataset.j); dessiner(); }; });
       $$('[data-c]', v).forEach(function (b) { b.onclick = function () { formCours(doc('edt', b.dataset.c)); }; });
@@ -387,7 +428,7 @@
     var n = !d; d = d || { id: uid(), matiere: matiere || matieres()[0].id, titre: '', pour: M.ajouter(auj(), 1), fait: false };
     var r = ouvrirModale(n ? 'Noter un devoir' : 'Modifier le devoir', '<form class="formulaire">' +
       champ('Matière', '<select name="matiere">' + optMatieres(d.matiere) + '</select>') +
-      champ('À faire', '<textarea name="titre" rows="3" required placeholder="Exercices 4 et 5 page 112">' + esc(d.titre) + '</textarea>') +
+      champ('À faire', '<textarea name="titre" rows="3" maxlength="500" required placeholder="Exercices 4 et 5 page 112">' + esc(d.titre) + '</textarea>') +
       champ('Pour le', '<input name="pour" type="date" value="' + esc(d.pour) + '" required>') +
       '<div class="rang-btn">' + (n ? '' : '<button type="button" class="btn danger sec" id="suppr">' + ico('poubelle') + ' Supprimer</button>') + '<button class="btn" type="submit">' + ico('coche') + ' Enregistrer</button></div></form>');
     var f = $('form', r);
@@ -423,9 +464,9 @@
   function detailMatiere(mid, tri) {
     var m = mat(mid), L = tous('notes').filter(function (n) { return n.matiere === mid; }).sort(function (a, b) { return a.date < b.date ? 1 : -1; });
     var LT = L.filter(function (n) { return n.trimestre === tri; }), moy = M.moyenne(LT);
-    var r = ouvrirModale(m.nom, '<div class="detail-tete" style="--c:' + m.couleur + '">' + pastilleMat(m) + '<div><b style="color:' + couleurNote(moy) + '">' + (moy == null ? '–' : M.nombre(moy)) + ' / 20</b><span>Trimestre ' + tri + ' · coefficient ' + m.coef + '</span></div></div>' +
-      (L.length ? '<div class="liste-notes">' + L.map(function (n) { return '<button class="ligne-note" data-n="' + n.id + '"><div><b>' + esc(n.type || 'Note') + '</b><span>' + esc(M.dateCourte(n.date)) + ' · T' + n.trimestre + (n.coef > 1 ? ' · coef ' + n.coef : '') + (n.commentaire ? ' · ' + esc(n.commentaire) : '') + '</span></div><b class="val" style="color:' + couleurNote(M.sur20(n)) + '">' + M.nombre(n.note, n.note % 1 ? 2 : 0) + '<small>/' + (n.sur || 20) + '</small></b></button>'; }).join('') + '</div>' : '<p class="vide">Aucune note pour l’instant.</p>') +
-      '<button class="btn plein" id="ajout">' + ico('plus') + ' Ajouter une note en ' + esc(m.nom) + '</button><button class="btn sec plein" id="koro">' + ico('bulle') + ' Demander conseil à Koro</button>');
+    var r = ouvrirModale(m.nom, '<div class="detail-tete" style="--c:' + couleur(m.couleur) + '">' + pastilleMat(m) + '<div><b style="color:' + couleurNote(moy) + '">' + (moy == null ? '–' : M.nombre(moy)) + ' / 20</b><span>Trimestre ' + tri + ' · coefficient ' + m.coef + '</span></div></div>' +
+      (L.length ? '<div class="liste-notes">' + L.map(function (n) { return '<button class="ligne-note" data-n="' + n.id + '"><div><b>' + esc(n.type || 'Note') + '</b><span>' + esc(M.dateCourte(n.date)) + ' · T' + (+n.trimestre || 1) + (n.coef > 1 ? ' · coef ' + (+n.coef) : '') + (n.commentaire ? ' · ' + esc(n.commentaire) : '') + '</span></div><b class="val" style="color:' + couleurNote(M.sur20(n)) + '">' + M.nombre(n.note, n.note % 1 ? 2 : 0) + '<small>/' + (+n.sur || 20) + '</small></b></button>'; }).join('') + '</div>' : '<p class="vide">Aucune note pour l’instant.</p>') +
+      '<button class="btn plein" id="ajout">' + ico('plus') + ' Ajouter une note en ' + esc(m.nom) + '</button><button class="btn sec plein" id="koro">' + ico('bulle') + ' Demander conseil à ' + esc(N.conseiller) + '</button>');
     $$('[data-n]', r).forEach(function (b) { b.onclick = function () { formNote(doc('notes', b.dataset.n)); }; });
     $('#ajout', r).onclick = function () { formNote(null, mid); };
     $('#koro', r).onclick = function () { aller('koro'); poser_question('Ma moyenne en ' + m.nom); };
@@ -445,7 +486,7 @@
       if (isNaN(val) || val < 0 || val > sur) { $('.erreur', f).textContent = 'La note doit être comprise entre 0 et ' + sur + '.'; return; }
       Object.assign(n, { matiere: f.matiere.value, note: val, sur: sur, type: f.type.value, coef: +f.coef.value, date: f.date.value, trimestre: +f.trimestre.value, commentaire: f.commentaire.value.trim() });
       poser('notes', n); Sons.jouer(M.sur20(n) >= 14 ? 'bravo' : 'enregistre');
-      if (neuf) toast(M.sur20(n) >= 14 ? 'Excellente note, bravo !' : M.sur20(n) >= 10 ? 'Note enregistrée.' : 'Note enregistrée. Koro va t’aider à remonter.');
+      if (neuf) toast(M.sur20(n) >= 14 ? 'Excellente note, bravo !' : M.sur20(n) >= 10 ? 'Note enregistrée.' : 'Note enregistrée. ' + N.conseiller + ' va t’aider à remonter.');
       fermerModale(); if (PILE.length) fermerModale();
     };
     if (!neuf) $('#suppr', r).onclick = async function () { if (await demander('Supprimer cette note ?', 'Supprimer')) { retirer('notes', n.id); fermerModale(); if (PILE.length) fermerModale(); } };
@@ -465,13 +506,15 @@
     var html = '<section class="carte prog-glob">' + anneau(p.pct) + '<div><b>' + (p.vu + p.revise) + ' chapitres vus sur ' + p.total + '</b><span>' + p.revise + ' révisés · ' + p.encours + ' en cours</span><div class="legende">' + M.ETATS.map(function (e) { return '<i class="etat ' + e + '">' + M.ETAT_NOM[e] + '</i>'; }).join('') + '</div></div></section>';
     D.matieres.forEach(function (m, i) {
       var ch = D.programme[m.id] || [], q = M.progression(ch);
-      var tete = '<span class="rt-mat">' + pastilleMat(m, true) + '<span><b>' + esc(m.nom) + '</b><small>' + (q.vu + q.revise) + '/' + q.total + ' vus</small></span></span><i class="barre-prog"><b style="width:' + q.pct + '%;background:' + m.couleur + '"></b></i>';
+      var tete = '<span class="rt-mat">' + pastilleMat(m, true) + '<span><b>' + esc(m.nom) + '</b><small>' + (q.vu + q.revise) + '/' + q.total + ' vus</small></span></span><i class="barre-prog"><b style="width:' + q.pct + '%;background:' + couleur(m.couleur) + '"></b></i>';
       var corps = ch.map(function (c) { return '<div class="chap"><button class="etat ' + (c.etat || 'avenir') + '" data-cycle="' + m.id + '|' + c.id + '">' + M.ETAT_NOM[c.etat || 'avenir'] + '</button><button class="chap-titre" data-chap="' + m.id + '|' + c.id + '">' + esc(c.titre) + '</button></div>'; }).join('') +
         '<button class="btn sec petit" data-ajchap="' + m.id + '">' + ico('plus') + ' Ajouter un chapitre</button>';
       html += repli('prog-' + m.id, tete, corps, i === 0);
     });
-    html += '<p class="aide">' + ico('info') + 'Programme de départ à ajuster selon la progression de tes professeurs. Touche l’étiquette d’un chapitre pour changer son état.</p>';
+    html += '<p class="aide">' + ico('info') + (p.total ? 'Programme de départ à ajuster selon la progression de tes professeurs. Touche l’étiquette d’un chapitre pour changer son état.' : (D.profil.classe ? 'Le programme de ta classe est vide : ajoute les chapitres au fil des cours (« Ajouter un chapitre » dans chaque matière).' : 'Choisis ta classe dans Réglages › Profil : le programme modèle de ta classe se chargera tout seul.')) + '</p>';
+    html += '<button class="btn sec plein" id="aj-matiere">' + ico('plus') + ' Ajouter une matière</button>';
     s.innerHTML = html; activerReplis(s);
+    $('#aj-matiere', s).onclick = function () { REPLIS['r-matieres'] = true; ecrireL('replis', REPLIS); reglages(); };
     $$('[data-cycle]', s).forEach(function (b) {
       b.onclick = function () {
         var k = b.dataset.cycle.split('|'), d = doc('programme', k[0]), c = d.chapitres.filter(function (x) { return x.id === k[1]; })[0];
@@ -488,7 +531,7 @@
     c = c || { id: mid + uid(), titre: '', etat: 'avenir' };
     var lies = tous('cours').filter(function (k) { return k.chapitre === c.id; });
     var r = ouvrirModale(neuf ? 'Nouveau chapitre' : 'Chapitre', '<form class="formulaire"><p class="sous-titre">' + pastilleMat(mat(mid), true) + esc(mat(mid).nom) + '</p>' +
-      champ('Titre du chapitre', '<input name="titre" value="' + esc(c.titre) + '" required>') +
+      champ('Titre du chapitre', '<input name="titre" maxlength="200" value="' + esc(c.titre) + '" required>') +
       champ('État', '<select name="etat">' + opt(M.ETATS.map(function (e) { return [e, M.ETAT_NOM[e]]; }), c.etat) + '</select>') +
       (lies.length ? '<div class="lies"><span>Cours de ce chapitre</span>' + lies.map(function (k) { return '<button type="button" class="puce" data-k="' + k.id + '">' + ico('livre') + esc(k.titre) + '</button>'; }).join('') + '</div>' : '') +
       '<div class="rang-btn">' + (neuf ? '' : '<button type="button" class="btn danger sec" id="suppr">' + ico('poubelle') + '</button><button type="button" class="btn sec" id="ecrire">' + ico('crayon') + ' Écrire le cours</button>') + '<button class="btn" type="submit">' + ico('coche') + ' Enregistrer</button></div></form>');
@@ -501,14 +544,14 @@
     }
   }
   function puces(sel) {
-    return '<div class="puces">' + [['', 'Toutes']].concat(matieres().map(function (m) { return [m.id, m.nom, m.couleur]; })).map(function (x) { return '<button data-f="' + x[0] + '" class="' + (x[0] === sel ? 'on' : '') + '"' + (x[2] ? ' style="--c:' + x[2] + '"' : '') + '>' + esc(x[1]) + '</button>'; }).join('') + '</div>';
+    return '<div class="puces">' + [['', 'Toutes']].concat(matieres().map(function (m) { return [m.id, m.nom, m.couleur]; })).map(function (x) { return '<button data-f="' + x[0] + '" class="' + (x[0] === sel ? 'on' : '') + '"' + (x[2] ? ' style="--c:' + couleur(x[2]) + '"' : '') + '>' + esc(x[1]) + '</button>'; }).join('') + '</div>';
   }
   function vueMesCours(s) {
     var f = NAV.filtre || '', L = tous('cours').filter(function (c) { return !f || c.matiere === f; }).sort(function (a, b) { return (b.date || '') < (a.date || '') ? -1 : 1; });
     var fiches = {}; tous('fiches').forEach(function (x) { if (x.coursId) fiches[x.coursId] = x; });
     var html = puces(f) + '<button class="btn plein" id="nouveau">' + ico('plus') + ' Nouveau cours</button>';
-    html += L.length ? L.map(function (c) { var m = mat(c.matiere); return '<button class="carte carte-cours" data-k="' + c.id + '" style="--c:' + m.couleur + '">' + pastilleMat(m, true) + '<div><b>' + esc(c.titre) + '</b><span>' + esc(m.nom) + ' · ' + esc(M.dateCourte(c.date || auj())) + '</span><p>' + esc(String(c.texte || '').slice(0, 110)) + (String(c.texte || '').length > 110 ? '…' : '') + '</p></div>' + (fiches[c.id] ? '<i class="badge-fiche">' + ico('etincelle') + 'Fiche</i>' : '') + '</button>'; }).join('')
-      : '<div class="vide-grand">' + ico('livre') + '<p>Recopie ici l’essentiel de tes cours (ou dicte-le). Kalan en fera des fiches de révision.</p></div>';
+    html += L.length ? L.map(function (c) { var m = mat(c.matiere); return '<button class="carte carte-cours" data-k="' + c.id + '" style="--c:' + couleur(m.couleur) + '">' + pastilleMat(m, true) + '<div><b>' + esc(c.titre) + '</b><span>' + esc(m.nom) + ' · ' + esc(M.dateCourte(c.date || auj())) + '</span><p>' + esc(String(c.texte || '').slice(0, 110)) + (String(c.texte || '').length > 110 ? '…' : '') + '</p></div>' + (fiches[c.id] ? '<i class="badge-fiche">' + ico('etincelle') + 'Fiche</i>' : '') + '</button>'; }).join('')
+      : '<div class="vide-grand">' + ico('livre') + '<p>Recopie ici l’essentiel de tes cours (ou dicte-le). L’application en fera des fiches de révision.</p></div>';
     s.innerHTML = html;
     $$('[data-f]', s).forEach(function (b) { b.onclick = function () { NAV.filtre = b.dataset.f; ecrireL('nav', NAV); dessiner(); }; });
     $$('[data-k]', s).forEach(function (b) { b.onclick = function () { voirCours(doc('cours', b.dataset.k)); }; });
@@ -545,8 +588,8 @@
     var r = ouvrirModale(neuf ? 'Nouveau cours' : 'Modifier le cours', '<form class="formulaire">' +
       champ('Matière', '<select name="matiere">' + optMatieres(c.matiere) + '</select>') +
       champ('Chapitre du programme', '<select name="chapitre">' + optChap(c.matiere, c.chapitre) + '</select>') +
-      champ('Titre', '<input name="titre" value="' + esc(c.titre) + '" required placeholder="La propriété de Thalès">') +
-      '<label class="champ"><span>Le cours' + (DICTEE ? '<button type="button" class="btn-dicter" id="dicter">' + ico('micro') + ' Dicter</button>' : '') + '</span><textarea name="texte" rows="12" placeholder="Recopie l’essentiel…">' + esc(c.texte) + '</textarea></label>' +
+      champ('Titre', '<input name="titre" maxlength="200" value="' + esc(c.titre) + '" required placeholder="La propriété de Thalès">') +
+      '<label class="champ"><span>Le cours' + (DICTEE ? '<button type="button" class="btn-dicter" id="dicter">' + ico('micro') + ' Dicter</button>' : '') + '</span><textarea name="texte" rows="12" maxlength="60000" placeholder="Recopie l’essentiel…">' + esc(c.texte) + '</textarea></label>' +
       '<details class="astuces"><summary>' + ico('ampoule') + ' Astuces pour une bonne fiche</summary><ul><li>Une définition par ligne : <b>mot : définition</b></li><li>Une formule par ligne : <b>Loi d’Ohm : U = R × I</b></li><li>Commence par <b>!</b> une phrase à retenir absolument</li><li>Écris les dates en chiffres : <b>En 1960, …</b></li>' + (IOS ? '<li>Pour dicter, touche le micro 🎤 du clavier.</li>' : '') + '</ul></details>' +
       '<div class="rang-btn"><button class="btn" type="submit">' + ico('coche') + ' Enregistrer</button></div></form>', { plein: true });
     var f = $('form', r);
@@ -574,7 +617,7 @@
   function vueFiches(s) {
     var f = NAV.filtre || '', a = auj(), L = tous('fiches').filter(function (x) { return !f || x.matiere === f; }).sort(function (x, y) { return (y.maj || 0) - (x.maj || 0); });
     var html = puces(f) + '<button class="btn plein sec" id="nouvelle">' + ico('plus') + ' Fiche écrite à la main</button>';
-    html += L.length ? L.map(function (x) { var m = mat(x.matiere), sec = x.sections || {}, dues = (x.cartes || []).filter(function (k) { return !k.prochaine || k.prochaine <= a; }).length; return '<button class="carte carte-fiche" data-fi="' + x.id + '" style="--c:' + m.couleur + '">' + pastilleMat(m, true) + '<div><b>' + esc(x.titre) + '</b><span>' + esc(m.nom) + ' · ' + pluriel((sec.definitions || []).length, 'définition') + ' · ' + pluriel((x.cartes || []).length, 'carte') + '</span></div>' + (dues ? '<i class="badge-dues">' + dues + '</i>' : '') + '</button>'; }).join('')
+    html += L.length ? L.map(function (x) { var m = mat(x.matiere), sec = x.sections || {}, dues = (x.cartes || []).filter(function (k) { return !k.prochaine || k.prochaine <= a; }).length; return '<button class="carte carte-fiche" data-fi="' + x.id + '" style="--c:' + couleur(m.couleur) + '">' + pastilleMat(m, true) + '<div><b>' + esc(x.titre) + '</b><span>' + esc(m.nom) + ' · ' + pluriel((sec.definitions || []).length, 'définition') + ' · ' + pluriel((x.cartes || []).length, 'carte') + '</span></div>' + (dues ? '<i class="badge-dues">' + dues + '</i>' : '') + '</button>'; }).join('')
       : '<div class="vide-grand">' + ico('etincelle') + '<p>Pas encore de fiche. Ouvre un cours et touche « Faire la fiche de révision ».</p><button class="btn" data-aller="cours/cours">Mes cours</button></div>';
     s.innerHTML = html; brancherActions(s);
     $$('[data-f]', s).forEach(function (b) { b.onclick = function () { NAV.filtre = b.dataset.f; ecrireL('nav', NAV); dessiner(); }; });
@@ -585,7 +628,7 @@
     if (!fi) return;
     var m = mat(fi.matiere), s = fi.sections || {}, a = auj(), dues = (fi.cartes || []).filter(function (k) { return !k.prochaine || k.prochaine <= a; }).length;
     function bloc(cle, titre, icone, corps) { return corps ? '<section class="bloc-fiche b-' + cle + '"><h4>' + ico(icone) + titre + '</h4>' + corps + '</section>' : ''; }
-    var html = '<div class="fiche" style="--c:' + m.couleur + '"><p class="sous-titre">' + pastilleMat(m, true) + esc(m.nom) + '</p>' +
+    var html = '<div class="fiche" style="--c:' + couleur(m.couleur) + '"><p class="sous-titre">' + pastilleMat(m, true) + esc(m.nom) + '</p>' +
       bloc('retenir', 'À retenir', 'ampoule', (s.retenir || []).length ? '<ul>' + s.retenir.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : '') +
       bloc('def', 'Définitions', 'livre', (s.definitions || []).length ? '<dl>' + s.definitions.map(function (d) { return '<dt>' + esc(d.terme) + '</dt><dd>' + esc(d.def) + '</dd>'; }).join('') + '</dl>' : '') +
       bloc('form', 'Formules', 'maths', (s.formules || []).length ? s.formules.map(function (x) { return '<div class="formule">' + esc(x) + '</div>'; }).join('') : '') +
@@ -605,7 +648,7 @@
     var s = fi.sections;
     var r = ouvrirModale(neuf ? 'Nouvelle fiche' : 'Modifier la fiche', '<form class="formulaire">' +
       champ('Matière', '<select name="matiere">' + optMatieres(fi.matiere) + '</select>') +
-      champ('Titre', '<input name="titre" value="' + esc(fi.titre) + '" required>') +
+      champ('Titre', '<input name="titre" maxlength="200" value="' + esc(fi.titre) + '" required>') +
       champ('À retenir (une idée par ligne)', '<textarea name="retenir" rows="4">' + esc((s.retenir || []).join('\n')) + '</textarea>') +
       champ('Définitions (« mot : définition », une par ligne)', '<textarea name="definitions" rows="4">' + esc((s.definitions || []).map(function (d) { return d.terme + ' : ' + d.def; }).join('\n')) + '</textarea>') +
       champ('Formules (une par ligne)', '<textarea name="formules" rows="3">' + esc((s.formules || []).join('\n')) + '</textarea>') +
@@ -654,7 +697,7 @@
     if (!k) { REV.i++; return vueReviser(s); }
     var m = mat(fi.matiere);
     s.innerHTML = '<div class="rev-prog"><i><b style="width:' + Math.round(REV.i / REV.liste.length * 100) + '%"></b></i><span>' + (REV.i + 1) + ' / ' + REV.liste.length + '</span></div>' +
-      '<div class="carte-rev' + (REV.montre ? ' retournee' : '') + '" style="--c:' + m.couleur + '"><p class="cr-mat">' + pastilleMat(m, true) + esc(m.nom) + ' · ' + esc(fi.titre.replace(/^Fiche — /, '')) + '</p><p class="cr-q">' + esc(k.q) + '</p>' + (REV.montre ? '<p class="cr-r">' + esc(k.r) + '</p>' : '') + '</div>' +
+      '<div class="carte-rev' + (REV.montre ? ' retournee' : '') + '" style="--c:' + couleur(m.couleur) + '"><p class="cr-mat">' + pastilleMat(m, true) + esc(m.nom) + ' · ' + esc(fi.titre.replace(/^Fiche — /, '')) + '</p><p class="cr-q">' + esc(k.q) + '</p>' + (REV.montre ? '<p class="cr-r">' + esc(k.r) + '</p>' : '') + '</div>' +
       (REV.montre ? '<div class="rang-btn rev-btn"><button class="btn rouge" id="ko">' + ico('retourner') + ' À revoir</button><button class="btn vert" id="ok">' + ico('coche') + ' Je savais</button></div>' : '<button class="btn plein" id="voir">Voir la réponse</button><p class="aide centre">Réponds dans ta tête (ou à voix haute) avant de retourner la carte.</p>');
     if (!REV.montre) $('#voir', s).onclick = function () { REV.montre = true; Sons.jouer('onglet', 4); vueReviser(s); };
     else {
@@ -687,11 +730,11 @@
   function vueKoro(v) {
     if (!CHAT.length) {
       var D = ctx(), C0 = Koro.conseils(D).slice(0, 3);
-      CHAT.push({ de: 'koro', texte: 'Salut ' + (D.profil.prenom || '') + ' ! Je suis **Koro**, ton grand frère des études. Je connais tes notes, ton emploi du temps, tes devoirs et tes cours.\nPour commencer, voici ce que je vois :\n' + C0.map(function (c) { return '• ' + c.texte; }).join('\n'), actions: uniques(C0.filter(function (c) { return c.action && c.action.aller; }).map(function (c) { return c.action; })).slice(0, 2) });
+      CHAT.push({ de: 'koro', texte: 'Salut ' + (D.profil.prenom || '') + ' ! Je suis **' + N.conseiller + '**, ton professeur particulier. Je connais tes notes, ton emploi du temps, tes devoirs et tes cours.\nPour commencer, voici ce que je vois :\n' + C0.map(function (c) { return '• ' + c.texte; }).join('\n'), actions: uniques(C0.filter(function (c) { return c.action && c.action.aller; }).map(function (c) { return c.action; })).slice(0, 2) });
       ecrireL('chat', CHAT);
     }
     var nq = tous('questions').filter(function (q) { return !q.repondu; }).length;
-    v.innerHTML = '<div class="koro-entete">' + AVATAR + '<div><b>Koro</b><span>Ton grand frère des études</span></div><button class="btn-rond" id="questions" aria-label="Questions pour le professeur">' + ico('question') + (nq ? '<i class="compteur">' + nq + '</i>' : '') + '</button><button class="btn-rond" id="effacer" aria-label="Effacer la conversation">' + ico('poubelle') + '</button></div>' +
+    v.innerHTML = '<div class="koro-entete">' + AVATAR + '<div><b>' + esc(N.conseiller) + '</b><span>' + esc(N.conseillerRole) + '</span></div><button class="btn-rond" id="questions" aria-label="Questions pour le professeur">' + ico('question') + (nq ? '<i class="compteur">' + nq + '</i>' : '') + '</button><button class="btn-rond" id="effacer" aria-label="Effacer la conversation">' + ico('poubelle') + '</button></div>' +
       '<div class="fil" id="fil">' + CHAT.map(bulle).join('') + '</div>' +
       '<div class="saisie-koro"><div class="puces sugg">' + Koro.SUGGESTIONS.map(function (q) { return '<button data-sugg="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
       '<form id="form-koro"><input name="q" autocomplete="off" enterkeyhint="send" placeholder="' + (IOS ? 'Écris ou dicte avec 🎤 du clavier…' : 'Pose ta question…') + '" value="' + esc(brouillon) + '">' + (DICTEE ? '<button type="button" class="btn-rond" id="dicter-koro" aria-label="Dicter">' + ico('micro') + '</button>' : '') + '<button class="btn-rond envoi" aria-label="Envoyer">' + ico('envoyer') + '</button></form></div>';
@@ -700,7 +743,7 @@
     f.q.oninput = function () { brouillon = f.q.value; };
     f.onsubmit = function (e) { e.preventDefault(); var q = f.q.value.trim(); if (!q) return; brouillon = ''; f.q.value = ''; poser_question(q); };
     $$('[data-sugg]', v).forEach(function (b) { b.onclick = function () { poser_question(b.dataset.sugg); }; });
-    $('#effacer', v).onclick = async function () { if (await demander('Effacer la conversation avec Koro ?', 'Effacer')) { CHAT = []; ecrireL('chat', CHAT); dessiner(); } };
+    $('#effacer', v).onclick = async function () { if (await demander('Effacer la conversation avec ' + N.conseiller + ' ?', 'Effacer')) { CHAT = []; ecrireL('chat', CHAT); dessiner(); } };
     $('#questions', v).onclick = questionsProf;
     if (DICTEE) { var b = $('#dicter-koro', v); brancherDictee(b, { get value() { return f.q.value; }, set value(x) { f.q.value = x.replace(/\.$/, ''); brouillon = f.q.value; } }); }
     brancherBulles(v);
@@ -710,7 +753,7 @@
       b.onclick = function () {
         var k = b.dataset.act.split('|'), a = CHAT[+k[0]].actions[+k[1]];
         if (a.aller) aller(a.aller); else if (a.question) poser_question(a.question);
-        else if (a.ouvrir === 'cours') voirCours(doc('cours', a.id)); else if (a.ouvrir === 'fiche') voirFiche(doc('fiches', a.id));
+        else if (a.ouvrir === 'cours') voirCours(doc('cours', a.id)); else if (a.ouvrir === 'fiche') voirFiche(doc('fiches', a.id)); else if (a.ouvrir === 'examen') formExamen();
       };
     });
     $$('[data-noter]', v).forEach(function (b) {
@@ -738,7 +781,7 @@
   }
   function questionsProf() {
     var L = tous('questions').sort(function (a, b) { return (a.repondu - b.repondu) || (a.date < b.date ? 1 : -1); });
-    var r = ouvrirModale('Questions pour mes professeurs', (L.length ? L.map(function (q) { return '<div class="question' + (q.repondu ? ' faite' : '') + '"><button class="case" data-q="' + q.id + '">' + ico('coche') + '</button><div><p>' + esc(q.texte) + '</p><span>Notée ' + esc(M.quand(q.date, auj())) + (q.repondu ? ' · réponse obtenue' : '') + '</span></div><button class="btn-rond" data-sq="' + q.id + '" aria-label="Supprimer">' + ico('poubelle') + '</button></div>'; }).join('') : '<p class="vide">Quand Koro ne sait pas répondre, note la question ici pour la poser en classe.</p>') +
+    var r = ouvrirModale('Questions pour mes professeurs', (L.length ? L.map(function (q) { return '<div class="question' + (q.repondu ? ' faite' : '') + '"><button class="case" data-q="' + q.id + '">' + ico('coche') + '</button><div><p>' + esc(q.texte) + '</p><span>Notée ' + esc(M.quand(q.date, auj())) + (q.repondu ? ' · réponse obtenue' : '') + '</span></div><button class="btn-rond" data-sq="' + q.id + '" aria-label="Supprimer">' + ico('poubelle') + '</button></div>'; }).join('') : '<p class="vide">Quand ' + esc(N.conseiller) + ' ne sait pas répondre, note la question ici pour la poser en classe.</p>') +
       '<form class="formulaire ajout-q">' + champ('Ajouter une question', '<input name="q" placeholder="Ma question…">') + '<button class="btn" type="submit">' + ico('plus') + ' Ajouter</button></form>');
     $$('[data-q]', r).forEach(function (b) { b.onclick = function () { var q = doc('questions', b.dataset.q); q.repondu = !q.repondu; poser('questions', q); Sons.jouer('coche'); fermerModale(); questionsProf(); }; });
     $$('[data-sq]', r).forEach(function (b) { b.onclick = function () { retirer('questions', b.dataset.sq); fermerModale(); questionsProf(); }; });
@@ -755,9 +798,9 @@
     var p = profil(), ml = matieres();
     var html = repli('r-profil', '<span>' + ico('personne') + ' Profil de l’élève</span>', '<form class="formulaire" id="f-profil">' +
       champ('Prénom', '<input name="prenom" value="' + esc(p.prenom) + '">') +
-      '<div class="deux">' + champ('Classe', '<input name="classe" value="' + esc(p.classe || '3e') + '">') + champ('Année scolaire', '<input name="annee" value="' + esc(p.annee || '') + '">') + '</div>' +
+      '<div class="deux">' + champ('Classe', '<select name="classe"><option value="">— Choisir —</option>' + opt(M.CLASSES.concat(M.CLASSES.indexOf(p.classe) < 0 && p.classe ? [p.classe] : []), p.classe || '') + '</select>') + champ('Année scolaire', '<input name="annee" value="' + esc(p.annee || '') + '">') + '</div>' +
       champ('Établissement', '<input name="etablissement" value="' + esc(p.etablissement || '') + '">') +
-      '<div class="deux">' + champ('Trimestre en cours', '<select name="trimestre">' + opt([1, 2, 3], p.trimestre || 1) + '</select>') + champ('Date du BEPC', '<input name="bepc" type="date" value="' + esc(p.bepc || '') + '">') + '</div>' +
+      '<div class="deux">' + champ('Trimestre en cours', '<select name="trimestre">' + opt([1, 2, 3], p.trimestre || 1) + '</select>') + champ('Date de l’examen (modifiable)', '<input name="bepc" type="date" value="' + esc(p.bepc || '') + '">') + '</div>' +
       '<button class="btn" type="submit">' + ico('coche') + ' Enregistrer</button></form>', true);
     html += repli('r-matieres', '<span>' + ico('livre') + ' Matières et coefficients</span>', '<form class="formulaire" id="f-mat"><p class="aide">Recopie les coefficients inscrits sur le bulletin : la moyenne générale en dépend.</p>' +
       ml.map(function (m, i) { return '<div class="ligne-reg" data-i="' + i + '">' + pastilleMat(m, true) + '<input name="nom' + i + '" value="' + esc(m.nom) + '" aria-label="Nom de la matière"><select name="coef' + i + '" aria-label="Coefficient">' + opt([1, 2, 3, 4, 5, 6], m.coef) + '</select><button type="button" class="btn-rond" data-retire="' + i + '" aria-label="Retirer">' + ico('croix') + '</button></div>'; }).join('') +
@@ -774,10 +817,18 @@
     }
     html += repli('r-donnees', '<span>' + ico('telecharger') + ' Mes données</span>', '<p class="texte">' + (MODE === 'demo' ? 'Démonstration : les données sont fictives et restent sur cet appareil.' : 'Tes données sont enregistrées dans le compte Google de ta famille, et gardées sur ce téléphone pour s’ouvrir même sans réseau.' + (S.maj ? ' Dernier échange : ' + esc(new Date(S.maj).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })) + '.' : '') + (S.file.length ? ' ' + pluriel(S.file.length, 'modification') + ' en attente d’envoi.' : '')) + '</p>' +
       '<div class="rang-btn col"><button class="btn sec" id="exporter">' + ico('telecharger') + ' Télécharger une copie (fichier)</button>' + (MODE === 'demo' ? '<button class="btn sec danger" id="raz">' + ico('retourner') + ' Remettre la démo à zéro</button>' : '<button class="btn sec" id="sync">' + ico('sync') + ' Synchroniser maintenant</button>') + '</div>');
-    html += repli('r-apropos', '<span>' + ico('info') + ' À propos</span>', '<div class="apropos">' + LOGO + '<div><b>Kalan</b><span>Version 1.0 · « kalan » : apprendre, en dioula</span></div></div><p class="texte">Kalan est une solution <b>SoluGis</b> — Solutions numériques &amp; IA, Abidjan.<br>Koro calcule tout sur le téléphone : aucune donnée n’est envoyée à un service d’intelligence artificielle.</p><p class="texte doux">Assistance SoluGis : WhatsApp +225 01 72 76 77 91</p>');
+    html += repli('r-apropos', '<span>' + ico('info') + ' À propos</span>', '<div class="apropos">' + LOGO + '<div><b>' + esc(N.appli) + '</b><span>Version 1.1</span></div></div><p class="texte">' + esc(N.appli) + ' est une solution <b>SoluGis</b> — Solutions numériques &amp; IA, Abidjan.<br>' + esc(N.conseiller) + ' calcule tout sur le téléphone : aucune donnée n’est envoyée à un service d’intelligence artificielle.</p><p class="texte doux">Assistance SoluGis : WhatsApp +225 01 72 76 77 91</p>');
     var r = ouvrirModale('Réglages', html, { plein: true }); activerReplis(r);
     var fp = $('#f-profil', r);
-    fp.onsubmit = function (e) { e.preventDefault(); var d = Object.assign({}, profil(), { id: 'profil', prenom: fp.prenom.value.trim(), classe: fp.classe.value.trim(), annee: fp.annee.value.trim(), etablissement: fp.etablissement.value.trim(), trimestre: +fp.trimestre.value, bepc: fp.bepc.value }); poser('profil', d); NAV.tri = 0; ecrireL('nav', NAV); Sons.jouer('enregistre'); toast('Profil enregistré.'); };
+    fp.onsubmit = async function (e) {
+      e.preventDefault(); var avant = profil().classe || '', classe = fp.classe.value;
+      var d = Object.assign({}, profil(), { id: 'profil', prenom: fp.prenom.value.trim(), classe: classe, annee: fp.annee.value.trim(), etablissement: fp.etablissement.value.trim(), trimestre: +fp.trimestre.value, bepc: fp.bepc.value });
+      if (classe !== avant) {
+        var msg = 'Passer en ' + (classe || '—') + ' : les matières et le programme modèle de cette classe vont remplacer les actuels (les notes sont gardées). L’avancement du programme repartira de zéro.';
+        if (!programmeEntame() || await demander(msg, 'Changer de classe')) appliquerProgramme(classe);
+      }
+      poser('profil', d); NAV.tri = 0; ecrireL('nav', NAV); Sons.jouer('enregistre'); toast('Profil enregistré.');
+    };
     var fm = $('#f-mat', r), liste = ml.map(function (m) { return Object.assign({}, m); });
     fm.onsubmit = function (e) { e.preventDefault(); liste.forEach(function (m, i) { if (fm['nom' + i]) { m.nom = fm['nom' + i].value.trim() || m.nom; m.coef = +fm['coef' + i].value; } }); poser('reglages', { id: 'matieres', verifie: true, liste: liste.filter(function (m) { return !m._retire; }) }); Sons.jouer('enregistre'); toast('Matières enregistrées.'); fermerModale(); reglages(); };
     $$('[data-retire]', fm).forEach(function (b) { b.onclick = async function () { var i = +b.dataset.retire, m = liste[i], n = tous('notes').filter(function (x) { return x.matiere === m.id; }).length; if (await demander('Retirer « ' + m.nom + ' » ?' + (n ? ' Ses ' + n + ' notes sont gardées mais ne compteront plus.' : ''), 'Retirer')) { m._retire = true; b.closest('.ligne-reg').remove(); } }; });
@@ -796,14 +847,14 @@
         if (!(await demander('Créer un nouveau code de départ pour l’élève ? Son code actuel ne marchera plus.', 'Créer'))) return;
         try { var x = await appel('codeEleve', {}); ouvrirModale('Code de départ de l’élève', '<p class="texte">Donne ce code à ton enfant. À sa première connexion, il choisira son propre code. Valable 3 jours.</p><p class="code-grand">' + esc(x.code) + '</p>'); } catch (y) { toast(y.message); }
       };
-      $('#sortir', r).onclick = async function () { if (await demander('Se déconnecter de cet appareil ?' + (S.file.length ? ' Attention : ' + pluriel(S.file.length, 'modification') + ' pas encore envoyée' + (S.file.length > 1 ? 's' : '') + '.' : ''), 'Se déconnecter')) { appel('deconnexion', {}).catch(function () {}); deconnecter(); } };
+      $('#sortir', r).onclick = async function () { if (await demander('Se déconnecter de cet appareil ?' + (S.file.length ? ' Attention : ' + pluriel(S.file.length, 'modification') + ' pas encore envoyée' + (S.file.length > 1 ? 's' : '') + '.' : ''), 'Se déconnecter')) { appel('deconnexion', {}).catch(function () {}); deconnecter('', true); } };
       $('#sync', r).onclick = async function () { await synchroniser(); await rafraichir(); toast(sync.etat === 'ok' ? 'Tout est à jour.' : 'Pas de réseau pour l’instant.'); };
     } else {
       $('#raz', r).onclick = async function () { if (await demander('Remettre la démonstration à zéro ?', 'Remettre à zéro')) { S.data = window.KALAN_DEMO(auj()); CHAT = []; sauver(); ecrireL('chat', CHAT); fermerModales(); dessiner(); } };
     }
     $('#exporter', r).onclick = function () {
-      var blob = new Blob([JSON.stringify({ application: 'Kalan', exporte: new Date().toISOString(), donnees: S.data }, null, 1)], { type: 'application/json' });
-      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'kalan-' + (profil().prenom || 'eleve').toLowerCase() + '-' + auj() + '.json'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      var blob = new Blob([JSON.stringify({ application: N.appli, exporte: new Date().toISOString(), donnees: S.data }, null, 1)], { type: 'application/json' });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = N.appli.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + (profil().prenom || 'eleve').toLowerCase() + '-' + auj() + '.json'; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
     };
   }
 
@@ -827,6 +878,6 @@
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && MODE !== 'demo' && S.jeton && Date.now() - S.maj > 60000) rafraichir(); });
   window.addEventListener('online', function () { planifierSync(); });
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(function () {});
-  window.KALAN = { S: S, aller: aller, ctx: ctx, fermer: fermerModales, ouvrir: { formCours: formCours, formDevoir: formDevoir, formNote: formNote, detailMatiere: detailMatiere, formChapitre: formChapitre, voirCours: voirCours, formCoursTexte: formCoursTexte, voirFiche: voirFiche, formFiche: formFiche, reglages: reglages, questionsProf: questionsProf }, doc: doc, tous: tous };   // pour le banc d'essai et les contrôles
+  window.KALAN = { S: S, aller: aller, ctx: ctx, fermer: fermerModales, ouvrir: { formCours: formCours, formDevoir: formDevoir, formNote: formNote, detailMatiere: detailMatiere, formChapitre: formChapitre, voirCours: voirCours, formCoursTexte: formCoursTexte, voirFiche: voirFiche, formFiche: formFiche, reglages: reglages, questionsProf: questionsProf, formExamen: formExamen }, doc: doc, tous: tous };   // pour le banc d'essai et les contrôles
   demarrer();
 })();

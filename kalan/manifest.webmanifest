@@ -1,7 +1,7 @@
 {
   "name": "Kalan – Démo",
   "short_name": "Kalan",
-  "description": "L'espace de l'élève : emploi du temps, programme, notes, cours, fiches de révision et Koro, le conseiller.",
+  "description": "L'espace de l'élève : emploi du temps, programme, notes, cours, fiches de révision et El Profesor, le conseiller.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
