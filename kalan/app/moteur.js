@@ -161,6 +161,15 @@ window.KM = (function () {
   function coursDuJour(edt, jourSemaine) {
     return edt.filter(function (c) { return +c.jour === jourSemaine; }).sort(function (a, b) { return a.debut < b.debut ? -1 : 1; });
   }
+  /* Classes (Côte d'Ivoire) et examen de fin d'année correspondant. */
+  var CLASSES = ['CP1', 'CP2', 'CE1', 'CE2', 'CM1', 'CM2', '6e', '5e', '4e', '3e', '2nde', '1re', 'Tle'];
+  function examen(classe) {
+    var c = sansAccents(classe || '').replace(/\s/g, '');
+    if (/^3/.test(c)) return 'BEPC';
+    if (/^(t|terminale)/.test(c)) return 'BAC';
+    if (/^cm2/.test(c)) return 'CEPE';
+    return 'examen';
+  }
   function heure(h) { return String(h || '').replace(/^0/, '').replace(':', ' h '); }
 
   return {
@@ -168,6 +177,6 @@ window.KM = (function () {
     sansAccents: sansAccents, nombre: nombre, sur20: sur20, moyenne: moyenne, parMatiere: parMatiere, generale: generale, tendance: tendance, mention: mention, evolution: evolution,
     ETATS: ETATS, ETAT_NOM: ETAT_NOM, progression: progression,
     genererFiche: genererFiche, cartesDeFiche: cartesDeFiche, repondre: repondre, cartesDues: cartesDues,
-    coursDuJour: coursDuJour, heure: heure
+    coursDuJour: coursDuJour, heure: heure, CLASSES: CLASSES, examen: examen
   };
 })();

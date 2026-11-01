@@ -1,4 +1,4 @@
-/* KALAN — Koro, le conseiller (« grand frère » en dioula).
+/* KALAN — le conseiller (nom affiché réglé dans marque.js).
    Il analyse les données de l'élève (notes, emploi du temps, devoirs, programme, cours, fiches) et répond aux questions courantes.
    Tout est calculé sur le téléphone : aucune donnée n'est envoyée à un service d'IA. */
 window.Koro = (function () {
@@ -54,10 +54,11 @@ window.Koro = (function () {
     var avecFiche = {}; D.fiches.forEach(function (f) { if (f.coursId) avecFiche[f.coursId] = 1; });
     var sansFiche = D.cours.filter(function (c) { return !avecFiche[c.id] && (c.texte || '').length > 80; });
     if (sansFiche.length) L.push({ niveau: 'info', icone: 'etincelle', texte: 'Ton cours « ' + sansFiche[0].titre + ' » n’a pas encore de fiche. Ouvre-le et touche « Faire la fiche » : je la prépare pour toi.', action: { lib: 'Mes cours', aller: 'cours/cours' } });
-    /* BEPC */
+    /* examen de fin d'année (BEPC, BAC, CEPE…) */
+    var ex = M.examen(D.profil.classe);
     if (D.profil.bepc) {
       var j = M.ecart(auj, D.profil.bepc);
-      if (j > 0 && j <= 90) L.push({ niveau: j <= 30 ? 'urgent' : 'important', icone: 'chapeau', texte: 'BEPC dans ' + j + ' jours. Une matière par jour, à tour de rôle, et un sujet d’entraînement chaque week-end.', action: { lib: 'Comment préparer le BEPC ?', question: 'Comment préparer le BEPC ?' } });
+      if (j > 0 && j <= 90) L.push({ niveau: j <= 30 ? 'urgent' : 'important', icone: 'chapeau', texte: (ex === 'examen' ? 'Examen' : ex) + ' dans ' + j + ' jours. Une matière par jour, à tour de rôle, et un sujet d’entraînement chaque week-end.', action: { lib: 'Comment préparer un examen ?', question: 'Comment préparer un examen ?' } });
     }
     /* encouragements */
     var forte = Object.keys(pm).map(function (k) { return pm[k]; }).filter(function (x) { return x.moy != null; }).sort(function (a, b) { return b.moy - a.moy; })[0];
@@ -100,7 +101,7 @@ window.Koro = (function () {
     if (!q) return { texte: 'Pose-moi une question, ' + prenom + ' !' };
 
     if (/^(bonjour|salut|bonsoir|coucou|hello|yo|cc|slt)\b/.test(q) && q.split(' ').length <= 3) {
-      return { texte: (new Date().getHours() >= 17 ? 'Bonsoir ' : 'Bonjour ') + prenom + ' ! Je suis Koro, ton grand frère des études. Je connais tes notes, ton emploi du temps, tes devoirs et tes cours. Que veux-tu savoir ?', suggestions: true };
+      return { texte: (new Date().getHours() >= 17 ? 'Bonsoir ' : 'Bonjour ') + prenom + ' ! Je suis ' + window.MARQUE.conseiller + ', ton professeur particulier. Je connais tes notes, ton emploi du temps, tes devoirs et tes cours. Que veux-tu savoir ?', suggestions: true };
     }
     if (/merci/.test(q) && q.split(' ').length <= 4) return { texte: 'Avec plaisir ! Bon courage, ' + prenom + '.' };
 
@@ -152,11 +153,12 @@ window.Koro = (function () {
       return { texte: 'Où tu en es du programme :\n' + liste(lignes) + (enc.length ? '\nEn ce moment : ' + enc.slice(0, 4).join(', ') + '.' : ''), actions: [{ lib: 'Voir le programme', aller: 'cours/programme' }] };
     }
 
-    /* BEPC */
-    if (/bepc|examen|brevet/.test(q) && !/comment|preparer|reviser|conseil|peur|stress|angoiss|panique/.test(q)) {
-      if (!D.profil.bepc) return { texte: 'La date du BEPC n’est pas encore enregistrée. Ajoute-la dans Réglages › Profil dès qu’elle est annoncée.', actions: [{ lib: 'Comment préparer le BEPC ?', question: 'Comment préparer le BEPC ?' }] };
+    /* examen de fin d'année */
+    if (/bepc|bac|cepe|examen|brevet/.test(q) && !/comment|preparer|reviser|conseil|peur|stress|angoiss|panique/.test(q)) {
+      var nx = M.examen(D.profil.classe), le = nx === 'examen' ? 'l’examen' : 'le ' + nx;
+      if (!D.profil.bepc) return { texte: 'La date ' + (nx === 'examen' ? 'de l’examen' : 'du ' + nx) + ' n’est pas encore enregistrée. Ajoute-la dans Réglages › Profil dès qu’elle est annoncée.', actions: [{ lib: 'Indiquer la date', ouvrir: 'examen' }, { lib: 'Comment préparer un examen ?', question: 'Comment préparer un examen ?' }] };
       var j = M.ecart(auj, D.profil.bepc);
-      return { texte: j > 0 ? 'Le BEPC commence ' + M.quand(D.profil.bepc, auj) + ', dans **' + j + ' jours**.' : 'La date enregistrée du BEPC est passée.', actions: [{ lib: 'Comment le préparer ?', question: 'Comment préparer le BEPC ?' }] };
+      return { texte: j > 0 ? le.charAt(0).toUpperCase() + le.slice(1) + ' commence ' + M.quand(D.profil.bepc, auj) + ', dans **' + j + ' jours**.' : 'La date enregistrée de ' + le + ' est passée.', actions: [{ lib: 'Modifier la date', ouvrir: 'examen' }, { lib: 'Comment le préparer ?', question: 'Comment préparer un examen ?' }] };
     }
 
     var docs = D.cours.map(function (c) { return { type: 'cours', c: c, t: c.titre + ' ' + c.texte }; })
@@ -182,7 +184,7 @@ window.Koro = (function () {
     /* recherche dans ses cours et ses fiches */
     var rc2 = dansMesCours(); if (rc2) return rc2;
 
-    return { texte: 'Je ne sais pas encore répondre à cette question. Je connais tes notes, tes devoirs, ton emploi du temps, ton programme, tes cours et les formules essentielles de 3e.\nSi c’est une question sur une leçon, note-la pour la poser à ton professeur.', noter: true, suggestions: true };
+    return { texte: 'Je ne sais pas encore répondre à cette question. Je connais tes notes, tes devoirs, ton emploi du temps, ton programme, tes cours, un mémo de formules et de dates, et des méthodes de travail.\nSi c’est une question sur une leçon, note-la pour la poser à ton professeur.', noter: true, suggestions: true };
   }
 
   var SUGGESTIONS = ['Que me conseilles-tu ?', 'Ma moyenne', 'J’ai quoi demain ?', 'Mes devoirs', 'Où j’en suis du programme ?', 'Comment bien réviser ?', 'Formule de Thalès', 'Loi d’Ohm', 'Gérer le stress'];
