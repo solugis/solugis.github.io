@@ -2,7 +2,8 @@
    (la nouvelle version s'affiche à l'ouverture suivante). Les échanges avec le service Google ne passent pas par ici. */
 const CACHE = 'entre-nous-v1';
 const FICHIERS = ['./', './index.html', './manifest.webmanifest', './icones/icone-180.png', './icones/icone-192.png'];
-self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FICHIERS))); self.skipWaiting(); });
+// One missing file (an icon not yet published) must not block the whole offline copy.
+self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => Promise.all(FICHIERS.map(f => c.add(f).catch(() => {}))))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(k => Promise.all(k.filter(n => n !== CACHE).map(n => caches.delete(n)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
