@@ -30,8 +30,9 @@ html[data-theme="harmonie"] {--bg:#f4f6f0;--surface:#fffefa;--surface2:#ebf0e6;-
 
 /* iOS Safari zooms into any field under 16px. */
 @media (max-width:760px){input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px!important}}
-/* Fixed page on iPhone (no sideways drift). */
-html,body{overflow-x:hidden;max-width:100%;overscroll-behavior:none}
+/* Fixed page on iPhone without blocking the wheel or trackpad on a computer (fix found on UNIVERS C.O, 02/11/2026):
+   only html hides the sideways overflow; body clips it without becoming an empty scroll area that swallows the wheel. */
+html{overflow-x:hidden;max-width:100%;overscroll-behavior-y:none}body{overflow-x:clip;max-width:100%}
 /* Edit buttons beside each delete. */
 .item-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}.remove.edit-item{font-size:15px;margin-top:-2px}.remove.edit-item:hover{color:var(--accent)}
 /* Connected mode: sign-in, sync status, invitation. */
@@ -85,14 +86,15 @@ html,body{overflow-x:hidden;max-width:100%;overscroll-behavior:none}
         if ((state.emotionSchemaVersion || 0) < 3 || !['automatic', 'shared', 'private'].includes(rating.sharingPreference)) {
           rating.sharingPreference = validScore(rating.value) ? (rating.visibility === 'couple' ? 'shared' : 'private') : 'automatic';
         }
-        // V1 never asked about sharing: an untouched V1 answer stays private, but its next edit follows the automatic default.
-        if ((state.emotionSchemaVersion || 0) < 4 && entry.source === 'legacy-local' && entry.revision === 1 && rating.sharingPreference === 'private' && rating.visibility !== 'couple') {
+        // Schema 5 (user's choice, 05/11/2026): every feeling entered is shared with the partner, without any option.
+        if ((state.emotionSchemaVersion || 0) < 5) {
+          delete rating.legacyPrivate;
           rating.sharingPreference = 'automatic';
-          rating.legacyPrivate = true;
+          if (validScore(rating.value)) { rating.visibility = 'couple'; rating.sharedAt ||= new Date().toISOString(); }
         }
       }
     }
-    state.emotionSchemaVersion = 4;
+    state.emotionSchemaVersion = 5;
     return state;
   }
   function newEntry(state, ownerId, date) {
@@ -108,8 +110,9 @@ html,body{overflow-x:hidden;max-width:100%;overscroll-behavior:none}
     entry[kind].value = value;
     delete entry[kind].legacyPrivate;
     if (value === null) Object.assign(entry[kind], emptyRating());
-    else if (entry[kind].sharingPreference !== 'private') {
-      entry[kind].visibility = 'couple';
+    else {
+      // Always shared: there is no private answer any more.
+      entry[kind].visibility = 'couple'; entry[kind].sharingPreference = 'automatic';
       entry[kind].sharedAt ||= new Date().toISOString();
     }
     entry.updatedAt = new Date().toISOString();
@@ -264,7 +267,7 @@ case'submit-settings':if(!req(d.first)||!req(d.second))return bad();{const names
 let emotionViewer = 'partner-a', emotionDate = TODAY, emotionMonth = monthKey(TODAY), emotionGrain = 'day';
 const personName = owner => owner === 'partner-a' ? S.couple.first || 'Profil A' : S.couple.second || 'Profil B';
 const decimal = value => value === null ? '—' : new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 3 }).format(value);
-const ratingText = value => value === null ? 'Non renseigné ou non partagé' : `${EmotionCore.emoji(value)} ${decimal(value)} / 5`;
+const ratingText = value => value === null ? 'Non renseigné' : `${EmotionCore.emoji(value)} ${decimal(value)} / 5`;
 function simulationBanner() {
   if (syncConnected()) return syncBanner();
   return `<div class="simulation-banner" role="note"><span><b>Simulation locale · aucun compte connecté</b><br>Les deux profils se saisissent sur cet appareil. Changer de profil simule les droits d’affichage ; cela ne protège pas l’accès aux données du navigateur.</span>${button('Ouvrir le Mood', 'sub:mood', 'btn sm soft')}</div>`;
@@ -274,21 +277,21 @@ function pendingLabel(date, day) {
   const mine = day.people.find(p => p.ownerId === emotionViewer).relation, theirs = day.people.find(p => p.ownerId !== emotionViewer).relation;
   if (mine !== null && EmotionCore.find(S, emotionViewer, date)?.relation.visibility !== 'couple') return 'Mon ressenti n’est pas partagé';
   if (mine === null && theirs !== null) return 'En attente de mon ressenti';
-  return mine !== null ? 'En attente du partenaire' : 'Aucun ressenti relationnel partagé';
+  return mine !== null ? 'En attente du partenaire' : 'Aucun ressenti sur la relation ce jour-là';
 }
 function commonCard(date, compact = false) {
   const day = EmotionCore.day(S, date, emotionViewer);
   const label = day.status === 'complete' ? `${EmotionCore.emoji(day.common)} ${decimal(day.common)} / 5` : pendingLabel(date, day);
-  return `<section class="common-mood ${compact ? 'compact' : ''}" aria-label="Mood commun"><div class="smallcaps">MOOD COMMUN · ${fullDate(date)}</div><div class="common-value" data-common-value="${day.common ?? ''}">${label}</div><p class="quiet small">Uniquement les deux ressentis relationnels partagés. Les humeurs personnelles sont exclues.</p><div class="emotion-people">${day.people.map(p => `<div><b>${esc(personName(p.ownerId))} ${p.ownerId === emotionViewer ? '· moi' : '· partenaire'}</b><div class="emotion-score">${ratingText(p.relation)}</div><small class="quiet">Ressenti relationnel${p.ownerId === emotionViewer && EmotionCore.find(S, p.ownerId, date)?.relation.visibility !== 'couple' && p.relation !== null ? ' · privé' : ''}</small>${compact ? '' : `<div class="personal-detail">Humeur personnelle : ${ratingText(p.personal)}</div>`}</div>`).join('')}</div><div class="emotion-gap">Écart entre les deux ressentis partagés : <b>${day.gap === null ? '—' : decimal(day.gap) + ' / 4'}</b></div></section>`;
+  return `<section class="common-mood ${compact ? 'compact' : ''}" aria-label="Mood commun"><div class="smallcaps">MOOD COMMUN · ${fullDate(date)}</div><div class="common-value" data-common-value="${day.common ?? ''}">${label}</div><p class="quiet small">Moyenne des deux ressentis sur la relation. Les humeurs personnelles sont exclues.</p><div class="emotion-people">${day.people.map(p => `<div><b>${esc(personName(p.ownerId))} ${p.ownerId === emotionViewer ? '· moi' : '· partenaire'}</b><div class="emotion-score">${ratingText(p.relation)}</div><small class="quiet">Ressenti relationnel${p.ownerId === emotionViewer && EmotionCore.find(S, p.ownerId, date)?.relation.visibility !== 'couple' && p.relation !== null ? ' · privé' : ''}</small>${compact ? '' : `<div class="personal-detail">Humeur personnelle : ${ratingText(p.personal)}</div>`}</div>`).join('')}</div><div class="emotion-gap">Écart entre les deux ressentis : <b>${day.gap === null ? '—' : decimal(day.gap) + ' / 4'}</b></div></section>`;
 }
 function emotionPicker(kind, rating) {
-  const value = rating?.value ?? null, shared = rating?.visibility === 'couple', automatic = rating?.sharingPreference !== 'private';
+  const value = rating?.value ?? null;
   const title = kind === 'personal' ? 'Mon humeur personnelle' : 'Mon ressenti sur notre relation';
-  return `<fieldset class="emotion-fieldset"><legend>${title}</legend><div class="quiet small">${kind === 'personal' ? 'Toujours exclue du Mood commun, même lorsqu’elle est partagée.' : 'Les deux ressentis relationnels partagés servent au Mood commun.'}</div><div class="mood-options">${moodSet.map((m, i) => `<button type="button" class="mood ${value === i + 1 ? 'selected' : ''}" aria-pressed="${value === i + 1}" aria-label="${title} : ${i + 1} sur 5, ${m[1]}" data-action="emotion-value:${kind}:${i + 1}"><span class="emoji" aria-hidden="true">${m[0]}</span><span>${i + 1} · ${m[1]}</span></button>`).join('')}</div><div class="emotion-share"><label><input type="checkbox" data-emotion-share="${kind}" ${automatic ? 'checked' : ''}> Partager automatiquement ${kind === 'personal' ? 'cette humeur' : 'ce ressenti'} avec le partenaire</label>${value === null ? '' : button('Effacer', 'emotion-clear:' + kind, 'btn ghost sm')}</div><small class="quiet">${shared ? 'Partagée avec le partenaire dès la saisie (simulation locale).' : rating?.legacyPrivate ? 'Réponse antérieure au Mood commun, restée privée. Elle sera partagée automatiquement si vous la modifiez.' : value === null && automatic ? 'Sera partagée automatiquement dès la saisie.' : 'Partage désactivé pour cette réponse : visible seulement dans ma vue émotionnelle.'}</small></fieldset>`;
+  return `<fieldset class="emotion-fieldset"><legend>${title}</legend><div class="quiet small">${kind === 'personal' ? 'Partagée avec votre partenaire, mais jamais comptée dans le Mood commun.' : 'Vos deux ressentis sur la relation forment le Mood commun.'}</div><div class="mood-options">${moodSet.map((m, i) => `<button type="button" class="mood ${value === i + 1 ? 'selected' : ''}" aria-pressed="${value === i + 1}" aria-label="${title} : ${i + 1} sur 5, ${m[1]}" data-action="emotion-value:${kind}:${i + 1}"><span class="emoji" aria-hidden="true">${m[0]}</span><span>${i + 1} · ${m[1]}</span></button>`).join('')}</div><div class="emotion-share"><small class="quiet">${value === null ? 'Sera partagée avec votre partenaire dès la saisie.' : 'Partagée avec votre partenaire' + (syncConnected() ? '.' : ' (simulation locale).')}</small>${value === null ? '' : button('Effacer', 'emotion-clear:' + kind, 'btn ghost sm')}</div></fieldset>`;
 }
 function emotionEditor() {
   const entry = EmotionCore.find(S, emotionViewer, emotionDate);
-  return `<div class="card-title"><h3>Nos ressentis, séparément</h3><span class="pill">${syncConnected() ? esc(personName(emotionViewer)) : 'Démo locale'}</span></div><div class="emotion-toolbar"><div><label for="emotion-date" class="smallcaps">JOUR À RENSEIGNER</label><input id="emotion-date" type="date" value="${emotionDate}" max="${TODAY}" data-change="emotion-date"></div>${syncConnected() ? '' : `<div><div class="smallcaps" style="margin-bottom:7px">VUE ÉMOTIONNELLE ET SAISIE POUR</div><div class="segmented emotion-owners">${EmotionCore.OWNERS.map(owner => `<button type="button" data-action="emotion-owner:${owner}" aria-pressed="${emotionViewer === owner}" class="${emotionViewer === owner ? 'active' : ''}">${esc(personName(owner))} · ${owner === 'partner-a' ? 'A' : 'B'}</button>`).join('')}</div></div>`}</div><p class="quiet small">${syncConnected() ? 'Vos réponses sont partagées automatiquement avec votre partenaire. Vous pouvez désactiver le partage de chaque réponse, avant ou après sa saisie.' : 'Les nouvelles évaluations sont partagées automatiquement. Vous pouvez désactiver le partage de chaque réponse, avant ou après sa saisie. Sélectionnez le profil à renseigner sur cet appareil.'}</p>${emotionPicker('personal', entry?.personal)}<div class="divider"></div>${emotionPicker('relation', entry?.relation)}${commonCard(emotionDate)}<div class="notice" style="margin-top:16px">Une moyenne peut correspondre à des perceptions différentes. Les deux valeurs et leur écart restent visibles lorsqu’elles sont partagées. Aucun diagnostic ni classement n’en est déduit.</div>`;
+  return `<div class="card-title"><h3>Nos ressentis, séparément</h3><span class="pill">${syncConnected() ? esc(personName(emotionViewer)) : 'Démo locale'}</span></div><div class="emotion-toolbar"><div><label for="emotion-date" class="smallcaps">JOUR À RENSEIGNER</label><input id="emotion-date" type="date" value="${emotionDate}" max="${TODAY}" data-change="emotion-date"></div>${syncConnected() ? '' : `<div><div class="smallcaps" style="margin-bottom:7px">VUE ÉMOTIONNELLE ET SAISIE POUR</div><div class="segmented emotion-owners">${EmotionCore.OWNERS.map(owner => `<button type="button" data-action="emotion-owner:${owner}" aria-pressed="${emotionViewer === owner}" class="${emotionViewer === owner ? 'active' : ''}">${esc(personName(owner))} · ${owner === 'partner-a' ? 'A' : 'B'}</button>`).join('')}</div></div>`}</div><p class="quiet small">${syncConnected() ? 'Vos réponses sont partagées avec votre partenaire dès leur saisie.' : 'Les réponses sont partagées avec le partenaire dès leur saisie. Sélectionnez le profil à renseigner sur cet appareil.'}</p>${emotionPicker('personal', entry?.personal)}<div class="divider"></div>${emotionPicker('relation', entry?.relation)}${commonCard(emotionDate)}<div class="notice" style="margin-top:16px">Une moyenne peut correspondre à des perceptions différentes. Les deux valeurs et leur écart restent toujours visibles. Aucun diagnostic ni classement n’en est déduit.</div>`;
 }
 function emotionAction(action) {
   if (action.startsWith('emotion-owner:')) { if (!syncConnected()) emotionViewer = action.slice(14); render(); return true; }   // connected: each partner answers only as themself
@@ -303,7 +306,6 @@ function emotionAction(action) {
 }
 function emotionChanged(event) {
   const target = event.target;
-  if (target.dataset.emotionShare) { EmotionCore.share(S, emotionViewer, emotionDate, target.dataset.emotionShare, target.checked); persist(); render(); return true; }
   if (target.dataset.change === 'emotion-date') { if (EmotionCore.validDate(target.value) && target.value <= TODAY) emotionDate = target.value; render(); return true; }
   if (target.dataset.change === 'emotion-month') { if (EmotionCore.validDate(target.value + '-01')) emotionMonth = target.value; render(); return true; }
   if (target.dataset.change === 'showMood') { S.privacy.showMood = target.checked; persist(); render(); return true; }
@@ -335,7 +337,7 @@ function emotionCalendar() {
     const monday = addDay(selected, -(new Date(selected + 'T12:00:00').getDay() + 6) % 7);
     body = `<div class="emotion-week">${Array.from({ length: 7 }, (_, i) => { const date = addDay(monday, i); return `<button class="week-day ${selected === date ? 'selected' : ''}" data-action="select-date:${date}" aria-label="${fullDate(date)}"><div class="smallcaps">${new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short' })}</div><b>${Number(date.slice(-2))}</b>${calendarSymbols(date)}</button>`; }).join('')}</div>`;
   } else body = `<div class="date-banner">${fullDate(selected)}</div>${calendarSymbols(selected)}`;
-  return `${pageHead('Tous nos instants', 'Notre <em>calendrier</em>', 'Nos journées, nos ressentis partagés et les moments qui comptent.', button(`${svg('plus')} Nouvel événement`, 'new-event', 'btn primary'))}<div class="card"><div class="calendar-head"><div class="month-title">${monthName(month + '-01')}</div><div class="cal-controls"><div class="segmented">${['month', 'week', 'day'].map((value, i) => `<button type="button" class="${calView === value ? 'active' : ''}" data-action="cal-view:${value}">${['Mois', 'Semaine', 'Jour'][i]}</button>`).join('')}</div>${iconBtn('back', 'cal-prev', 'Précédent')}${iconBtn('arrow', 'cal-next', 'Suivant')}${button('Aujourd’hui', 'cal-today', 'btn sm')}</div></div><div class="calendar-privacy"><label><input type="checkbox" data-change="showMood" ${S.privacy.showMood ? 'checked' : ''}> Afficher le Mood</label><label><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy ? 'checked' : ''}> Afficher les événements intimes 🔞</label></div>${body}<div class="cal-legend"><span>😔 😕 😐 😊 🥰 Mood commun</span>${S.privacy.showIntimacy ? '<span>🔞 Moment intime</span>' : ''}<span>◌ Un ressenti manque ou n’est pas partagé</span></div><p class="tiny quiet">Emoji arrondi au niveau le plus proche ; le score décimal reste conservé. Un jour sans réponse n’a pas de score.</p><div class="selected-date"><div class="selected-date-head"><b>${fullDate(selected)}</b>${button(`${svg('plus')} Ajouter`, 'new-event', 'btn sm soft')}</div>${S.privacy.showMood ? commonCard(selected, false) : '<div class="notice">Mood masqué dans le calendrier.</div>'}${selected <= TODAY ? `<div style="margin:12px 0">${button('Saisir les ressentis de cette date', 'emotion-open:' + selected, 'btn soft sm')}</div>` : ''}<div class="smallcaps" style="margin-top:20px">ÉVÉNEMENTS VISIBLES</div>${evList(events, true)}</div></div>`;
+  return `${pageHead('Tous nos instants', 'Notre <em>calendrier</em>', 'Nos journées, nos ressentis et les moments qui comptent.', button(`${svg('plus')} Nouvel événement`, 'new-event', 'btn primary'))}<div class="card"><div class="calendar-head"><div class="month-title">${monthName(month + '-01')}</div><div class="cal-controls"><div class="segmented">${['month', 'week', 'day'].map((value, i) => `<button type="button" class="${calView === value ? 'active' : ''}" data-action="cal-view:${value}">${['Mois', 'Semaine', 'Jour'][i]}</button>`).join('')}</div>${iconBtn('back', 'cal-prev', 'Précédent')}${iconBtn('arrow', 'cal-next', 'Suivant')}${button('Aujourd’hui', 'cal-today', 'btn sm')}</div></div><div class="calendar-privacy"><label><input type="checkbox" data-change="showMood" ${S.privacy.showMood ? 'checked' : ''}> Afficher le Mood</label><label><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy ? 'checked' : ''}> Afficher les événements intimes 🔞</label></div>${body}<div class="cal-legend"><span>😔 😕 😐 😊 🥰 Mood commun</span>${S.privacy.showIntimacy ? '<span>🔞 Moment intime</span>' : ''}<span>◌ Un ressenti manque ou n’est pas partagé</span></div><p class="tiny quiet">Emoji arrondi au niveau le plus proche ; le score décimal reste conservé. Un jour sans réponse n’a pas de score.</p><div class="selected-date"><div class="selected-date-head"><b>${fullDate(selected)}</b>${button(`${svg('plus')} Ajouter`, 'new-event', 'btn sm soft')}</div>${S.privacy.showMood ? commonCard(selected, false) : '<div class="notice">Mood masqué dans le calendrier.</div>'}${selected <= TODAY ? `<div style="margin:12px 0">${button('Saisir les ressentis de cette date', 'emotion-open:' + selected, 'btn soft sm')}</div>` : ''}<div class="smallcaps" style="margin-top:20px">ÉVÉNEMENTS VISIBLES</div>${evList(events, true)}</div></div>`;
 }
 function emotionChart(rows) {
   const width = 720, height = 220, left = 30, top = 18, bottom = 175;
