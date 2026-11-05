@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<script>window.ENTRE_NOUS_CONFIG={api:"https://script.google.com/macros/s/AKfycbwipAAin8VYydEkw-5hCUchITnwk3RZmX0qaOI7M2P5GVA6_aJjN4cPY1jTRUY6_BAWag/exec"};</script>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icones/icone-180.png" />
+<meta name="theme-color" content="#965d6b" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="Entre Nous" />
+<script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<title>Entre Nous — Votre univers à deux</title>
+<style>
+:root { --bg:#f8f5f1;--surface:#fffdfa;--surface2:#f1e9e5;--surface3:#e9dcd5;--ink:#30282c;--muted:#85787b;--line:#e8dedc;--accent:#965d6b;--accent2:#e5bdba;--accentInk:#fff;--shadow:0 16px 55px rgba(70,36,46,.055);--warn:#d5a579;--good:#788e7c;--radius:22px;--serif:Georgia,'Iowan Old Style','Times New Roman',serif;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif; }
+html[data-theme="elegance"] {--bg:#f7f4ee;--surface:#fffefa;--surface2:#eee7d9;--surface3:#e3d5bb;--ink:#333027;--muted:#807668;--line:#e6decf;--accent:#866c48;--accent2:#ddc8a5;--shadow:0 15px 50px rgba(85,67,36,.06)}
+html[data-theme="nocturne"] {--bg:#1b202b;--surface:#262d3a;--surface2:#333b4c;--surface3:#454d5b;--ink:#f8f2eb;--muted:#bcb6bc;--line:#424656;--accent:#d4af9f;--accent2:#a27f83;--accentInk:#22212b;--shadow:0 18px 55px rgba(3,6,13,.14);--good:#9bb5a0}
+html[data-theme="harmonie"] {--bg:#f4f6f0;--surface:#fffefa;--surface2:#ebf0e6;--surface3:#dce5d8;--ink:#2b3831;--muted:#728175;--line:#e0e7dc;--accent:#5e826a;--accent2:#aec7ac;--shadow:0 16px 55px rgba(38,70,43,.05);--good:#669572}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px} body{overflow-x:hidden} button,input,textarea,select{font:inherit} button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed} button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent2);outline-offset:2px} a{color:inherit} .app{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;background:var(--surface);border-right:1px solid var(--line);padding:33px 21px 20px;display:flex;flex-direction:column;z-index:8}.brand{display:flex;align-items:center;gap:12px;padding:0 8px;margin-bottom:39px}.logo{width:43px;height:43px;display:grid;place-items:center;border-radius:14px;background:var(--accent);color:var(--accentInk);font-family:var(--serif);font-size:25px;font-style:italic;box-shadow:0 9px 20px rgba(90,40,52,.15)}.brand-name{font:26px var(--serif);letter-spacing:-.9px}.brand-sub{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin-top:4px}.side-label{font-size:10px;letter-spacing:1.7px;text-transform:uppercase;color:var(--muted);padding:0 14px;margin:7px 0 14px}.nav{display:flex;flex-direction:column;gap:6px}.nav-button{display:flex;align-items:center;gap:13px;width:100%;border:0;background:transparent;color:var(--muted);padding:13px 15px;border-radius:13px;text-align:left;font-weight:600;transition:.2s}.nav-button svg,.small-icon svg{width:19px;height:19px;stroke-width:1.8}.nav-button:hover{background:var(--surface2);color:var(--ink)}.nav-button.active{background:var(--surface2);color:var(--accent)}.side-spacer{flex:1}.side-note{padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--bg);line-height:1.65;font-size:12px;color:var(--muted)}.side-note strong{color:var(--ink);display:block;margin-bottom:3px}.side-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:17px;gap:8px}.mini-profile{display:flex;gap:9px;align-items:center;font-weight:600;font-size:12px}.avatar{display:grid;place-items:center;width:31px;height:31px;background:var(--surface3);color:var(--ink);border-radius:50%;font:600 12px var(--sans)}.small-icon{border:1px solid var(--line);border-radius:11px;background:var(--surface);padding:9px;display:inline-grid;place-items:center;color:var(--muted)}.small-icon:hover{color:var(--accent);background:var(--surface2)}.main{min-width:0;padding:0 50px 65px;max-width:1490px;width:100%;margin:auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:103px;border-bottom:1px solid var(--line);margin-bottom:31px}.eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:700}.top-actions{display:flex;gap:12px;align-items:center}.topdate{font-size:12px;color:var(--muted)}.avatars{display:flex;align-items:center;margin-left:8px}.avatars .avatar{border:2px solid var(--bg);width:36px;height:36px}.avatars .avatar+.avatar{margin-left:-9px;background:var(--accent2)}.page{animation:appear .3s ease;min-width:0}@keyframes appear{from{opacity:.2;transform:translateY(5px)}to{opacity:1;transform:none}}.welcome{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:25px}.display{font:normal clamp(33px,3.7vw,52px)/1.11 var(--serif);letter-spacing:-1.7px;margin:8px 0 12px}.display em{color:var(--accent);font-style:italic}.lede{color:var(--muted);font-size:14px;line-height:1.65;margin:0}.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:11px 16px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:650;white-space:nowrap;min-height:41px;transition:transform .15s,background .15s}.btn:hover{transform:translateY(-1px)}.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accentInk)}.btn.soft{background:var(--surface2);border-color:var(--surface2);color:var(--ink)}.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}.btn.danger{color:#b95656}.btn.sm{padding:8px 11px;min-height:32px;font-size:12px}.btn svg{width:17px;height:17px}.grid-2{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,1fr);gap:20px}.grid-even{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}.stack{display:flex;flex-direction:column;gap:20px}.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:23px;box-shadow:var(--shadow);min-width:0}.card.compact{padding:20px}.card-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.card-title h3{margin:0;font:normal 23px var(--serif);letter-spacing:-.5px}.smallcaps{color:var(--muted);font-weight:750;letter-spacing:1.4px;text-transform:uppercase;font-size:10px}.quiet{color:var(--muted)}.tiny{font-size:11px}.small{font-size:12px}.hero{position:relative;overflow:hidden;min-height:238px;border-radius:24px;padding:31px;background:linear-gradient(116deg,var(--surface2),var(--surface3));display:flex;align-items:center;justify-content:space-between;isolation:isolate}.hero:after{content:'♡';font:200px var(--serif);position:absolute;right:5%;bottom:-104px;color:var(--accent);opacity:.12;z-index:-1;transform:rotate(-14deg)}.hero .hero-main{max-width:440px}.hero .h-title{font:normal 38px/1.14 var(--serif);letter-spacing:-1px;margin:14px 0}.hero p{color:var(--muted);line-height:1.65;max-width:350px}.hero-ornament{width:160px;height:160px;border:1px solid var(--accent2);border-radius:50%;display:grid;place-items:center;font:96px var(--serif);color:var(--accent);opacity:.55;transform:rotate(-12deg)}.mood-options{display:flex;gap:8px;justify-content:space-between;margin:13px 0 19px}.mood{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 4px 9px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--muted);font-size:10px;transition:.2s}.mood:hover,.mood.selected{border-color:var(--accent);background:var(--surface2);color:var(--ink);transform:translateY(-1px)}.mood .emoji{font-size:25px}.divider{height:1px;background:var(--line);margin:18px 0}.section-hint{display:flex;align-items:center;justify-content:space-between;gap:10px}.section-hint span{font-weight:700;font-size:12px}.progress{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}.progress>div{height:100%;border-radius:99px;background:var(--accent);transition:width .3s}.event-line{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}.event-line:last-child{border-bottom:0}.date-chip{width:45px;height:46px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0}.date-chip b{font-size:17px}.date-chip span{font-size:9px;text-transform:uppercase;color:var(--muted)}.event-line .event-desc{flex:1;min-width:0}.event-desc b{font-size:13px}.event-desc small{display:block;margin-top:4px;color:var(--muted);font-size:11px}.event-symbol{font-size:23px}.stat-tile{padding:19px;border-radius:16px;background:var(--bg);border:1px solid var(--line)}.stat-number{font:normal 30px var(--serif);margin:9px 0 6px}.stat-label{font-size:11px;color:var(--muted);line-height:1.5}.two-mini{display:grid;grid-template-columns:1fr 1fr;gap:11px}.pill{border-radius:99px;padding:5px 9px;font-size:10px;font-weight:700;background:var(--surface2);color:var(--accent);display:inline-flex;align-items:center;gap:5px}.pill.pending{background:#f6ebda;color:#9a7543}.pill.accepted{background:#e5f0e8;color:#4d805d}.pill.private{background:var(--surface2);color:var(--muted)}.calendar-head{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:20px}.month-title{font:normal 28px var(--serif)}.cal-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.segmented{display:inline-flex;background:var(--bg);padding:4px;border:1px solid var(--line);border-radius:12px;gap:3px}.segmented button{border:0;background:none;color:var(--muted);border-radius:9px;padding:8px 13px;font-size:12px}.segmented button.active{background:var(--surface);box-shadow:0 2px 9px rgba(0,0,0,.06);color:var(--ink);font-weight:700}.cal-weekdays,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.cal-weekdays div{text-align:center;padding:11px;color:var(--muted);font-size:11px;font-weight:700}.cal-grid{border-top:1px solid var(--line);border-left:1px solid var(--line);border-radius:10px;overflow:hidden}.day{position:relative;min-height:113px;padding:11px 8px 6px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);color:var(--ink);text-align:left;display:flex;flex-direction:column;gap:7px}.day:hover{background:var(--bg)}.day.outside{background:var(--bg);opacity:.45}.day.selected{background:var(--surface2)}.day.today .day-number{background:var(--accent);color:var(--accentInk)}.day-number{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:10px;font-size:12px;font-weight:650}.day-emojis{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:20px;line-height:1.25}.day-emojis span{border-radius:7px}.cal-chip{font-size:9px;line-height:1.25;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cal-legend{display:flex;gap:15px;flex-wrap:wrap;padding-top:15px;font-size:11px;color:var(--muted)}.selected-date{background:var(--bg);border-radius:17px;padding:16px;margin-top:17px;border:1px solid var(--line)}.selected-date-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:7px}.week-day{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:15px;min-height:135px;cursor:pointer}.week-day.selected{border-color:var(--accent)}.week-day b{display:block;margin:6px 0 9px}.date-banner{font:normal 26px var(--serif);margin-bottom:16px}.list-row{padding:14px 0;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)}.list-row:last-child{border:0}.list-row>div:nth-child(2){flex:1;min-width:0}.list-row b{font-size:13px}.list-row small{display:block;color:var(--muted);margin-top:5px;font-size:11px}.remove{border:0;background:transparent;color:var(--muted);font-size:20px;line-height:1;padding:3px 6px}.remove:hover{color:#c15b5b}.project{border:1px solid var(--line);border-radius:17px;padding:19px;background:var(--surface);display:flex;flex-direction:column;gap:13px}.project-head{display:flex;align-items:start;justify-content:space-between;gap:7px}.project h3{font:normal 21px var(--serif);margin:0 0 7px}.project .proj-icon{font-size:23px;line-height:1}.task{display:flex;gap:8px;align-items:start;padding:8px 0;font-size:12px;color:var(--ink)}.task input{accent-color:var(--accent);margin:2px 0 0}.task.done span{text-decoration:line-through;color:var(--muted)}.task .task-text{flex:1}.task .remove{font-size:15px;margin-top:-2px}.task-editor{display:flex;gap:7px}.task-editor input{min-width:0;flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--bg);color:var(--ink);font-size:12px}.task-editor button{border:0;background:var(--surface2);border-radius:10px;color:var(--accent);padding:7px 11px}.money-big{font:normal 42px var(--serif);letter-spacing:-1.3px;margin:9px 0 19px}.bar-rows{display:flex;flex-direction:column;gap:15px}.bar-row{display:grid;grid-template-columns:95px 1fr 78px;gap:10px;align-items:center;font-size:11px}.bar-row span:last-child{text-align:right;font-weight:700}.budget-hero{background:linear-gradient(125deg,var(--surface2),var(--surface3));padding:29px;border:0}.finance-amount{font:normal 43px var(--serif);margin:12px 0}.finance-top{display:flex;justify-content:space-between;align-items:start;gap:10px}.finance-hero-row{display:flex;gap:20px;align-items:end;justify-content:space-between}.finance-hero-note{font-size:11px;color:var(--muted);line-height:1.6}.finance-entry{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:13px 0}.finance-entry:last-child{border:0}.finance-entry .finance-symbol{display:grid;place-items:center;font-size:19px;width:41px;height:41px;border-radius:12px;background:var(--bg)}.finance-entry .entry-description{flex:1}.finance-entry b{font-size:12px}.finance-entry small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.finance-entry .entry-amount{font-weight:750;font-size:12px}.goal{border:1px solid var(--line);border-radius:16px;padding:17px;margin-bottom:11px}.goal-top{display:flex;gap:8px;justify-content:space-between;align-items:start}.goal-name{font-weight:750}.goal .progress{margin:12px 0 8px}.chart{height:175px;position:relative;display:flex;align-items:end;gap:10px;padding:25px 5px 18px;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to top,transparent,transparent 40px,var(--line) 41px);margin:20px 0 18px}.chart-column{flex:1;display:flex;align-items:end;justify-content:center;height:100%;position:relative}.chart-bar{background:var(--accent2);width:70%;max-width:38px;border-radius:9px 9px 3px 3px;min-height:3px;position:relative}.chart-bar:after{content:attr(data-val);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);padding-bottom:5px}.chart-column small{position:absolute;top:100%;margin-top:7px;color:var(--muted);font-size:10px}.subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}.subtabs button{border:1px solid var(--line);border-radius:12px;padding:10px 15px;background:var(--surface);color:var(--muted);font-weight:650;font-size:12px}.subtabs button.active{background:var(--accent);border-color:var(--accent);color:var(--accentInk)}.rule{border:1px solid var(--line);border-radius:16px;padding:17px;margin:12px 0;background:var(--surface)}.rule h4{font-size:13px;margin:0 0 11px}.rule p{font-size:12px;color:var(--muted);line-height:1.65;margin:0 0 13px}.rule-meta{display:flex;justify-content:space-between;align-items:center;gap:10px}.idea-list{display:flex;gap:8px;flex-wrap:wrap}.suggestion{border:1px dashed var(--line);border-radius:12px;padding:12px;font-size:12px;color:var(--muted);background:var(--bg);text-align:left;line-height:1.5}.suggestion:hover{border-color:var(--accent);color:var(--ink)}.memory{border:1px solid var(--line);border-radius:17px;overflow:hidden;background:var(--surface)}.memory-art{height:125px;background:linear-gradient(135deg,var(--surface2),var(--surface3));display:grid;place-items:center;font:55px var(--serif);color:var(--accent)}.memory-body{padding:16px}.memory h4{font:normal 21px var(--serif);margin:0 0 7px}.memory p{font-size:12px;line-height:1.6;color:var(--muted)}.memory small{font-size:10px;color:var(--muted)}.modal-backdrop{position:fixed;inset:0;background:rgba(19,16,19,.46);backdrop-filter:blur(5px);z-index:30;display:grid;place-items:center;padding:20px;animation:appear .15s}.modal{background:var(--surface);border:1px solid var(--line);width:min(520px,100%);max-height:min(86vh,800px);overflow:auto;border-radius:25px;padding:25px;box-shadow:0 35px 90px rgba(0,0,0,.18)}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}.modal h2{font:normal 28px var(--serif);margin:0}.field{display:flex;flex-direction:column;gap:8px;margin:13px 0}.field label{font-size:11px;font-weight:750;color:var(--muted)}.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 13px;width:100%;min-width:0;outline:none}.field textarea{resize:vertical;min-height:92px;line-height:1.5}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:23px}.theme-choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.theme-choice{border:1px solid var(--line);padding:8px;border-radius:13px;background:var(--surface);text-align:center;color:var(--ink);font-size:11px}.theme-choice.active{border:2px solid var(--accent)}.theme-swatch{height:44px;border-radius:9px;margin-bottom:7px}.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:13px 0;border-bottom:1px solid var(--line)}.toggle-row:last-child{border:0}.toggle-row b{font-size:13px}.toggle-row small{font-size:11px;color:var(--muted);display:block;line-height:1.45;margin-top:4px}.switch{position:relative;display:inline-block;width:45px;height:25px;flex-shrink:0}.switch input{opacity:0;width:0;height:0}.switch span{position:absolute;inset:0;background:var(--surface3);border-radius:99px;transition:.2s}.switch span:after{content:'';position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:white;box-shadow:0 2px 6px #0002;transition:.2s}.switch input:checked+span{background:var(--accent)}.switch input:checked+span:after{transform:translateX(20px)}.notice{font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px;line-height:1.65}.notice.warning{border-left:3px solid var(--warn)}.empty{padding:28px;text-align:center;color:var(--muted);font-size:12px;line-height:1.65;border:1px dashed var(--line);border-radius:15px}.toast{position:fixed;bottom:24px;right:23px;z-index:80;background:var(--ink);color:var(--bg);padding:13px 18px;border-radius:12px;font-size:12px;box-shadow:var(--shadow);animation:appear .2s}.mobile-nav{display:none}.hide-mobile{display:block} .text-btn{border:0;background:none;color:var(--accent);font-size:11px;font-weight:700;padding:6px 0}.inline-select{border:1px solid var(--line);color:var(--ink);background:var(--surface);padding:8px 9px;border-radius:10px;font-size:11px;max-width:120px}.snapshot-list{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.snapshot{background:var(--surface2);border-radius:12px;padding:12px 14px;flex:1}.snapshot b{display:block;font:normal 22px var(--serif)}.snapshot span{font-size:10px;color:var(--muted)}
+@media(max-width:1150px){.main{padding:0 27px 55px}.app{grid-template-columns:218px minmax(0,1fr)}.grid-2{grid-template-columns:1fr 1fr}.hero-ornament{width:100px;height:100px;font-size:60px}}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.main{padding:0 23px 102px}.mobile-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:20;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);padding:7px 5px max(10px,env(safe-area-inset-bottom));box-shadow:0 -5px 30px #0000000a}.mobile-nav button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px;border:0;background:transparent;color:var(--muted);font-size:10px}.mobile-nav button.active{color:var(--accent);font-weight:750}.mobile-nav svg{width:21px;height:21px}.toast{bottom:90px;left:15px;right:15px;text-align:center}.topbar{min-height:80px;margin-bottom:25px}}
+@media(max-width:640px){.main{padding:0 15px 98px}.topbar{min-height:71px;margin-bottom:21px}.topdate{display:none}.topbar .eyebrow{font-size:9px}.display{font-size:37px}.welcome{align-items:start;flex-direction:column;gap:14px}.welcome .btn{width:100%}.grid-2,.grid-even,.grid-3{grid-template-columns:1fr}.card{padding:17px;border-radius:18px}.hero{min-height:235px;padding:23px}.hero-ornament{display:none}.hero .h-title{font-size:34px}.cal-grid{border-radius:7px}.day{min-height:68px;padding:5px 3px;gap:3px}.day-number{width:24px;height:24px;font-size:11px}.day-emojis{font-size:17px;gap:1px}.cal-chip{display:none}.cal-weekdays div{padding:8px}.calendar-head{align-items:start}.month-title{font-size:24px}.cal-controls{width:100%;justify-content:space-between}.mood{padding:10px 2px 8px;font-size:9px}.mood .emoji{font-size:23px}.form-row{grid-template-columns:1fr}.theme-choices{grid-template-columns:repeat(2,1fr)}.modal{padding:19px}.hide-mobile{display:none}.finance-amount{font-size:35px}.bar-row{grid-template-columns:75px 1fr 65px;font-size:10px}.avatars .avatar{width:30px;height:30px}.small-icon{padding:7px}.subtabs button{padding:9px 11px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.simulation-banner{display:flex;justify-content:space-between;align-items:center;gap:16px;border:1px solid var(--line);border-left:3px solid var(--accent);padding:14px 17px;border-radius:15px;background:var(--surface);color:var(--muted);font-size:11px;line-height:1.6;margin:-9px 0 25px}.simulation-banner b{color:var(--ink);font-size:12px}.emotion-toolbar{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;margin:17px 0}.emotion-toolbar input,input[type=month]{display:block;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-top:7px;max-width:100%}.emotion-owners{max-width:100%;flex-wrap:wrap}.emotion-owners button{white-space:normal;overflow-wrap:anywhere}.emotion-fieldset{border:0;padding:0;margin:20px 0;min-width:0}.emotion-fieldset legend{font-weight:700;font-size:13px;margin-bottom:8px}.emotion-fieldset .mood{min-height:70px}.emotion-share{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:4px 0 7px;font-size:12px}.emotion-share label{display:flex;align-items:center;gap:8px;line-height:1.6}.emotion-share input,.calendar-privacy input{accent-color:var(--accent);width:17px;height:17px;flex-shrink:0}.common-mood{background:var(--bg);border:1px solid var(--line);border-radius:17px;padding:20px;margin-top:20px;min-width:0}.common-value{font:normal clamp(22px,3vw,32px)/1.3 var(--serif);margin:12px 0;overflow-wrap:anywhere}.emotion-people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:17px}.emotion-people>div{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:13px;min-width:0}.emotion-people b{font-size:12px;overflow-wrap:anywhere}.emotion-score{font-size:14px;margin:10px 0;line-height:1.5}.personal-detail{border-top:1px solid var(--line);font-size:11px;color:var(--muted);margin-top:12px;padding-top:12px;line-height:1.7}.emotion-gap{font-size:12px;line-height:1.6;margin-top:15px;color:var(--muted)}.calendar-privacy{display:flex;gap:15px;flex-wrap:wrap;margin:0 0 18px;font-size:12px}.calendar-privacy label{display:flex;align-items:center;gap:7px;min-height:28px}.day-emojis{display:flex;align-items:center;flex-wrap:wrap;gap:3px;min-width:0;overflow:visible}.day-mood,.day-intimacy{display:inline-block;flex:0 0 auto;font-size:22px;line-height:1.35}.day-other{font-size:17px}.day-wait{font-size:24px;color:var(--muted)}.day.outside{opacity:1}.day.outside .day-number{color:var(--muted)}.emotion-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.emotion-week .week-day{min-width:0;padding:12px 8px;color:var(--ink);text-align:left}.emotion-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:20px}.emotion-metrics .smallcaps{line-height:1.7;overflow-wrap:anywhere}.emotion-trend-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:24px}.emotion-trend-head h3{font:normal 23px var(--serif);margin:0}.emotion-chart{margin-top:20px;min-width:0}.emotion-chart svg{width:100%;height:auto;display:block}.emotion-chart-legend{display:flex;gap:15px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin:8px 0 20px}.emotion-chart-legend span{display:flex;align-items:center;gap:6px}.emotion-chart-legend i{width:10px;height:10px;border-radius:50%}.emotion-table-wrap{overflow:auto;max-width:100%;border:1px solid var(--line);border-radius:12px;max-height:410px}.emotion-table{width:100%;min-width:590px;border-collapse:collapse;text-align:left;font-size:11px;font-variant-numeric:tabular-nums}.emotion-table caption{text-align:left;padding:13px;color:var(--muted);line-height:1.6}.emotion-table th,.emotion-table td{padding:12px 10px;border-top:1px solid var(--line)}.emotion-table thead{position:sticky;top:0;background:var(--surface2)}.emotion-table tbody tr:hover{background:var(--bg)}.common-mood.compact{padding:14px}.common-mood.compact .common-value{font-size:23px}.common-mood.compact .emotion-people>div{padding:10px}.switch input:focus-visible+span{outline:3px solid var(--accent);outline-offset:3px}
+@media(max-width:1100px){.emotion-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.emotion-week{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:640px){.simulation-banner{align-items:stretch;flex-direction:column;padding:12px;gap:8px;margin-top:-8px}.simulation-banner .btn{align-self:flex-start}.emotion-toolbar{flex-direction:column}.emotion-people{gap:8px}.emotion-people>div{padding:10px}.emotion-score{font-size:12px}.common-mood{padding:14px}.emotion-fieldset .mood{padding:10px 2px;font-size:9px;gap:7px}.emotion-fieldset .mood .emoji{font-size:23px}.emotion-week{grid-template-columns:repeat(3,minmax(0,1fr))}.day{padding:7px 3px 5px!important;min-height:112px!important;gap:5px}.day-mood,.day-intimacy{font-size:19px}.day-other{font-size:15px}.day-emojis{gap:2px}.day-number{width:23px;height:23px}.cal-weekdays div{padding:9px 1px;font-size:9px}.emotion-metrics{gap:8px}.emotion-metrics .stat-tile{padding:12px}.emotion-metrics .stat-number{font-size:26px}.emotion-chart{overflow:auto}.emotion-chart svg{min-width:500px}.emotion-trend-head .segmented{width:100%;justify-content:space-between}.selected-date-head{flex-wrap:wrap}.card-title{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* iOS Safari zooms into any field under 16px. */
+@media (max-width:760px){input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px!important}}
+/* Fixed page on iPhone (no sideways drift). */
+html,body{overflow-x:hidden;max-width:100%;overscroll-behavior:none}
+/* Edit buttons beside each delete. */
+.item-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}.remove.edit-item{font-size:15px;margin-top:-2px}.remove.edit-item:hover{color:var(--accent)}
+/* Connected mode: sign-in, sync status, invitation. */
+.porte{min-height:100vh;min-height:100dvh;max-width:440px;margin:0 auto;padding:max(48px,env(safe-area-inset-top)) 16px 32px;display:flex;flex-direction:column;align-items:center;text-align:center}.porte .display{margin-bottom:26px}.porte-form{width:100%;text-align:left;display:grid;gap:14px}.porte-profils{width:100%;display:flex}.porte-profils button{flex:1;min-width:0;overflow-wrap:anywhere}.porte-erreur{min-height:1.4em;margin:0;color:var(--accent);font-size:12px;line-height:1.5}.porte-form .btn.primary{width:100%;justify-content:center}.porte-pied{margin-top:22px;line-height:1.6}
+.sync-banner{display:flex;align-items:center;gap:11px;border:1px solid var(--line);padding:11px 15px;border-radius:15px;background:var(--surface);color:var(--muted);font-size:11px;line-height:1.55;margin:-9px 0 22px}.sync-banner b{color:var(--ink)}.sync-text{flex:1;min-width:0;overflow-wrap:anywhere}.sync-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;background:#6f9e7c}.sync-dot.attente{background:#d0a052}.sync-dot.horsligne{background:#b9675f}
+.invite-code{font:normal 38px/1.2 var(--serif);letter-spacing:4px;text-align:center;padding:18px 10px;margin:14px 0;border-radius:15px;background:var(--bg);border:1px dashed var(--line);color:var(--ink);user-select:all}
+.banc-bandeau{position:fixed;left:8px;right:8px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:90;font:11px/1.45 system-ui,sans-serif;background:#fff7d6;color:#5b4500;border:1px solid #f0d77a;border-radius:10px;padding:6px 9px;opacity:.94}.banc-bandeau a{color:#5b4500}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.EmotionCore = api;
+})(typeof globalThis === 'object' ? globalThis : this, function () {
+  'use strict';
+  const OWNERS = ['partner-a', 'partner-b'];
+  const validScore = value => typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 5;
+  const validDate = value => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return false;
+    const parsed = new Date(value + 'T12:00:00Z');
+    return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+  };
+  const uid = () => typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  const emptyRating = () => ({ value: null, visibility: 'private', sharedAt: null, sharingPreference: 'automatic' });
+  function migrate(input) {
+    const state = JSON.parse(JSON.stringify(input));
+    state.couple.id ||= uid();
+    state.privacy ||= {};
+    state.privacy.showMood ??= true;
+    state.emotionEntries ||= [];
+    if (!state.emotionSchemaVersion) {
+      for (const old of state.moods || []) {
+        if (!validDate(old.date)) continue;
+        // Historical ratings belong only to A. Migration never infers B or consent.
+        const entry = newEntry(state, 'partner-a', old.date);
+        entry.personal.value = validScore(old.personal) ? old.personal : null;
+        entry.relation.value = validScore(old.relation) ? old.relation : null;
+        entry.privateNote = typeof old.note === 'string' ? old.note : '';
+        entry.source = 'legacy-local';
+        if (!state.emotionEntries.some(e => e.date === old.date && e.ownerId === entry.ownerId)) state.emotionEntries.push(entry);
+      }
+    }
+    // The new default applies to new answers, never retroactively to private history.
+    for (const entry of state.emotionEntries) {
+      for (const kind of ['personal', 'relation']) {
+        const rating = entry[kind] ||= emptyRating();
+        if ((state.emotionSchemaVersion || 0) < 3 || !['automatic', 'shared', 'private'].includes(rating.sharingPreference)) {
+          rating.sharingPreference = validScore(rating.value) ? (rating.visibility === 'couple' ? 'shared' : 'private') : 'automatic';
+        }
+        // V1 never asked about sharing: an untouched V1 answer stays private, but its next edit follows the automatic default.
+        if ((state.emotionSchemaVersion || 0) < 4 && entry.source === 'legacy-local' && entry.revision === 1 && rating.sharingPreference === 'private' && rating.visibility !== 'couple') {
+          rating.sharingPreference = 'automatic';
+          rating.legacyPrivate = true;
+        }
+      }
+    }
+    state.emotionSchemaVersion = 4;
+    return state;
+  }
+  function newEntry(state, ownerId, date) {
+    if (!OWNERS.includes(ownerId) || !validDate(date)) throw new Error('Profil ou date invalide');
+    const timestamp = new Date().toISOString();
+    return { id: uid(), coupleId: state.couple.id, ownerId, date, timeZone: 'Africa/Abidjan', personal: emptyRating(), relation: emptyRating(), privateNote: '', source: 'local-demo', revision: 1, createdAt: timestamp, updatedAt: timestamp, sync: { status: 'local-only', serverVersion: null } };
+  }
+  const find = (state, ownerId, date) => state.emotionEntries.find(e => e.ownerId === ownerId && e.date === date && e.coupleId === state.couple.id);
+  function update(state, ownerId, date, kind, value) {
+    if (!['personal', 'relation'].includes(kind) || (value !== null && !validScore(value))) throw new Error('Score invalide : choisir de 1 à 5');
+    let entry = find(state, ownerId, date);
+    if (!entry) { entry = newEntry(state, ownerId, date); state.emotionEntries.push(entry); }
+    entry[kind].value = value;
+    delete entry[kind].legacyPrivate;
+    if (value === null) Object.assign(entry[kind], emptyRating());
+    else if (entry[kind].sharingPreference !== 'private') {
+      entry[kind].visibility = 'couple';
+      entry[kind].sharedAt ||= new Date().toISOString();
+    }
+    entry.updatedAt = new Date().toISOString();
+    entry.revision++;
+    return entry;
+  }
+  function share(state, ownerId, date, kind, allowed) {
+    if (!['personal', 'relation'].includes(kind)) return false;
+    let entry = find(state, ownerId, date);
+    if (!entry) { entry = newEntry(state, ownerId, date); state.emotionEntries.push(entry); }
+    const hasValue = validScore(entry[kind].value);
+    delete entry[kind].legacyPrivate;
+    entry[kind].sharingPreference = allowed === true ? (hasValue ? 'shared' : 'automatic') : 'private';
+    entry[kind].visibility = allowed === true && hasValue ? 'couple' : 'private';
+    entry[kind].sharedAt = allowed === true && hasValue ? new Date().toISOString() : null;
+    entry.updatedAt = new Date().toISOString();
+    entry.revision++;
+    return true;
+  }
+  function visible(state, ownerId, date, viewerId) {
+    if (!OWNERS.includes(viewerId)) throw new Error('Vue inconnue');
+    const entry = find(state, ownerId, date);
+    const result = { ownerId, date, personal: null, relation: null };
+    if (!entry) return result;
+    for (const kind of ['personal', 'relation']) {
+      const rating = entry[kind];
+      if (rating && validScore(rating.value) && (ownerId === viewerId || rating.visibility === 'couple')) result[kind] = rating.value;
+    }
+    return result;
+  }
+  function day(state, date, viewerId) {
+    const people = OWNERS.map(owner => visible(state, owner, date, viewerId));
+    const shared = OWNERS.map(owner => find(state, owner, date)?.relation).map(r => r?.visibility === 'couple' && validScore(r.value) ? r.value : null);
+    const complete = shared.every(value => value !== null);
+    // Personal ratings never enter this computation. No hidden partner state is exposed.
+    return { date, people, common: complete ? (shared[0] + shared[1]) / 2 : null, gap: complete ? Math.abs(shared[0] - shared[1]) : null, status: complete ? 'complete' : people.some(p => p.relation !== null) ? 'waiting' : 'empty' };
+  }
+  const mean = values => {
+    const present = values.filter(value => typeof value === 'number' && Number.isFinite(value));
+    return present.length ? present.reduce((sum, value) => sum + value, 0) / present.length : null;
+  };
+  function summarize(days) {
+    return { common: mean(days.map(d => d.common)), gap: mean(days.map(d => d.gap)), count: days.filter(d => d.common !== null).length, people: OWNERS.map((owner, i) => ({ ownerId: owner, personal: mean(days.map(d => d.people[i].personal)), relation: mean(days.map(d => d.people[i].relation)), personalCount: days.filter(d => d.people[i].personal !== null).length, relationCount: days.filter(d => d.people[i].relation !== null).length })) };
+  }
+  const shift = (date, days) => { const d = new Date(date + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0, 10); };
+  function monthDates(month) {
+    if (!validDate(month + '-01')) throw new Error('Mois invalide');
+    const result = [];
+    for (let date = month + '-01'; date.slice(0, 7) === month; date = shift(date, 1)) result.push(date);
+    return result;
+  }
+  function series(state, month, grain, viewerId) {
+    if (!['day', 'week', 'month'].includes(grain)) throw new Error('Période invalide');
+    const groups = new Map();
+    const dates = grain === 'month' ? Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(month + '-01T12:00:00Z'); d.setUTCMonth(d.getUTCMonth() - 11 + i); return d.toISOString().slice(0, 7);
+    }).flatMap(monthDates) : monthDates(month);
+    for (const date of dates) {
+      const key = grain === 'day' ? date : grain === 'month' ? date.slice(0, 7) : shift(date, -(new Date(date + 'T12:00:00Z').getUTCDay() + 6) % 7);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(day(state, date, viewerId));
+    }
+    return [...groups].map(([key, days]) => ({ key, start: days[0].date, end: days.at(-1).date, ...summarize(days) }));
+  }
+  const emoji = value => typeof value === 'number' && value >= 1 && value <= 5 ? ['😔', '😕', '😐', '😊', '🥰'][Math.round(value) - 1] : null;
+  return { OWNERS, validScore, validDate, migrate, find, update, share, visible, day, mean, summarize, series, monthDates, emoji };
+});
+
+</script>
+<script>
+(()=>{
+'use strict';
+const KEY=window.ENTRE_NOUS_CONFIG&&window.ENTRE_NOUS_CONFIG.api?'entrenous-app-'+(window.ENTRE_NOUS_CONFIG.api==='banc'?'banc'+(new URLSearchParams(location.search).get('appareil')||''):'ligne'):'entrenous-v1-demo-2026';
+const TYPES={intime:{emoji:'🔞',name:'Moment intime'},rdv:{emoji:'📅',name:'Rendez-vous'},special:{emoji:'💝',name:'Moment spécial'},anniversaire:{emoji:'🎂',name:'Anniversaire'},projet:{emoji:'✅',name:'Projet / tâche'},sortie:{emoji:'🥂',name:'Sortie à deux'}};
+const ICON={house:'<path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',projects:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',wallet:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M16 15h2"/>',heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/>',gear:'<circle cx="12" cy="12" r="3"/><path d="m19.4 15 .2.2 1.4 1.2-1.4 2.4-1.7-.7a8 8 0 0 1-2.2 1.3l-.3 1.8h-2.8l-.4-1.8a8 8 0 0 1-2.4-1.3l-1.7.7-1.4-2.4 1.4-1.2a8 8 0 0 1 0-2.6l-1.4-1.2L8.1 9l1.7.7a8 8 0 0 1 2.4-1.3l.4-1.8h2.8l.3 1.8a8 8 0 0 1 2.2 1.3l1.7-.7 1.4 2.4-1.4 1.2a8 8 0 0 1-.2 2.4z" transform="translate(-2.5 -2.5)"/>',plus:'<path d="M12 5v14M5 12h14"/>',arrow:'<path d="m9 18 6-6-6-6"/>',back:'<path d="m15 18-6-6 6-6"/>',chevron:'<path d="m6 9 6 6 6-6"/>',lock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',chart:'<path d="M3 3v18h18M7 16l4-4 3 2 6-8"/>',spark:'<path d="m12 3 1.7 6.3L20 11l-6.3 1.7L12 19l-1.7-6.3L4 11l6.3-1.7z"/>',check:'<path d="m5 12 4 4L19 6"/>',trash:'<path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14"/>',edit:'<path d="M12 20h9M5 19l3.5-.7L20 6.8 17.2 4 5.7 15.5z"/>',shield:'<path d="M12 22S4 18 4 11V5l8-3 8 3v6c0 7-8 11-8 11z"/>',book:'<path d="M4 4h16v16H4a2 2 0 0 0 0-4h16M4 4v12"/>'};
+const svg=(name)=>`<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICON[name]||ICON.heart}</svg>`;
+const $=(s)=>document.querySelector(s);
+const esc=(x)=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=(n)=>Math.round(Number(n)||0).toLocaleString('fr-FR');
+const fullDate=(d)=>new Date(d+'T12:00:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+const dstr=(d)=>{const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
+const addDay=(d,n)=>{const x=new Date(d+'T12:00:00');x.setDate(x.getDate()+n);return dstr(x)};
+const TODAY=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Abidjan',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+const monthKey=(date)=>String(date).slice(0,7);
+const monthName=(date)=>new Date(date+'T12:00:00').toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+function seed(){const base=TODAY;return {theme:'romance',screen:'home',couple:{first:'Alex',second:'Camille',stage:'construction'},privacy:{showIntimacy:true},budget:500000,events:[{id:'e1',date:addDay(base,-4),type:'intime',title:'Notre moment'},{id:'e2',date:addDay(base,2),type:'rdv',title:'Dîner en amoureux'},{id:'e3',date:addDay(base,6),type:'intime',title:'Notre moment'},{id:'e4',date:addDay(base,10),type:'special',title:'Notre rendez-vous préféré'},{id:'e5',date:addDay(base,14),type:'anniversaire',title:'Une date à célébrer'}],moods:[{id:'m1',date:addDay(base,-3),personal:4,relation:5,note:''},{id:'m2',date:addDay(base,-2),personal:3,relation:4,note:''},{id:'m3',date:addDay(base,-1),personal:5,relation:4,note:''}],projects:[{id:'p1',name:'Notre escapade à Assinie',emoji:'🌴',due:addDay(base,40),tasks:[{id:'t1',name:'Choisir les dates',done:true},{id:'t2',name:'Réserver le logement',done:false},{id:'t3',name:'Organiser le transport',done:false}]},{id:'p2',name:'Aménager notre cocon',emoji:'🏡',due:addDay(base,55),tasks:[{id:'t4',name:'Définir notre budget',done:true},{id:'t5',name:'Faire la liste des achats',done:true},{id:'t6',name:'Choisir la décoration',done:false}]}],expenses:[{id:'x1',name:'Courses de la semaine',amount:92000,date:addDay(base,-3),category:'Alimentation',paidBy:'Commun',visibility:'partage'},{id:'x2',name:'Maison',amount:150000,date:addDay(base,-2),category:'Logement',paidBy:'Alex',visibility:'partage'},{id:'x3',name:'Sortie à deux',amount:44000,date:addDay(base,-1),category:'Loisirs',paidBy:'Camille',visibility:'partage'}],goals:[{id:'g1',name:'Vacances à deux',target:2000000,saved:800000}],expectations:[{id:'a1',title:'Notre temps à deux',body:'J’aimerais que nous gardions un moment privilégié chaque semaine.'}],rules:[{id:'r1',category:'Communication',body:'Nous choisissons un moment calme pour discuter lorsque nous ne sommes pas d’accord.',status:'example'},{id:'r2',category:'Finances',body:'Nous décidons ensemble des dépenses importantes concernant nos projets communs.',status:'example'}],memories:[{id:'s1',date:addDay(base,-20),title:'Notre beau dimanche',emoji:'🌅',note:'Un moment simple à garder dans notre histoire.'}],demo:true}}
+function load(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x&&x.events&&x.projects){if(!x.emotionSchemaVersion&&!localStorage.getItem(KEY+':before-emotions-v2')){try{localStorage.setItem(KEY+':before-emotions-v2',JSON.stringify(x))}catch(e){}}return x}}catch(e){}return window.ENTRE_NOUS_CONFIG&&window.ENTRE_NOUS_CONFIG.api?emptyState():seed()}
+let S=EmotionCore.migrate(load()),page='home',sub='overview',month=monthKey(TODAY),selected=TODAY,calView='month',modal=null,noticeTimer=null;
+function persist(){syncAfterPersist();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Stockage indisponible : vos changements peuvent ne pas être conservés.')}}
+function id(){return Math.random().toString(36).slice(2,10)}
+const el=(tag,cls,html)=>`<${tag}${cls?` class="${cls}"`:''}>${html}</${tag}>`;
+const button=(title,action='noop',cls='btn')=>`<button type="button" class="${cls}" data-action="${esc(action)}">${title}</button>`;
+function toast(msg){document.querySelector('.toast')?.remove();const n=document.createElement('div');n.className='toast';n.textContent=msg;document.body.append(n);clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>n.remove(),3300)}
+function iconBtn(name,action,label='Action'){return `<button type="button" class="small-icon" data-action="${esc(action)}" aria-label="${esc(label)}">${svg(name)}</button>`}
+const NAV=[['home','Accueil','house'],['calendar','Calendrier','calendar'],['projects','Projets','projects'],['finance','Finances','wallet'],['us','Nous','heart']];
+function shell(){return `<div class="app"><aside class="sidebar"><div class="brand"><div class="logo">e.</div><div><div class="brand-name">Entre Nous</div><div class="brand-sub">Un univers à deux</div></div></div><div class="side-label">Votre espace</div><nav class="nav">${NAV.map(x=>`<button class="nav-button ${page===x[0]?'active':''}" data-action="nav:${x[0]}">${svg(x[2])}${x[1]}</button>`).join('')}</nav><div class="side-spacer"></div><div class="side-note"><strong>Une histoire, à votre rythme ♡</strong>${syncConnected()?'Vos saisies sont partagées avec votre partenaire et gardées sur cet appareil.':"Ce prototype conserve vos saisies dans ce navigateur uniquement. Aucun partenaire n'y est connecté."}</div><div class="side-bottom"><div class="mini-profile"><div class="avatar">${esc(personName(emotionViewer).slice(0,1))}</div><span>${esc(personName(emotionViewer))}</span></div>${iconBtn('gear','settings','Personnaliser')}</div></aside><main class="main"><header class="topbar"><div><div class="eyebrow">ENTRE NOUS${syncConnected()?'':'<span style="opacity:.42;margin:0 5px">/</span> VERSION DÉCOUVERTE'}</div><div class="tiny quiet" style="margin-top:8px">Votre histoire, votre rythme.</div></div><div class="top-actions"><span class="topdate">${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</span>${iconBtn('gear','settings','Réglages')}<div class="avatars"><div class="avatar">${esc(S.couple.first.slice(0,1))}</div><div class="avatar">${esc(S.couple.second.slice(0,1))}</div></div></div></header>${simulationBanner()}<div class="page">${renderPage()}</div></main><nav class="mobile-nav">${NAV.map(x=>`<button data-action="nav:${x[0]}" class="${page===x[0]?'active':''}">${svg(x[2])}<span>${x[1]}</span></button>`).join('')}</nav></div>${modal?renderModal():''}`}
+function render(){document.documentElement.dataset.theme=S.theme;const a=$('#app');a.innerHTML=shell();fillEdit()}
+function pageHead(kicker,title,desc,actions=''){return `<div class="welcome"><div><div class="eyebrow">${kicker}</div><h1 class="display">${title}</h1><p class="lede">${desc}</p></div>${actions}</div>`}
+function renderPage(){switch(page){case'calendar':return emotionCalendar();case'projects':return projects();case'finance':return finance();case'us':return us();default:return home()}}
+function evList(evs,withRemove=false){evs=visibleEvents(evs);return evs.length?evs.map(e=>`<div class="event-line"><div class="date-chip"><b>${Number(e.date.slice(-2))}</b><span>${new Date(e.date+'T12:00').toLocaleDateString('fr-FR',{month:'short'})}</span></div><span class="event-symbol">${e.type==='intime'&&!S.privacy.showIntimacy?'🔒':TYPES[e.type]?.emoji||'📅'}</span><div class="event-desc"><b>${e.type==='intime'&&!S.privacy.showIntimacy?'Moment privé':esc(e.title)}</b><small>${TYPES[e.type]?.name||'Événement'} · ${fullDate(e.date)}</small></div>${withRemove?`${e.type==='intime'&&!S.privacy.showIntimacy?'':editButton('event',e,'Modifier l’événement')}<button class="remove" title="Supprimer" data-action="delete-event:${e.id}">×</button>`:''}</div>`).join(''):`<div class="empty">Aucun événement pour le moment.<br>Ajoutez une date importante pour commencer.</div>`}
+function upcoming(n=3){return visibleEvents([...S.events]).filter(e=>e.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,n)}
+function monthlyExpenses(){return S.expenses.filter(e=>monthKey(e.date)===monthKey(TODAY)).reduce((a,e)=>a+Number(e.amount),0)}
+function taskCount(){const all=S.projects.flatMap(p=>p.tasks);return [all.filter(t=>t.done).length,all.length]}
+function moodToday(){return S.moods.find(m=>m.date===TODAY)||{personal:0,relation:0,note:''}}
+const moodSet=[['😔','Bas'],['😕','Mitigé'],['😐','Neutre'],['😊','Bien'],['🥰','Super']];
+function moodPicker(label,mode,value){return `<div><div class="section-hint"><span>${label}</span><small class="quiet">${value?'Enregistré aujourd’hui':'À renseigner si vous le souhaitez'}</small></div><div class="mood-options">${moodSet.map((m,i)=>`<button class="mood ${Number(value)===i+1?'selected':''}" data-action="mood:${mode}:${i+1}" aria-label="${m[1]}"><span class="emoji">${m[0]}</span><span>${m[1]}</span></button>`).join('')}</div></div>`}
+function home(){const t=moodToday(),up=upcoming(),spent=monthlyExpenses(),[done,total]=taskCount();return `${pageHead('Votre cocon digital',`Bonjour, <em>${esc(personName(emotionViewer))}</em> ♡`,'Un endroit à vous, pour prendre soin de votre relation et de votre quotidien.',button(`${svg('plus')} Ajouter un événement`,'new-event','btn primary'))}<div class="grid-2"><div class="stack"><section class="hero"><div class="hero-main"><div class="smallcaps">NOTRE PETIT UNIVERS</div><div class="h-title">De belles choses<br>se vivent <em>à deux.</em></div><p>Les instants précieux, les projets de demain, les mots du cœur. Tout trouve sa place ici.</p>${button('Voir notre calendrier '+svg('arrow'),'nav:calendar','btn soft')}</div><div class="hero-ornament">♡</div></section><section class="card">${emotionEditor()}</section><section class="card"><div class="card-title"><h3>Nos prochains moments</h3>${button('Calendrier '+svg('arrow'),'nav:calendar','btn ghost sm')}</div>${evList(up)}${button(`${svg('plus')} Ajouter une date`,'new-event','btn soft sm')}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>En un regard</h3><span class="smallcaps">Ce mois-ci</span></div><div class="two-mini"><div class="stat-tile"><div class="smallcaps">${S.privacy.showIntimacy?'Moments 🔞':'Moments privés'}</div><div class="stat-number">${S.privacy.showIntimacy?S.events.filter(e=>e.type==='intime'&&monthKey(e.date)===monthKey(TODAY)).length:'—'}</div><div class="stat-label">Inscrits au calendrier</div></div><div class="stat-tile"><div class="smallcaps">Nos tâches</div><div class="stat-number">${done}<span class="quiet" style="font:17px var(--sans)"> / ${total}</span></div><div class="stat-label">Tâches accomplies</div></div><div class="stat-tile"><div class="smallcaps">Budget restant</div><div class="stat-number" style="font-size:24px">${fmt(S.budget-spent)}</div><div class="stat-label">FCFA ce mois-ci</div></div><div class="stat-tile"><div class="smallcaps">Notre relation</div><div class="stat-number">${EmotionCore.day(S,TODAY,emotionViewer).common === null ? '—' : EmotionCore.emoji(EmotionCore.day(S,TODAY,emotionViewer).common)}</div><div class="stat-label">Mood commun · deux réponses partagées</div></div></div></section><section class="card"><div class="card-title"><h3>Notre budget</h3>${button(svg('arrow'),'nav:finance','btn ghost sm')}</div><div class="section-hint"><span>Utilisé ce mois</span><b class="small">${fmt(spent)} / ${fmt(S.budget)} FCFA</b></div><div class="progress" style="margin:13px 0 10px"><div style="width:${Math.min(100,S.budget?spent/S.budget*100:0)}%"></div></div><p class="quiet small" style="line-height:1.6">Visualisez vos dépenses et faites grandir vos projets communs.</p></section><section class="card"><div class="card-title"><h3>Nos engagements</h3>${button(svg('arrow'),'sub:agreements','btn ghost sm')}</div><p class="quiet small" style="line-height:1.75">Exprimer nos attentes, construire des accords, évoluer sans jamais se juger.</p><div style="background:var(--bg);padding:14px;border-radius:13px;font:italic 17px/1.55 var(--serif)">« Écouter pour comprendre, pas seulement pour répondre. »</div>${button('Découvrir notre charte','sub:agreements','btn soft sm')}</section></div></div>`}
+function calendar(){const year=Number(month.slice(0,4)),mo=Number(month.slice(5,7))-1,start=new Date(year,mo,1),offset=(start.getDay()+6)%7,days=new Date(year,mo+1,0).getDate(),gridN=Math.ceil((offset+days)/7)*7;
+const cells=Array.from({length:gridN},(_,i)=>{let date=dstr(new Date(year,mo,i-offset+1)),d=Number(date.slice(-2)),isMonth=date.slice(0,7)===month,evs=S.events.filter(e=>e.date===date);return `<button class="day ${isMonth?'':'outside'} ${date===TODAY?'today':''} ${selected===date?'selected':''}" data-action="select-date:${date}" aria-label="${fullDate(date)}"><span class="day-number">${d}</span><div class="day-emojis">${evs.slice(0,4).map(e=>`<span title="${esc(e.type==='intime'?'Moment intime':e.title)}">${e.type==='intime'&&!S.privacy.showIntimacy?'🔒':TYPES[e.type]?.emoji||'📅'}</span>`).join('')}</div>${evs.length?`<div class="cal-chip">${evs.length} événement${evs.length>1?'s':''}</div>`:''}</button>`}).join('');
+const dayEv=S.events.filter(e=>e.date===selected);let body='';if(calView==='month'){body=`<div class="cal-weekdays">${['LUN','MAR','MER','JEU','VEN','SAM','DIM'].map(s=>`<div>${s}</div>`).join('')}</div><div class="cal-grid">${cells}</div>`}else if(calView==='week'){const day=new Date(selected+'T12:00');const mon=addDay(selected,-(day.getDay()+6)%7);body=`<div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(135px,1fr))">${Array.from({length:7},(_,i)=>{const dd=addDay(mon,i);let ev=S.events.filter(e=>e.date===dd);return `<button class="week-day ${selected===dd?'selected':''}" data-action="select-date:${dd}"><div class="smallcaps">${new Date(dd+'T12:00').toLocaleDateString('fr-FR',{weekday:'short'})}</div><b>${Number(dd.slice(-2))}</b><div style="font-size:22px">${ev.map(e=>e.type==='intime'&&!S.privacy.showIntimacy?'🔒':TYPES[e.type]?.emoji||'📅').join(' ')||'—'}</div></button>`}).join('')}</div>`}else{body=`<div class="date-banner">${fullDate(selected)}</div>${evList(dayEv,true)}`}
+return `${pageHead('Tous nos instants','Notre <em>calendrier</em>','Rendez-vous, projets, souvenirs et moments intimes : l’histoire de votre quotidien.',button(`${svg('plus')} Nouvel événement`,'new-event','btn primary'))}<div class="card"><div class="calendar-head"><div class="month-title">${monthName(month+'-01').replace(/^./,c=>c.toUpperCase())}</div><div class="cal-controls"><div class="segmented">${['month','week','day'].map((v,i)=>`<button class="${calView===v?'active':''}" data-action="cal-view:${v}">${['Mois','Semaine','Jour'][i]}</button>`).join('')}</div>${iconBtn('back','cal-prev','Précédent')}${iconBtn('arrow','cal-next','Suivant')}${button('Aujourd’hui','cal-today','btn sm')}</div></div>${body}<div class="cal-legend"><span>🔞 Moments intimes</span><span>💝 Dates spéciales</span><span>📅 Rendez-vous</span><span>✅ Projets</span></div><div class="selected-date"><div class="selected-date-head"><b>${fullDate(selected)}</b>${button(`${svg('plus')} Ajouter`,'new-event','btn sm soft')}</div>${calView==='day'?'':evList(dayEv,true)}</div><div style="margin-top:13px" class="toggle-row"><div><b>Afficher les icônes 🔞</b><small>Visible par défaut dans les cases des jours concernés. À désactiver pour un affichage discret.</small></div><label class="switch"><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy?'checked':''}/><span></span></label></div><div class="notice warning">Confidentialité : cette version enregistre localement les informations dans le navigateur, sans chiffrement spécifique ni synchronisation. Évitez les détails sensibles sur un appareil partagé.</div></div>`}
+function projects(){const [done,total]=taskCount();return `${pageHead('Organiser demain','Nos <em>projets</em>','Des grandes ambitions aux petites tâches du quotidien, avançons ensemble.',button(`${svg('plus')} Nouveau projet`,'new-project','btn primary'))}<div class="grid-3" style="margin-bottom:20px"><div class="stat-tile"><div class="smallcaps">Projets actifs</div><div class="stat-number">${S.projects.length}</div><div class="stat-label">Objectifs partagés</div></div><div class="stat-tile"><div class="smallcaps">Tâches accomplies</div><div class="stat-number">${done} <span class="quiet" style="font:15px var(--sans)">/ ${total}</span></div><div class="stat-label">Étapes réalisées</div></div><div class="stat-tile"><div class="smallcaps">Progression globale</div><div class="stat-number">${total?Math.round(done/total*100):0}%</div><div class="progress"><div style="width:${total?done/total*100:0}%"></div></div></div></div><div class="grid-even">${S.projects.map(p=>{const done=p.tasks.filter(t=>t.done).length;return `<section class="project"><div class="project-head"><div><div class="proj-icon">${esc(p.emoji||'♡')}</div><h3>${esc(p.name)}</h3><div class="quiet tiny">Échéance : ${p.due?fullDate(p.due):'Non définie'}</div></div><div class="item-actions">${button('Modifier','edit-item:project:'+p.id,'btn ghost sm')}${button('Supprimer','delete-project:'+p.id,'btn ghost sm danger')}</div></div><div><div class="section-hint"><span class="small">Notre progression</span><span class="tiny quiet">${done} / ${p.tasks.length} étapes</span></div><div class="progress" style="margin-top:10px"><div style="width:${p.tasks.length?done/p.tasks.length*100:0}%"></div></div></div><div>${p.tasks.map(t=>`<div class="task ${t.done?'done':''}"><input type="checkbox" data-change="task:${p.id}:${t.id}" ${t.done?'checked':''} aria-label="Terminer ${esc(t.name)}"/><span class="task-text">${esc(t.name)}</span>${editButton('task',{id:p.id,name:t.name},'Renommer la tâche',':'+t.id)}<button data-action="delete-task:${p.id}:${t.id}" class="remove" title="Retirer la tâche">×</button></div>`).join('')||'<div class="quiet small">Aucune tâche pour le moment.</div>'}</div><div class="task-editor"><input id="task-${p.id}" placeholder="Ajouter une tâche…" aria-label="Nouvelle tâche"/><button data-action="add-task:${p.id}" aria-label="Ajouter une tâche">+</button></div></section>`}).join('')||'<div class="empty">Aucun projet encore. Créez votre premier projet commun.</div>'}</div>`}
+function finance(){const spent=monthlyExpenses(),remaining=S.budget-spent,cat={};S.expenses.filter(x=>monthKey(x.date)===monthKey(TODAY)).forEach(e=>cat[e.category]=(cat[e.category]||0)+Number(e.amount));const max=Math.max(...Object.values(cat),1);return `${pageHead('Construire ensemble','Nos <em>finances</em>','Un espace simple pour suivre les dépenses communes et donner vie à vos projets.',button(`${svg('plus')} Ajouter une dépense`,'new-expense','btn primary'))}<div class="grid-2"><div class="stack"><section class="card budget-hero"><div class="finance-top"><div><div class="smallcaps">NOTRE BUDGET · ${monthName(TODAY).toUpperCase()}</div><div class="finance-amount">${fmt(remaining)} <span style="font:14px var(--sans)">FCFA</span></div><div class="finance-hero-note">Disponibles sur un budget mensuel de ${fmt(S.budget)} FCFA</div></div>${iconBtn('edit','edit-budget','Modifier le budget')}</div><div class="progress" style="margin:20px 0 10px"><div style="width:${Math.min(100,S.budget?spent/S.budget*100:0)}%"></div></div><div class="section-hint"><span class="small">${fmt(spent)} FCFA dépensés</span><span class="small">${S.budget?Math.round(spent/S.budget*100):0}% utilisés</span></div></section><section class="card"><div class="card-title"><h3>Nos dépenses</h3>${button(`${svg('plus')} Ajouter`,'new-expense','btn soft sm')}</div>${S.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10).map(e=>`<div class="finance-entry"><div class="finance-symbol">${({Alimentation:'🥑',Logement:'🏠',Loisirs:'🥂',Transport:'🚕',Santé:'🌿',Autre:'🧾'})[e.category]||'🧾'}</div><div class="entry-description"><b>${esc(e.name)}</b><small>${esc(e.category)} · ${fullDate(e.date)} · ${esc(e.paidBy)} · ${e.visibility==='prive'?'🔒 Privé':'Commun'}</small></div><div class="entry-amount">– ${fmt(e.amount)}</div>${editButton('expense',e,'Modifier la dépense')}<button class="remove" data-action="delete-expense:${e.id}" title="Supprimer">×</button></div>`).join('')||'<div class="empty">Ajoutez une dépense pour commencer.</div>'}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>Répartition du mois</h3><span class="smallcaps">Dépenses</span></div>${Object.keys(cat).length?`<div class="bar-rows">${Object.entries(cat).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="bar-row"><span>${esc(k)}</span><div class="progress"><div style="width:${Math.round(v/max*100)}%"></div></div><span>${fmt(v)}</span></div>`).join('')}</div>`:'<div class="empty">Pas de dépenses ce mois-ci.</div>'}</section><section class="card"><div class="card-title"><h3>Nos objectifs</h3>${button(`${svg('plus')} Nouvel objectif`,'new-goal','btn soft sm')}</div>${S.goals.map(g=>`<div class="goal"><div class="goal-top"><div class="goal-name">🎯 ${esc(g.name)}</div>${button('Ajouter','deposit:'+g.id,'btn sm soft')}</div><div class="progress"><div style="width:${Math.min(100,g.target?g.saved/g.target*100:0)}%"></div></div><div class="section-hint"><span class="quiet tiny">${fmt(g.saved)} / ${fmt(g.target)} FCFA</span><span class="tiny">${g.target&&g.saved>=g.target?'Atteint ✓':(g.target?Math.round(g.saved/g.target*100):0)+'%'}</span></div><div style="text-align:right;margin-top:8px">${button('Modifier','edit-item:goal:'+g.id,'btn ghost sm')}${button('Supprimer','delete-goal:'+g.id,'btn ghost sm danger')}</div></div>`).join('')||'<div class="empty">Votre premier objectif d’épargne vous attend.</div>'}<div class="notice">Les cagnottes sont des suivis virtuels : aucun argent n’est détenu ou transféré dans cette application.</div></section></div></div>`}
+function us(){const subs=[['overview','Notre relation'],['mood','Mood'],['stats','Statistiques'],['agreements','Nos engagements'],['memories','Souvenirs']];let content=sub==='mood'?'<section class="card">'+emotionEditor()+'</section>':sub==='stats'?emotionalStats():sub==='agreements'?agreements():sub==='memories'?memories():overview();return `${pageHead('Notre histoire','Juste <em>nous deux.</em>','Les émotions, les petits instants et les engagements qui rendent votre histoire unique.') }<div class="subtabs">${subs.map(x=>`<button data-action="tab:${x[0]}" class="${sub===x[0]?'active':''}">${x[1]}</button>`).join('')}</div>${content}`}
+function overview(){const t=moodToday(),active=S.rules.filter(r=>r.status==='accepted').length;return `<div class="grid-2"><div class="stack"><section class="hero"><div class="hero-main"><div class="smallcaps">L'HISTOIRE QUE NOUS ÉCRIVONS</div><div class="h-title">Un jour à la fois,<br>et toujours <em>ensemble.</em></div><p>Racontez vos moments, exprimez vos ressentis et gardez ce qui compte.</p>${button('Ajouter un souvenir','new-memory','btn soft')}</div><div class="hero-ornament">♡</div></section><section class="card">${emotionEditor()}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>Notre charte</h3>${button(svg('arrow'),'tab:agreements','btn ghost sm')}</div><div class="two-mini"><div class="stat-tile"><div class="stat-number">${S.expectations.length}</div><div class="stat-label">Mes attentes privées</div></div><div class="stat-tile"><div class="stat-number">${active}</div><div class="stat-label">Engagements acceptés à deux</div></div></div><p class="quiet small" style="line-height:1.65">Les propositions ne deviennent communes qu’après l’accord réel de chaque partenaire dans une future version synchronisée.</p>${button('Voir nos engagements','tab:agreements','btn soft sm')}</section><section class="card"><div class="card-title"><h3>Notre histoire en chiffres</h3>${button(svg('arrow'),'tab:stats','btn ghost sm')}</div><div class="two-mini"><div class="stat-tile"><div class="stat-number">${S.privacy.showIntimacy?S.events.filter(e=>e.type==='intime').length:'—'}</div><div class="stat-label">${S.privacy.showIntimacy?'Moments intimes 🔞 inscrits':'Moments privés masqués'}</div></div><div class="stat-tile"><div class="stat-number">${S.memories.length}</div><div class="stat-label">Souvenirs précieux</div></div></div>${button('Voir toutes les statistiques','tab:stats','btn soft sm')}</section></div></div>`}
+function stats(){const thisMonth=S.events.filter(e=>monthKey(e.date)===monthKey(TODAY)),intimes=thisMonth.filter(e=>e.type==='intime').length, outings=thisMonth.filter(e=>e.type==='sortie'||e.type==='special').length,mood=S.moods.filter(e=>monthKey(e.date)===monthKey(TODAY)),relation=mood.filter(m=>m.relation>0),positive=relation.filter(m=>m.relation>=4).length,[done,total]=taskCount(),spent=monthlyExpenses();let last7=Array.from({length:7},(_,i)=>{const d=addDay(TODAY,i-6),x=S.moods.find(m=>m.date===d);return {d,x}});return `<div class="grid-3" style="margin-bottom:20px"><div class="stat-tile"><div class="smallcaps">Moments 🔞 / mois</div><div class="stat-number">${intimes}</div><div class="stat-label">Dates enregistrées, sans jugement</div></div><div class="stat-tile"><div class="smallcaps">Ressentis positifs</div><div class="stat-number">${relation.length?Math.round(positive/relation.length*100)+' %':'—'}</div><div class="stat-label">Sur ${relation.length} jour(s) renseigné(s)</div></div><div class="stat-tile"><div class="smallcaps">Moments à deux</div><div class="stat-number">${outings}</div><div class="stat-label">Sorties et dates spéciales ce mois-ci</div></div><div class="stat-tile"><div class="smallcaps">Tâches achevées</div><div class="stat-number">${total?Math.round(done/total*100)+' %':'—'}</div><div class="stat-label">${done} tâche(s) sur ${total}</div></div><div class="stat-tile"><div class="smallcaps">Dépenses communes saisies</div><div class="stat-number" style="font-size:25px">${fmt(spent)}</div><div class="stat-label">FCFA ce mois-ci, toutes visibilités</div></div><div class="stat-tile"><div class="smallcaps">Souvenirs</div><div class="stat-number">${S.memories.length}</div><div class="stat-label">Moments précieux enregistrés</div></div></div><div class="grid-even"><section class="card"><div class="card-title"><h3>Ressenti relationnel</h3><span class="smallcaps">7 derniers jours</span></div><div class="chart">${last7.map(o=>`<div class="chart-column"><div class="chart-bar" style="height:${o.x&&o.x.relation?(o.x.relation/5*100):2}%;opacity:${o.x&&o.x.relation?1:.17}" data-val="${o.x&&o.x.relation?o.x.relation+'/5':'—'}"></div><small>${new Date(o.d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short'})}</small></div>`).join('')}</div><p class="quiet small">Le graphique reflète seulement les jours où un ressenti a été saisi.</p></section><section class="card"><div class="card-title"><h3>Notre rétrospective</h3><span class="smallcaps">${monthName(TODAY)}</span></div><div class="hero" style="min-height:220px;padding:24px"><div class="hero-main"><div class="smallcaps">CE MOIS-CI ♡</div><div style="font:normal 25px/1.35 var(--serif);margin:14px 0">${intimes} moment${intimes>1?'s':''} 🔞, ${outings} sortie${outings>1?'s':''} et ${done} tâche${done>1?'s':''} accomplie${done>1?'s':''}.</div><p>Chaque histoire évolue à son rythme. Ces chiffres sont des souvenirs, pas des objectifs à atteindre.</p></div></div></section></div>`}
+function agreements(){const expectations=S.expectations;const pending=S.rules.filter(r=>r.status!=='example'),suggested=S.rules.filter(r=>r.status==='example');return `<div class="grid-even"><section class="card"><div class="card-title"><h3>Mes attentes</h3><span class="pill private">${svg('lock')} Espace privé</span></div><p class="quiet small" style="line-height:1.65">Écrivez vos besoins, valeurs ou limites personnelles. Elles ne sont pas automatiquement partagées.</p>${expectations.map(e=>`<div class="rule"><h4>${esc(e.title)}</h4><p>${esc(e.body)}</p><div class="rule-meta"><span class="pill private">Personnel</span><span class="item-actions">${button('Modifier','edit-item:expectation:'+e.id,'btn ghost sm')}${button('Supprimer','delete-expectation:'+e.id,'btn ghost sm danger')}</span></div></div>`).join('')||'<div class="empty">Notez vos premières attentes personnelles.</div>'}${button(`${svg('plus')} Ajouter une attente`,'new-expectation','btn soft')}</section><section class="card"><div class="card-title"><h3>Nos règles</h3><span class="pill pending">Accord mutuel requis</span></div><p class="quiet small" style="line-height:1.65">Proposez des engagements. ${syncConnected()?'Une proposition devient un engagement quand l’autre personne l’accepte depuis son téléphone.':"Dans ce prototype local, aucune proposition n'est validée au nom de l'autre personne."}</p>${pending.map(r=>`<div class="rule"><h4>${esc(r.category)}</h4><p>« ${esc(r.body)} »</p><div class="rule-meta">${ruleMeta(r)}</div></div>`).join('')||'<div class="empty">Aucune proposition pour le moment. Créez votre première règle à discuter ensemble.</div>'}${button(`${svg('plus')} Proposer une règle`,'new-rule','btn primary')}<div class="divider"></div><div class="smallcaps" style="margin-bottom:12px">Idées pour commencer</div><div class="idea-list">${suggested.map(r=>`<button class="suggestion" data-action="suggest-rule:${r.id}"><b>${esc(r.category)}</b><br>${esc(r.body)}<br><span style="color:var(--accent);font-weight:700">+ Proposer</span></button>`).join('')}</div></section></div><div class="notice warning" style="margin-top:16px">Les règles ne remplacent jamais le consentement du moment, notamment pour l'intimité. Pas de sanctions, de points de bonne conduite ni de suivi automatique des « infractions ».</div>`}
+function memories(){return `<div class="card-title" style="margin-bottom:15px"><div><div class="smallcaps">NOTRE ALBUM</div><h3 style="font:normal 25px var(--serif);margin:5px 0">Les souvenirs qui restent ♡</h3></div>${button(`${svg('plus')} Ajouter un souvenir`,'new-memory','btn primary')}</div><div class="grid-3">${S.memories.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(m=>`<article class="memory"><div class="memory-art">${esc(m.emoji||'♡')}</div><div class="memory-body"><small>${fullDate(m.date)}</small><h4>${esc(m.title)}</h4><p>${esc(m.note)}</p><div class="item-actions">${button('Modifier','edit-item:memory:'+m.id,'btn ghost sm')}${button('Supprimer','delete-memory:'+m.id,'btn ghost sm danger')}</div></div></article>`).join('')||'<div class="empty">Ajoutez votre premier souvenir.</div>'}</div>`}
+function field(name,label,type='text',value='',extra=''){return `<div class="field"><label for="f-${name}">${label}</label><input id="f-${name}" name="${name}" type="${type}" value="${esc(value)}" ${extra}/></div>`}
+function select(name,label,opts,sel){return `<div class="field"><label for="f-${name}">${label}</label><select id="f-${name}" name="${name}">${opts.map(o=>`<option value="${esc(o[0])}" ${sel===o[0]?'selected':''}>${esc(o[1])}</option>`).join('')}</select></div>`}
+function txt(name,label,placeholder=''){return `<div class="field"><label for="f-${name}">${label}</label><textarea id="f-${name}" name="${name}" placeholder="${esc(placeholder)}"></textarea></div>`}
+function renderModal(){let title='',body='',action='',submit='Enregistrer';const type=modal.type;switch(type){case'new-event':title='Un moment à noter';body=`${field('title','Quel événement ?','text','','required maxlength="100" placeholder="Ex. : Notre dîner à deux"')}${field('date','Date','date',selected,'required')}${select('type','Type d’événement',Object.entries(TYPES).map(([k,v])=>[k,`${v.emoji} ${v.name}`]),'rdv')}<div class="notice">Pour un moment intime, l’emoji 🔞 apparaîtra directement dans le calendrier. Évitez les descriptions explicites sur un appareil partagé.</div>`;action='submit-event';break;
+case'new-project':title='Un nouveau projet';body=`${field('name','Nom du projet','text','','required maxlength="100" placeholder="Ex. : Notre voyage"')}<div class="form-row">${field('emoji','Un emoji','text','✨','maxlength="16"')}${field('due','Échéance facultative','date',addDay(TODAY,30))}</div>`;action='submit-project';break;
+case'new-expense':title='Ajouter une dépense';body=`${field('name','Description','text','','required maxlength="90" placeholder="Ex. : Courses"')}<div class="form-row">${field('amount','Montant (FCFA)','number','','required min="1" step="1"')}${field('date','Date','date',TODAY,'required')}</div><div class="form-row">${select('category','Catégorie',['Alimentation','Logement','Loisirs','Transport','Santé','Autre'].map(x=>[x,x]),'Alimentation')}${select('paidBy','Payé par',['Commun',S.couple.first,S.couple.second].map(x=>[x,x]),'Commun')}</div>${select('visibility','Visibilité prévue',[['partage','Dépense commune'],['prive','Personnelle / privée']],'partage')}<div class="notice">${syncConnected()?'Une dépense personnelle n’est visible que par vous.':'Aucun partage entre comptes n’est actif dans ce prototype local.'}</div>`;action='submit-expense';break;
+case'edit-budget':title='Définir notre budget';body=field('budget','Budget mensuel (FCFA)','number',S.budget,'required min="0" step="1"');action='submit-budget';break;
+case'new-goal':title='Notre nouvel objectif';body=`${field('name','Nom de l’objectif','text','','required maxlength="90" placeholder="Ex. : Notre voyage"')}${field('target','Montant à atteindre (FCFA)','number','','required min="1" step="1"')}${modal.edit?field('saved','Déjà mis de côté (FCFA)','number','','required min="0" step="1"')+'<div class="notice">Corrige le suivi en cas d’erreur de saisie. Aucun argent n’est déplacé.</div>':''}`;action='submit-goal';break;
+case'deposit':title='Faire progresser notre objectif';body=`<p class="quiet small">${esc(S.goals.find(g=>g.id===modal.id)?.name)}</p>${field('amount','Montant à ajouter au suivi (FCFA)','number','','required min="1" step="1"')}<div class="notice">Il s’agit d’une saisie de suivi, pas d’un véritable dépôt bancaire.</div>`;action='submit-deposit';break;
+case'new-expectation':title='Une attente personnelle';body=`${field('title','Sujet','text','','required maxlength="70" placeholder="Ex. : Prendre le temps de parler"')}${txt('body','Ce qui compte pour moi','Je souhaiterais que…')}`;action='submit-expectation';break;
+case'new-rule':title='Proposer un engagement';body=`${select('category','Catégorie',['Communication','Confiance & respect','Finances','Intimité 🔞','Désaccords','Vie quotidienne','Autre'].map(x=>[x,x]),'Communication')}${txt('body','Votre proposition','Ex. : Nous discutons des décisions importantes ensemble.') }<div class="notice">${syncConnected()?'Elle deviendra un engagement quand votre partenaire l’aura acceptée.':'La proposition restera non validée tant qu’aucune authentification et synchronisation à deux ne sont disponibles.'}</div>`;action='submit-rule';break;
+case'new-memory':title='Un souvenir précieux';body=`${field('title','Titre du souvenir','text','','required maxlength="90" placeholder="Ex. : Notre belle soirée"')}<div class="form-row">${field('date','Date','date',TODAY,'required')}${field('emoji','Emoji','text','💝','maxlength="16"')}</div>${txt('note','Ce dont vous souhaitez vous souvenir','Quelques mots…')}`;action='submit-memory';break;
+case'change-code':title='Changer mon code';body=`${field('ancien','Code actuel','password','','required autocomplete="current-password"')}${field('nouveau','Nouveau code (6 caractères au moins)','password','','required minlength="6" autocomplete="new-password"')}${field('confirme','Confirmez le nouveau code','password','','required autocomplete="new-password"')}`;action='submit-code';submit='Changer mon code';break;
+case'sync-info':title=modal.title;body=modal.body;action='';break;
+case'edit-task':title='Renommer la tâche';body=field('name','Tâche','text','','required maxlength="100"');action='submit-task';break;
+case'settings':title='Notre univers';body=`<div class="smallcaps" style="margin-bottom:13px">CHOISIR UN THÈME</div><div class="theme-choices">${[['romance','Romance','#f6e5e0','#965d6b'],['elegance','Élégance','#eee5d3','#866c48'],['nocturne','Nocturne','#283041','#d4af9f'],['harmonie','Harmonie','#dfeadd','#5e826a']].map(p=>`<button class="theme-choice ${S.theme===p[0]?'active':''}" type="button" data-action="theme:${p[0]}"><div class="theme-swatch" style="background:${p[2]};border-bottom:15px solid ${p[3]}"></div>${p[1]}</button>`).join('')}</div><div class="divider"></div><div class="smallcaps">NOTRE PROFIL</div><div class="form-row">${field('first',emotionViewer==='partner-b'?'Prénom du partenaire':'Mon prénom','text',S.couple.first,'required maxlength="32"')}${field('second',emotionViewer==='partner-b'?'Mon prénom':'Prénom du partenaire','text',S.couple.second,'required maxlength="32"')}</div>${select('stage','Notre étape',[['decouverte','Nous nous découvrons'],['construction','Nous construisons notre histoire'],['ensemble','Nous partageons notre quotidien'] ],S.couple.stage)}<div class="toggle-row"><div><b>Afficher le Mood dans le calendrier</b><small>Masquer les emojis et les ressentis dans le calendrier</small></div><label class="switch"><input aria-label="Afficher le Mood dans le calendrier" type="checkbox" data-change="showMood" ${S.privacy.showMood?'checked':''}/><span></span></label></div><div class="toggle-row"><div><b>Afficher 🔞 dans le calendrier</b><small>Masquage rapide des événements intimes à l'écran</small></div><label class="switch"><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy?'checked':''}/><span></span></label></div><div class="notice warning" style="margin-top:15px">${syncConnected()?'Vos données sont enregistrées dans le compte Google où l’application est installée. La personne qui gère ce compte peut techniquement ouvrir le classeur : choisissez-le ensemble. Aucune connexion bancaire n’est active.':'Prototype de démonstration : les données restent dans ce navigateur et ne sont pas chiffrées spécialement. Ni invitation, ni partage, ni connexion bancaire ne sont actifs.'}</div>${syncConnected()?syncSettingsButtons():`<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:13px">${button('Réinitialiser les exemples','reset-demo','btn danger sm')}${button('Effacer toutes mes données','clear-all','btn danger sm')}</div>`}`;action='submit-settings';submit='Enregistrer le profil';break;}
+return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" aria-modal="true" aria-label="${esc(title)}" class="modal"><div class="modal-head"><h2>${esc(title)}</h2>${button('×','close','btn ghost sm')}</div><form id="modal-form" data-form="${action}">${body}<div class="form-actions">${button(action?'Annuler':'Fermer','close','btn')}${action?`<button type="submit" class="btn primary">${submit}</button>`:''}</div></form></div></div>`}
+function close(){modal=null;render()}
+function changeMonth(d){const x=new Date(month+'-01T12:00:00');x.setMonth(x.getMonth()+d);month=monthKey(dstr(x));selected=month+'-01'}
+function confirmDel(q){return window.confirm(q)}
+function actions(e){const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='close-out'&&e.target!==b)return;if(emotionAction(a)||editAction(a)||syncAction(a))return;if(a==='close'||a==='close-out'){close();return}if(a.startsWith('nav:')){page=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('sub:')){page='us';sub=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('tab:')){sub=a.split(':')[1];render();return}if(a.startsWith('cal-view:')){calView=a.split(':')[1];render();return}if(a==='cal-prev'||a==='cal-next'){if(calView==='month')changeMonth(a==='cal-prev'?-1:1);else{selected=addDay(selected,(a==='cal-prev'?-1:1)*(calView==='week'?7:1));month=monthKey(selected)}render();return}if(a==='cal-today'){month=monthKey(TODAY);selected=TODAY;render();return}if(a.startsWith('select-date:')){selected=a.split(':')[1];month=monthKey(selected);render();return}if(a.startsWith('theme:')){S.theme=a.split(':')[1];persist();render();modal={type:'settings'};render();return}if(a.startsWith('new-')||a==='edit-budget'||a==='settings'){modal={type:a};render();return}if(a.startsWith('delete-event:')){if(confirmDel('Supprimer cet événement ?')){S.events=S.events.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-expense:')){if(confirmDel('Supprimer cette dépense ?')){S.expenses=S.expenses.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-goal:')){if(confirmDel('Supprimer cet objectif ?')){S.goals=S.goals.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-project:')){if(confirmDel('Supprimer le projet et toutes ses tâches ?')){S.projects=S.projects.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-task:')){const [,pid,tid]=a.split(':');let p=S.projects.find(p=>p.id===pid);if(p)p.tasks=p.tasks.filter(t=>t.id!==tid);persist();render();return}if(a.startsWith('add-task:')){let pid=a.split(':')[1],v=$('#task-'+pid)?.value.trim();if(!v){toast('Écrivez une tâche.');return}S.projects.find(p=>p.id===pid)?.tasks.push({id:id(),name:v,done:false});persist();render();return}if(a.startsWith('deposit:')){modal={type:'deposit',id:a.split(':')[1]};render();return}if(a.startsWith('delete-expectation:')){if(confirmDel('Supprimer cette attente personnelle ?')){S.expectations=S.expectations.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-rule:')){if(confirmDel('Retirer cette proposition ?')){S.rules=S.rules.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('suggest-rule:')){let r=S.rules.find(x=>x.id===a.split(':')[1]);if(r){S.rules.push({id:id(),category:r.category,body:r.body,status:'pending'});persist();render();toast('Proposition créée. Non validée par le partenaire.')}return}if(a.startsWith('delete-memory:')){if(confirmDel('Supprimer ce souvenir ?')){S.memories=S.memories.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a==='reset-demo'){if(confirmDel('Réinitialiser toutes les données du prototype avec les exemples initiaux ?')){S=EmotionCore.migrate(seed());persist();modal=null;page='home';render()}return}if(a==='clear-all'){if(confirmDel('Effacer toutes les données de cette démonstration ? Cette action est irréversible.')){let oldTheme=S.theme,first=S.couple.first,second=S.couple.second;S=EmotionCore.migrate(seed());Object.assign(S,{theme:oldTheme,events:[],moods:[],emotionEntries:[],projects:[],expenses:[],goals:[],expectations:[],rules:[],memories:[],demo:false});S.couple={...S.couple,first,second};persist();modal=null;page='home';render()}return}}
+function changed(e){if(emotionChanged(e))return;const c=e.target.dataset.change;if(!c)return;if(c==='intimacy'){S.privacy.showIntimacy=e.target.checked;persist();render();return}if(c.startsWith('task:')){const [,pid,tid]=c.split(':'),p=S.projects.find(x=>x.id===pid),t=p?.tasks.find(x=>x.id===tid);if(t){t.done=e.target.checked;persist();render()}return}}
+function submitted(e){const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();const action=f.dataset.form,d=Object.fromEntries(new FormData(f).entries());if(editSubmitted(action,d)||syncSubmitted(action,d))return;const req=(x)=>String(x||'').trim();const pos=(x)=>Number(x)>0&&Number.isFinite(Number(x));const bad=()=>toast('Vérifiez les informations saisies.');switch(action){case'submit-event':if(!req(d.title)||!d.date)return bad();S.events.push({id:id(),title:req(d.title),date:d.date,type:d.type||'rdv'});selected=d.date;month=monthKey(d.date);break;
+case'submit-project':if(!req(d.name))return bad();S.projects.push({id:id(),name:req(d.name),emoji:req(d.emoji)||'✨',due:d.due,tasks:[]});break;
+case'submit-expense':if(!req(d.name)||!pos(d.amount)||!d.date)return bad();S.expenses.push({id:id(),name:req(d.name),amount:Number(d.amount),date:d.date,category:d.category,paidBy:d.paidBy,visibility:d.visibility});break;
+case'submit-budget':if(Number(d.budget)<0||!Number.isFinite(Number(d.budget)))return bad();S.budget=Number(d.budget);break;
+case'submit-goal':if(!req(d.name)||!pos(d.target))return bad();S.goals.push({id:id(),name:req(d.name),target:Number(d.target),saved:0});break;
+case'submit-deposit':if(!pos(d.amount))return bad();const goal=S.goals.find(g=>g.id===modal.id);if(goal)goal.saved+=Number(d.amount);break;
+case'submit-expectation':if(!req(d.title)||!req(d.body))return bad();S.expectations.push({id:id(),title:req(d.title),body:req(d.body)});break;
+case'submit-rule':if(!req(d.body))return bad();S.rules.push({id:id(),category:d.category,body:req(d.body),status:'pending'});break;
+case'submit-memory':if(!req(d.title)||!d.date)return bad();S.memories.push({id:id(),title:req(d.title),date:d.date,emoji:req(d.emoji)||'♡',note:req(d.note)});break;
+case'submit-settings':if(!req(d.first)||!req(d.second))return bad();{const names={[S.couple.first]:req(d.first),[S.couple.second]:req(d.second)};if(S.couple.first!==S.couple.second)S.expenses.forEach(x=>{if(x.paidBy in names)x.paidBy=names[x.paidBy]})}S.couple={...S.couple,first:req(d.first),second:req(d.second),stage:d.stage};break;default:return}persist();modal=null;render();toast(syncConnected()?'Enregistré. ♡':'Enregistré dans ce navigateur. ♡')}
+// Integrated inside the original application closure: existing screens and storage stay in place.
+let emotionViewer = 'partner-a', emotionDate = TODAY, emotionMonth = monthKey(TODAY), emotionGrain = 'day';
+const personName = owner => owner === 'partner-a' ? S.couple.first || 'Profil A' : S.couple.second || 'Profil B';
+const decimal = value => value === null ? '—' : new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 3 }).format(value);
+const ratingText = value => value === null ? 'Non renseigné ou non partagé' : `${EmotionCore.emoji(value)} ${decimal(value)} / 5`;
+function simulationBanner() {
+  if (syncConnected()) return syncBanner();
+  return `<div class="simulation-banner" role="note"><span><b>Simulation locale · aucun compte connecté</b><br>Les deux profils se saisissent sur cet appareil. Changer de profil simule les droits d’affichage ; cela ne protège pas l’accès aux données du navigateur.</span>${button('Ouvrir le Mood', 'sub:mood', 'btn sm soft')}</div>`;
+}
+// Worded from the viewer's side: the missing answer may be their own.
+function pendingLabel(date, day) {
+  const mine = day.people.find(p => p.ownerId === emotionViewer).relation, theirs = day.people.find(p => p.ownerId !== emotionViewer).relation;
+  if (mine !== null && EmotionCore.find(S, emotionViewer, date)?.relation.visibility !== 'couple') return 'Mon ressenti n’est pas partagé';
+  if (mine === null && theirs !== null) return 'En attente de mon ressenti';
+  return mine !== null ? 'En attente du partenaire' : 'Aucun ressenti relationnel partagé';
+}
+function commonCard(date, compact = false) {
+  const day = EmotionCore.day(S, date, emotionViewer);
+  const label = day.status === 'complete' ? `${EmotionCore.emoji(day.common)} ${decimal(day.common)} / 5` : pendingLabel(date, day);
+  return `<section class="common-mood ${compact ? 'compact' : ''}" aria-label="Mood commun"><div class="smallcaps">MOOD COMMUN · ${fullDate(date)}</div><div class="common-value" data-common-value="${day.common ?? ''}">${label}</div><p class="quiet small">Uniquement les deux ressentis relationnels partagés. Les humeurs personnelles sont exclues.</p><div class="emotion-people">${day.people.map(p => `<div><b>${esc(personName(p.ownerId))} ${p.ownerId === emotionViewer ? '· moi' : '· partenaire'}</b><div class="emotion-score">${ratingText(p.relation)}</div><small class="quiet">Ressenti relationnel${p.ownerId === emotionViewer && EmotionCore.find(S, p.ownerId, date)?.relation.visibility !== 'couple' && p.relation !== null ? ' · privé' : ''}</small>${compact ? '' : `<div class="personal-detail">Humeur personnelle : ${ratingText(p.personal)}</div>`}</div>`).join('')}</div><div class="emotion-gap">Écart entre les deux ressentis partagés : <b>${day.gap === null ? '—' : decimal(day.gap) + ' / 4'}</b></div></section>`;
+}
+function emotionPicker(kind, rating) {
+  const value = rating?.value ?? null, shared = rating?.visibility === 'couple', automatic = rating?.sharingPreference !== 'private';
+  const title = kind === 'personal' ? 'Mon humeur personnelle' : 'Mon ressenti sur notre relation';
+  return `<fieldset class="emotion-fieldset"><legend>${title}</legend><div class="quiet small">${kind === 'personal' ? 'Toujours exclue du Mood commun, même lorsqu’elle est partagée.' : 'Les deux ressentis relationnels partagés servent au Mood commun.'}</div><div class="mood-options">${moodSet.map((m, i) => `<button type="button" class="mood ${value === i + 1 ? 'selected' : ''}" aria-pressed="${value === i + 1}" aria-label="${title} : ${i + 1} sur 5, ${m[1]}" data-action="emotion-value:${kind}:${i + 1}"><span class="emoji" aria-hidden="true">${m[0]}</span><span>${i + 1} · ${m[1]}</span></button>`).join('')}</div><div class="emotion-share"><label><input type="checkbox" data-emotion-share="${kind}" ${automatic ? 'checked' : ''}> Partager automatiquement ${kind === 'personal' ? 'cette humeur' : 'ce ressenti'} avec le partenaire</label>${value === null ? '' : button('Effacer', 'emotion-clear:' + kind, 'btn ghost sm')}</div><small class="quiet">${shared ? 'Partagée avec le partenaire dès la saisie (simulation locale).' : rating?.legacyPrivate ? 'Réponse antérieure au Mood commun, restée privée. Elle sera partagée automatiquement si vous la modifiez.' : value === null && automatic ? 'Sera partagée automatiquement dès la saisie.' : 'Partage désactivé pour cette réponse : visible seulement dans ma vue émotionnelle.'}</small></fieldset>`;
+}
+function emotionEditor() {
+  const entry = EmotionCore.find(S, emotionViewer, emotionDate);
+  return `<div class="card-title"><h3>Nos ressentis, séparément</h3><span class="pill">${syncConnected() ? esc(personName(emotionViewer)) : 'Démo locale'}</span></div><div class="emotion-toolbar"><div><label for="emotion-date" class="smallcaps">JOUR À RENSEIGNER</label><input id="emotion-date" type="date" value="${emotionDate}" max="${TODAY}" data-change="emotion-date"></div>${syncConnected() ? '' : `<div><div class="smallcaps" style="margin-bottom:7px">VUE ÉMOTIONNELLE ET SAISIE POUR</div><div class="segmented emotion-owners">${EmotionCore.OWNERS.map(owner => `<button type="button" data-action="emotion-owner:${owner}" aria-pressed="${emotionViewer === owner}" class="${emotionViewer === owner ? 'active' : ''}">${esc(personName(owner))} · ${owner === 'partner-a' ? 'A' : 'B'}</button>`).join('')}</div></div>`}</div><p class="quiet small">${syncConnected() ? 'Vos réponses sont partagées automatiquement avec votre partenaire. Vous pouvez désactiver le partage de chaque réponse, avant ou après sa saisie.' : 'Les nouvelles évaluations sont partagées automatiquement. Vous pouvez désactiver le partage de chaque réponse, avant ou après sa saisie. Sélectionnez le profil à renseigner sur cet appareil.'}</p>${emotionPicker('personal', entry?.personal)}<div class="divider"></div>${emotionPicker('relation', entry?.relation)}${commonCard(emotionDate)}<div class="notice" style="margin-top:16px">Une moyenne peut correspondre à des perceptions différentes. Les deux valeurs et leur écart restent visibles lorsqu’elles sont partagées. Aucun diagnostic ni classement n’en est déduit.</div>`;
+}
+function emotionAction(action) {
+  if (action.startsWith('emotion-owner:')) { if (!syncConnected()) emotionViewer = action.slice(14); render(); return true; }   // connected: each partner answers only as themself
+  if (action.startsWith('emotion-value:')) {
+    const [, kind, value] = action.split(':');
+    EmotionCore.update(S, emotionViewer, emotionDate, kind, Number(value)); persist(); render(); toast(syncConnected() ? 'Évaluation enregistrée. ♡' : 'Évaluation enregistrée sur cet appareil.'); return true;
+  }
+  if (action.startsWith('emotion-clear:')) { EmotionCore.update(S, emotionViewer, emotionDate, action.split(':')[1], null); persist(); render(); return true; }
+  if (action.startsWith('emotion-open:')) { emotionDate = action.split(':')[1]; page = 'us'; sub = 'mood'; render(); window.scrollTo(0, 0); return true; }
+  if (action.startsWith('emotion-grain:')) { emotionGrain = action.split(':')[1]; render(); return true; }
+  return false;
+}
+function emotionChanged(event) {
+  const target = event.target;
+  if (target.dataset.emotionShare) { EmotionCore.share(S, emotionViewer, emotionDate, target.dataset.emotionShare, target.checked); persist(); render(); return true; }
+  if (target.dataset.change === 'emotion-date') { if (EmotionCore.validDate(target.value) && target.value <= TODAY) emotionDate = target.value; render(); return true; }
+  if (target.dataset.change === 'emotion-month') { if (EmotionCore.validDate(target.value + '-01')) emotionMonth = target.value; render(); return true; }
+  if (target.dataset.change === 'showMood') { S.privacy.showMood = target.checked; persist(); render(); return true; }
+  return false;
+}
+const visibleEvents = events => S.privacy.showIntimacy ? events : events.filter(e => e.type !== 'intime');
+function calendarSymbols(date) {
+  const events = visibleEvents(S.events.filter(e => e.date === date));
+  const day = EmotionCore.day(S, date, emotionViewer);
+  const mood = !S.privacy.showMood ? '' : day.common !== null ? `<span class="day-mood" title="Mood commun : ${decimal(day.common)} sur 5">${EmotionCore.emoji(day.common)}</span>` : day.status === 'waiting' ? `<span class="day-wait" title="${pendingLabel(date, day)}" aria-label="${pendingLabel(date, day)}">◌</span>` : '';
+  // Intimacy is handled separately so a busy day can never push it out of a slice.
+  const intimate = events.some(e => e.type === 'intime') ? '<span class="day-intimacy" title="Moment intime">🔞</span>' : '';
+  const other = [...new Set(events.filter(e => e.type !== 'intime').map(e => TYPES[e.type]?.emoji || '📅'))].slice(0, 2);
+  return `<div class="day-emojis">${mood}${intimate}${other.map(e => `<span class="day-other" aria-hidden="true">${e}</span>`).join('')}</div>`;
+}
+function emotionCalendar() {
+  const year = Number(month.slice(0, 4)), mo = Number(month.slice(5, 7)) - 1;
+  const offset = (new Date(year, mo, 1).getDay() + 6) % 7, days = new Date(year, mo + 1, 0).getDate();
+  const cells = Array.from({ length: Math.ceil((offset + days) / 7) * 7 }, (_, i) => {
+    const date = dstr(new Date(year, mo, i - offset + 1)), events = visibleEvents(S.events.filter(e => e.date === date));
+    const day = EmotionCore.day(S, date, emotionViewer);
+    const moodLabel = !S.privacy.showMood ? '' : day.common !== null ? `, Mood commun ${decimal(day.common)} sur 5` : day.status === 'waiting' ? ', ' + pendingLabel(date, day) : '';
+    return `<button class="day ${date.slice(0, 7) === month ? '' : 'outside'} ${date === TODAY ? 'today' : ''} ${date === selected ? 'selected' : ''}" data-action="select-date:${date}" aria-label="${fullDate(date)}${moodLabel}${events.some(e => e.type === 'intime') ? ', Moment intime' : ''}"><span class="day-number">${Number(date.slice(-2))}</span>${calendarSymbols(date)}${events.length ? `<div class="cal-chip">${events.length} événement${events.length > 1 ? 's' : ''}</div>` : ''}</button>`;
+  }).join('');
+  const events = visibleEvents(S.events.filter(e => e.date === selected));
+  let body;
+  if (calView === 'month') body = `<div class="cal-weekdays">${['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'].map(d => `<div>${d}</div>`).join('')}</div><div class="cal-grid">${cells}</div>`;
+  else if (calView === 'week') {
+    const monday = addDay(selected, -(new Date(selected + 'T12:00:00').getDay() + 6) % 7);
+    body = `<div class="emotion-week">${Array.from({ length: 7 }, (_, i) => { const date = addDay(monday, i); return `<button class="week-day ${selected === date ? 'selected' : ''}" data-action="select-date:${date}" aria-label="${fullDate(date)}"><div class="smallcaps">${new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short' })}</div><b>${Number(date.slice(-2))}</b>${calendarSymbols(date)}</button>`; }).join('')}</div>`;
+  } else body = `<div class="date-banner">${fullDate(selected)}</div>${calendarSymbols(selected)}`;
+  return `${pageHead('Tous nos instants', 'Notre <em>calendrier</em>', 'Nos journées, nos ressentis partagés et les moments qui comptent.', button(`${svg('plus')} Nouvel événement`, 'new-event', 'btn primary'))}<div class="card"><div class="calendar-head"><div class="month-title">${monthName(month + '-01')}</div><div class="cal-controls"><div class="segmented">${['month', 'week', 'day'].map((value, i) => `<button type="button" class="${calView === value ? 'active' : ''}" data-action="cal-view:${value}">${['Mois', 'Semaine', 'Jour'][i]}</button>`).join('')}</div>${iconBtn('back', 'cal-prev', 'Précédent')}${iconBtn('arrow', 'cal-next', 'Suivant')}${button('Aujourd’hui', 'cal-today', 'btn sm')}</div></div><div class="calendar-privacy"><label><input type="checkbox" data-change="showMood" ${S.privacy.showMood ? 'checked' : ''}> Afficher le Mood</label><label><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy ? 'checked' : ''}> Afficher les événements intimes 🔞</label></div>${body}<div class="cal-legend"><span>😔 😕 😐 😊 🥰 Mood commun</span>${S.privacy.showIntimacy ? '<span>🔞 Moment intime</span>' : ''}<span>◌ Un ressenti manque ou n’est pas partagé</span></div><p class="tiny quiet">Emoji arrondi au niveau le plus proche ; le score décimal reste conservé. Un jour sans réponse n’a pas de score.</p><div class="selected-date"><div class="selected-date-head"><b>${fullDate(selected)}</b>${button(`${svg('plus')} Ajouter`, 'new-event', 'btn sm soft')}</div>${S.privacy.showMood ? commonCard(selected, false) : '<div class="notice">Mood masqué dans le calendrier.</div>'}${selected <= TODAY ? `<div style="margin:12px 0">${button('Saisir les ressentis de cette date', 'emotion-open:' + selected, 'btn soft sm')}</div>` : ''}<div class="smallcaps" style="margin-top:20px">ÉVÉNEMENTS VISIBLES</div>${evList(events, true)}</div></div>`;
+}
+function emotionChart(rows) {
+  const width = 720, height = 220, left = 30, top = 18, bottom = 175;
+  const x = i => left + i * ((width - left - 18) / Math.max(1, rows.length - 1));
+  const y = value => bottom - (value - 1) * ((bottom - top) / 4);
+  const definitions = [{ name: personName('partner-a'), color: 'var(--accent)', get: r => r.people[0].relation }, { name: personName('partner-b'), color: 'var(--muted)', dash: '5 4', get: r => r.people[1].relation }, { name: 'Mood commun', color: 'var(--ink)', get: r => r.common }];
+  const paths = definitions.map(def => {
+    let previous = null, output = '';
+    rows.forEach((row, i) => { const value = def.get(row); if (value === null) { previous = null; return; } const point = [x(i), y(value)]; if (previous) output += `<line x1="${previous[0]}" y1="${previous[1]}" x2="${point[0]}" y2="${point[1]}" stroke="${def.color}" stroke-width="2" ${def.dash ? `stroke-dasharray="${def.dash}"` : ''}/>`; output += `<circle cx="${point[0]}" cy="${point[1]}" r="${def.name === 'Mood commun' ? 4 : 2.5}" fill="${def.color}"><title>${esc(def.name)} · ${esc(row.key)} : ${decimal(value)} / 5</title></circle>`; previous = point; });
+    return output;
+  }).join('');
+  return `<div class="emotion-chart"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Évolution des ressentis relationnels et du Mood commun, de 1 à 5. Les valeurs absentes créent des interruptions. Le tableau donne toutes les valeurs.">${[1, 2, 3, 4, 5].map(value => `<line x1="${left}" y1="${y(value)}" x2="${width - 12}" y2="${y(value)}" stroke="var(--line)"/><text x="8" y="${y(value) + 4}" fill="var(--muted)" font-size="11">${value}</text>`).join('')}${paths}${rows.filter((_, i) => i % Math.max(1, Math.ceil(rows.length / 8)) === 0 || i === rows.length - 1).map(row => `<text x="${x(rows.indexOf(row))}" y="203" text-anchor="middle" fill="var(--muted)" font-size="10">${emotionGrain === 'month' ? row.key.slice(2) : row.start.slice(5)}</text>`).join('')}</svg></div><div class="emotion-chart-legend">${definitions.map(d => `<span><i style="background:${d.color}"></i>${esc(d.name)}${d.dash ? ' · pointillés' : ''}</span>`).join('')}</div>`;
+}
+function emotionalStats() {
+  const rows = EmotionCore.series(S, emotionMonth, emotionGrain, emotionViewer);
+  const days = EmotionCore.monthDates(emotionMonth).map(date => EmotionCore.day(S, date, emotionViewer));
+  const summary = EmotionCore.summarize(days);
+  const tile = (title, value, note) => `<div class="stat-tile"><div class="smallcaps">${title}</div><div class="stat-number" title="${value === null ? '' : value}">${decimal(value)}${value === null ? '' : ' <span class="small quiet">/ 5</span>'}</div><div class="stat-label">${note}</div></div>`;
+  const thisMonth = S.events.filter(e => monthKey(e.date) === emotionMonth), intimes = thisMonth.filter(e => e.type === 'intime').length, outings = thisMonth.filter(e => e.type === 'sortie' || e.type === 'special').length, [done, total] = taskCount();
+  const spent = S.expenses.filter(e => monthKey(e.date) === emotionMonth).reduce((sum, e) => sum + Number(e.amount), 0);
+  return `<section class="card"><div class="card-title"><div><div class="smallcaps">VUE ÉMOTIONNELLE DE ${esc(personName(emotionViewer)).toUpperCase()}</div><h3 style="margin-top:8px">Nos émotions dans le temps</h3></div><label class="small">Mois <input type="month" aria-label="Mois des statistiques" value="${emotionMonth}" data-change="emotion-month"></label></div>${syncConnected() ? '' : `<div class="emotion-owners segmented">${EmotionCore.OWNERS.map(owner => `<button type="button" data-action="emotion-owner:${owner}" aria-pressed="${emotionViewer === owner}" class="${emotionViewer === owner ? 'active' : ''}">${esc(personName(owner))} · ${owner === 'partner-a' ? 'A' : 'B'}</button>`).join('')}</div>`}<div class="emotion-metrics">${tile('Mood commun du mois', summary.common, `${summary.count} jour(s) avec deux ressentis partagés`)}${summary.people.map(p => tile('Relation · ' + esc(personName(p.ownerId)), p.relation, `${p.relationCount} jour(s) autorisé(s) dans cette vue`)).join('')}<div class="stat-tile"><div class="smallcaps">Écart moyen partagé</div><div class="stat-number">${decimal(summary.gap)}<span class="small quiet">${summary.gap === null ? '' : ' / 4'}</span></div><div class="stat-label">Moyenne des écarts absolus · ${summary.count} jour(s)</div></div></div><div class="two-mini" style="margin:15px 0">${summary.people.map(p => `<div class="notice"><b>Humeur personnelle · ${esc(personName(p.ownerId))}</b><br>${decimal(p.personal)}${p.personal === null ? '' : ' / 5'} · ${p.personalCount} jour(s) visible(s)<br>Exclue du Mood commun</div>`).join('')}</div><div class="notice">Les journées sans réponse sont exclues des moyennes. Les moyennes individuelles peuvent porter sur des jours différents. Les humeurs privées du partenaire ne sont jamais affichées dans cette vue. Les chiffres décrivent les saisies, sans évaluer la qualité de la relation.</div><div class="emotion-trend-head"><h3>Évolution des ressentis</h3><div class="segmented">${[['day', 'Jour'], ['week', 'Semaine'], ['month', 'Mois']].map(([value, title]) => `<button type="button" class="${emotionGrain === value ? 'active' : ''}" data-action="emotion-grain:${value}">${title}</button>`).join('')}</div></div><p class="quiet small">${emotionGrain === 'month' ? 'Les 12 mois jusqu’au mois choisi.' : emotionGrain === 'week' ? 'Semaines du lundi au dimanche, limitées aux jours du mois choisi.' : 'Chaque journée du mois choisi.'} Les moyennes et écarts sont recalculés après chaque modification ou retrait du partage.</p>${emotionChart(rows)}<div class="emotion-table-wrap" tabindex="0" role="region" aria-label="Valeurs des statistiques émotionnelles, défilement horizontal"><table class="emotion-table"><caption>${emotionGrain === 'month' ? 'Moyennes mensuelles' : emotionGrain === 'week' ? 'Moyennes hebdomadaires' : 'Détail quotidien'} · valeurs sur 5, écarts sur 4</caption><thead><tr><th>Période</th><th>Humeur ${esc(S.couple.first)}</th><th>Humeur ${esc(S.couple.second)}</th><th>Relation ${esc(S.couple.first)}</th><th>Relation ${esc(S.couple.second)}</th><th>Mood commun</th><th>Écart</th><th>Jours communs</th></tr></thead><tbody>${rows.map(row => `<tr><th scope="row">${emotionGrain === 'month' ? row.key : row.start.slice(5) + (row.end === row.start ? '' : ' → ' + row.end.slice(5))}</th>${row.people.map(p => `<td title="${p.personal ?? ''}">${decimal(p.personal)}</td>`).join('')}${row.people.map(p => `<td title="${p.relation ?? ''}">${decimal(p.relation)}</td>`).join('')}<td title="${row.common ?? ''}">${decimal(row.common)}</td><td title="${row.gap ?? ''}">${decimal(row.gap)}</td><td>${row.count}</td></tr>`).join('')}</tbody></table></div></section><section class="card" style="margin-top:20px"><div class="card-title"><h3>Notre rétrospective</h3><span class="smallcaps">${monthName(emotionMonth + '-01')}</span></div><div class="grid-3"><div class="stat-tile"><div class="smallcaps">${S.privacy.showIntimacy ? 'Moments 🔞' : 'Moments privés'}</div><div class="stat-number">${S.privacy.showIntimacy ? intimes : '—'}</div><div class="stat-label">${S.privacy.showIntimacy ? 'Événements saisis ce mois-ci' : 'Masqués par votre réglage'}</div></div><div class="stat-tile"><div class="smallcaps">Moments à deux</div><div class="stat-number">${outings}</div><div class="stat-label">Sorties et dates spéciales ce mois-ci</div></div><div class="stat-tile"><div class="smallcaps">Tâches achevées</div><div class="stat-number">${total ? Math.round(done / total * 100) + ' %' : '—'}</div><div class="stat-label">${done} sur ${total} · tous les projets actuels</div></div><div class="stat-tile"><div class="smallcaps">Dépenses saisies</div><div class="stat-number" style="font-size:24px">${fmt(spent)}</div><div class="stat-label">FCFA ce mois-ci · toutes visibilités</div></div><div class="stat-tile"><div class="smallcaps">Souvenirs</div><div class="stat-number">${S.memories.length}</div><div class="stat-label">Tous les souvenirs enregistrés</div></div><div class="stat-tile"><div class="smallcaps">Jours communs du mois</div><div class="stat-number">${summary.count}</div><div class="stat-label">Deux ressentis relationnels partagés</div></div></div></section>`;
+}
+
+// Editing reuses each creation form: same fields and same checks, prefilled, then saved in place.
+const EDITABLE = {
+  event: { modal: 'new-event', title: 'Modifier l’événement', list: () => S.events },
+  project: { modal: 'new-project', title: 'Modifier le projet', list: () => S.projects },
+  task: { modal: 'edit-task', title: 'Renommer la tâche', list: () => [] },
+  expense: { modal: 'new-expense', title: 'Modifier la dépense', list: () => S.expenses },
+  goal: { modal: 'new-goal', title: 'Modifier l’objectif', list: () => S.goals },
+  expectation: { modal: 'new-expectation', title: 'Modifier mon attente', list: () => S.expectations },
+  // Only a pending proposal can change, and only by its author: an agreement already validated belongs to both partners.
+  rule: { modal: 'new-rule', title: 'Modifier la proposition', list: () => S.rules.filter(r => r.status === 'pending' && (!syncConnected() || !r.proposedBy || r.proposedBy === SY.me)) },
+  memory: { modal: 'new-memory', title: 'Modifier le souvenir', list: () => S.memories },
+};
+function editTarget(edit) {
+  if (edit.kind === 'task') return S.projects.find(p => p.id === edit.id)?.tasks.find(t => t.id === edit.taskId) || null;
+  const item = EDITABLE[edit.kind]?.list().find(x => x.id === edit.id) || null;
+  // A hidden intimate event is never reopened in clear text.
+  return item && edit.kind === 'event' && item.type === 'intime' && !S.privacy.showIntimacy ? null : item;
+}
+const editButton = (kind, item, label, extra = '') => `<button type="button" class="remove edit-item" title="${label}" aria-label="${label} · ${esc(item.title || item.name || item.category || '')}" data-action="edit-item:${kind}:${item.id}${extra}">✎</button>`;
+function editAction(action) {
+  if (!action.startsWith('edit-item:')) return false;
+  const [, kind, id, taskId] = action.split(':'), edit = { kind, id, taskId };
+  if (!EDITABLE[kind] || !editTarget(edit)) { toast('Cet élément n’est plus disponible.'); return true; }
+  modal = { type: EDITABLE[kind].modal, edit };
+  render();
+  return true;
+}
+// Called after each render: puts the saved values back into the form opened for editing.
+function fillEdit() {
+  const edit = modal?.edit, form = document.querySelector('#modal-form');
+  if (!edit || !form) return;
+  const item = editTarget(edit);
+  if (!item) { modal = null; render(); return; }
+  const dialog = form.closest('.modal');
+  dialog.setAttribute('aria-label', EDITABLE[edit.kind].title);
+  dialog.querySelector('h2').textContent = EDITABLE[edit.kind].title;
+  form.querySelector('[type=submit]').textContent = 'Enregistrer les modifications';
+  for (const input of form.querySelectorAll('[name]')) {
+    const value = item[input.name];
+    if (value === undefined || value === null) continue;
+    if (input.tagName === 'SELECT' && ![...input.options].some(o => o.value === String(value))) input.add(new Option(String(value), String(value)));
+    input.value = String(value);
+  }
+}
+function editSubmitted(action, d) {
+  const edit = modal?.edit;
+  if (!edit) return false;
+  const item = editTarget(edit), req = x => String(x || '').trim(), pos = x => Number(x) > 0 && Number.isFinite(Number(x));
+  if (!item) { modal = null; render(); return true; }
+  const bad = () => { toast('Vérifiez les informations saisies.'); return true; };
+  const checks = {
+    event: () => req(d.title) && d.date && Object.assign(item, { title: req(d.title), date: d.date, type: d.type || item.type }),
+    project: () => req(d.name) && Object.assign(item, { name: req(d.name), emoji: req(d.emoji) || '✨', due: d.due || '' }),
+    task: () => req(d.name) && Object.assign(item, { name: req(d.name) }),
+    expense: () => req(d.name) && pos(d.amount) && d.date && Object.assign(item, { name: req(d.name), amount: Number(d.amount), date: d.date, category: d.category, paidBy: d.paidBy, visibility: d.visibility }),
+    goal: () => req(d.name) && pos(d.target) && Number(d.saved) >= 0 && Number.isFinite(Number(d.saved)) && Object.assign(item, { name: req(d.name), target: Number(d.target), saved: Number(d.saved) }),
+    expectation: () => req(d.title) && req(d.body) && Object.assign(item, { title: req(d.title), body: req(d.body) }),
+    rule: () => req(d.body) && Object.assign(item, { category: d.category || item.category, body: req(d.body) }),
+    memory: () => req(d.title) && d.date && Object.assign(item, { title: req(d.title), date: d.date, emoji: req(d.emoji) || '♡', note: req(d.note) }),
+  };
+  if (!checks[edit.kind]()) return bad();
+  if (edit.kind === 'event') { selected = item.date; month = monthKey(item.date); }
+  item.updatedAt = new Date().toISOString();
+  persist(); modal = null; render(); toast(syncConnected() ? 'Modifications enregistrées. ♡' : 'Modifications enregistrées dans ce navigateur. ♡');
+  return true;
+}
+
+// Connected mode: both partners share one Apps Script service (serveur/Code.gs). The phone keeps everything
+// (immediate display, offline entries) and sends each change as soon as the network allows. Without
+// window.ENTRE_NOUS_CONFIG.api, the app stays the local demonstration, untouched.
+const SYNC_CFG = (typeof window !== 'undefined' && window.ENTRE_NOUS_CONFIG) || {};
+const SYNC_MODE = !SYNC_CFG.api ? 'demo' : SYNC_CFG.api === 'banc' ? 'banc' : 'ligne';
+const SYNC_PARAMS = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
+const SYNC_KEY = KEY + ':sync';
+const SYNC_COLS = ['events', 'projects', 'expenses', 'goals', 'expectations', 'rules', 'memories', 'emotionEntries'];
+const SYNC_EMPTY = { jeton: '', me: '', file: [], base: null, version: 0, maj: 0, partenaireActif: true, noms: {}, dernierProfil: 'partner-a' };
+function syncRead() { try { return Object.assign({}, SYNC_EMPTY, JSON.parse(localStorage.getItem(SYNC_KEY)) || {}); } catch (e) { return Object.assign({}, SYNC_EMPTY); } }
+let SY = syncRead();
+const syncRun = { busy: false, again: false, etat: 'ok', timer: null, wrote: 0, polling: false };
+function syncSave() { try { localStorage.setItem(SYNC_KEY, JSON.stringify(SY)); } catch (e) { /* stockage plein ou bloqué */ } }
+function syncConnected() { return SYNC_MODE !== 'demo' && !!SY.jeton; }
+const partnerOf = owner => owner === 'partner-a' ? 'partner-b' : 'partner-a';
+const syncId = () => typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
+function syncError(message, code) { const e = new Error(message); e.code = code || ''; return e; }
+
+// First opening of the connected app: no demo couple, only the example rules offered as ideas.
+// A function declaration on purpose: load() calls it before this file's constants exist.
+function emptyState() {
+  const s = seed();
+  return Object.assign(s, { couple: { ...s.couple, first: '', second: '' }, events: [], moods: [], projects: [], expenses: [], goals: [], expectations: [], memories: [], emotionEntries: [], rules: s.rules.filter(r => r.status === 'example'), demo: false });
+}
+
+function syncCall(fn, args) {
+  const body = JSON.stringify({ fn, args: Object.assign({ jeton: SY.jeton }, args || {}) });
+  let sending;
+  if (SYNC_MODE === 'banc') sending = new Promise((ok, ko) => {
+    const go = () => {
+      if (SYNC_PARAMS.get('horsligne') || window.ENTRE_NOUS_HORS_LIGNE) return ko(syncError('Connexion impossible pour le moment.', 'reseau'));
+      try { ok(JSON.parse(JSON.stringify(window.ENTRE_NOUS_SERVEUR.traiter(JSON.parse(body))))); } catch (e) { ko(e); }
+    };
+    const slow = +(SYNC_PARAMS.get('lent') || 0); slow ? setTimeout(go, slow) : go();
+  });
+  else sending = (async () => {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 12000);
+        const r = await fetch(SYNC_CFG.api, { method: 'POST', body, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, signal: ctl.signal });
+        clearTimeout(t); return await r.json();
+      } catch (e) { if (attempt >= 2) throw syncError('Connexion impossible pour le moment.', 'reseau'); await new Promise(r => setTimeout(r, 1200 * (attempt + 1))); }
+    }
+  })();
+  return sending.then(rep => { if (!rep || !rep.ok) throw syncError((rep && rep.erreur) || 'Erreur inconnue.', rep && rep.code); return rep; });
+}
+
+// What this profile may send: shared items, its own private ones, its own feelings. The partner's feelings are read-only here.
+function syncWritable() {
+  const me = SY.me, out = { couple: { couple: { first: S.couple.first, second: S.couple.second, stage: S.couple.stage, budget: S.budget } } };
+  for (const col of SYNC_COLS) {
+    out[col] = {};
+    for (const item of S[col] || []) {
+      if (!item || !item.id || (col === 'rules' && item.status === 'example') || (col === 'emotionEntries' && item.ownerId !== me)) continue;
+      if ((col === 'expectations' || col === 'expenses') && !item.ownerId) item.ownerId = me;
+      if (col === 'rules' && !item.proposedBy) item.proposedBy = me;
+      out[col][item.id] = item;
+    }
+  }
+  return out;
+}
+const syncSnapshot = docs => Object.fromEntries(Object.entries(docs).map(([col, items]) => [col, Object.fromEntries(Object.entries(items).map(([id, d]) => [id, JSON.stringify(d)]))]));
+// Called by persist(): every change made anywhere in the app becomes a queued operation, compared with the last known server state.
+function syncAfterPersist() {
+  if (!syncConnected() || !SY.base) return;
+  const now = syncWritable(), ops = [];
+  for (const col of Object.keys(now)) {
+    const before = SY.base[col] || {};
+    for (const id of Object.keys(now[col])) { const json = JSON.stringify(now[col][id]); if (before[id] !== json) ops.push({ op: 'put', col, id, doc: JSON.parse(json) }); }
+    for (const id of Object.keys(before)) if (!(id in now[col])) ops.push({ op: 'del', col, id });
+  }
+  if (!ops.length) return;
+  for (const op of ops) { op.opId = syncId(); SY.file = SY.file.filter(o => !(o.col === op.col && o.id === op.id)); SY.file.push(op); }
+  SY.base = syncSnapshot(now);
+  syncSave(); syncPlan();
+}
+function syncPlan() { clearTimeout(syncRun.timer); syncRun.timer = setTimeout(syncFlush, 500); syncBadge(); }
+async function syncFlush() {
+  if (!syncConnected()) return;
+  if (syncRun.busy) { syncRun.again = true; return; }
+  syncRun.busy = true; syncBadge();
+  let rejected = false;
+  try {
+    while (SY.file.length) {
+      const batch = SY.file.slice(0, syncRun.oneByOne ? 1 : 40);
+      try { const r = await syncCall('ecrire', { ops: batch }); SY.version = r.version; syncRun.wrote = Date.now(); }
+      catch (x) {
+        if (x.code === 'reseau' || x.code === 'serveur' || x.code === 'session') throw x;
+        // Refused by the service: find the operation at fault, set it aside and let the others leave.
+        if (batch.length > 1) { syncRun.oneByOne = true; continue; }
+        rejected = true; toast('Une modification n’a pas pu être enregistrée : ' + x.message);
+      }
+      const sent = new Set(batch.map(o => o.opId));
+      SY.file = SY.file.filter(o => !sent.has(o.opId));
+      SY.maj = Date.now(); syncSave();
+    }
+    syncRun.oneByOne = false; syncRun.etat = 'ok';
+  } catch (e) {
+    syncRun.busy = false;
+    if (e.code === 'session') return syncLogout('Votre session a expiré : entrez de nouveau votre code. Vos saisies sont gardées.', false);
+    syncRun.etat = 'horsligne'; setTimeout(syncPlan, 20000); syncBadge(); return;
+  }
+  syncRun.busy = false; syncBadge();
+  if (rejected) syncRefresh();   // the local copy went further than the service accepted: realign it
+  if (syncRun.again) { syncRun.again = false; syncFlush(); }
+}
+async function syncRefresh() {
+  if (!syncConnected()) return;
+  try {
+    const r = await syncCall('etat', {});
+    if (r.version < SY.version && Date.now() - syncRun.wrote < 60000) { syncBadge(); return; }   // answer older than our last write
+    const data = r.data || {};
+    for (const op of SY.file) { data[op.col] = data[op.col] || {}; if (op.op === 'put') data[op.col][op.id] = op.doc; else delete data[op.col][op.id]; }
+    const firstRun = !(data.couple || {}).couple;
+    syncApply(data, r);
+    if (!SY.file.length) syncRun.etat = 'ok';
+    // The welcome form closes by itself once the partner has entered the names, unless someone is typing in it.
+    const typing = document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+    if (modal && modal.welcome && !firstRun && !typing) modal = null;
+    syncRedraw();
+    if (firstRun && !modal) { modal = { type: 'settings', welcome: true }; render(); toast('Bienvenue ♡ Commencez par vos deux prénoms.'); }
+    if (SY.file.length) syncFlush();
+  } catch (e) {
+    if (e.code === 'session') return syncLogout('Votre session a expiré : entrez de nouveau votre code. Vos saisies sont gardées.', false);
+    syncRun.etat = 'horsligne'; syncBadge();
+  }
+}
+function syncApply(data, r) {
+  const examples = S.rules.filter(x => x.status === 'example');
+  for (const col of SYNC_COLS) S[col] = Object.values(data[col] || {});
+  S.rules = S.rules.concat(examples);
+  S.couple = { ...S.couple, id: r.coupleId || S.couple.id };
+  const c = (data.couple || {}).couple;
+  if (c) { S.couple.first = c.first || ''; S.couple.second = c.second || ''; S.couple.stage = c.stage || S.couple.stage; if (typeof c.budget === 'number') S.budget = c.budget; }
+  // The couple identifier is the service's; partners' entries are matched on it locally.
+  for (const e of S.emotionEntries) e.coupleId = S.couple.id;
+  SY.me = r.profil || SY.me; SY.version = r.version; SY.maj = Date.now(); SY.partenaireActif = !!r.partenaireActif;
+  SY.noms = { 'partner-a': S.couple.first, 'partner-b': S.couple.second };
+  SY.base = syncSnapshot(syncWritable());
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* stockage plein ou bloqué */ }
+  syncSave();
+}
+// A background update never wipes what someone is typing: an open form or a focused field waits for the next render.
+function syncRedraw() {
+  const a = document.activeElement;
+  if (modal || (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName))) { syncBadge(); return; }
+  render();
+}
+function syncPolling() {
+  if (syncRun.polling || typeof setInterval !== 'function') return;
+  syncRun.polling = true;
+  setInterval(() => { if (document.visibilityState === 'visible') syncRefresh(); }, 120000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && Date.now() - SY.maj > 30000) syncRefresh(); });
+}
+
+/* ------------------------------------------------------------------ bandeau, réglages, actions */
+const syncAgo = t => { const m = Math.round((Date.now() - t) / 60000); return !t ? 'jamais' : m < 1 ? 'à l’instant' : m < 60 ? `il y a ${m} min` : new Date(t).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }); };
+function syncStatus() {
+  const state = syncRun.busy || SY.file.length ? (syncRun.etat === 'horsligne' ? 'horsligne' : 'attente') : syncRun.etat;
+  const text = { ok: `À jour · ${syncAgo(SY.maj)}`, attente: 'Envoi en cours…', horsligne: 'Hors ligne : vos saisies sont gardées et partiront dès le retour du réseau.' }[state];
+  return { state, text };
+}
+function syncBanner() {
+  const { state, text } = syncStatus(), partner = personName(partnerOf(SY.me));
+  return `<div class="sync-banner" role="status"><span class="sync-dot ${state}" aria-hidden="true"></span><span class="sync-text"><b>${esc(personName(SY.me))}</b> · <span data-sync-text>${esc(text)}</span>${SY.partenaireActif ? '' : `<br><span class="quiet">${esc(partner)} n’a pas encore rejoint l’application.</span>`}</span>${SY.partenaireActif ? '' : button('Inviter', 'sync-invite', 'btn sm soft')}</div>`;
+}
+function syncBadge() {
+  const dot = document.querySelector('.sync-dot'), txt = document.querySelector('[data-sync-text]');
+  if (!dot || !txt) return;
+  const { state, text } = syncStatus();
+  dot.className = 'sync-dot ' + state; txt.textContent = text;
+}
+function syncSettingsButtons() {
+  return `<div class="notice" style="margin-top:15px">Connecté·e en tant que <b>${esc(personName(SY.me))}</b> (profil ${SY.me === 'partner-a' ? 'A' : 'B'}). ${esc(syncStatus().text)}</div><div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:13px">${button('Changer mon code', 'sync-code', 'btn sm')}${SY.partenaireActif ? '' : button('Inviter ' + esc(personName(partnerOf(SY.me))), 'sync-invite', 'btn sm soft')}${button('Se déconnecter de cet appareil', 'sync-logout', 'btn danger sm')}</div>`;
+}
+function ruleMeta(r) {
+  const remove = label => button(label, 'delete-rule:' + r.id, 'btn ghost sm danger'), edit = button('Modifier', 'edit-item:rule:' + r.id, 'btn ghost sm');
+  if (r.status === 'accepted') return `<span class="pill accepted">Validé par vous deux</span><span class="item-actions">${remove('Retirer')}</span>`;
+  if (!syncConnected()) return `<span class="pill pending">Proposition locale · non validée</span><span class="item-actions">${edit}${remove('Retirer')}</span>`;
+  if (!r.proposedBy || r.proposedBy === SY.me) return `<span class="pill pending">En attente de ${esc(personName(partnerOf(SY.me)))}</span><span class="item-actions">${edit}${remove('Retirer')}</span>`;
+  return `<span class="pill pending">Proposé par ${esc(personName(r.proposedBy))}</span><span class="item-actions">${button('Accepter', 'accept-rule:' + r.id, 'btn sm primary')}${remove('Décliner')}</span>`;
+}
+function syncAction(a) {
+  if (a === 'sync-code') { modal = { type: 'change-code' }; render(); return true; }
+  if (a === 'sync-invite') {
+    syncCall('codePartenaire', {}).then(r => {
+      const partner = personName(r.profil), address = location.href.split(/[?#]/)[0];
+      modal = { type: 'sync-info', title: 'Inviter ' + partner, body: `<p class="quiet small" style="line-height:1.65">Donnez ce code de départ à ${esc(partner)}, de vive voix ou par message. Il est valable 3 jours et ne sert qu’une fois : ${esc(partner)} choisira ensuite son propre code, que personne d’autre ne connaîtra.</p><div class="invite-code" aria-label="Code de départ">${esc(r.code)}</div><p class="quiet small" style="line-height:1.65">Adresse de l’application : <b>${esc(address)}</b><br>Profil à choisir : <b>${r.profil === 'partner-a' ? 'A' : 'B'}</b>.</p>` };
+      render();
+    }).catch(e => toast(e.message));
+    return true;
+  }
+  if (a === 'sync-logout') {
+    if (confirmDel('Se déconnecter de cet appareil ?' + (SY.file.length ? ` Attention : ${SY.file.length} modification(s) pas encore envoyée(s) seront perdues.` : ' Vos données restent enregistrées pour le couple.'))) {
+      syncCall('deconnexion', {}).catch(() => {}); syncLogout('', true);
+    }
+    return true;
+  }
+  if (a.startsWith('accept-rule:')) {
+    const r = S.rules.find(x => x.id === a.split(':')[1]);
+    if (r && syncConnected() && r.status === 'pending' && r.proposedBy !== SY.me) { r.status = 'accepted'; r.acceptedBy = SY.me; r.acceptedAt = new Date().toISOString(); persist(); render(); toast('Engagement validé à deux. ♡'); }
+    return true;
+  }
+  return false;
+}
+function syncSubmitted(action, d) {
+  if (action !== 'submit-code') return false;
+  if (String(d.nouveau || '').length < 6) { toast('Le nouveau code doit compter au moins 6 caractères.'); return true; }
+  if (d.nouveau !== d.confirme) { toast('Les deux nouveaux codes ne sont pas identiques.'); return true; }
+  syncCall('changerCode', { ancien: d.ancien, nouveau: d.nouveau }).then(() => { modal = null; render(); toast('Votre code a été changé.'); }).catch(e => toast(e.message));
+  return true;
+}
+
+/* ------------------------------------------------------------------ porte (connexion) */
+function syncPorte(message) {
+  const root = document.querySelector('#app');
+  document.documentElement.dataset.theme = S.theme;
+  let choice = SY.dernierProfil || 'partner-a', firstCode = false;
+  const label = p => `${esc(SY.noms[p] || 'Profil')} · ${p === 'partner-a' ? 'A' : 'B'}`;
+  root.innerHTML = `<div class="porte"><div class="logo">e.</div><div class="eyebrow" style="margin-top:18px">Entre Nous</div><h1 class="display">Votre univers <em>à deux</em></h1>
+<form class="card porte-form" autocomplete="on"><div class="smallcaps">QUI ÊTES-VOUS ?</div><div class="segmented porte-profils">${['partner-a', 'partner-b'].map(p => `<button type="button" data-porte-profil="${p}" aria-pressed="${p === choice}" class="${p === choice ? 'active' : ''}">${label(p)}</button>`).join('')}</div>
+<div class="field"><label for="porte-code">Code personnel</label><input id="porte-code" name="code" type="password" autocomplete="current-password" required></div>
+<div class="porte-nouveau" hidden><div class="field"><label for="porte-nouveau">Choisissez votre code (6 caractères au moins)</label><input id="porte-nouveau" name="nouveau" type="password" autocomplete="new-password" minlength="6"></div><div class="field"><label for="porte-confirme">Confirmez ce code</label><input id="porte-confirme" name="confirme" type="password" autocomplete="new-password"></div></div>
+<p class="porte-erreur" role="alert">${esc(message || '')}</p><button class="btn primary" type="submit">Entrer</button></form>
+<p class="tiny quiet porte-pied">Une solution SoluGis · vos données sont enregistrées dans le compte Google de votre couple.</p></div>`;
+  const form = root.querySelector('.porte-form'), error = form.querySelector('.porte-erreur');
+  form.querySelectorAll('[data-porte-profil]').forEach(b => b.addEventListener('click', () => {
+    choice = b.dataset.porteProfil; SY.dernierProfil = choice; syncSave();
+    form.querySelectorAll('[data-porte-profil]').forEach(x => { x.classList.toggle('active', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+  }));
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); e.stopPropagation();
+    const args = { profil: choice, code: form.code.value }, submit = form.querySelector('[type=submit]');
+    error.textContent = '';
+    if (firstCode) {
+      if (form.nouveau.value.length < 6) { error.textContent = 'Votre code doit compter au moins 6 caractères.'; return; }
+      if (form.nouveau.value !== form.confirme.value) { error.textContent = 'Les deux codes ne sont pas identiques.'; return; }
+      args.nouveau = form.nouveau.value;
+    }
+    submit.disabled = true;
+    try {
+      const r = await syncCall('connexion', args);
+      if (r.etape === 'nouveau') { firstCode = true; form.querySelector('.porte-nouveau').hidden = false; error.textContent = 'Première connexion : choisissez votre code personnel. Personne d’autre ne le connaîtra.'; form.nouveau.focus(); }
+      else syncLoggedIn(r);
+    } catch (x) { error.textContent = x.message; }
+    submit.disabled = false;
+  });
+}
+function syncLoggedIn(r) {
+  // Another profile on this phone: start from a clean local copy, never from the previous person's data.
+  if (SY.me && SY.me !== r.profil) { S = EmotionCore.migrate(emptyState()); SY.file = []; }
+  SY.jeton = r.jeton; SY.me = r.profil; SY.dernierProfil = r.profil;
+  SY.base = syncSnapshot(syncWritable());
+  syncSave();
+  emotionViewer = SY.me; page = 'home'; modal = null;
+  render(); syncRefresh(); syncPolling();
+}
+function syncLogout(message, wipe) {
+  SY.jeton = '';
+  if (wipe) { S = EmotionCore.migrate(emptyState()); SY.file = []; SY.base = null; SY.version = 0; SY.me = ''; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* stockage plein ou bloqué */ } }
+  syncSave(); modal = null; syncPorte(message);
+}
+function syncStart() {
+  if (SYNC_MODE === 'demo') { render(); return; }
+  if (!SY.jeton) { syncPorte(); return; }
+  emotionViewer = SY.me;
+  render(); syncRefresh(); syncPolling();
+}
+if (typeof window !== 'undefined') window.EntreNousSync = { flush: syncFlush, refresh: syncRefresh, state: () => SY, run: syncRun };   // for the test bench
+
+const app=$('#app');app.addEventListener('click',actions);app.addEventListener('change',changed);app.addEventListener('submit',submitted);app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id?.startsWith('task-')){e.preventDefault();const id=e.target.id.slice(5);const v=e.target.value.trim();if(v){S.projects.find(p=>p.id===id)?.tasks.push({id:Math.random().toString(36).slice(2,10),name:v,done:false});persist();render()}}});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal)close()});syncStart();
+})();
+</script>
+</body>
+</html>
