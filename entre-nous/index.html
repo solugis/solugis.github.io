@@ -40,6 +40,78 @@ html{overflow-x:hidden;max-width:100%;overscroll-behavior-y:none}body{overflow-x
 .sync-banner{display:flex;align-items:center;gap:11px;border:1px solid var(--line);padding:11px 15px;border-radius:15px;background:var(--surface);color:var(--muted);font-size:11px;line-height:1.55;margin:-9px 0 22px}.sync-banner b{color:var(--ink)}.sync-text{flex:1;min-width:0;overflow-wrap:anywhere}.sync-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;background:#6f9e7c}.sync-dot.attente{background:#d0a052}.sync-dot.horsligne{background:#b9675f}
 .invite-code{font:normal 38px/1.2 var(--serif);letter-spacing:4px;text-align:center;padding:18px 10px;margin:14px 0;border-radius:15px;background:var(--bg);border:1px dashed var(--line);color:var(--ink);user-select:all}
 .banc-bandeau{position:fixed;left:8px;right:8px;bottom:calc(78px + env(safe-area-inset-bottom));z-index:90;font:11px/1.45 system-ui,sans-serif;background:#fff7d6;color:#5b4500;border:1px solid #f0d77a;border-radius:10px;padding:6px 9px;opacity:.94}.banc-bandeau a{color:#5b4500}
+/* iPhone: Safari gives date fields a native minimum width wider than the column (reported 06/11/2026 on "Échéance facultative").
+   Columns may not grow past the screen, and date fields drop the native look so width:100% applies. */
+.form-row{grid-template-columns:repeat(2,minmax(0,1fr))}@media(max-width:640px){.form-row{grid-template-columns:minmax(0,1fr)}}
+.field{min-width:0}
+input[type=date],input[type=month],input[type=time]{-webkit-appearance:none;appearance:none;display:block;width:100%;max-width:100%;min-width:0;min-height:46px;text-align:left}
+input::-webkit-date-and-time-value{text-align:left;margin:0}
+/* Form buttons centred in every dialog (user's request, 06/11/2026). */
+.form-actions{justify-content:center}
+/* Volume slider of the sound settings: a plain slider, not a text field. */
+.field input.sons-volume{border:0;padding:0;background:none;accent-color:var(--accent);min-height:28px}
+
+
+/* Souvenirs (photos, vidéos), documents, visionneuse, notifications */
+.album-tete{margin-bottom:12px;gap:12px;flex-wrap:wrap}.album-titre{font:normal 25px var(--serif);margin:5px 0}
+.album-jauge{margin:0 0 16px}.album-jauge small{display:block;font-size:11px;line-height:1.55;margin-top:6px}
+.album-barre{height:6px;border-radius:9px;background:var(--surface2);overflow:hidden}.album-barre span{display:block;height:100%;background:var(--accent);border-radius:9px;transition:width .3s}
+.album-envois{border:1px solid var(--line);background:var(--surface);border-radius:15px;padding:12px 14px;margin:0 0 16px;font-size:12px}
+.album-envois-tete{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px}.album-envois small{display:block;margin-top:7px;font-size:11px}
+.album-erreur{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin-top:9px;color:var(--ink);font-size:12px}
+.memory-art{position:relative;width:100%;border:0;padding:0;cursor:pointer;overflow:hidden;font:55px var(--serif)}
+.memory-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .25s}
+img[data-vignette][src^="data:image/gif"]{opacity:0}
+.memory-compte{position:absolute;left:10px;bottom:10px;background:rgba(20,16,18,.62);color:#fff;font:700 10px var(--sans,inherit);padding:4px 8px;border-radius:99px;letter-spacing:.2px}
+.album-modal{width:min(640px,100%)}.album-date{margin:-6px 0 8px}.album-note{font-size:13px;line-height:1.6;margin:0 0 12px;white-space:pre-wrap}
+.album-ajout{margin:4px 0 12px}.album-choix{position:relative;display:inline-flex;align-items:center;gap:7px;cursor:pointer;overflow:hidden;max-width:100%}
+.album-input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0 0 0 0)}
+.album-choix:focus-within{outline:2px solid var(--accent);outline-offset:2px}.album-choisis{display:block;margin-top:6px;font-size:11px}.album-choisis:empty{display:none}
+.field-label{display:block;font-size:11px;font-weight:750;color:var(--muted);margin-bottom:7px}
+.album-grille{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;border-radius:13px;overflow:hidden}.album-grille .empty{grid-column:1/-1}
+.album-case{position:relative;aspect-ratio:1;border:0;padding:0;background:var(--surface2);cursor:pointer;overflow:hidden}
+.album-case img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .25s}
+.album-sans{display:grid;place-items:center;height:100%;font-size:26px}
+.album-duree{position:absolute;right:5px;bottom:5px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:7px}
+.visionneuse{position:fixed;inset:0;z-index:40;background:#0d0b0c;color:#fff;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);animation:appear .15s}
+.vis-haut,.vis-bas{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px}
+.vis-bas{flex-wrap:wrap;align-items:flex-end}.vis-rang{font-size:12px;opacity:.75}
+.vis-bouton{background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:11px;padding:9px 12px;font:600 13px var(--sans,inherit);cursor:pointer;max-width:70vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vis-bouton.danger{color:#ffb4b4}.vis-actions{display:flex;gap:7px;flex-wrap:wrap}
+.vis-legende{min-width:0;flex:1 1 180px}.vis-legende b{display:block;font-size:14px;margin-bottom:3px}.vis-legende small{font-size:11px;opacity:.7}
+.vis-scene{position:relative;flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}
+.vis-scene img,.vis-scene video{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.vis-scene .vis-flou{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:blur(6px);opacity:.5}
+.vis-progres{position:relative;font-size:13px;background:rgba(0,0,0,.45);padding:8px 13px;border-radius:11px}
+.vis-fleche{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:58px;border:0;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;font-size:28px;cursor:pointer}
+.vis-fleche.prec{left:8px}.vis-fleche.suiv{right:8px}
+.doc-filtres{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin:0 0 14px;scrollbar-width:none}.doc-filtres::-webkit-scrollbar{display:none}
+.pill-btn{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:99px;padding:8px 12px;font:700 11px var(--sans,inherit);cursor:pointer;white-space:nowrap}
+.pill-btn.active{background:var(--accent);border-color:var(--accent);color:var(--accentInk,#fff)}
+.doc-groupe{margin-bottom:14px}.doc-groupe h4{margin:0 0 10px;font:normal 19px var(--serif)}
+.doc-ligne{display:flex;align-items:center;gap:11px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}.doc-groupe h4+.doc-ligne{border-top:0}
+.doc-texte{flex:1 1 160px;min-width:0;text-align:left;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;font:inherit}
+.doc-texte b{display:block;font-size:13px;overflow-wrap:anywhere}.doc-texte small{display:block;font-size:11px;color:var(--muted);margin-top:2px}.doc-note{font-style:italic}
+.doc-icone{flex:0 0 auto;width:42px;height:48px;border-radius:9px;display:grid;place-items:center;font:800 9px var(--sans,inherit);letter-spacing:.3px;color:#fff;background:#8a7b72}
+.doc-icone.pdf{background:#c2554d}.doc-icone.img{background:#5e826a}.doc-icone.tab{background:#3f8a5a}.doc-icone.txt{background:#4f6fae}.doc-icone.vid{background:#866c48}
+.doc-ligne .item-actions{margin-left:auto}
+.doc-fiche{display:flex;gap:13px;align-items:center;margin-bottom:12px}.doc-fiche b{display:block;overflow-wrap:anywhere}.doc-fiche small{font-size:11px;line-height:1.6}
+.doc-zone{margin-top:8px}.doc-zone .vis-progres{background:var(--surface2);color:var(--ink);display:inline-block}
+.doc-apercu{width:100%;max-height:50vh;object-fit:contain;border-radius:13px;background:var(--surface2);margin-bottom:12px}
+.doc-boutons,.notif-boutons{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.notif-invite{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:15px;padding:10px 14px;margin:-12px 0 22px;font-size:12px;color:var(--ink)}
+@media (max-width:640px){.vis-fleche{display:none}.doc-ligne .item-actions{margin-left:53px}}
+/* Nos pensées du jour (Accueil) */
+.pensees-grille{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.pensee{border:1px solid var(--line);border-radius:17px;padding:14px 15px;background:var(--bg);min-width:0}.pensee.moi{background:var(--surface2)}
+.pensee-tete{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}.pensee-tete b{font-size:12px}.pensee-tete small{font-size:10px;color:var(--muted);margin-left:auto}
+.pensee-initiale{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accentInk,#fff);font-size:11px;font-weight:700}
+.pensee blockquote{margin:0;font:italic 17px/1.45 var(--serif);color:var(--ink);overflow-wrap:anywhere;white-space:pre-wrap}
+.pensee cite{display:block;margin-top:6px;font-size:11px;color:var(--muted);font-style:normal}
+.pensee-vide{font-size:12px;color:var(--muted);line-height:1.55;margin:0 0 10px}.pensee-actions{margin-top:8px}
+.pensee-genres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;margin-bottom:14px}.pensee-genres label{text-align:center;border-radius:9px;padding:9px 3px;font-size:11.5px;line-height:1.3;color:var(--muted);cursor:pointer;position:relative}
+.pensee-genres label.active{background:var(--surface);box-shadow:0 2px 9px rgba(0,0,0,.06);color:var(--ink);font-weight:700}.pensee-genres input{position:absolute;opacity:0;width:1px;height:1px}
+@media (max-width:640px){.pensees-grille{grid-template-columns:1fr}}
 
 </style>
 </head>
@@ -183,6 +255,155 @@ html{overflow-x:hidden;max-width:100%;overscroll-behavior-y:none}body{overflow-x
 
 </script>
 <script>
+/* Sons d'Entre Nous, fabriqués sur le téléphone (Web Audio : aucun fichier, aucune musique sous droits).
+   Deux familles :
+   - effets de navigation, courts : SONS_EN.jouer(nom, i) — nom : toucher (i = numéro de l'onglet), ouvrir, enregistrer, mood, connexion ;
+   - ambiance musicale continue, générée note à note (jamais deux fois identique) : SONS_EN.ambiance(nom) — velours, complicite, soie, ou '' pour couper.
+   Volume : SONS_EN.volume(0…1). Sur iPhone, aucun son ne peut partir avant un premier toucher : SONS_EN.debloquer() à appeler sur ce toucher.
+   La musique s'éteint en douceur quand l'application passe en arrière-plan et reprend au retour. */
+var SONS_EN = (function () {
+  'use strict';
+  var ac = null, maitre = null, salle = null, effets = null, musique = null;   // musique = voie de l'ambiance en cours
+  var etat = { ambiance: '', volume: 0.6, minuterie: null, prochain: 0, pas: 0, voix: [] };
+  var hz = function (m) { return 440 * Math.pow(2, (m - 69) / 12); };
+
+  function contexte() {
+    if (ac) return ac;
+    var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+    ac = new AC();
+    maitre = ac.createGain(); maitre.gain.value = etat.volume; maitre.connect(ac.destination);
+    // Salle : réverbération douce fabriquée (bruit qui s'éteint en 3 s), pour l'espace et le velouté.
+    salle = ac.createConvolver();
+    var n = Math.floor(ac.sampleRate * 3.2), imp = ac.createBuffer(2, n, ac.sampleRate);
+    for (var c = 0; c < 2; c++) { var d = imp.getChannelData(c); for (var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.6); }
+    salle.buffer = imp;
+    var mouille = ac.createGain(); mouille.gain.value = 0.55; salle.connect(mouille); mouille.connect(maitre);
+    effets = ac.createGain(); effets.gain.value = 0.9; effets.connect(maitre);
+    return ac;
+  }
+  function vers(dest, sec, mouille) {   // départ vers la sortie, avec une part dans la salle
+    var g = ac.createGain(); g.connect(dest);
+    if (mouille) { var s = ac.createGain(); s.gain.value = mouille; g.connect(s); s.connect(salle); }
+    return g;
+  }
+  function panne(dest, p) { if (!ac.createStereoPanner) return dest; var s = ac.createStereoPanner(); s.pan.value = p; s.connect(dest); return s; }
+
+  /* ------------------------------------------------------------ timbres */
+  // Cloche douce (FM légère) : comme un piano électrique feutré.
+  function cloche(t, f, g, duree, dest) {
+    var o = ac.createOscillator(), mod = ac.createOscillator(), mg = ac.createGain(), e = ac.createGain();
+    o.type = 'sine'; o.frequency.value = f; mod.type = 'sine'; mod.frequency.value = f * 2; mg.gain.setValueAtTime(f * 0.9, t); mg.gain.exponentialRampToValueAtTime(f * 0.05, t + duree * 0.6);
+    mod.connect(mg); mg.connect(o.frequency);
+    e.gain.setValueAtTime(0.0001, t); e.gain.exponentialRampToValueAtTime(g, t + 0.012); e.gain.exponentialRampToValueAtTime(0.0001, t + duree);
+    o.connect(e); e.connect(dest); o.start(t); mod.start(t); o.stop(t + duree + 0.1); mod.stop(t + duree + 0.1);
+  }
+  // Nappe : deux oscillateurs désaccordés par note, filtre chaud qui respire lentement.
+  function nappe(t, notes, g, duree, dest, attaque, ouverture) {
+    var f = ac.createBiquadFilter(), e = ac.createGain(), lfo = ac.createOscillator(), lg = ac.createGain();
+    f.type = 'lowpass'; f.Q.value = 0.7; f.frequency.value = ouverture || 900;
+    lfo.frequency.value = 0.07 + Math.random() * 0.05; lg.gain.value = (ouverture || 900) * 0.35; lfo.connect(lg); lg.connect(f.frequency);
+    var a = attaque || 2.5;
+    e.gain.setValueAtTime(0.0001, t); e.gain.exponentialRampToValueAtTime(g, t + a); e.gain.setValueAtTime(g, t + duree - 2.5); e.gain.exponentialRampToValueAtTime(0.0001, t + duree + 1.5);
+    f.connect(e); e.connect(dest);
+    notes.forEach(function (m) { ['triangle', 'sawtooth'].forEach(function (forme, k) {
+      var o = ac.createOscillator(), mg = ac.createGain(); o.type = forme; o.frequency.value = hz(m); o.detune.value = k ? 7 : -5;
+      mg.gain.value = (k ? 0.25 : 0.75) / notes.length; o.connect(mg); mg.connect(f); o.start(t); o.stop(t + duree + 1.6);
+    }); });
+    lfo.start(t); lfo.stop(t + duree + 1.6);
+  }
+  function basse(t, m, g, duree, dest) {
+    var o = ac.createOscillator(), e = ac.createGain(); o.type = 'sine'; o.frequency.value = hz(m);
+    e.gain.setValueAtTime(0.0001, t); e.gain.exponentialRampToValueAtTime(g, t + 1.8); e.gain.exponentialRampToValueAtTime(0.0001, t + duree + 1);
+    o.connect(e); e.connect(dest); o.start(t); o.stop(t + duree + 1.1);
+  }
+  function battement(t, g, dest) {   // un « lub-dub » de cœur, très sourd
+    [[0, 1], [0.22, 0.7]].forEach(function (p) {
+      var o = ac.createOscillator(), e = ac.createGain(), s = t + p[0]; o.type = 'sine'; o.frequency.setValueAtTime(70, s); o.frequency.exponentialRampToValueAtTime(42, s + 0.16);
+      e.gain.setValueAtTime(0.0001, s); e.gain.exponentialRampToValueAtTime(g * p[1], s + 0.02); e.gain.exponentialRampToValueAtTime(0.0001, s + 0.3);
+      o.connect(e); e.connect(dest); o.start(s); o.stop(s + 0.35);
+    });
+  }
+
+  /* ------------------------------------------------------------ effets de navigation */
+  var GAMME = [74, 76, 78, 81, 83];   // ré, mi, fa#, la, si : une note par onglet, toutes consonantes entre elles
+  var EFFETS = {
+    toucher: function (t, i) { cloche(t, hz(GAMME[(i || 0) % GAMME.length]), 0.16, 0.7, vers(effets, 0, 0.35)); },
+    ouvrir: function (t) { [69, 74, 78].forEach(function (m, k) { cloche(t + k * 0.06, hz(m), 0.1, 1.1, vers(effets, 0, 0.45)); }); },
+    // Deux notes qui se répondent : l'une, puis l'autre, une tierce plus haut (un « nous »).
+    enregistrer: function (t) { cloche(t, hz(74), 0.15, 0.9, vers(panne(effets, -0.3), 0, 0.4)); cloche(t + 0.16, hz(78), 0.15, 1.2, vers(panne(effets, 0.3), 0, 0.5)); },
+    mood: function (t) { cloche(t, hz(69), 0.12, 1.8, vers(panne(effets, -0.4), 0, 0.55)); cloche(t, hz(73), 0.12, 1.8, vers(panne(effets, 0.4), 0, 0.55)); cloche(t + 0.35, hz(81), 0.08, 2.2, vers(effets, 0, 0.7)); },
+    connexion: function (t) { nappe(t, [62, 66, 69, 73], 0.09, 3, vers(effets, 0, 0.5), 0.6, 1400); [74, 78, 81, 86].forEach(function (m, k) { cloche(t + 0.25 + k * 0.14, hz(m), 0.07, 1.6, vers(effets, 0, 0.6)); }); }
+  };
+
+  /* ------------------------------------------------------------ ambiances */
+  // Suite d'accords en ré majeur, chaude et sans tension : Dmaj9 – Bm9 – Gmaj9 – A6sus (puis retour).
+  var ACCORDS = [
+    { basse: 38, notes: [50, 54, 57, 61, 64], motif: [74, 76, 78, 81, 85] },
+    { basse: 35, notes: [47, 50, 54, 57, 61], motif: [71, 73, 74, 78, 81] },
+    { basse: 31, notes: [43, 47, 50, 54, 57], motif: [71, 74, 76, 78, 83] },
+    { basse: 33, notes: [45, 50, 52, 54, 59], motif: [69, 71, 74, 76, 81] }
+  ];
+  var choix = function (l) { return l[Math.floor(Math.random() * l.length)]; };
+  var AMBIANCES = {
+    velours: { duree: 9, mesure: function (t, a, d) {
+      nappe(t, a.notes, 0.16, d, vers(musique, 0, 0.5), 3, 850); basse(t, a.basse + 12, 0.05, d, vers(musique, 0, 0.2));
+      if (Math.random() < 0.6) cloche(t + 3 + Math.random() * 3, hz(choix(a.motif)), 0.035, 3.5, vers(musique, 0, 0.8));
+    } },
+    // Deux voix se répondent, l'une à gauche, l'autre à droite : une phrase, puis la réponse une tierce ou une octave au-dessus.
+    complicite: { duree: 6.6, mesure: function (t, a, d) {
+      nappe(t, a.notes, 0.07, d, vers(musique, 0, 0.5), 2, 700); basse(t, a.basse + 12, 0.035, d, vers(musique, 0, 0.2));
+      var gauche = panne(musique, -0.55), droite = panne(musique, 0.55), noir = 60 / 72, i = Math.floor(Math.random() * 3);
+      for (var k = 0; k < 3; k++) cloche(t + 0.4 + k * noir * (k === 2 ? 1.5 : 1), hz(a.motif[(i + k) % 5]), 0.06, 2.2, vers(gauche, 0, 0.5));
+      var r = t + 0.4 + noir * 4;
+      cloche(r, hz(a.motif[(i + 2) % 5] + (Math.random() < 0.3 ? 12 : 0)), 0.05, 2.4, vers(droite, 0, 0.55));
+      cloche(r + noir, hz(a.motif[(i + 4) % 5]), 0.05, 2.8, vers(droite, 0, 0.6));
+    } },
+    // Nappe suspendue, scintillements, et deux cœurs qui battent doucement l'un près de l'autre.
+    soie: { duree: 11, mesure: function (t, a, d) {
+      nappe(t, a.notes.slice(1), 0.13, d, vers(musique, 0, 0.6), 4, 650);
+      for (var b = 0; b < 4; b++) { battement(t + 1 + b * 1.02, 0.07, vers(panne(musique, -0.25), 0, 0.15)); battement(t + 1.12 + b * 0.98, 0.05, vers(panne(musique, 0.25), 0, 0.15)); }
+      for (var s = 0; s < 3; s++) cloche(t + 4 + s * 1.9 + Math.random(), hz(choix(a.motif) + 12), 0.02, 4, vers(panne(musique, Math.random() * 1.2 - 0.6), 0, 0.9));
+    } }
+  };
+  function planifier() {
+    var A = AMBIANCES[etat.ambiance]; if (!A || !ac || !musique) return;
+    while (etat.prochain < ac.currentTime + 2.5) {   // on prépare toujours la mesure suivante à l'avance
+      A.mesure(etat.prochain, ACCORDS[etat.pas % ACCORDS.length], A.duree);
+      etat.prochain += A.duree; etat.pas++;
+    }
+    etat.minuterie = setTimeout(planifier, 1000);
+  }
+  function lancer() {
+    clearTimeout(etat.minuterie);
+    if (!etat.ambiance || !contexte() || document.visibilityState === 'hidden') return;
+    if (ac.state === 'suspended') ac.resume();
+    var t = ac.currentTime;
+    // Une voie neuve à chaque départ : ce que l'ancienne avait déjà programmé s'éteint avec elle.
+    musique = ac.createGain(); musique.gain.setValueAtTime(0.0001, t); musique.gain.linearRampToValueAtTime(0.9, t + 3); musique.connect(maitre);
+    etat.prochain = t + 0.1; etat.pas = Math.floor(Math.random() * ACCORDS.length); planifier();
+  }
+  function eteindre(rapide) {
+    clearTimeout(etat.minuterie);
+    if (!ac) return;
+    if (!musique) return;
+    var t = ac.currentTime, fin = rapide ? 0.6 : 2.5, voie = musique; musique = null;
+    voie.gain.cancelScheduledValues(t); voie.gain.setValueAtTime(voie.gain.value, t); voie.gain.linearRampToValueAtTime(0, t + fin);
+    setTimeout(function () { try { voie.disconnect(); } catch (e) { /* déjà débranchée */ } }, fin * 1000 + 200);
+  }
+  if (typeof document !== 'undefined') document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') eteindre(true); else if (etat.ambiance && !musique) lancer(); });
+
+  return {
+    AMBIANCES: [['velours', 'Velours'], ['complicite', 'Complicité'], ['soie', 'Soie']],
+    debloquer: function () { if (contexte() && ac.state === 'suspended') ac.resume(); if (etat.ambiance && !musique) lancer(); },
+    jouer: function (nom, i) { try { if (!EFFETS[nom] || !contexte()) return; if (ac.state === 'suspended') ac.resume(); EFFETS[nom](ac.currentTime + 0.02, i); } catch (e) { /* le son ne doit jamais gêner l'application */ } },
+    ambiance: function (nom) { if (nom === etat.ambiance) return; eteindre(); etat.ambiance = AMBIANCES[nom] ? nom : ''; if (etat.ambiance) lancer(); },
+    volume: function (v) { etat.volume = Math.max(0, Math.min(1, +v || 0)); if (maitre) maitre.gain.setTargetAtTime(etat.volume, ac.currentTime, 0.1); },
+    actuelle: function () { return etat.ambiance; }
+  };
+})();
+
+</script>
+<script>
 (()=>{
 'use strict';
 const KEY=window.ENTRE_NOUS_CONFIG&&window.ENTRE_NOUS_CONFIG.api?'entrenous-app-'+(window.ENTRE_NOUS_CONFIG.api==='banc'?'banc'+(new URLSearchParams(location.search).get('appareil')||''):'ligne'):'entrenous-v1-demo-2026';
@@ -209,7 +430,7 @@ function toast(msg){document.querySelector('.toast')?.remove();const n=document.
 function iconBtn(name,action,label='Action'){return `<button type="button" class="small-icon" data-action="${esc(action)}" aria-label="${esc(label)}">${svg(name)}</button>`}
 const NAV=[['home','Accueil','house'],['calendar','Calendrier','calendar'],['projects','Projets','projects'],['finance','Finances','wallet'],['us','Nous','heart']];
 function shell(){return `<div class="app"><aside class="sidebar"><div class="brand"><div class="logo">e.</div><div><div class="brand-name">Entre Nous</div><div class="brand-sub">Un univers à deux</div></div></div><div class="side-label">Votre espace</div><nav class="nav">${NAV.map(x=>`<button class="nav-button ${page===x[0]?'active':''}" data-action="nav:${x[0]}">${svg(x[2])}${x[1]}</button>`).join('')}</nav><div class="side-spacer"></div><div class="side-note"><strong>Une histoire, à votre rythme ♡</strong>${syncConnected()?'Vos saisies sont partagées avec votre partenaire et gardées sur cet appareil.':"Ce prototype conserve vos saisies dans ce navigateur uniquement. Aucun partenaire n'y est connecté."}</div><div class="side-bottom"><div class="mini-profile"><div class="avatar">${esc(personName(emotionViewer).slice(0,1))}</div><span>${esc(personName(emotionViewer))}</span></div>${iconBtn('gear','settings','Personnaliser')}</div></aside><main class="main"><header class="topbar"><div><div class="eyebrow">ENTRE NOUS${syncConnected()?'':'<span style="opacity:.42;margin:0 5px">/</span> VERSION DÉCOUVERTE'}</div><div class="tiny quiet" style="margin-top:8px">Votre histoire, votre rythme.</div></div><div class="top-actions"><span class="topdate">${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</span>${iconBtn('gear','settings','Réglages')}<div class="avatars"><div class="avatar">${esc(S.couple.first.slice(0,1))}</div><div class="avatar">${esc(S.couple.second.slice(0,1))}</div></div></div></header>${simulationBanner()}<div class="page">${renderPage()}</div></main><nav class="mobile-nav">${NAV.map(x=>`<button data-action="nav:${x[0]}" class="${page===x[0]?'active':''}">${svg(x[2])}<span>${x[1]}</span></button>`).join('')}</nav></div>${modal?renderModal():''}`}
-function render(){document.documentElement.dataset.theme=S.theme;const a=$('#app');a.innerHTML=shell();fillEdit()}
+function render(){document.documentElement.dataset.theme=S.theme;const a=$('#app');a.innerHTML=shell();fillEdit();albumApresRendu()}
 function pageHead(kicker,title,desc,actions=''){return `<div class="welcome"><div><div class="eyebrow">${kicker}</div><h1 class="display">${title}</h1><p class="lede">${desc}</p></div>${actions}</div>`}
 function renderPage(){switch(page){case'calendar':return emotionCalendar();case'projects':return projects();case'finance':return finance();case'us':return us();default:return home()}}
 function evList(evs,withRemove=false){evs=visibleEvents(evs);return evs.length?evs.map(e=>`<div class="event-line"><div class="date-chip"><b>${Number(e.date.slice(-2))}</b><span>${new Date(e.date+'T12:00').toLocaleDateString('fr-FR',{month:'short'})}</span></div><span class="event-symbol">${e.type==='intime'&&!S.privacy.showIntimacy?'🔒':TYPES[e.type]?.emoji||'📅'}</span><div class="event-desc"><b>${e.type==='intime'&&!S.privacy.showIntimacy?'Moment privé':esc(e.title)}</b><small>${TYPES[e.type]?.name||'Événement'} · ${fullDate(e.date)}</small></div>${withRemove?`${e.type==='intime'&&!S.privacy.showIntimacy?'':editButton('event',e,'Modifier l’événement')}<button class="remove" title="Supprimer" data-action="delete-event:${e.id}">×</button>`:''}</div>`).join(''):`<div class="empty">Aucun événement pour le moment.<br>Ajoutez une date importante pour commencer.</div>`}
@@ -219,14 +440,14 @@ function taskCount(){const all=S.projects.flatMap(p=>p.tasks);return [all.filter
 function moodToday(){return S.moods.find(m=>m.date===TODAY)||{personal:0,relation:0,note:''}}
 const moodSet=[['😔','Bas'],['😕','Mitigé'],['😐','Neutre'],['😊','Bien'],['🥰','Super']];
 function moodPicker(label,mode,value){return `<div><div class="section-hint"><span>${label}</span><small class="quiet">${value?'Enregistré aujourd’hui':'À renseigner si vous le souhaitez'}</small></div><div class="mood-options">${moodSet.map((m,i)=>`<button class="mood ${Number(value)===i+1?'selected':''}" data-action="mood:${mode}:${i+1}" aria-label="${m[1]}"><span class="emoji">${m[0]}</span><span>${m[1]}</span></button>`).join('')}</div></div>`}
-function home(){const t=moodToday(),up=upcoming(),spent=monthlyExpenses(),[done,total]=taskCount();return `${pageHead('Votre cocon digital',`Bonjour, <em>${esc(personName(emotionViewer))}</em> ♡`,'Un endroit à vous, pour prendre soin de votre relation et de votre quotidien.',button(`${svg('plus')} Ajouter un événement`,'new-event','btn primary'))}<div class="grid-2"><div class="stack"><section class="hero"><div class="hero-main"><div class="smallcaps">NOTRE PETIT UNIVERS</div><div class="h-title">De belles choses<br>se vivent <em>à deux.</em></div><p>Les instants précieux, les projets de demain, les mots du cœur. Tout trouve sa place ici.</p>${button('Voir notre calendrier '+svg('arrow'),'nav:calendar','btn soft')}</div><div class="hero-ornament">♡</div></section><section class="card">${emotionEditor()}</section><section class="card"><div class="card-title"><h3>Nos prochains moments</h3>${button('Calendrier '+svg('arrow'),'nav:calendar','btn ghost sm')}</div>${evList(up)}${button(`${svg('plus')} Ajouter une date`,'new-event','btn soft sm')}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>En un regard</h3><span class="smallcaps">Ce mois-ci</span></div><div class="two-mini"><div class="stat-tile"><div class="smallcaps">${S.privacy.showIntimacy?'Moments 🔞':'Moments privés'}</div><div class="stat-number">${S.privacy.showIntimacy?S.events.filter(e=>e.type==='intime'&&monthKey(e.date)===monthKey(TODAY)).length:'—'}</div><div class="stat-label">Inscrits au calendrier</div></div><div class="stat-tile"><div class="smallcaps">Nos tâches</div><div class="stat-number">${done}<span class="quiet" style="font:17px var(--sans)"> / ${total}</span></div><div class="stat-label">Tâches accomplies</div></div><div class="stat-tile"><div class="smallcaps">Budget restant</div><div class="stat-number" style="font-size:24px">${fmt(S.budget-spent)}</div><div class="stat-label">FCFA ce mois-ci</div></div><div class="stat-tile"><div class="smallcaps">Notre relation</div><div class="stat-number">${EmotionCore.day(S,TODAY,emotionViewer).common === null ? '—' : EmotionCore.emoji(EmotionCore.day(S,TODAY,emotionViewer).common)}</div><div class="stat-label">Mood commun · deux réponses partagées</div></div></div></section><section class="card"><div class="card-title"><h3>Notre budget</h3>${button(svg('arrow'),'nav:finance','btn ghost sm')}</div><div class="section-hint"><span>Utilisé ce mois</span><b class="small">${fmt(spent)} / ${fmt(S.budget)} FCFA</b></div><div class="progress" style="margin:13px 0 10px"><div style="width:${Math.min(100,S.budget?spent/S.budget*100:0)}%"></div></div><p class="quiet small" style="line-height:1.6">Visualisez vos dépenses et faites grandir vos projets communs.</p></section><section class="card"><div class="card-title"><h3>Nos engagements</h3>${button(svg('arrow'),'sub:agreements','btn ghost sm')}</div><p class="quiet small" style="line-height:1.75">Exprimer nos attentes, construire des accords, évoluer sans jamais se juger.</p><div style="background:var(--bg);padding:14px;border-radius:13px;font:italic 17px/1.55 var(--serif)">« Écouter pour comprendre, pas seulement pour répondre. »</div>${button('Découvrir notre charte','sub:agreements','btn soft sm')}</section></div></div>`}
+function home(){const t=moodToday(),up=upcoming(),spent=monthlyExpenses(),[done,total]=taskCount();return `${pageHead('Votre cocon digital',`Bonjour, <em>${esc(personName(emotionViewer))}</em> ♡`,'Un endroit à vous, pour prendre soin de votre relation et de votre quotidien.',button(`${svg('plus')} Ajouter un événement`,'new-event','btn primary'))}<div class="grid-2"><div class="stack"><section class="hero"><div class="hero-main"><div class="smallcaps">NOTRE PETIT UNIVERS</div><div class="h-title">De belles choses<br>se vivent <em>à deux.</em></div><p>Les instants précieux, les projets de demain, les mots du cœur. Tout trouve sa place ici.</p>${button('Voir notre calendrier '+svg('arrow'),'nav:calendar','btn soft')}</div><div class="hero-ornament">♡</div></section>${penseeAccueil()}<section class="card">${emotionEditor()}</section><section class="card"><div class="card-title"><h3>Nos prochains moments</h3>${button('Calendrier '+svg('arrow'),'nav:calendar','btn ghost sm')}</div>${evList(up)}${button(`${svg('plus')} Ajouter une date`,'new-event','btn soft sm')}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>En un regard</h3><span class="smallcaps">Ce mois-ci</span></div><div class="two-mini"><div class="stat-tile"><div class="smallcaps">${S.privacy.showIntimacy?'Moments 🔞':'Moments privés'}</div><div class="stat-number">${S.privacy.showIntimacy?S.events.filter(e=>e.type==='intime'&&monthKey(e.date)===monthKey(TODAY)).length:'—'}</div><div class="stat-label">Inscrits au calendrier</div></div><div class="stat-tile"><div class="smallcaps">Nos tâches</div><div class="stat-number">${done}<span class="quiet" style="font:17px var(--sans)"> / ${total}</span></div><div class="stat-label">Tâches accomplies</div></div><div class="stat-tile"><div class="smallcaps">Budget restant</div><div class="stat-number" style="font-size:24px">${fmt(S.budget-spent)}</div><div class="stat-label">FCFA ce mois-ci</div></div><div class="stat-tile"><div class="smallcaps">Notre relation</div><div class="stat-number">${EmotionCore.day(S,TODAY,emotionViewer).common === null ? '—' : EmotionCore.emoji(EmotionCore.day(S,TODAY,emotionViewer).common)}</div><div class="stat-label">Mood commun · deux réponses partagées</div></div></div></section><section class="card"><div class="card-title"><h3>Notre budget</h3>${button(svg('arrow'),'nav:finance','btn ghost sm')}</div><div class="section-hint"><span>Utilisé ce mois</span><b class="small">${fmt(spent)} / ${fmt(S.budget)} FCFA</b></div><div class="progress" style="margin:13px 0 10px"><div style="width:${Math.min(100,S.budget?spent/S.budget*100:0)}%"></div></div><p class="quiet small" style="line-height:1.6">Visualisez vos dépenses et faites grandir vos projets communs.</p></section><section class="card"><div class="card-title"><h3>Nos engagements</h3>${button(svg('arrow'),'sub:agreements','btn ghost sm')}</div><p class="quiet small" style="line-height:1.75">Exprimer nos attentes, construire des accords, évoluer sans jamais se juger.</p><div style="background:var(--bg);padding:14px;border-radius:13px;font:italic 17px/1.55 var(--serif)">« Écouter pour comprendre, pas seulement pour répondre. »</div>${button('Découvrir notre charte','sub:agreements','btn soft sm')}</section></div></div>`}
 function calendar(){const year=Number(month.slice(0,4)),mo=Number(month.slice(5,7))-1,start=new Date(year,mo,1),offset=(start.getDay()+6)%7,days=new Date(year,mo+1,0).getDate(),gridN=Math.ceil((offset+days)/7)*7;
 const cells=Array.from({length:gridN},(_,i)=>{let date=dstr(new Date(year,mo,i-offset+1)),d=Number(date.slice(-2)),isMonth=date.slice(0,7)===month,evs=S.events.filter(e=>e.date===date);return `<button class="day ${isMonth?'':'outside'} ${date===TODAY?'today':''} ${selected===date?'selected':''}" data-action="select-date:${date}" aria-label="${fullDate(date)}"><span class="day-number">${d}</span><div class="day-emojis">${evs.slice(0,4).map(e=>`<span title="${esc(e.type==='intime'?'Moment intime':e.title)}">${e.type==='intime'&&!S.privacy.showIntimacy?'🔒':TYPES[e.type]?.emoji||'📅'}</span>`).join('')}</div>${evs.length?`<div class="cal-chip">${evs.length} événement${evs.length>1?'s':''}</div>`:''}</button>`}).join('');
 const dayEv=S.events.filter(e=>e.date===selected);let body='';if(calView==='month'){body=`<div class="cal-weekdays">${['LUN','MAR','MER','JEU','VEN','SAM','DIM'].map(s=>`<div>${s}</div>`).join('')}</div><div class="cal-grid">${cells}</div>`}else if(calView==='week'){const day=new Date(selected+'T12:00');const mon=addDay(selected,-(day.getDay()+6)%7);body=`<div class="grid-3" style="grid-template-columns:repeat(auto-fit,minmax(135px,1fr))">${Array.from({length:7},(_,i)=>{const dd=addDay(mon,i);let ev=S.events.filter(e=>e.date===dd);return `<button class="week-day ${selected===dd?'selected':''}" data-action="select-date:${dd}"><div class="smallcaps">${new Date(dd+'T12:00').toLocaleDateString('fr-FR',{weekday:'short'})}</div><b>${Number(dd.slice(-2))}</b><div style="font-size:22px">${ev.map(e=>e.type==='intime'&&!S.privacy.showIntimacy?'🔒':TYPES[e.type]?.emoji||'📅').join(' ')||'—'}</div></button>`}).join('')}</div>`}else{body=`<div class="date-banner">${fullDate(selected)}</div>${evList(dayEv,true)}`}
 return `${pageHead('Tous nos instants','Notre <em>calendrier</em>','Rendez-vous, projets, souvenirs et moments intimes : l’histoire de votre quotidien.',button(`${svg('plus')} Nouvel événement`,'new-event','btn primary'))}<div class="card"><div class="calendar-head"><div class="month-title">${monthName(month+'-01').replace(/^./,c=>c.toUpperCase())}</div><div class="cal-controls"><div class="segmented">${['month','week','day'].map((v,i)=>`<button class="${calView===v?'active':''}" data-action="cal-view:${v}">${['Mois','Semaine','Jour'][i]}</button>`).join('')}</div>${iconBtn('back','cal-prev','Précédent')}${iconBtn('arrow','cal-next','Suivant')}${button('Aujourd’hui','cal-today','btn sm')}</div></div>${body}<div class="cal-legend"><span>🔞 Moments intimes</span><span>💝 Dates spéciales</span><span>📅 Rendez-vous</span><span>✅ Projets</span></div><div class="selected-date"><div class="selected-date-head"><b>${fullDate(selected)}</b>${button(`${svg('plus')} Ajouter`,'new-event','btn sm soft')}</div>${calView==='day'?'':evList(dayEv,true)}</div><div style="margin-top:13px" class="toggle-row"><div><b>Afficher les icônes 🔞</b><small>Visible par défaut dans les cases des jours concernés. À désactiver pour un affichage discret.</small></div><label class="switch"><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy?'checked':''}/><span></span></label></div><div class="notice warning">Confidentialité : cette version enregistre localement les informations dans le navigateur, sans chiffrement spécifique ni synchronisation. Évitez les détails sensibles sur un appareil partagé.</div></div>`}
 function projects(){const [done,total]=taskCount();return `${pageHead('Organiser demain','Nos <em>projets</em>','Des grandes ambitions aux petites tâches du quotidien, avançons ensemble.',button(`${svg('plus')} Nouveau projet`,'new-project','btn primary'))}<div class="grid-3" style="margin-bottom:20px"><div class="stat-tile"><div class="smallcaps">Projets actifs</div><div class="stat-number">${S.projects.length}</div><div class="stat-label">Objectifs partagés</div></div><div class="stat-tile"><div class="smallcaps">Tâches accomplies</div><div class="stat-number">${done} <span class="quiet" style="font:15px var(--sans)">/ ${total}</span></div><div class="stat-label">Étapes réalisées</div></div><div class="stat-tile"><div class="smallcaps">Progression globale</div><div class="stat-number">${total?Math.round(done/total*100):0}%</div><div class="progress"><div style="width:${total?done/total*100:0}%"></div></div></div></div><div class="grid-even">${S.projects.map(p=>{const done=p.tasks.filter(t=>t.done).length;return `<section class="project"><div class="project-head"><div><div class="proj-icon">${esc(p.emoji||'♡')}</div><h3>${esc(p.name)}</h3><div class="quiet tiny">Échéance : ${p.due?fullDate(p.due):'Non définie'}</div></div><div class="item-actions">${button('Modifier','edit-item:project:'+p.id,'btn ghost sm')}${button('Supprimer','delete-project:'+p.id,'btn ghost sm danger')}</div></div><div><div class="section-hint"><span class="small">Notre progression</span><span class="tiny quiet">${done} / ${p.tasks.length} étapes</span></div><div class="progress" style="margin-top:10px"><div style="width:${p.tasks.length?done/p.tasks.length*100:0}%"></div></div></div><div>${p.tasks.map(t=>`<div class="task ${t.done?'done':''}"><input type="checkbox" data-change="task:${p.id}:${t.id}" ${t.done?'checked':''} aria-label="Terminer ${esc(t.name)}"/><span class="task-text">${esc(t.name)}</span>${editButton('task',{id:p.id,name:t.name},'Renommer la tâche',':'+t.id)}<button data-action="delete-task:${p.id}:${t.id}" class="remove" title="Retirer la tâche">×</button></div>`).join('')||'<div class="quiet small">Aucune tâche pour le moment.</div>'}</div><div class="task-editor"><input id="task-${p.id}" placeholder="Ajouter une tâche…" aria-label="Nouvelle tâche"/><button data-action="add-task:${p.id}" aria-label="Ajouter une tâche">+</button></div></section>`}).join('')||'<div class="empty">Aucun projet encore. Créez votre premier projet commun.</div>'}</div>`}
 function finance(){const spent=monthlyExpenses(),remaining=S.budget-spent,cat={};S.expenses.filter(x=>monthKey(x.date)===monthKey(TODAY)).forEach(e=>cat[e.category]=(cat[e.category]||0)+Number(e.amount));const max=Math.max(...Object.values(cat),1);return `${pageHead('Construire ensemble','Nos <em>finances</em>','Un espace simple pour suivre les dépenses communes et donner vie à vos projets.',button(`${svg('plus')} Ajouter une dépense`,'new-expense','btn primary'))}<div class="grid-2"><div class="stack"><section class="card budget-hero"><div class="finance-top"><div><div class="smallcaps">NOTRE BUDGET · ${monthName(TODAY).toUpperCase()}</div><div class="finance-amount">${fmt(remaining)} <span style="font:14px var(--sans)">FCFA</span></div><div class="finance-hero-note">Disponibles sur un budget mensuel de ${fmt(S.budget)} FCFA</div></div>${iconBtn('edit','edit-budget','Modifier le budget')}</div><div class="progress" style="margin:20px 0 10px"><div style="width:${Math.min(100,S.budget?spent/S.budget*100:0)}%"></div></div><div class="section-hint"><span class="small">${fmt(spent)} FCFA dépensés</span><span class="small">${S.budget?Math.round(spent/S.budget*100):0}% utilisés</span></div></section><section class="card"><div class="card-title"><h3>Nos dépenses</h3>${button(`${svg('plus')} Ajouter`,'new-expense','btn soft sm')}</div>${S.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10).map(e=>`<div class="finance-entry"><div class="finance-symbol">${({Alimentation:'🥑',Logement:'🏠',Loisirs:'🥂',Transport:'🚕',Santé:'🌿',Autre:'🧾'})[e.category]||'🧾'}</div><div class="entry-description"><b>${esc(e.name)}</b><small>${esc(e.category)} · ${fullDate(e.date)} · ${esc(e.paidBy)} · ${e.visibility==='prive'?'🔒 Privé':'Commun'}</small></div><div class="entry-amount">– ${fmt(e.amount)}</div>${editButton('expense',e,'Modifier la dépense')}<button class="remove" data-action="delete-expense:${e.id}" title="Supprimer">×</button></div>`).join('')||'<div class="empty">Ajoutez une dépense pour commencer.</div>'}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>Répartition du mois</h3><span class="smallcaps">Dépenses</span></div>${Object.keys(cat).length?`<div class="bar-rows">${Object.entries(cat).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="bar-row"><span>${esc(k)}</span><div class="progress"><div style="width:${Math.round(v/max*100)}%"></div></div><span>${fmt(v)}</span></div>`).join('')}</div>`:'<div class="empty">Pas de dépenses ce mois-ci.</div>'}</section><section class="card"><div class="card-title"><h3>Nos objectifs</h3>${button(`${svg('plus')} Nouvel objectif`,'new-goal','btn soft sm')}</div>${S.goals.map(g=>`<div class="goal"><div class="goal-top"><div class="goal-name">🎯 ${esc(g.name)}</div>${button('Ajouter','deposit:'+g.id,'btn sm soft')}</div><div class="progress"><div style="width:${Math.min(100,g.target?g.saved/g.target*100:0)}%"></div></div><div class="section-hint"><span class="quiet tiny">${fmt(g.saved)} / ${fmt(g.target)} FCFA</span><span class="tiny">${g.target&&g.saved>=g.target?'Atteint ✓':(g.target?Math.round(g.saved/g.target*100):0)+'%'}</span></div><div style="text-align:right;margin-top:8px">${button('Modifier','edit-item:goal:'+g.id,'btn ghost sm')}${button('Supprimer','delete-goal:'+g.id,'btn ghost sm danger')}</div></div>`).join('')||'<div class="empty">Votre premier objectif d’épargne vous attend.</div>'}<div class="notice">Les cagnottes sont des suivis virtuels : aucun argent n’est détenu ou transféré dans cette application.</div></section></div></div>`}
-function us(){const subs=[['overview','Notre relation'],['mood','Mood'],['stats','Statistiques'],['agreements','Nos engagements'],['memories','Souvenirs']];let content=sub==='mood'?'<section class="card">'+emotionEditor()+'</section>':sub==='stats'?emotionalStats():sub==='agreements'?agreements():sub==='memories'?memories():overview();return `${pageHead('Notre histoire','Juste <em>nous deux.</em>','Les émotions, les petits instants et les engagements qui rendent votre histoire unique.') }<div class="subtabs">${subs.map(x=>`<button data-action="tab:${x[0]}" class="${sub===x[0]?'active':''}">${x[1]}</button>`).join('')}</div>${content}`}
+function us(){const subs=[['overview','Notre relation'],['mood','Mood'],['stats','Statistiques'],['agreements','Nos engagements'],['memories','Souvenirs'],['documents','Documents']];let content=sub==='mood'?'<section class="card">'+emotionEditor()+'</section>':sub==='stats'?emotionalStats():sub==='agreements'?agreements():sub==='memories'?albumSouvenirs():sub==='documents'?albumDocuments():overview();return `${pageHead('Notre histoire','Juste <em>nous deux.</em>','Les émotions, les petits instants et les engagements qui rendent votre histoire unique.') }<div class="subtabs">${subs.map(x=>`<button data-action="tab:${x[0]}" class="${sub===x[0]?'active':''}">${x[1]}</button>`).join('')}</div>${content}`}
 function overview(){const t=moodToday(),active=S.rules.filter(r=>r.status==='accepted').length;return `<div class="grid-2"><div class="stack"><section class="hero"><div class="hero-main"><div class="smallcaps">L'HISTOIRE QUE NOUS ÉCRIVONS</div><div class="h-title">Un jour à la fois,<br>et toujours <em>ensemble.</em></div><p>Racontez vos moments, exprimez vos ressentis et gardez ce qui compte.</p>${button('Ajouter un souvenir','new-memory','btn soft')}</div><div class="hero-ornament">♡</div></section><section class="card">${emotionEditor()}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>Notre charte</h3>${button(svg('arrow'),'tab:agreements','btn ghost sm')}</div><div class="two-mini"><div class="stat-tile"><div class="stat-number">${S.expectations.length}</div><div class="stat-label">Mes attentes privées</div></div><div class="stat-tile"><div class="stat-number">${active}</div><div class="stat-label">Engagements acceptés à deux</div></div></div><p class="quiet small" style="line-height:1.65">Les propositions ne deviennent communes qu’après l’accord réel de chaque partenaire dans une future version synchronisée.</p>${button('Voir nos engagements','tab:agreements','btn soft sm')}</section><section class="card"><div class="card-title"><h3>Notre histoire en chiffres</h3>${button(svg('arrow'),'tab:stats','btn ghost sm')}</div><div class="two-mini"><div class="stat-tile"><div class="stat-number">${S.privacy.showIntimacy?S.events.filter(e=>e.type==='intime').length:'—'}</div><div class="stat-label">${S.privacy.showIntimacy?'Moments intimes 🔞 inscrits':'Moments privés masqués'}</div></div><div class="stat-tile"><div class="stat-number">${S.memories.length}</div><div class="stat-label">Souvenirs précieux</div></div></div>${button('Voir toutes les statistiques','tab:stats','btn soft sm')}</section></div></div>`}
 function stats(){const thisMonth=S.events.filter(e=>monthKey(e.date)===monthKey(TODAY)),intimes=thisMonth.filter(e=>e.type==='intime').length, outings=thisMonth.filter(e=>e.type==='sortie'||e.type==='special').length,mood=S.moods.filter(e=>monthKey(e.date)===monthKey(TODAY)),relation=mood.filter(m=>m.relation>0),positive=relation.filter(m=>m.relation>=4).length,[done,total]=taskCount(),spent=monthlyExpenses();let last7=Array.from({length:7},(_,i)=>{const d=addDay(TODAY,i-6),x=S.moods.find(m=>m.date===d);return {d,x}});return `<div class="grid-3" style="margin-bottom:20px"><div class="stat-tile"><div class="smallcaps">Moments 🔞 / mois</div><div class="stat-number">${intimes}</div><div class="stat-label">Dates enregistrées, sans jugement</div></div><div class="stat-tile"><div class="smallcaps">Ressentis positifs</div><div class="stat-number">${relation.length?Math.round(positive/relation.length*100)+' %':'—'}</div><div class="stat-label">Sur ${relation.length} jour(s) renseigné(s)</div></div><div class="stat-tile"><div class="smallcaps">Moments à deux</div><div class="stat-number">${outings}</div><div class="stat-label">Sorties et dates spéciales ce mois-ci</div></div><div class="stat-tile"><div class="smallcaps">Tâches achevées</div><div class="stat-number">${total?Math.round(done/total*100)+' %':'—'}</div><div class="stat-label">${done} tâche(s) sur ${total}</div></div><div class="stat-tile"><div class="smallcaps">Dépenses communes saisies</div><div class="stat-number" style="font-size:25px">${fmt(spent)}</div><div class="stat-label">FCFA ce mois-ci, toutes visibilités</div></div><div class="stat-tile"><div class="smallcaps">Souvenirs</div><div class="stat-number">${S.memories.length}</div><div class="stat-label">Moments précieux enregistrés</div></div></div><div class="grid-even"><section class="card"><div class="card-title"><h3>Ressenti relationnel</h3><span class="smallcaps">7 derniers jours</span></div><div class="chart">${last7.map(o=>`<div class="chart-column"><div class="chart-bar" style="height:${o.x&&o.x.relation?(o.x.relation/5*100):2}%;opacity:${o.x&&o.x.relation?1:.17}" data-val="${o.x&&o.x.relation?o.x.relation+'/5':'—'}"></div><small>${new Date(o.d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short'})}</small></div>`).join('')}</div><p class="quiet small">Le graphique reflète seulement les jours où un ressenti a été saisi.</p></section><section class="card"><div class="card-title"><h3>Notre rétrospective</h3><span class="smallcaps">${monthName(TODAY)}</span></div><div class="hero" style="min-height:220px;padding:24px"><div class="hero-main"><div class="smallcaps">CE MOIS-CI ♡</div><div style="font:normal 25px/1.35 var(--serif);margin:14px 0">${intimes} moment${intimes>1?'s':''} 🔞, ${outings} sortie${outings>1?'s':''} et ${done} tâche${done>1?'s':''} accomplie${done>1?'s':''}.</div><p>Chaque histoire évolue à son rythme. Ces chiffres sont des souvenirs, pas des objectifs à atteindre.</p></div></div></section></div>`}
 function agreements(){const expectations=S.expectations;const pending=S.rules.filter(r=>r.status!=='example'),suggested=S.rules.filter(r=>r.status==='example');return `<div class="grid-even"><section class="card"><div class="card-title"><h3>Mes attentes</h3><span class="pill private">${svg('lock')} Espace privé</span></div><p class="quiet small" style="line-height:1.65">Écrivez vos besoins, valeurs ou limites personnelles. Elles ne sont pas automatiquement partagées.</p>${expectations.map(e=>`<div class="rule"><h4>${esc(e.title)}</h4><p>${esc(e.body)}</p><div class="rule-meta"><span class="pill private">Personnel</span><span class="item-actions">${button('Modifier','edit-item:expectation:'+e.id,'btn ghost sm')}${button('Supprimer','delete-expectation:'+e.id,'btn ghost sm danger')}</span></div></div>`).join('')||'<div class="empty">Notez vos premières attentes personnelles.</div>'}${button(`${svg('plus')} Ajouter une attente`,'new-expectation','btn soft')}</section><section class="card"><div class="card-title"><h3>Nos règles</h3><span class="pill pending">Accord mutuel requis</span></div><p class="quiet small" style="line-height:1.65">Proposez des engagements. ${syncConnected()?'Une proposition devient un engagement quand l’autre personne l’accepte depuis son téléphone.':"Dans ce prototype local, aucune proposition n'est validée au nom de l'autre personne."}</p>${pending.map(r=>`<div class="rule"><h4>${esc(r.category)}</h4><p>« ${esc(r.body)} »</p><div class="rule-meta">${ruleMeta(r)}</div></div>`).join('')||'<div class="empty">Aucune proposition pour le moment. Créez votre première règle à discuter ensemble.</div>'}${button(`${svg('plus')} Proposer une règle`,'new-rule','btn primary')}<div class="divider"></div><div class="smallcaps" style="margin-bottom:12px">Idées pour commencer</div><div class="idea-list">${suggested.map(r=>`<button class="suggestion" data-action="suggest-rule:${r.id}"><b>${esc(r.category)}</b><br>${esc(r.body)}<br><span style="color:var(--accent);font-weight:700">+ Proposer</span></button>`).join('')}</div></section></div><div class="notice warning" style="margin-top:16px">Les règles ne remplacent jamais le consentement du moment, notamment pour l'intimité. Pas de sanctions, de points de bonne conduite ni de suivi automatique des « infractions ».</div>`}
@@ -234,7 +455,7 @@ function memories(){return `<div class="card-title" style="margin-bottom:15px"><
 function field(name,label,type='text',value='',extra=''){return `<div class="field"><label for="f-${name}">${label}</label><input id="f-${name}" name="${name}" type="${type}" value="${esc(value)}" ${extra}/></div>`}
 function select(name,label,opts,sel){return `<div class="field"><label for="f-${name}">${label}</label><select id="f-${name}" name="${name}">${opts.map(o=>`<option value="${esc(o[0])}" ${sel===o[0]?'selected':''}>${esc(o[1])}</option>`).join('')}</select></div>`}
 function txt(name,label,placeholder=''){return `<div class="field"><label for="f-${name}">${label}</label><textarea id="f-${name}" name="${name}" placeholder="${esc(placeholder)}"></textarea></div>`}
-function renderModal(){let title='',body='',action='',submit='Enregistrer';const type=modal.type;switch(type){case'new-event':title='Un moment à noter';body=`${field('title','Quel événement ?','text','','required maxlength="100" placeholder="Ex. : Notre dîner à deux"')}${field('date','Date','date',selected,'required')}${select('type','Type d’événement',Object.entries(TYPES).map(([k,v])=>[k,`${v.emoji} ${v.name}`]),'rdv')}<div class="notice">Pour un moment intime, l’emoji 🔞 apparaîtra directement dans le calendrier. Évitez les descriptions explicites sur un appareil partagé.</div>`;action='submit-event';break;
+function renderModal(){const album=albumModal()||penseeModal();if(album)return album;let title='',body='',action='',submit='Enregistrer';const type=modal.type;switch(type){case'new-event':title='Un moment à noter';body=`${field('title','Quel événement ?','text','','required maxlength="100" placeholder="Ex. : Notre dîner à deux"')}${field('date','Date','date',selected,'required')}${select('type','Type d’événement',Object.entries(TYPES).map(([k,v])=>[k,`${v.emoji} ${v.name}`]),'rdv')}<div class="notice">Pour un moment intime, l’emoji 🔞 apparaîtra directement dans le calendrier. Évitez les descriptions explicites sur un appareil partagé.</div>`;action='submit-event';break;
 case'new-project':title='Un nouveau projet';body=`${field('name','Nom du projet','text','','required maxlength="100" placeholder="Ex. : Notre voyage"')}<div class="form-row">${field('emoji','Un emoji','text','✨','maxlength="16"')}${field('due','Échéance facultative','date',addDay(TODAY,30))}</div>`;action='submit-project';break;
 case'new-expense':title='Ajouter une dépense';body=`${field('name','Description','text','','required maxlength="90" placeholder="Ex. : Courses"')}<div class="form-row">${field('amount','Montant (FCFA)','number','','required min="1" step="1"')}${field('date','Date','date',TODAY,'required')}</div><div class="form-row">${select('category','Catégorie',['Alimentation','Logement','Loisirs','Transport','Santé','Autre'].map(x=>[x,x]),'Alimentation')}${select('paidBy','Payé par',['Commun',S.couple.first,S.couple.second].map(x=>[x,x]),'Commun')}</div>${select('visibility','Visibilité prévue',[['partage','Dépense commune'],['prive','Personnelle / privée']],'partage')}<div class="notice">${syncConnected()?'Une dépense personnelle n’est visible que par vous.':'Aucun partage entre comptes n’est actif dans ce prototype local.'}</div>`;action='submit-expense';break;
 case'edit-budget':title='Définir notre budget';body=field('budget','Budget mensuel (FCFA)','number',S.budget,'required min="0" step="1"');action='submit-budget';break;
@@ -242,18 +463,18 @@ case'new-goal':title='Notre nouvel objectif';body=`${field('name','Nom de l’ob
 case'deposit':title='Faire progresser notre objectif';body=`<p class="quiet small">${esc(S.goals.find(g=>g.id===modal.id)?.name)}</p>${field('amount','Montant à ajouter au suivi (FCFA)','number','','required min="1" step="1"')}<div class="notice">Il s’agit d’une saisie de suivi, pas d’un véritable dépôt bancaire.</div>`;action='submit-deposit';break;
 case'new-expectation':title='Une attente personnelle';body=`${field('title','Sujet','text','','required maxlength="70" placeholder="Ex. : Prendre le temps de parler"')}${txt('body','Ce qui compte pour moi','Je souhaiterais que…')}`;action='submit-expectation';break;
 case'new-rule':title='Proposer un engagement';body=`${select('category','Catégorie',['Communication','Confiance & respect','Finances','Intimité 🔞','Désaccords','Vie quotidienne','Autre'].map(x=>[x,x]),'Communication')}${txt('body','Votre proposition','Ex. : Nous discutons des décisions importantes ensemble.') }<div class="notice">${syncConnected()?'Elle deviendra un engagement quand votre partenaire l’aura acceptée.':'La proposition restera non validée tant qu’aucune authentification et synchronisation à deux ne sont disponibles.'}</div>`;action='submit-rule';break;
-case'new-memory':title='Un souvenir précieux';body=`${field('title','Titre du souvenir','text','','required maxlength="90" placeholder="Ex. : Notre belle soirée"')}<div class="form-row">${field('date','Date','date',TODAY,'required')}${field('emoji','Emoji','text','💝','maxlength="16"')}</div>${txt('note','Ce dont vous souhaitez vous souvenir','Quelques mots…')}`;action='submit-memory';break;
+case'new-memory':title='Un souvenir précieux';body=`${field('title','Titre du souvenir','text','','required maxlength="90" placeholder="Ex. : Notre belle soirée"')}<div class="form-row">${field('date','Date','date',TODAY,'required')}${field('emoji','Emoji','text','💝','maxlength="16"')}</div>${txt('note','Ce dont vous souhaitez vous souvenir','Quelques mots…')}${albumChoixMemoire()}`;action='submit-memory';break;
 case'change-code':title='Changer mon code';body=`${field('ancien','Code actuel','password','','required autocomplete="current-password"')}${field('nouveau','Nouveau code (6 caractères au moins)','password','','required minlength="6" autocomplete="new-password"')}${field('confirme','Confirmez le nouveau code','password','','required autocomplete="new-password"')}`;action='submit-code';submit='Changer mon code';break;
 case'sync-info':title=modal.title;body=modal.body;action='';break;
 case'edit-task':title='Renommer la tâche';body=field('name','Tâche','text','','required maxlength="100"');action='submit-task';break;
-case'settings':title='Notre univers';body=`<div class="smallcaps" style="margin-bottom:13px">CHOISIR UN THÈME</div><div class="theme-choices">${[['romance','Romance','#f6e5e0','#965d6b'],['elegance','Élégance','#eee5d3','#866c48'],['nocturne','Nocturne','#283041','#d4af9f'],['harmonie','Harmonie','#dfeadd','#5e826a']].map(p=>`<button class="theme-choice ${S.theme===p[0]?'active':''}" type="button" data-action="theme:${p[0]}"><div class="theme-swatch" style="background:${p[2]};border-bottom:15px solid ${p[3]}"></div>${p[1]}</button>`).join('')}</div><div class="divider"></div><div class="smallcaps">NOTRE PROFIL</div><div class="form-row">${field('first',emotionViewer==='partner-b'?'Prénom du partenaire':'Mon prénom','text',S.couple.first,'required maxlength="32"')}${field('second',emotionViewer==='partner-b'?'Mon prénom':'Prénom du partenaire','text',S.couple.second,'required maxlength="32"')}</div>${select('stage','Notre étape',[['decouverte','Nous nous découvrons'],['construction','Nous construisons notre histoire'],['ensemble','Nous partageons notre quotidien'] ],S.couple.stage)}<div class="toggle-row"><div><b>Afficher le Mood dans le calendrier</b><small>Masquer les emojis et les ressentis dans le calendrier</small></div><label class="switch"><input aria-label="Afficher le Mood dans le calendrier" type="checkbox" data-change="showMood" ${S.privacy.showMood?'checked':''}/><span></span></label></div><div class="toggle-row"><div><b>Afficher 🔞 dans le calendrier</b><small>Masquage rapide des événements intimes à l'écran</small></div><label class="switch"><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy?'checked':''}/><span></span></label></div><div class="notice warning" style="margin-top:15px">${syncConnected()?'Vos données sont enregistrées dans le compte Google où l’application est installée. La personne qui gère ce compte peut techniquement ouvrir le classeur : choisissez-le ensemble. Aucune connexion bancaire n’est active.':'Prototype de démonstration : les données restent dans ce navigateur et ne sont pas chiffrées spécialement. Ni invitation, ni partage, ni connexion bancaire ne sont actifs.'}</div>${syncConnected()?syncSettingsButtons():`<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:13px">${button('Réinitialiser les exemples','reset-demo','btn danger sm')}${button('Effacer toutes mes données','clear-all','btn danger sm')}</div>`}`;action='submit-settings';submit='Enregistrer le profil';break;}
+case'settings':title='Notre univers';body=`<div class="smallcaps" style="margin-bottom:13px">CHOISIR UN THÈME</div><div class="theme-choices">${[['romance','Romance','#f6e5e0','#965d6b'],['elegance','Élégance','#eee5d3','#866c48'],['nocturne','Nocturne','#283041','#d4af9f'],['harmonie','Harmonie','#dfeadd','#5e826a']].map(p=>`<button class="theme-choice ${S.theme===p[0]?'active':''}" type="button" data-action="theme:${p[0]}"><div class="theme-swatch" style="background:${p[2]};border-bottom:15px solid ${p[3]}"></div>${p[1]}</button>`).join('')}</div><div class="divider"></div><div class="smallcaps">NOTRE PROFIL</div><div class="form-row">${field('first',emotionViewer==='partner-b'?'Prénom du partenaire':'Mon prénom','text',S.couple.first,'required maxlength="32"')}${field('second',emotionViewer==='partner-b'?'Mon prénom':'Prénom du partenaire','text',S.couple.second,'required maxlength="32"')}</div>${select('stage','Notre étape',[['decouverte','Nous nous découvrons'],['construction','Nous construisons notre histoire'],['ensemble','Nous partageons notre quotidien'] ],S.couple.stage)}<div class="toggle-row"><div><b>Afficher le Mood dans le calendrier</b><small>Masquer les emojis et les ressentis dans le calendrier</small></div><label class="switch"><input aria-label="Afficher le Mood dans le calendrier" type="checkbox" data-change="showMood" ${S.privacy.showMood?'checked':''}/><span></span></label></div><div class="toggle-row"><div><b>Afficher 🔞 dans le calendrier</b><small>Masquage rapide des événements intimes à l'écran</small></div><label class="switch"><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy?'checked':''}/><span></span></label></div>${sonsReglages()}${notifReglages()}<div class="notice warning" style="margin-top:15px">${syncConnected()?'Vos données sont enregistrées dans le compte Google où l’application est installée. La personne qui gère ce compte peut techniquement ouvrir le classeur : choisissez-le ensemble. Aucune connexion bancaire n’est active.':'Prototype de démonstration : les données restent dans ce navigateur et ne sont pas chiffrées spécialement. Ni invitation, ni partage, ni connexion bancaire ne sont actifs.'}</div>${syncConnected()?syncSettingsButtons():`<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:13px">${button('Réinitialiser les exemples','reset-demo','btn danger sm')}${button('Effacer toutes mes données','clear-all','btn danger sm')}</div>`}`;action='submit-settings';submit='Enregistrer le profil';break;}
 return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" aria-modal="true" aria-label="${esc(title)}" class="modal"><div class="modal-head"><h2>${esc(title)}</h2>${button('×','close','btn ghost sm')}</div><form id="modal-form" data-form="${action}">${body}<div class="form-actions">${button(action?'Annuler':'Fermer','close','btn')}${action?`<button type="submit" class="btn primary">${submit}</button>`:''}</div></form></div></div>`}
 function close(){modal=null;render()}
 function changeMonth(d){const x=new Date(month+'-01T12:00:00');x.setMonth(x.getMonth()+d);month=monthKey(dstr(x));selected=month+'-01'}
 function confirmDel(q){return window.confirm(q)}
-function actions(e){const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='close-out'&&e.target!==b)return;if(emotionAction(a)||editAction(a)||syncAction(a))return;if(a==='close'||a==='close-out'){close();return}if(a.startsWith('nav:')){page=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('sub:')){page='us';sub=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('tab:')){sub=a.split(':')[1];render();return}if(a.startsWith('cal-view:')){calView=a.split(':')[1];render();return}if(a==='cal-prev'||a==='cal-next'){if(calView==='month')changeMonth(a==='cal-prev'?-1:1);else{selected=addDay(selected,(a==='cal-prev'?-1:1)*(calView==='week'?7:1));month=monthKey(selected)}render();return}if(a==='cal-today'){month=monthKey(TODAY);selected=TODAY;render();return}if(a.startsWith('select-date:')){selected=a.split(':')[1];month=monthKey(selected);render();return}if(a.startsWith('theme:')){S.theme=a.split(':')[1];persist();render();modal={type:'settings'};render();return}if(a.startsWith('new-')||a==='edit-budget'||a==='settings'){modal={type:a};render();return}if(a.startsWith('delete-event:')){if(confirmDel('Supprimer cet événement ?')){S.events=S.events.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-expense:')){if(confirmDel('Supprimer cette dépense ?')){S.expenses=S.expenses.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-goal:')){if(confirmDel('Supprimer cet objectif ?')){S.goals=S.goals.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-project:')){if(confirmDel('Supprimer le projet et toutes ses tâches ?')){S.projects=S.projects.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-task:')){const [,pid,tid]=a.split(':');let p=S.projects.find(p=>p.id===pid);if(p)p.tasks=p.tasks.filter(t=>t.id!==tid);persist();render();return}if(a.startsWith('add-task:')){let pid=a.split(':')[1],v=$('#task-'+pid)?.value.trim();if(!v){toast('Écrivez une tâche.');return}S.projects.find(p=>p.id===pid)?.tasks.push({id:id(),name:v,done:false});persist();render();return}if(a.startsWith('deposit:')){modal={type:'deposit',id:a.split(':')[1]};render();return}if(a.startsWith('delete-expectation:')){if(confirmDel('Supprimer cette attente personnelle ?')){S.expectations=S.expectations.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-rule:')){if(confirmDel('Retirer cette proposition ?')){S.rules=S.rules.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('suggest-rule:')){let r=S.rules.find(x=>x.id===a.split(':')[1]);if(r){S.rules.push({id:id(),category:r.category,body:r.body,status:'pending'});persist();render();toast('Proposition créée. Non validée par le partenaire.')}return}if(a.startsWith('delete-memory:')){if(confirmDel('Supprimer ce souvenir ?')){S.memories=S.memories.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a==='reset-demo'){if(confirmDel('Réinitialiser toutes les données du prototype avec les exemples initiaux ?')){S=EmotionCore.migrate(seed());persist();modal=null;page='home';render()}return}if(a==='clear-all'){if(confirmDel('Effacer toutes les données de cette démonstration ? Cette action est irréversible.')){let oldTheme=S.theme,first=S.couple.first,second=S.couple.second;S=EmotionCore.migrate(seed());Object.assign(S,{theme:oldTheme,events:[],moods:[],emotionEntries:[],projects:[],expenses:[],goals:[],expectations:[],rules:[],memories:[],demo:false});S.couple={...S.couple,first,second};persist();modal=null;page='home';render()}return}}
-function changed(e){if(emotionChanged(e))return;const c=e.target.dataset.change;if(!c)return;if(c==='intimacy'){S.privacy.showIntimacy=e.target.checked;persist();render();return}if(c.startsWith('task:')){const [,pid,tid]=c.split(':'),p=S.projects.find(x=>x.id===pid),t=p?.tasks.find(x=>x.id===tid);if(t){t.done=e.target.checked;persist();render()}return}}
-function submitted(e){const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();const action=f.dataset.form,d=Object.fromEntries(new FormData(f).entries());if(editSubmitted(action,d)||syncSubmitted(action,d))return;const req=(x)=>String(x||'').trim();const pos=(x)=>Number(x)>0&&Number.isFinite(Number(x));const bad=()=>toast('Vérifiez les informations saisies.');switch(action){case'submit-event':if(!req(d.title)||!d.date)return bad();S.events.push({id:id(),title:req(d.title),date:d.date,type:d.type||'rdv'});selected=d.date;month=monthKey(d.date);break;
+function actions(e){const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='close-out'&&e.target!==b)return;sonsAction(a);if(emotionAction(a)||editAction(a)||syncAction(a)||albumAction(a)||notifAction(a)||penseeAction(a))return;if(a==='close'||a==='close-out'){close();return}if(a.startsWith('nav:')){page=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('sub:')){page='us';sub=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('tab:')){sub=a.split(':')[1];render();return}if(a.startsWith('cal-view:')){calView=a.split(':')[1];render();return}if(a==='cal-prev'||a==='cal-next'){if(calView==='month')changeMonth(a==='cal-prev'?-1:1);else{selected=addDay(selected,(a==='cal-prev'?-1:1)*(calView==='week'?7:1));month=monthKey(selected)}render();return}if(a==='cal-today'){month=monthKey(TODAY);selected=TODAY;render();return}if(a.startsWith('select-date:')){selected=a.split(':')[1];month=monthKey(selected);render();return}if(a.startsWith('theme:')){S.theme=a.split(':')[1];persist();render();modal={type:'settings'};render();return}if(a.startsWith('new-')||a==='edit-budget'||a==='settings'){modal={type:a};render();return}if(a.startsWith('delete-event:')){if(confirmDel('Supprimer cet événement ?')){S.events=S.events.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-expense:')){if(confirmDel('Supprimer cette dépense ?')){S.expenses=S.expenses.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-goal:')){if(confirmDel('Supprimer cet objectif ?')){S.goals=S.goals.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-project:')){if(confirmDel('Supprimer le projet et toutes ses tâches ?')){S.projects=S.projects.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-task:')){const [,pid,tid]=a.split(':');let p=S.projects.find(p=>p.id===pid);if(p)p.tasks=p.tasks.filter(t=>t.id!==tid);persist();render();return}if(a.startsWith('add-task:')){let pid=a.split(':')[1],v=$('#task-'+pid)?.value.trim();if(!v){toast('Écrivez une tâche.');return}S.projects.find(p=>p.id===pid)?.tasks.push({id:id(),name:v,done:false});persist();render();return}if(a.startsWith('deposit:')){modal={type:'deposit',id:a.split(':')[1]};render();return}if(a.startsWith('delete-expectation:')){if(confirmDel('Supprimer cette attente personnelle ?')){S.expectations=S.expectations.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-rule:')){if(confirmDel('Retirer cette proposition ?')){S.rules=S.rules.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('suggest-rule:')){let r=S.rules.find(x=>x.id===a.split(':')[1]);if(r){S.rules.push({id:id(),category:r.category,body:r.body,status:'pending'});persist();render();toast('Proposition créée. Non validée par le partenaire.')}return}if(a.startsWith('delete-memory:')){if(confirmDel(albumQuestionSuppression(a.split(':')[1]))){albumOublierSouvenir(a.split(':')[1]);S.memories=S.memories.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a==='reset-demo'){if(confirmDel('Réinitialiser toutes les données du prototype avec les exemples initiaux ?')){S=EmotionCore.migrate(seed());persist();modal=null;page='home';render()}return}if(a==='clear-all'){if(confirmDel('Effacer toutes les données de cette démonstration ? Cette action est irréversible.')){let oldTheme=S.theme,first=S.couple.first,second=S.couple.second;S=EmotionCore.migrate(seed());Object.assign(S,{theme:oldTheme,events:[],moods:[],emotionEntries:[],projects:[],expenses:[],goals:[],expectations:[],rules:[],memories:[],media:[],documents:[],pensees:[],demo:false});S.couple={...S.couple,first,second};persist();modal=null;page='home';render();ficMenageDemo()}return}}
+function changed(e){if(emotionChanged(e)||sonsChanged(e)||albumChanged(e)||notifChanged(e)||penseeChanged(e))return;const c=e.target.dataset.change;if(!c)return;if(c==='intimacy'){S.privacy.showIntimacy=e.target.checked;persist();render();return}if(c.startsWith('task:')){const [,pid,tid]=c.split(':'),p=S.projects.find(x=>x.id===pid),t=p?.tasks.find(x=>x.id===tid);if(t){t.done=e.target.checked;persist();render()}return}}
+function submitted(e){const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();const action=f.dataset.form,d=Object.fromEntries(new FormData(f).entries());if(penseeSubmitted(action,d)||albumSubmitted(action,d,f)||editSubmitted(action,d)||syncSubmitted(action,d))return;const req=(x)=>String(x||'').trim();const pos=(x)=>Number(x)>0&&Number.isFinite(Number(x));const bad=()=>toast('Vérifiez les informations saisies.');switch(action){case'submit-event':if(!req(d.title)||!d.date)return bad();S.events.push({id:id(),title:req(d.title),date:d.date,type:d.type||'rdv'});selected=d.date;month=monthKey(d.date);break;
 case'submit-project':if(!req(d.name))return bad();S.projects.push({id:id(),name:req(d.name),emoji:req(d.emoji)||'✨',due:d.due,tasks:[]});break;
 case'submit-expense':if(!req(d.name)||!pos(d.amount)||!d.date)return bad();S.expenses.push({id:id(),name:req(d.name),amount:Number(d.amount),date:d.date,category:d.category,paidBy:d.paidBy,visibility:d.visibility});break;
 case'submit-budget':if(Number(d.budget)<0||!Number.isFinite(Number(d.budget)))return bad();S.budget=Number(d.budget);break;
@@ -262,7 +483,7 @@ case'submit-deposit':if(!pos(d.amount))return bad();const goal=S.goals.find(g=>g
 case'submit-expectation':if(!req(d.title)||!req(d.body))return bad();S.expectations.push({id:id(),title:req(d.title),body:req(d.body)});break;
 case'submit-rule':if(!req(d.body))return bad();S.rules.push({id:id(),category:d.category,body:req(d.body),status:'pending'});break;
 case'submit-memory':if(!req(d.title)||!d.date)return bad();S.memories.push({id:id(),title:req(d.title),date:d.date,emoji:req(d.emoji)||'♡',note:req(d.note)});break;
-case'submit-settings':if(!req(d.first)||!req(d.second))return bad();{const names={[S.couple.first]:req(d.first),[S.couple.second]:req(d.second)};if(S.couple.first!==S.couple.second)S.expenses.forEach(x=>{if(x.paidBy in names)x.paidBy=names[x.paidBy]})}S.couple={...S.couple,first:req(d.first),second:req(d.second),stage:d.stage};break;default:return}persist();modal=null;render();toast(syncConnected()?'Enregistré. ♡':'Enregistré dans ce navigateur. ♡')}
+case'submit-settings':if(!req(d.first)||!req(d.second))return bad();{const names={[S.couple.first]:req(d.first),[S.couple.second]:req(d.second)};if(S.couple.first!==S.couple.second)S.expenses.forEach(x=>{if(x.paidBy in names)x.paidBy=names[x.paidBy]})}S.couple={...S.couple,first:req(d.first),second:req(d.second),stage:d.stage};break;default:return}persist();modal=null;render();sonsJouer('enregistrer');toast(syncConnected()?'Enregistré. ♡':'Enregistré dans ce navigateur. ♡')}
 // Integrated inside the original application closure: existing screens and storage stay in place.
 let emotionViewer = 'partner-a', emotionDate = TODAY, emotionMonth = monthKey(TODAY), emotionGrain = 'day';
 const personName = owner => owner === 'partner-a' ? S.couple.first || 'Profil A' : S.couple.second || 'Profil B';
@@ -424,7 +645,7 @@ function editSubmitted(action, d) {
   if (!checks[edit.kind]()) return bad();
   if (edit.kind === 'event') { selected = item.date; month = monthKey(item.date); }
   item.updatedAt = new Date().toISOString();
-  persist(); modal = null; render(); toast(syncConnected() ? 'Modifications enregistrées. ♡' : 'Modifications enregistrées dans ce navigateur. ♡');
+  persist(); modal = null; render(); sonsJouer('enregistrer'); toast(syncConnected() ? 'Modifications enregistrées. ♡' : 'Modifications enregistrées dans ce navigateur. ♡');
   return true;
 }
 
@@ -435,7 +656,7 @@ const SYNC_CFG = (typeof window !== 'undefined' && window.ENTRE_NOUS_CONFIG) || 
 const SYNC_MODE = !SYNC_CFG.api ? 'demo' : SYNC_CFG.api === 'banc' ? 'banc' : 'ligne';
 const SYNC_PARAMS = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
 const SYNC_KEY = KEY + ':sync';
-const SYNC_COLS = ['events', 'projects', 'expenses', 'goals', 'expectations', 'rules', 'memories', 'emotionEntries'];
+const SYNC_COLS = ['events', 'projects', 'expenses', 'goals', 'expectations', 'rules', 'memories', 'media', 'documents', 'pensees', 'emotionEntries'];
 const SYNC_EMPTY = { jeton: '', me: '', file: [], base: null, version: 0, maj: 0, partenaireActif: true, noms: {}, dernierProfil: 'partner-a' };
 function syncRead() { try { return Object.assign({}, SYNC_EMPTY, JSON.parse(localStorage.getItem(SYNC_KEY)) || {}); } catch (e) { return Object.assign({}, SYNC_EMPTY); } }
 let SY = syncRead();
@@ -450,10 +671,12 @@ function syncError(message, code) { const e = new Error(message); e.code = code 
 // A function declaration on purpose: load() calls it before this file's constants exist.
 function emptyState() {
   const s = seed();
-  return Object.assign(s, { couple: { ...s.couple, first: '', second: '' }, events: [], moods: [], projects: [], expenses: [], goals: [], expectations: [], memories: [], emotionEntries: [], rules: s.rules.filter(r => r.status === 'example'), demo: false });
+  return Object.assign(s, { couple: { ...s.couple, first: '', second: '' }, events: [], moods: [], projects: [], expenses: [], goals: [], expectations: [], memories: [], media: [], documents: [], pensees: [], emotionEntries: [], rules: s.rules.filter(r => r.status === 'example'), demo: false });
 }
 
-function syncCall(fn, args) {
+// Options: delai (ms, 12 s by default) and essais (3 by default; 1 for a file chunk, whose resumption is checked first).
+function syncCall(fn, args, opts) {
+  const delai = (opts && opts.delai) || 12000, essais = (opts && opts.essais) || 3;
   const body = JSON.stringify({ fn, args: Object.assign({ jeton: SY.jeton }, args || {}) });
   let sending;
   if (SYNC_MODE === 'banc') sending = new Promise((ok, ko) => {
@@ -466,10 +689,10 @@ function syncCall(fn, args) {
   else sending = (async () => {
     for (let attempt = 0; ; attempt++) {
       try {
-        const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 12000);
+        const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), delai);
         const r = await fetch(SYNC_CFG.api, { method: 'POST', body, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, signal: ctl.signal });
         clearTimeout(t); return await r.json();
-      } catch (e) { if (attempt >= 2) throw syncError('Connexion impossible pour le moment.', 'reseau'); await new Promise(r => setTimeout(r, 1200 * (attempt + 1))); }
+      } catch (e) { if (attempt >= essais - 1) throw syncError('Connexion impossible pour le moment.', 'reseau'); await new Promise(r => setTimeout(r, 1200 * (attempt + 1))); }
     }
   })();
   return sending.then(rep => { if (!rep || !rep.ok) throw syncError((rep && rep.erreur) || 'Erreur inconnue.', rep && rep.code); return rep; });
@@ -481,7 +704,7 @@ function syncWritable() {
   for (const col of SYNC_COLS) {
     out[col] = {};
     for (const item of S[col] || []) {
-      if (!item || !item.id || (col === 'rules' && item.status === 'example') || (col === 'emotionEntries' && item.ownerId !== me)) continue;
+      if (!item || !item.id || (col === 'rules' && item.status === 'example') || ((col === 'emotionEntries' || col === 'pensees') && item.ownerId !== me)) continue;
       if ((col === 'expectations' || col === 'expenses') && !item.ownerId) item.ownerId = me;
       if (col === 'rules' && !item.proposedBy) item.proposedBy = me;
       out[col][item.id] = item;
@@ -564,7 +787,7 @@ function syncApply(data, r) {
   if (c) { S.couple.first = c.first || ''; S.couple.second = c.second || ''; S.couple.stage = c.stage || S.couple.stage; if (typeof c.budget === 'number') S.budget = c.budget; }
   // The couple identifier is the service's; partners' entries are matched on it locally.
   for (const e of S.emotionEntries) e.coupleId = S.couple.id;
-  SY.me = r.profil || SY.me; SY.version = r.version; SY.maj = Date.now(); SY.partenaireActif = !!r.partenaireActif;
+  SY.me = r.profil || SY.me; SY.version = r.version; if (r.stock) SY.stock = r.stock; SY.maj = Date.now(); SY.partenaireActif = !!r.partenaireActif;
   SY.noms = { 'partner-a': S.couple.first, 'partner-b': S.couple.second };
   SY.base = syncSnapshot(syncWritable());
   try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* stockage plein ou bloqué */ }
@@ -592,7 +815,7 @@ function syncStatus() {
 }
 function syncBanner() {
   const { state, text } = syncStatus(), partner = personName(partnerOf(SY.me));
-  return `<div class="sync-banner" role="status"><span class="sync-dot ${state}" aria-hidden="true"></span><span class="sync-text"><b>${esc(personName(SY.me))}</b> · <span data-sync-text>${esc(text)}</span>${SY.partenaireActif ? '' : `<br><span class="quiet">${esc(partner)} n’a pas encore rejoint l’application.</span>`}</span>${SY.partenaireActif ? '' : button('Inviter', 'sync-invite', 'btn sm soft')}</div>`;
+  return `<div class="sync-banner" role="status"><span class="sync-dot ${state}" aria-hidden="true"></span><span class="sync-text"><b>${esc(personName(SY.me))}</b> · <span data-sync-text>${esc(text)}</span>${SY.partenaireActif ? '' : `<br><span class="quiet">${esc(partner)} n’a pas encore rejoint l’application.</span>`}</span>${SY.partenaireActif ? '' : button('Inviter', 'sync-invite', 'btn sm soft')}</div>${notifInvitation()}`;
 }
 function syncBadge() {
   const dot = document.querySelector('.sync-dot'), txt = document.querySelector('[data-sync-text]');
@@ -621,8 +844,9 @@ function syncAction(a) {
     return true;
   }
   if (a === 'sync-logout') {
-    if (confirmDel('Se déconnecter de cet appareil ?' + (SY.file.length ? ` Attention : ${SY.file.length} modification(s) pas encore envoyée(s) seront perdues.` : ' Vos données restent enregistrées pour le couple.'))) {
-      syncCall('deconnexion', {}).catch(() => {}); syncLogout('', true);
+    const envois = ficEnAttente();
+    if (confirmDel('Se déconnecter de cet appareil ?' + (SY.file.length ? ` Attention : ${SY.file.length} modification(s) pas encore envoyée(s) seront perdues.` : ' Vos données restent enregistrées pour le couple.') + (envois ? ` ${envois} fichier(s) en cours d’envoi seront abandonnés.` : ''))) {
+      notifOublierAppareil(); syncCall('deconnexion', {}).catch(() => {}); ficAbandonner(); syncLogout('', true);
     }
     return true;
   }
@@ -683,20 +907,712 @@ function syncLoggedIn(r) {
   SY.base = syncSnapshot(syncWritable());
   syncSave();
   emotionViewer = SY.me; page = 'home'; modal = null;
-  render(); syncRefresh(); syncPolling();
+  render(); sonsJouer('connexion'); syncRefresh(); syncPolling(); notifSession(); notifMaj(); ficReprendre();
 }
 function syncLogout(message, wipe) {
-  SY.jeton = '';
+  SY.jeton = ''; notifSession();
   if (wipe) { S = EmotionCore.migrate(emptyState()); SY.file = []; SY.base = null; SY.version = 0; SY.me = ''; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* stockage plein ou bloqué */ } }
   syncSave(); modal = null; syncPorte(message);
 }
 function syncStart() {
-  if (SYNC_MODE === 'demo') { render(); return; }
+  if (SYNC_MODE === 'demo') { render(); ficReprendre(); return; }
   if (!SY.jeton) { syncPorte(); return; }
   emotionViewer = SY.me;
-  render(); syncRefresh(); syncPolling();
+  notifAllerDepuisAdresse();
+  render(); syncRefresh(); syncPolling(); notifSession(); notifMaj(); ficReprendre();
 }
 if (typeof window !== 'undefined') window.EntreNousSync = { flush: syncFlush, refresh: syncRefresh, state: () => SY, run: syncRun };   // for the test bench
+
+// Sound signature (src/sons.js): « Velours » plays while the app is open, short notes follow navigation.
+// Settings stay on this phone only: each partner chooses for their own device.
+const SONS_KEY = KEY + ':sons';
+const SONS_REG = (() => { try { return Object.assign({ musique: true, effets: true, volume: 0.6 }, JSON.parse(localStorage.getItem(SONS_KEY)) || {}); } catch (e) { return { musique: true, effets: true, volume: 0.6 }; } })();
+const sonsOk = typeof SONS_EN !== 'undefined';
+function sonsGarder() { try { localStorage.setItem(SONS_KEY, JSON.stringify(SONS_REG)); } catch (e) { /* stockage plein ou bloqué */ } }
+function sonsJouer(nom, i) { if (sonsOk && SONS_REG.effets) SONS_EN.jouer(nom, i); }
+function sonsAppliquer() { if (!sonsOk) return; SONS_EN.volume(SONS_REG.volume); SONS_EN.ambiance(SONS_REG.musique ? 'velours' : ''); }
+if (sonsOk) {
+  SONS_EN.volume(SONS_REG.volume);
+  // iPhone: no sound can start before a first touch; the music then starts by itself.
+  const premier = () => { SONS_EN.debloquer(); sonsAppliquer(); };
+  ['pointerdown', 'touchend', 'keydown'].forEach(n => document.addEventListener(n, premier, { capture: true, passive: true }));
+}
+// Called before each action: plays the matching note, never blocks the action.
+function sonsAction(a) {
+  if (a.startsWith('nav:')) sonsJouer('toucher', Math.max(0, NAV.findIndex(n => n[0] === a.slice(4))));
+  else if (a.startsWith('sub:') || a.startsWith('tab:') || a.startsWith('cal-view:') || a.startsWith('emotion-grain:')) sonsJouer('toucher', 4);
+  else if (/^(new-|edit-item:|deposit:|edit-budget$|settings$|sync-code$|sync-invite$)/.test(a)) sonsJouer('ouvrir');
+  else if (a.startsWith('accept-rule:')) sonsJouer('mood');
+  else if (a.startsWith('emotion-value:')) setTimeout(() => sonsJouer(EmotionCore.day(S, emotionDate, emotionViewer).common !== null ? 'mood' : 'enregistrer'), 0);
+  return false;
+}
+function sonsReglages() {
+  const ligne = (titre, detail, cle) => `<div class="toggle-row"><div><b>${titre}</b><small>${detail}</small></div><label class="switch"><input type="checkbox" aria-label="${titre}" data-change="${cle}" ${SONS_REG[cle.slice(5)] ? 'checked' : ''}/><span></span></label></div>`;
+  return `<div class="smallcaps" style="margin:18px 0 4px">SONS ET MUSIQUE</div>${ligne('Musique d’ambiance', 'Velours, douce et continue, pendant que l’application est ouverte', 'sons-musique')}${ligne('Sons de navigation', 'Une note discrète à chaque toucher', 'sons-effets')}<div class="field"><label for="sons-volume">Volume sur cet appareil</label><input id="sons-volume" type="range" min="0" max="1" step="0.05" value="${SONS_REG.volume}" data-change="sons-volume" class="sons-volume"></div>`;
+}
+// No render() here: the settings form stays as typed.
+function sonsChanged(e) {
+  const c = e.target.dataset.change;
+  if (c === 'sons-musique') { SONS_REG.musique = e.target.checked; sonsGarder(); sonsAppliquer(); return true; }
+  if (c === 'sons-effets') { SONS_REG.effets = e.target.checked; sonsGarder(); if (SONS_REG.effets) sonsJouer('toucher', 2); return true; }
+  if (c === 'sons-volume') { SONS_REG.volume = Number(e.target.value); sonsGarder(); sonsAppliquer(); sonsJouer('toucher', 1); return true; }
+  return false;
+}
+
+// Photos, videos and documents of the couple (served by serveur/Code.gs, « fichiers du couple »).
+// Connected: sent to the couple's Google Drive through the service, 4 MB at a time, and read back the same way.
+// Demonstration: kept in this browser only (IndexedDB). Either way a local copy avoids downloading a file twice.
+const FIC_MO = 1048576;
+const FIC = {
+  // Technical limits, shown to the couple: a photo is reduced before leaving the phone; a video travels as it is.
+  limites: { photo: 40 * FIC_MO, video: 100 * FIC_MO, document: 25 * FIC_MO },
+  morceau: 4 * FIC_MO, direct: 3 * FIC_MO, cache: 300 * FIC_MO,
+  photo: { cote: 2048, qualite: 0.86 }, vignette: { cote: 420, qualite: 0.72 },
+  envois: [], actif: false, reprise: null, timer: null,
+  vignettes: new Map(), attente: new Set(), lecture: new Map(), pleins: new Map(), memoire: new Map(),
+};
+const FIC_VIDE = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+const ficPause = ms => new Promise(r => setTimeout(r, ms));
+const ficTaille = n => n >= 1024 * FIC_MO ? (n / 1024 / FIC_MO).toFixed(1).replace('.', ',') + ' Go' : n >= FIC_MO ? (n / FIC_MO).toFixed(n >= 10 * FIC_MO ? 0 : 1).replace('.', ',') + ' Mo' : Math.max(1, Math.round(n / 1024)) + ' Ko';
+const ficDuree = s => !(s > 0) ? '' : Math.floor(s / 60) + ':' + String(Math.round(s % 60)).padStart(2, '0');
+
+/* ------------------------------------------------------------------ local store (IndexedDB, else memory) */
+let ficBaseP = null;
+function ficBase() {
+  return ficBaseP || (ficBaseP = new Promise((ok, ko) => {
+    if (typeof indexedDB === 'undefined') return ko(new Error('IndexedDB absent'));
+    const r = indexedDB.open('entre-nous-fichiers', 1);
+    r.onupgradeneeded = () => { r.result.createObjectStore('fichiers'); r.result.createObjectStore('envois'); };
+    r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error);
+  }));
+}
+async function ficIdb(store, mode, fn) {
+  const db = await ficBase();
+  return new Promise((ok, ko) => { const t = db.transaction(store, mode), r = fn(t.objectStore(store)); t.oncomplete = () => ok(r && r.result); t.onerror = t.onabort = () => ko(t.error); });
+}
+// Keys are prefixed with this app's storage key: the demonstration, the test bench and the real app never mix.
+const ficCle = id => KEY + '|' + id;
+async function ficLocal(id) {
+  if (FIC.memoire.has(id)) return FIC.memoire.get(id);
+  try { return await ficIdb('fichiers', 'readonly', s => s.get(ficCle(id))); } catch (e) { return undefined; }
+}
+async function ficGarder(id, blob, garde) {
+  const v = { blob, t: Date.now(), taille: blob.size, garde: !!garde };
+  try { await ficIdb('fichiers', 'readwrite', s => s.put(v, ficCle(id))); } catch (e) { if (garde) FIC.memoire.set(id, v); }
+}
+function ficOublier(ids) { for (const id of ids.filter(Boolean)) { FIC.memoire.delete(id); ficIdb('fichiers', 'readwrite', s => s.delete(ficCle(id))).catch(() => {}); const u = FIC.vignettes.get(id); if (u) { URL.revokeObjectURL(u); FIC.vignettes.delete(id); } } }
+// Downloaded copies beyond 300 MB: the oldest go first (files only kept here, in the demonstration, never do).
+async function ficRanger() {
+  try {
+    const db = await ficBase(), L = [];
+    await new Promise(ok => { const t = db.transaction('fichiers', 'readonly'), c = t.objectStore('fichiers').openCursor(); c.onsuccess = () => { const x = c.result; if (!x) return ok(); if (String(x.key).startsWith(KEY + '|') && !x.value.garde) L.push([x.key, x.value.taille || 0, x.value.t || 0]); x.continue(); }; t.onerror = () => ok(); });
+    let total = L.reduce((n, x) => n + x[1], 0);
+    for (const [k, n] of L.sort((a, b) => a[2] - b[2])) { if (total <= FIC.cache) break; total -= n; await ficIdb('fichiers', 'readwrite', s => s.delete(k)); }
+  } catch (e) { /* stockage indisponible : rien à ranger */ }
+}
+
+/* ------------------------------------------------------------------ base64 */
+const ficEnBase64 = blob => new Promise((ok, ko) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = () => ko(r.error); r.readAsDataURL(blob); });
+const ficDeBase64 = (b64, type) => fetch('data:application/octet-stream;base64,' + b64).then(r => r.blob()).then(b => new Blob([b], { type: type || 'application/octet-stream' }));
+
+/* ------------------------------------------------------------------ sending and reading */
+// Returns { id, taille }. Demonstration: the file stays in this browser.
+async function ficEnvoyer(blob, rubrique, nom, job, progres) {
+  if (!syncConnected()) { const id = 'loc-' + syncId(); await ficGarder(id, blob, true); progres(blob.size); return { id, taille: blob.size }; }
+  const base = { rubrique, nom, type: blob.type || 'application/octet-stream', taille: blob.size };
+  if (blob.size <= FIC.direct) { const r = await syncCall('fichierDebut', Object.assign({ donnees: await ficEnBase64(blob) }, base), { delai: 90000 }); progres(blob.size); return r.fichier; }
+  let debut = 0, essais = 0;
+  if (job && job.envoi) {   // resumed after a closed app or a lost network: Drive says where it stopped
+    try { const st = await syncCall('fichierEtat', { envoi: job.envoi }, { delai: 30000 }); if (st.fini) return st.fichier; debut = st.recu; }
+    catch (e) { if (e.code !== 'envoi') throw e; job.envoi = ''; }
+  }
+  if (!job || !job.envoi) { const r = await syncCall('fichierDebut', base, { delai: 30000 }); if (job) { job.envoi = r.envoi; ficSauverEnvoi(job); } else base.envoi = r.envoi; }
+  const envoi = job ? job.envoi : base.envoi;
+  for (;;) {
+    progres(debut);
+    try {
+      const r = await syncCall('fichierMorceau', { envoi, debut, donnees: await ficEnBase64(blob.slice(debut, debut + FIC.morceau)) }, { delai: 120000, essais: 1 });
+      if (r.fini) { progres(blob.size); return r.fichier; }
+      debut = r.recu; essais = 0;
+    } catch (e) {
+      if ((e.code !== 'reseau' && e.code !== 'serveur') || ++essais > 4) throw e;
+      await ficPause(2500 * essais);
+      const st = await syncCall('fichierEtat', { envoi }, { delai: 30000 });
+      if (st.fini) return st.fichier;
+      debut = st.recu;
+    }
+  }
+}
+// Whole file as a Blob: local copy first, else 4 MB at a time from the service. One download per file at once.
+function ficBlob(id, type, taille, progres) {
+  if (FIC.lecture.has(id)) return FIC.lecture.get(id);
+  const p = (async () => {
+    const l = await ficLocal(id);
+    if (l && l.blob) { if (!l.garde) ficGarder(id, l.blob); return l.blob; }
+    if (!syncConnected()) throw syncError('Ce fichier n’est pas sur cet appareil.', 'absent');
+    const parts = []; let recu = 0;
+    do {
+      const r = await syncCall('fichierLire', { id, debut: recu }, { delai: 120000 });
+      const b = await ficDeBase64(r.donnees, type); parts.push(b); recu += b.size; taille = r.taille;
+      if (progres) progres(recu / taille);
+    } while (recu < taille);
+    const blob = new Blob(parts, { type: type || 'application/octet-stream' });
+    await ficGarder(id, blob); ficRanger();
+    return blob;
+  })();
+  FIC.lecture.set(id, p);
+  p.then(() => FIC.lecture.delete(id), () => FIC.lecture.delete(id));
+  return p;
+}
+// Full-size files open in the viewer keep their address while they are shown (six at most).
+function ficPlein(id) { return FIC.pleins.get(id) || null; }
+function ficTenir(id, blob) {
+  if (FIC.pleins.has(id)) return FIC.pleins.get(id);
+  const v = { blob, url: URL.createObjectURL(blob) }; FIC.pleins.set(id, v);
+  while (FIC.pleins.size > 6) { const [k, x] = FIC.pleins.entries().next().value; URL.revokeObjectURL(x.url); FIC.pleins.delete(k); }
+  return v;
+}
+
+/* ------------------------------------------------------------------ thumbnails */
+function ficVignetteUrl(id) { if (!id) return FIC_VIDE; const u = FIC.vignettes.get(id); if (u) return u; FIC.attente.add(id); return FIC_VIDE; }
+function ficPoserVignette(id, blob) { if (!FIC.vignettes.has(id)) FIC.vignettes.set(id, URL.createObjectURL(blob)); document.querySelectorAll(`img[data-vignette="${CSS.escape(id)}"]`).forEach(i => { i.src = FIC.vignettes.get(id); }); }
+async function ficChargerVignettes() {
+  const ids = [...FIC.attente]; FIC.attente.clear();
+  if (!ids.length) return;
+  const manque = [];
+  for (const id of ids) { const l = await ficLocal(id); if (l && l.blob) ficPoserVignette(id, l.blob); else manque.push(id); }
+  if (!syncConnected()) return;
+  for (let i = 0; i < manque.length; i += 20) {
+    try {
+      const r = await syncCall('vignettes', { ids: manque.slice(i, i + 20) }, { delai: 45000 });
+      for (const [id, b64] of Object.entries(r.vignettes || {})) { const b = await ficDeBase64(b64, 'image/jpeg'); ficGarder(id, b); ficPoserVignette(id, b); }
+    } catch (e) { manque.slice(i, i + 20).forEach(id => FIC.attente.add(id)); return; }   // retried at the next display
+  }
+}
+
+/* ------------------------------------------------------------------ preparing photos and videos */
+function ficImage(file) {
+  return new Promise((ok, ko) => { const img = new Image(), u = URL.createObjectURL(file); img.onload = () => { ok(img); setTimeout(() => URL.revokeObjectURL(u), 500); }; img.onerror = () => { URL.revokeObjectURL(u); ko(new Error('illisible')); }; img.src = u; });
+}
+function ficReduire(src, w, h, { cote, qualite }) {
+  const k = Math.min(1, cote / Math.max(w, h)), c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+  return new Promise(ok => c.toBlob(b => ok(b), 'image/jpeg', qualite));
+}
+// The <img> element applies the photo's orientation (EXIF): the reduced copy stays upright.
+async function ficPreparerPhoto(file) {
+  const img = await ficImage(file), w = img.naturalWidth, h = img.naturalHeight;
+  const plein = file.size < 600 * 1024 && /jpeg|png|webp/.test(file.type) && Math.max(w, h) <= FIC.photo.cote ? file : await ficReduire(img, w, h, FIC.photo);
+  return { fichier: plein, vignette: await ficReduire(img, w, h, FIC.vignette), largeur: w, hauteur: h };
+}
+function ficPreparerVideo(file) {
+  return new Promise(ok => {
+    const v = document.createElement('video'), u = URL.createObjectURL(file); let fini = false;
+    const fin = x => { if (fini) return; fini = true; clearTimeout(t); try { v.removeAttribute('src'); v.load(); } catch (e) { /* déjà libérée */ } URL.revokeObjectURL(u); ok(Object.assign({ fichier: file }, x)); };
+    const t = setTimeout(() => fin({ duree: v.duration || 0 }), 9000);
+    v.muted = true; v.playsInline = true; v.preload = 'auto'; v.setAttribute('playsinline', '');
+    v.onloadeddata = () => { v.currentTime = Math.min(1, (v.duration || 2) / 3); };
+    v.onseeked = async () => { try { fin({ vignette: await ficReduire(v, v.videoWidth, v.videoHeight, FIC.vignette), largeur: v.videoWidth, hauteur: v.videoHeight, duree: v.duration }); } catch (e) { fin({ duree: v.duration }); } };
+    v.onerror = () => fin({});
+    v.src = u;
+  });
+}
+
+/* ------------------------------------------------------------------ sending queue (kept across closings) */
+// job: { id, mode, col: 'media' | 'documents', fichier, nom, type, doc, etat: 'attente' | 'envoi' | 'erreur', fait, total, erreur, envoi }
+const ficEnAttente = () => FIC.envois.filter(j => j.etat !== 'erreur').length;
+function ficSauverEnvoi(job) { const { erreur, ...v } = job; ficIdb('envois', 'readwrite', s => s.put(v, job.id)).catch(() => {}); }
+function ficRetirerEnvoi(job) { FIC.envois = FIC.envois.filter(j => j !== job); ficIdb('envois', 'readwrite', s => s.delete(job.id)).catch(() => {}); }
+function ficSorte(file) {
+  const t = file.type || '';
+  if (t.startsWith('image/')) return 'photo';
+  if (t.startsWith('video/') || /\.(mov|mp4|m4v|webm)$/i.test(file.name || '')) return 'video';
+  return '';
+}
+// Adds chosen files to the queue. quoi: { col: 'media', memoryId } or { col: 'documents', categorie, note }. Returns the refusals.
+function ficAjouter(files, quoi) {
+  const refus = [];
+  for (const file of files) {
+    const sorte = quoi.col === 'media' ? ficSorte(file) : 'document', max = FIC.limites[sorte];
+    if (!sorte) { refus.push(`${file.name} : ni photo ni vidéo.`); continue; }
+    if (!file.size) { refus.push(`${file.name} : fichier vide.`); continue; }
+    if (file.size > max) { refus.push(`${file.name} : ${ficTaille(file.size)}, au-delà de ${ficTaille(max)}${sorte === 'video' ? ' (raccourcissez-la dans Photos : Modifier, puis réessayez)' : ''}.`); continue; }
+    const doc = quoi.col === 'media' ? { kind: sorte, memoryId: quoi.memoryId, legende: '' } : { categorie: quoi.categorie || 'autres', note: quoi.note || '' };
+    const job = { id: syncId(), mode: KEY, col: quoi.col, fichier: file, nom: file.name || (sorte === 'video' ? 'video.mov' : 'photo.jpg'), type: file.type || 'application/octet-stream', doc, etat: 'attente', fait: 0, total: file.size, ajoute: Date.now() };
+    FIC.envois.push(job); ficSauverEnvoi(job);
+  }
+  if (refus.length) toast(refus.length === 1 ? 'Non ajouté : ' + refus[0] : `${refus.length} fichiers non ajoutés. ${refus[0]}`);
+  albumRedessiner(); ficTraiter();
+  return refus;
+}
+async function ficReprendre() {
+  if (FIC.reprise) return FIC.reprise;
+  FIC.reprise = (async () => {
+    try {
+      const db = await ficBase(), L = await new Promise(ok => { const r = db.transaction('envois', 'readonly').objectStore('envois').getAll(); r.onsuccess = () => ok(r.result || []); r.onerror = () => ok([]); });
+      for (const j of L) if (j.mode === KEY && !FIC.envois.some(x => x.id === j.id)) FIC.envois.push(Object.assign(j, { etat: 'attente' }));
+    } catch (e) { /* pas de stockage : rien à reprendre */ }
+    if (!syncConnected()) ficMenageDemo();
+    albumRedessiner(); ficTraiter();
+  })();
+  return FIC.reprise;
+}
+function ficAbandonner() { for (const j of [...FIC.envois]) ficRetirerEnvoi(j); FIC.reprise = null; }
+// Demonstration: files no element cites any more (data erased, element deleted) leave this browser.
+async function ficMenageDemo() {
+  try {
+    const cites = new Set(), db = await ficBase();
+    for (const x of [...(S.media || []), ...(S.documents || [])]) { cites.add(x.fileId); cites.add(x.thumbId); }
+    await new Promise(ok => { const t = db.transaction('fichiers', 'readwrite'), c = t.objectStore('fichiers').openCursor(); c.onsuccess = () => { const x = c.result; if (!x) return; const id = String(x.key).slice(KEY.length + 1); if (String(x.key).startsWith(KEY + '|loc-') && !cites.has(id) && !FIC.envois.some(j => j.vignetteId === id || j.fichierId === id)) x.delete(); x.continue(); }; t.oncomplete = t.onerror = () => ok(); });
+  } catch (e) { /* rien à faire */ }
+}
+async function ficTraiter() {
+  if (FIC.actif || (SYNC_MODE !== 'demo' && !syncConnected())) return;
+  FIC.actif = true; clearTimeout(FIC.timer);
+  try {
+    for (let job; (job = FIC.envois.find(j => j.etat === 'attente'));) {
+      job.etat = 'envoi'; albumProgres();
+      try { await ficEnvoyerJob(job); }
+      catch (e) {
+        if (e.code === 'reseau' || e.code === 'serveur') { job.etat = 'attente'; FIC.timer = setTimeout(ficTraiter, 30000); albumProgres(); break; }
+        if (e.code === 'session') { job.etat = 'attente'; break; }
+        if (e.code === 'envoi') { job.envoi = ''; job.etat = 'attente'; ficSauverEnvoi(job); continue; }
+        job.etat = 'erreur'; job.erreur = e.message || 'Envoi impossible.'; toast(`${job.nom} : ${job.erreur}`); albumRedessiner();
+      }
+    }
+  } finally { FIC.actif = false; albumProgres(); }
+}
+async function ficEnvoyerJob(job) {
+  // 1. Preparation, once: reduced photo, thumbnail of the photo or the video.
+  if (!job.pret) {
+    if (job.col === 'media' && job.doc.kind === 'photo') {
+      try { Object.assign(job, await ficPreparerPhoto(job.fichier)); }
+      catch (e) { if (!/jpeg|png|gif|webp/.test(job.type)) throw syncError('format de photo non reconnu par ce navigateur.'); }
+    } else if (job.col === 'media') Object.assign(job, await ficPreparerVideo(job.fichier));
+    job.type = job.fichier.type || job.type; job.total = job.fichier.size + (job.vignette ? job.vignette.size : 0);
+    if (job.doc.kind === 'photo' && job.fichier.type === 'image/jpeg') job.nom = job.nom.replace(/\.(heic|heif|png|webp)$/i, '.jpg');
+    job.pret = true; ficSauverEnvoi(job);
+  }
+  const vu = n => { job.fait = n; albumProgres(); };
+  // 2. Thumbnail, then the file itself (resumable).
+  if (job.vignette && !job.vignetteId) { const v = await ficEnvoyer(job.vignette, 'vignettes', 'vignette.jpg', null, () => {}); job.vignetteId = v.id; job.tailleVignette = v.taille; ficSauverEnvoi(job); }
+  const base = job.vignette ? job.vignette.size : 0;
+  if (!job.fichierId) { const f = await ficEnvoyer(job.fichier, job.col === 'media' ? 'souvenirs' : 'documents', job.nom, job, n => vu(base + n)); job.fichierId = f.id; job.taille = f.taille; ficSauverEnvoi(job); }
+  // 3. The element that cites it, through the usual synchronisation. A souvenir deleted meanwhile takes nothing.
+  if (job.col === 'media' && !S.memories.some(m => m.id === job.doc.memoryId)) { ficRetirerEnvoi(job); albumRedessiner(); return; }
+  if (syncConnected()) { ficGarder(job.fichierId, job.fichier); if (job.vignette) ficGarder(job.vignetteId, job.vignette); }
+  if (job.vignette) ficPoserVignette(job.vignetteId, job.vignette);
+  const doc = Object.assign({ id: syncId(), nom: job.nom, type: job.type, taille: job.taille, fileId: job.fichierId, ownerId: syncConnected() ? SY.me : emotionViewer, createdAt: new Date().toISOString() }, job.doc);
+  if (job.vignetteId) Object.assign(doc, { thumbId: job.vignetteId, tailleVignette: job.tailleVignette });
+  for (const k of ['largeur', 'hauteur', 'duree']) if (job[k]) doc[k] = Math.round(job[k] * 10) / 10;
+  (S[job.col] = S[job.col] || []).push(doc);
+  ficRetirerEnvoi(job);
+  persist(); albumRedessiner();
+  if (!ficEnAttente()) { sonsJouer('enregistrer'); toast(job.col === 'media' ? 'Photos et vidéos rangées dans votre souvenir. ♡' : 'Document rangé. ♡'); }
+}
+if (typeof window !== 'undefined') { if (window.addEventListener) window.addEventListener('online', () => ficTraiter()); window.EntreNousFichiers = FIC; }
+
+// Souvenirs with their photos and videos, and the couple's documents (files: src/fichiers.js).
+const DOC_CATS = [['identite', 'Identité et état civil', '🪪'], ['logement', 'Logement', '🏠'], ['sante', 'Santé', '🩺'], ['finances', 'Banque et finances', '🏦'], ['assurances', 'Assurances', '🛡️'], ['voyages', 'Voyages', '✈️'], ['travail', 'Travail et études', '💼'], ['enfants', 'Enfants', '🧸'], ['autres', 'Autres', '📁']];
+let albumFiltre = '';
+const albumMedias = memoryId => (S.media || []).filter(x => x.memoryId === memoryId).sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+const albumDoc = docId => (S.documents || []).find(x => x.id === docId);
+const albumMedia = mediaId => (S.media || []).find(x => x.id === mediaId);
+const albumQui = x => x.ownerId ? personName(x.ownerId) : '';
+const albumJour = iso => iso ? new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+
+/* ------------------------------------------------------------------ shared pieces */
+// The file picker is a styled label: the real input stays reachable (iPhone opens Photos, the camera or Files).
+function albumChoix(nom, libelle, accept, change, multiple = true) {
+  return `<label class="btn soft album-choix">${svg('plus')} ${libelle}<input class="album-input" type="file" name="${nom}" accept="${accept}" ${multiple ? 'multiple' : ''} data-change="${change}"></label><small class="album-choisis quiet" data-choisis></small>`;
+}
+// In the souvenir form (creation and edit): photos and videos chosen with the words.
+const albumChoixMemoire = () => `<div class="field"><span class="field-label">${modal?.edit ? 'Ajouter des photos ou vidéos (facultatif)' : 'Photos et vidéos (facultatif)'}</span>${albumChoix('medias', 'Choisir dans mes photos', 'image/*,video/*', 'album-choix')}<small class="quiet album-choisis-limites">${albumLimites()}.</small></div>`;
+function albumLimites() { return 'Photos réduites automatiquement · vidéos jusqu’à 100 Mo (environ 1 min 30 filmée en 1080p) · documents jusqu’à 25 Mo'; }
+function albumJauge() {
+  if (!syncConnected()) return `<p class="album-jauge quiet small">Démonstration : vos photos, vidéos et documents restent dans ce navigateur. ${albumLimites()}.</p>`;
+  const n = [...(S.media || []), ...(S.documents || [])].reduce((t, x) => t + (+x.taille || 0) + (+x.tailleVignette || 0), 0), q = (SY.stock && SY.stock.quota) || 5 * 1024 * FIC_MO;
+  return `<div class="album-jauge"><div class="album-barre" aria-hidden="true"><span style="width:${Math.min(100, n / q * 100).toFixed(1)}%"></span></div><small class="quiet">Espace du couple : ${n ? ficTaille(n) : '0 Mo'} utilisés sur ${ficTaille(q)}. ${albumLimites()}.</small></div>`;
+}
+const albumEnvois = filtre => `<div data-envois="${esc(filtre)}">${albumEnvoisContenu(filtre)}</div>`;
+function albumEnvoisContenu(filtre) {
+  const L = FIC.envois.filter(j => filtre === 'documents' ? j.col === 'documents' : j.col === 'media' && (filtre === '*' || j.doc.memoryId === filtre));
+  if (!L.length) return '';
+  const actifs = L.filter(j => j.etat !== 'erreur'), fait = actifs.reduce((n, j) => n + (j.fait || 0), 0), total = actifs.reduce((n, j) => n + (j.total || 0), 0) || 1;
+  const pause = actifs.length && actifs.every(j => j.etat === 'attente') && !FIC.actif;
+  return `<div class="album-envois" role="status">${actifs.length ? `<div class="album-envois-tete"><b>${pause ? 'En attente du réseau' : 'Envoi en cours'} · ${actifs.length} fichier${actifs.length > 1 ? 's' : ''}</b><span>${Math.round(fait / total * 100)} %</span></div><div class="album-barre"><span style="width:${(fait / total * 100).toFixed(1)}%"></span></div><small class="quiet">Gardez l’application ouverte jusqu’à la fin. En cas de coupure, l’envoi reprend tout seul.</small>` : ''}${L.filter(j => j.etat === 'erreur').map(j => `<div class="album-erreur"><span><b>${esc(j.nom)}</b> · ${esc(j.erreur)}</span><span class="item-actions">${button('Réessayer', 'envoi-reessayer:' + j.id, 'btn ghost sm')}${button('Retirer', 'envoi-retirer:' + j.id, 'btn ghost sm danger')}</span></div>`).join('')}</div>`;
+}
+function albumProgres() { if (typeof document === 'undefined' || !document.querySelectorAll) return; document.querySelectorAll('[data-envois]').forEach(el => { el.innerHTML = albumEnvoisContenu(el.dataset.envois); }); }
+// A finished upload redraws the screen, unless someone is typing or watching a photo or a video.
+function albumRedessiner() {
+  if (typeof document === 'undefined') return;
+  const a = document.activeElement;
+  if ((modal && /media-view|document-view/.test(modal.type)) || (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName) && a.type !== 'file')) { albumProgres(); return; }
+  render();
+}
+function albumFenetre(titre, corps, pied = '', classe = '') {
+  return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" aria-modal="true" aria-label="${esc(titre)}" class="modal ${classe}"><div class="modal-head"><h2>${esc(titre)}</h2>${button('×', 'close', 'btn ghost sm')}</div>${corps}<div class="form-actions">${pied}${button('Fermer', 'close', 'btn')}</div></div></div>`;
+}
+function albumPartager(blob, nom, type) {
+  const f = new File([blob], nom || 'fichier', { type: type || blob.type });
+  if (navigator.canShare && navigator.canShare({ files: [f] })) { navigator.share({ files: [f] }).catch(() => {}); return; }
+  const a = document.createElement('a'), u = URL.createObjectURL(f); a.href = u; a.download = f.name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 60000);
+}
+
+/* ------------------------------------------------------------------ Souvenirs */
+function albumSouvenirs() {
+  const L = S.memories.slice().sort((a, b) => b.date.localeCompare(a.date));
+  return `<div class="card-title album-tete"><div><div class="smallcaps">NOTRE ALBUM</div><h3 class="album-titre">Les souvenirs qui restent ♡</h3></div>${button(`${svg('plus')} Ajouter un souvenir`, 'new-memory', 'btn primary')}</div>${albumJauge()}${albumEnvois('*')}<div class="grid-3">${L.map(albumCarte).join('') || '<div class="empty">Ajoutez votre premier souvenir : quelques mots, des photos, une vidéo.</div>'}</div>`;
+}
+function albumCarte(m) {
+  const L = albumMedias(m.id), photos = L.filter(x => x.kind === 'photo').length, videos = L.length - photos, couv = L.find(x => x.kind === 'photo' && x.thumbId) || L.find(x => x.thumbId);
+  const compte = [photos ? `${photos} photo${photos > 1 ? 's' : ''}` : '', videos ? `${videos} vidéo${videos > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ');
+  return `<article class="memory"><button type="button" class="memory-art" data-action="memory-open:${m.id}" aria-label="Ouvrir le souvenir ${esc(m.title)}">${couv ? `<img class="memory-photo" data-vignette="${esc(couv.thumbId)}" src="${ficVignetteUrl(couv.thumbId)}" alt="">` : esc(m.emoji || '♡')}${compte ? `<span class="memory-compte">${compte}</span>` : ''}</button><div class="memory-body"><small>${fullDate(m.date)}</small><h4>${esc(m.title)}</h4><p>${esc(m.note)}</p><div class="item-actions">${button(L.length ? 'Voir l’album' : 'Ajouter des photos', 'memory-open:' + m.id, 'btn soft sm')}${button('Modifier', 'edit-item:memory:' + m.id, 'btn ghost sm')}${button('Supprimer', 'delete-memory:' + m.id, 'btn ghost sm danger')}</div></div></article>`;
+}
+function albumCase(x) {
+  const titre = x.kind === 'video' ? 'Vidéo' : 'Photo';
+  return `<button type="button" class="album-case" data-action="media-open:${x.id}" aria-label="${titre}${x.legende ? ' · ' + esc(x.legende) : ''}">${x.thumbId ? `<img data-vignette="${esc(x.thumbId)}" src="${ficVignetteUrl(x.thumbId)}" alt="">` : `<span class="album-sans">${x.kind === 'video' ? '🎬' : '🖼️'}</span>`}${x.kind === 'video' ? `<span class="album-duree">▶ ${ficDuree(x.duree)}</span>` : ''}</button>`;
+}
+function albumVueSouvenir(m) {
+  const L = albumMedias(m.id);
+  const corps = `<p class="quiet small album-date">${fullDate(m.date)} ${esc(m.emoji || '')}</p>${m.note ? `<p class="album-note">${esc(m.note)}</p>` : ''}<div class="album-ajout">${albumChoix('ajout', 'Ajouter des photos ou vidéos', 'image/*,video/*', 'album-ajout:' + m.id)}</div>${albumEnvois(m.id)}<div class="album-grille">${L.map(albumCase).join('') || '<div class="empty">Pas encore de photo dans ce souvenir.</div>'}</div>`;
+  return albumFenetre(m.title, corps, button('Modifier', 'edit-item:memory:' + m.id, 'btn'), 'album-modal');
+}
+function albumVisionneuse(x) {
+  const L = albumMedias(x.memoryId), i = L.findIndex(y => y.id === x.id), prec = L[i - 1], suiv = L[i + 1], m = S.memories.find(y => y.id === x.memoryId);
+  const plein = ficPlein(x.fileId), libelle = x.kind === 'video' ? 'Vidéo' : 'Photo';
+  const scene = plein ? albumScene(x, plein.url) : `${x.thumbId ? `<img class="vis-flou" data-vignette="${esc(x.thumbId)}" src="${ficVignetteUrl(x.thumbId)}" alt="">` : ''}<div class="vis-progres">Chargement…</div>`;
+  return `<div class="visionneuse" role="dialog" aria-modal="true" aria-label="${libelle}"><div class="vis-haut"><button type="button" class="vis-bouton" data-action="media-retour" aria-label="Revenir au souvenir">‹ ${esc(m ? m.title : 'Souvenir')}</button><span class="vis-rang">${i + 1} / ${L.length}</span></div><div class="vis-scene" data-vis="${x.id}">${scene}</div>${prec ? `<button type="button" class="vis-fleche prec" data-action="media-open:${prec.id}" aria-label="${libelle} précédente">‹</button>` : ''}${suiv ? `<button type="button" class="vis-fleche suiv" data-action="media-open:${suiv.id}" aria-label="${libelle} suivante">›</button>` : ''}<div class="vis-bas"><div class="vis-legende">${x.legende ? `<b>${esc(x.legende)}</b>` : ''}<small>Ajoutée par ${esc(albumQui(x))} · ${albumJour(x.createdAt)}${x.taille ? ' · ' + ficTaille(x.taille) : ''}</small></div><div class="vis-actions">${button('Légende', 'media-legende:' + x.id, 'vis-bouton')}${button('Enregistrer', 'media-save:' + x.id, 'vis-bouton')}${button('Supprimer', 'media-delete:' + x.id, 'vis-bouton danger')}</div></div></div>`;
+}
+function albumScene(x, url) { return x.kind === 'video' ? `<video src="${url}" controls playsinline preload="metadata"></video>` : `<img src="${url}" alt="${esc(x.legende || 'Photo du souvenir')}">`; }
+function albumChargerPlein() {
+  const x = albumMedia(modal.id), scene = x && document.querySelector(`[data-vis="${x.id}"]`);
+  if (!scene || ficPlein(x.fileId)) return;
+  const texte = scene.querySelector('.vis-progres');
+  ficBlob(x.fileId, x.type, x.taille, f => { if (texte) texte.textContent = `Chargement… ${Math.round(f * 100)} %`; })
+    .then(b => { const v = ficTenir(x.fileId, b), ici = document.querySelector(`[data-vis="${x.id}"]`); if (ici) ici.innerHTML = albumScene(x, v.url); })
+    .catch(e => { if (texte) texte.textContent = e.message || 'Chargement impossible.'; });
+}
+function albumQuestionSuppression(memoryId) { const n = albumMedias(memoryId).length; return n ? `Supprimer ce souvenir et ses ${n} photo${n > 1 ? 's' : ''} ou vidéo${n > 1 ? 's' : ''} ? Elles seront retirées pour vous deux.` : 'Supprimer ce souvenir ?'; }
+function albumOublierSouvenir(memoryId) {
+  const L = albumMedias(memoryId);
+  if (!syncConnected()) ficOublier(L.flatMap(x => [x.fileId, x.thumbId]));
+  S.media = (S.media || []).filter(x => x.memoryId !== memoryId);
+  FIC.envois.filter(j => j.col === 'media' && j.doc.memoryId === memoryId).forEach(ficRetirerEnvoi);
+}
+
+/* ------------------------------------------------------------------ Documents */
+const albumCat = id => DOC_CATS.find(c => c[0] === id) || DOC_CATS[DOC_CATS.length - 1];
+function albumIcone(x) {
+  const ext = (String(x.nom || '').match(/\.([a-z0-9]{1,5})$/i) || [, ''])[1].toUpperCase(), t = x.type || '';
+  const genre = /pdf/.test(t) || ext === 'PDF' ? 'pdf' : t.startsWith('image/') ? 'img' : /sheet|excel|csv/.test(t) || /XLSX?|CSV/.test(ext) ? 'tab' : /word|document|text/.test(t) || /DOCX?|TXT|RTF|PAGES/.test(ext) ? 'txt' : t.startsWith('video/') ? 'vid' : 'autre';
+  return `<span class="doc-icone ${genre}" aria-hidden="true">${esc((ext || '•').slice(0, 4))}</span>`;
+}
+function albumDocuments() {
+  const L = (S.documents || []).slice().sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  const presentes = DOC_CATS.filter(c => L.some(x => albumCat(x.categorie)[0] === c[0]));
+  if (albumFiltre && !presentes.some(c => c[0] === albumFiltre)) albumFiltre = '';
+  const filtres = presentes.length > 1 ? `<div class="doc-filtres" role="group" aria-label="Catégories">${button('Tous · ' + L.length, 'doc-filtre:', 'pill-btn' + (albumFiltre ? '' : ' active'))}${presentes.map(c => button(`${c[2]} ${c[1]} · ${L.filter(x => albumCat(x.categorie)[0] === c[0]).length}`, 'doc-filtre:' + c[0], 'pill-btn' + (albumFiltre === c[0] ? ' active' : ''))).join('')}</div>` : '';
+  const groupes = presentes.filter(c => !albumFiltre || c[0] === albumFiltre).map(c => `<section class="card doc-groupe"><h4>${c[2]} ${esc(c[1])}</h4>${L.filter(x => albumCat(x.categorie)[0] === c[0]).map(x => `<div class="doc-ligne">${albumIcone(x)}<button type="button" class="doc-texte" data-action="doc-open:${x.id}"><b>${esc(x.nom)}</b><small>${ficTaille(+x.taille || 0)} · ${albumJour(x.createdAt)} · ${esc(albumQui(x))}</small>${x.note ? `<small class="doc-note">${esc(x.note)}</small>` : ''}</button><span class="item-actions">${button('Ouvrir', 'doc-open:' + x.id, 'btn soft sm')}${button('Modifier', 'doc-edit:' + x.id, 'btn ghost sm')}${button('Supprimer', 'doc-delete:' + x.id, 'btn ghost sm danger')}</span></div>`).join('')}</section>`).join('');
+  return `<div class="card-title album-tete"><div><div class="smallcaps">NOS DOCUMENTS</div><h3 class="album-titre">Les papiers du couple, au même endroit</h3></div>${button(`${svg('plus')} Ajouter un document`, 'new-document', 'btn primary')}</div>${albumJauge()}${albumEnvois('documents')}${filtres}${groupes || '<div class="empty">Rangez ici vos papiers : pièces d’identité, bail, assurances, ordonnances, billets… Seuls vous deux y avez accès.</div>'}`;
+}
+const albumCats = sel => select('categorie', 'Catégorie', DOC_CATS.map(c => [c[0], c[2] + ' ' + c[1]]), sel || 'autres');
+function albumNouveauDocument() {
+  const corps = `<div class="field"><span class="field-label">Fichiers</span>${albumChoix('fichiers', 'Choisir un ou plusieurs fichiers', '*/*', 'album-choix')}</div>${albumCats(albumFiltre || 'autres')}${txt('note', 'Note (facultative)', 'Ex. : à renouveler en mars')}<p class="quiet small">PDF, photos, Word, Excel… jusqu’à 25 Mo chacun. Seuls vous deux y avez accès.</p>`;
+  return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" aria-modal="true" aria-label="Ajouter un document" class="modal"><div class="modal-head"><h2>Ajouter un document</h2>${button('×', 'close', 'btn ghost sm')}</div><form id="modal-form" data-form="submit-document">${corps}<div class="form-actions">${button('Annuler', 'close', 'btn')}<button type="submit" class="btn primary">Ranger</button></div></form></div></div>`;
+}
+function albumModifierDocument(x) {
+  const corps = `${field('nom', 'Nom du document', 'text', x.nom, 'required maxlength="120"')}${albumCats(albumCat(x.categorie)[0])}<div class="field"><label for="f-note">Note (facultative)</label><textarea id="f-note" name="note">${esc(x.note || '')}</textarea></div>`;
+  return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" aria-modal="true" aria-label="Modifier le document" class="modal"><div class="modal-head"><h2>Modifier le document</h2>${button('×', 'close', 'btn ghost sm')}</div><form id="modal-form" data-form="submit-document-edit">${corps}<div class="form-actions">${button('Annuler', 'close', 'btn')}<button type="submit" class="btn primary">Enregistrer</button></div></form></div></div>`;
+}
+function albumVueDocument(x) {
+  const c = albumCat(x.categorie), plein = ficPlein(x.fileId);
+  const corps = `<div class="doc-fiche">${albumIcone(x)}<div><b>${esc(x.nom)}</b><small class="quiet">${c[2]} ${esc(c[1])} · ${ficTaille(+x.taille || 0)}<br>Ajouté par ${esc(albumQui(x))} le ${albumJour(x.createdAt)}</small></div></div>${x.note ? `<p class="album-note">${esc(x.note)}</p>` : ''}<div class="doc-zone" data-doc-zone="${x.id}">${plein ? albumDocPret(x, plein.url) : '<div class="vis-progres doc-progres">Chargement…</div>'}</div>`;
+  return albumFenetre(x.nom, corps, button('Modifier', 'doc-edit:' + x.id, 'btn'), 'album-modal');
+}
+function albumDocPret(x, url) {
+  return `${(x.type || '').startsWith('image/') ? `<img class="doc-apercu" src="${url}" alt="${esc(x.nom)}">` : ''}<div class="doc-boutons">${button('Ouvrir', 'doc-ouvrir:' + x.id, 'btn primary')}${button('Enregistrer ou partager', 'doc-partager:' + x.id, 'btn soft')}</div>`;
+}
+function albumChargerDoc() {
+  const x = albumDoc(modal.id), zone = x && document.querySelector(`[data-doc-zone="${x.id}"]`);
+  if (!zone || ficPlein(x.fileId)) return;
+  const texte = zone.querySelector('.vis-progres');
+  ficBlob(x.fileId, x.type, x.taille, f => { if (texte) texte.textContent = `Chargement… ${Math.round(f * 100)} %`; })
+    .then(b => { const v = ficTenir(x.fileId, b), ici = document.querySelector(`[data-doc-zone="${x.id}"]`); if (ici) ici.innerHTML = albumDocPret(x, v.url); })
+    .catch(e => { if (texte) texte.textContent = e.message || 'Chargement impossible.'; });
+}
+
+/* ------------------------------------------------------------------ hooks */
+function albumModal() {
+  if (!modal) return '';
+  if (modal.type === 'memory-view') { const m = S.memories.find(x => x.id === modal.id); return m ? albumVueSouvenir(m) : ''; }
+  if (modal.type === 'media-view') { const x = albumMedia(modal.id); return x ? albumVisionneuse(x) : ''; }
+  if (modal.type === 'new-document') return albumNouveauDocument();
+  if (modal.type === 'document-edit') { const x = albumDoc(modal.id); return x ? albumModifierDocument(x) : ''; }
+  if (modal.type === 'document-view') { const x = albumDoc(modal.id); return x ? albumVueDocument(x) : ''; }
+  return '';
+}
+// After each render: thumbnails, then the full photo, video or document being viewed.
+function albumApresRendu() {
+  if (/^(memory-view|media-view|document-view|document-edit)$/.test(modal?.type || '') && !albumModal()) { modal = null; render(); return; }
+  ficChargerVignettes();
+  if (modal?.type === 'media-view') albumChargerPlein();
+  if (modal?.type === 'document-view') albumChargerDoc();
+}
+function albumAction(a) {
+  const [verbe, cle] = [a.slice(0, a.indexOf(':') + 1 || a.length), a.slice(a.indexOf(':') + 1)];
+  switch (verbe || a) {
+    case 'memory-open:': modal = { type: 'memory-view', id: cle }; render(); return true;
+    case 'media-open:': modal = { type: 'media-view', id: cle }; render(); return true;
+    case 'media-retour': { const x = albumMedia(modal?.id); modal = x ? { type: 'memory-view', id: x.memoryId } : null; render(); return true; }
+    case 'media-save:': { const x = albumMedia(cle), p = x && ficPlein(x.fileId); if (p) albumPartager(p.blob, x.nom, x.type); else toast('Un instant : le fichier se charge encore.'); return true; }
+    case 'media-legende:': {
+      const x = albumMedia(cle); if (!x) return true;
+      const l = window.prompt('Légende de cette ' + (x.kind === 'video' ? 'vidéo' : 'photo'), x.legende || '');
+      if (l !== null) { x.legende = String(l).trim().slice(0, 140); x.updatedAt = new Date().toISOString(); persist(); render(); }
+      return true;
+    }
+    case 'media-delete:': {
+      const x = albumMedia(cle); if (!x || !confirmDel(`Supprimer cette ${x.kind === 'video' ? 'vidéo' : 'photo'} pour vous deux ?`)) return true;
+      if (!syncConnected()) ficOublier([x.fileId, x.thumbId]);
+      S.media = S.media.filter(y => y.id !== x.id); persist();
+      const L = albumMedias(x.memoryId); modal = L.length ? { type: 'media-view', id: (L.find(y => String(y.createdAt) > String(x.createdAt)) || L[L.length - 1]).id } : { type: 'memory-view', id: x.memoryId };
+      render(); toast('Supprimée.'); return true;
+    }
+    case 'doc-filtre:': albumFiltre = cle; render(); return true;
+    case 'doc-open:': modal = { type: 'document-view', id: cle }; render(); return true;
+    case 'doc-edit:': modal = { type: 'document-edit', id: cle }; render(); return true;
+    case 'doc-delete:': {
+      const x = albumDoc(cle); if (!x || !confirmDel(`Supprimer « ${x.nom} » pour vous deux ?`)) return true;
+      if (!syncConnected()) ficOublier([x.fileId, x.thumbId]);
+      S.documents = S.documents.filter(y => y.id !== x.id); persist(); modal = null; render(); toast('Document supprimé.'); return true;
+    }
+    case 'doc-ouvrir:': {
+      const x = albumDoc(cle), p = x && ficPlein(x.fileId); if (!p) { toast('Un instant : le document se charge encore.'); return true; }
+      if (!window.open(p.url, '_blank')) albumPartager(p.blob, x.nom, x.type);
+      return true;
+    }
+    case 'doc-partager:': { const x = albumDoc(cle), p = x && ficPlein(x.fileId); if (p) albumPartager(p.blob, x.nom, x.type); else toast('Un instant : le document se charge encore.'); return true; }
+    case 'envoi-reessayer:': { const j = FIC.envois.find(y => y.id === cle); if (j) { j.etat = 'attente'; j.erreur = ''; ficTraiter(); albumProgres(); } return true; }
+    case 'envoi-retirer:': { const j = FIC.envois.find(y => y.id === cle); if (j) { ficRetirerEnvoi(j); albumRedessiner(); } return true; }
+  }
+  return false;
+}
+const albumFichiersDe = f => f && f.querySelector ? [...(f.querySelector('input[type=file]')?.files || [])] : [];
+function albumSubmitted(action, d, f) {
+  const req = x => String(x || '').trim();
+  if (action === 'submit-memory') {
+    const files = albumFichiersDe(f);
+    if (!files.length) return false;   // no file: the usual creation or edit
+    if (modal?.edit) { const id = modal.edit.id; editSubmitted(action, d); ficAjouter(files, { col: 'media', memoryId: id }); return true; }
+    if (!req(d.title) || !d.date) { toast('Vérifiez les informations saisies.'); return true; }
+    const m = { id: syncId(), title: req(d.title), date: d.date, emoji: req(d.emoji) || '♡', note: req(d.note) };
+    S.memories.push(m); persist();
+    modal = { type: 'memory-view', id: m.id }; render();
+    ficAjouter(files, { col: 'media', memoryId: m.id });
+    toast('Souvenir enregistré. Les photos et vidéos s’envoient… ♡');
+    return true;
+  }
+  if (action === 'submit-document') {
+    const files = albumFichiersDe(f);
+    if (!files.length) { toast('Choisissez au moins un fichier.'); return true; }
+    albumFiltre = d.categorie || '';
+    modal = null; render();
+    if (ficAjouter(files, { col: 'documents', categorie: d.categorie, note: req(d.note).slice(0, 300) }).length < files.length) toast('Envoi en cours… ♡');
+    return true;
+  }
+  if (action === 'submit-document-edit') {
+    const x = albumDoc(modal?.id);
+    if (!x || !req(d.nom)) { toast('Vérifiez les informations saisies.'); return true; }
+    Object.assign(x, { nom: req(d.nom).slice(0, 120), categorie: d.categorie || x.categorie, note: req(d.note).slice(0, 300), updatedAt: new Date().toISOString() });
+    persist(); modal = { type: 'document-view', id: x.id }; render(); sonsJouer('enregistrer'); toast('Modifications enregistrées. ♡');
+    return true;
+  }
+  return false;
+}
+function albumChanged(e) {
+  const c = e.target.dataset.change || '';
+  if (c === 'album-choix') {
+    const L = [...(e.target.files || [])], n = L.reduce((t, x) => t + x.size, 0), out = e.target.closest('.field, .album-ajout, form')?.querySelector('[data-choisis]');
+    if (out) out.textContent = L.length ? `${L.length} fichier${L.length > 1 ? 's' : ''} choisi${L.length > 1 ? 's' : ''} · ${ficTaille(n)}` : '';
+    return true;
+  }
+  if (c.startsWith('album-ajout:')) { const L = [...(e.target.files || [])]; e.target.value = ''; if (L.length) ficAjouter(L, { col: 'media', memoryId: c.slice(12) }); return true; }
+  return false;
+}
+// The viewer follows the finger and the arrow keys.
+if (typeof document !== 'undefined' && document.addEventListener) {
+  let x0 = null;
+  const voisin = sens => { const x = modal?.type === 'media-view' && albumMedia(modal.id); if (!x) return; const L = albumMedias(x.memoryId), y = L[L.findIndex(z => z.id === x.id) + sens]; if (y) { modal = { type: 'media-view', id: y.id }; render(); } };
+  document.addEventListener('touchstart', e => { x0 = modal?.type === 'media-view' && e.touches.length === 1 && !e.target.closest('video') ? e.touches[0].clientX : null; }, { passive: true });
+  document.addEventListener('touchend', e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 60) voisin(dx < 0 ? 1 : -1); }, { passive: true });
+  document.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') voisin(-1); if (e.key === 'ArrowRight') voisin(1); });
+}
+
+// Notifications on the phone (serveur/Code.gs, « notifications »): each addition by one partner reaches the other's
+// phone, even locked. The signal is empty; the service worker (web/sw.js) asks the service for the text with this session.
+// On iPhone: iOS 16.4 or later, and Entre Nous opened from its home-screen icon.
+const NOTIF_SESSION = 'entre-nous-session';
+const NOTIF = { etat: null, lecture: null };
+const notifIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const notifIcone = () => navigator.standalone === true || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+const notifPossible = () => typeof navigator !== 'undefined' && 'serviceWorker' in navigator && typeof window !== 'undefined' && 'PushManager' in window && 'Notification' in window;
+const notifOctets = b64 => Uint8Array.from(atob((b64 + '='.repeat((4 - b64.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+const notifDiscret = () => { try { return localStorage.getItem(KEY + ':notif-discret') === '1'; } catch (e) { return false; } };
+const notifAppareil = () => (notifIOS() ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Ordinateur');
+// The service worker needs the service address and this session to fetch the text of a notification.
+function notifSession() {
+  if (typeof caches === 'undefined' || SYNC_MODE !== 'ligne') return;
+  caches.open(NOTIF_SESSION).then(c => SY.jeton ? c.put('./session', new Response(JSON.stringify({ api: SYNC_CFG.api, jeton: SY.jeton }), { headers: { 'Content-Type': 'application/json' } })) : c.delete('./session')).catch(() => {});
+}
+function notifLireEtat() {
+  if (NOTIF.lecture) return NOTIF.lecture;
+  NOTIF.lecture = (async () => {
+    if (SYNC_MODE !== 'ligne' || !notifPossible()) return (NOTIF.etat = { possible: false });
+    try { const reg = await navigator.serviceWorker.getRegistration(), sub = reg && await reg.pushManager.getSubscription(); NOTIF.etat = { possible: true, permission: Notification.permission, sub }; }
+    catch (e) { NOTIF.etat = { possible: true, permission: Notification.permission, sub: null }; }
+    return NOTIF.etat;
+  })().finally(() => { NOTIF.lecture = null; });
+  return NOTIF.lecture;
+}
+// Redraws only the notification blocks: an open settings form keeps what is being typed.
+async function notifMaj() {
+  if (SYNC_MODE !== 'ligne') return;
+  await notifLireEtat();
+  document.querySelectorAll('[data-notif]').forEach(el => { el.innerHTML = notifContenu(); });
+  document.querySelectorAll('[data-notif-invite]').forEach(el => { el.outerHTML = notifInvitation(); });
+}
+function notifContenu() {
+  if (SYNC_MODE === 'demo') return '<p class="quiet small">Dans l’application connectée, chaque ajout de l’un prévient le téléphone de l’autre, même verrouillé.</p>';
+  if (SYNC_MODE === 'banc') return '<p class="quiet small">Banc d’essai : les notifications se règlent depuis l’application installée sur le téléphone.</p>';
+  const N = NOTIF.etat;
+  if (!N) { notifMaj(); return '<p class="quiet small">…</p>'; }
+  const intro = `<p class="quiet small">Quand ${esc(personName(partnerOf(SY.me)))} ajoute quelque chose (souvenir, photo, document, rendez-vous, dépense commune, ressenti…), ce téléphone vous prévient, même verrouillé.</p>`;
+  if (notifIOS() && !notifIcone()) return intro + '<div class="notice">Sur iPhone, les notifications ne marchent que depuis l’icône Entre Nous : dans Safari, touchez <b>Partager</b> › <b>Sur l’écran d’accueil</b>, puis ouvrez Entre Nous depuis cette icône et revenez ici.</div>';
+  if (!N.possible) return intro + '<div class="notice">Ce navigateur ne permet pas les notifications. Sur iPhone, il faut iOS 16.4 ou plus récent et l’icône sur l’écran d’accueil.</div>';
+  if (N.permission === 'denied') return intro + `<div class="notice">Les notifications sont refusées pour Entre Nous. ${notifIOS() ? 'Sur iPhone : <b>Réglages</b> › <b>Notifications</b> › <b>Entre Nous</b> › <b>Autoriser les notifications</b>.' : 'Dans Chrome : touchez le cadenas à gauche de l’adresse › <b>Autorisations</b> › <b>Notifications</b> › <b>Autoriser</b>.'}</div>`;
+  const discret = `<div class="toggle-row"><div><b>Notifications discrètes</b><small>Sur l’écran verrouillé : « Du nouveau dans votre univers à deux », sans détail</small></div><label class="switch"><input type="checkbox" aria-label="Notifications discrètes" data-change="notif-discret" ${notifDiscret() ? 'checked' : ''}/><span></span></label></div>`;
+  if (N.sub) return intro + `<p><b>✓ Activées sur ce téléphone.</b></p>${discret}<div class="notif-boutons">${button('Envoyer un essai', 'notif-essai', 'btn sm soft')}${button('Désactiver', 'notif-off', 'btn sm ghost danger')}</div>`;
+  return intro + `${discret}<div class="notif-boutons">${button('🔔 Activer les notifications', 'notif-on', 'btn primary')}</div>`;
+}
+const notifReglages = () => `<div class="smallcaps" style="margin:18px 0 4px">NOTIFICATIONS</div><div data-notif>${notifContenu()}</div>`;
+// Invitation under the status banner, as long as this phone can receive notifications and has not been asked yet.
+function notifInvitation() {
+  const N = NOTIF.etat;
+  if (SYNC_MODE !== 'ligne' || !N || !N.possible || N.sub || N.permission !== 'default' || (notifIOS() && !notifIcone())) return '<span data-notif-invite hidden></span>';
+  return `<div class="notif-invite" data-notif-invite><span>🔔 Soyez prévenu·e quand ${esc(personName(partnerOf(SY.me)))} ajoute quelque chose.</span>${button('Activer', 'notif-on', 'btn sm primary')}</div>`;
+}
+async function notifActiver() {
+  try {
+    const perm = await Notification.requestPermission();   // first step after the touch: required by the iPhone
+    if (perm !== 'granted') { toast('Notifications non autorisées sur ce téléphone.'); return; }
+    const { cle } = await syncCall('notifCle', {});
+    const reg = await navigator.serviceWorker.ready;
+    const sub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: notifOctets(cle) });
+    notifSession();
+    await syncCall('notifAbonner', { sub: sub.toJSON(), discret: notifDiscret(), appareil: notifAppareil() });
+    sonsJouer('enregistrer'); toast('Notifications activées sur ce téléphone. ♡');
+  } catch (e) { toast(e.message || 'Activation impossible.'); }
+  finally { notifMaj(); }
+}
+async function notifDesactiver() {
+  try {
+    const reg = await navigator.serviceWorker.getRegistration(), sub = reg && await reg.pushManager.getSubscription();
+    if (sub) { await syncCall('notifDesabonner', { endpoint: sub.endpoint }).catch(() => {}); await sub.unsubscribe(); }
+    toast('Notifications désactivées sur ce téléphone.');
+  } catch (e) { toast(e.message || 'Désactivation impossible.'); }
+  notifMaj();
+}
+// Leaving this phone: the session token is captured now, before the sign-out clears it.
+function notifOublierAppareil() {
+  if (SYNC_MODE !== 'ligne' || !notifPossible()) return;
+  const jeton = SY.jeton;
+  navigator.serviceWorker.getRegistration().then(reg => reg && reg.pushManager.getSubscription()).then(sub => {
+    if (!sub) return;
+    syncCall('notifDesabonner', { jeton, endpoint: sub.endpoint }).catch(() => {}).finally(() => sub.unsubscribe().catch(() => {}));
+  }).catch(() => {});
+}
+function notifAction(a) {
+  if (a === 'notif-on') { notifActiver(); return true; }
+  if (a === 'notif-off') { if (confirmDel('Ne plus recevoir de notifications sur ce téléphone ?')) notifDesactiver(); return true; }
+  if (a === 'notif-essai') { notifSession(); syncCall('notifEssai', {}).then(r => toast(r.envoyes ? 'Essai envoyé : la notification arrive dans quelques secondes.' : 'L’essai n’a pas pu partir.')).catch(e => toast(e.message)); return true; }
+  return false;
+}
+function notifChanged(e) {
+  if (e.target.dataset.change !== 'notif-discret') return false;
+  try { localStorage.setItem(KEY + ':notif-discret', e.target.checked ? '1' : '0'); } catch (x) { /* stockage bloqué */ }
+  if (NOTIF.etat && NOTIF.etat.sub) syncCall('notifAbonner', { sub: NOTIF.etat.sub.toJSON(), discret: e.target.checked, appareil: notifAppareil() }).then(() => toast(e.target.checked ? 'Notifications discrètes.' : 'Notifications détaillées.')).catch(x => toast(x.message));
+  return true;
+}
+// A touched notification opens the right screen (address ?aller=… or a message from the service worker).
+function notifAller(vue) {
+  const [p, s] = String(vue || '').split('/');
+  if (!p || !NAV.some(n => n[0] === p)) return;
+  page = p; if (s) sub = s; modal = null;
+}
+function notifAllerDepuisAdresse() {
+  const vue = SYNC_PARAMS.get('aller'); if (!vue) return;
+  notifAller(vue);
+  try { history.replaceState(null, '', location.pathname); } catch (e) { /* adresse inchangée */ }
+}
+if (typeof navigator !== 'undefined' && navigator.serviceWorker && navigator.serviceWorker.addEventListener) {
+  navigator.serviceWorker.addEventListener('message', ev => { const d = ev.data || {}; if (d.en === 'aller') { notifAller(d.vue); render(); syncRefresh(); } });
+}
+
+// « Ma pensée du jour »: each partner writes a thought, a quotation or a sweet word, shown to both on the home page.
+// One per person and per day; the service keeps it that way (serveur/Code.gs, genre « pensee »).
+const PENSEE_GENRES = [['pensee', 'Une pensée', '💭'], ['citation', 'Une citation', '❝'], ['mot', 'Un mot doux', '💌']];
+const penseeMoi = () => syncConnected() ? SY.me : emotionViewer;
+// Today's thought of a person, else the last one they wrote (with its date).
+function penseeDe(owner) {
+  return (S.pensees || []).filter(x => x.ownerId === owner && x.date <= TODAY).sort((a, b) => b.date.localeCompare(a.date) || String(b.updatedAt).localeCompare(String(a.updatedAt)))[0] || null;
+}
+function penseeQuand(date) {
+  if (date === TODAY) return 'aujourd’hui';
+  if (date === addDay(TODAY, -1)) return 'hier';
+  return 'le ' + new Date(date + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+}
+function penseeBloc(owner) {
+  const x = penseeDe(owner), moi = owner === penseeMoi(), nom = esc(personName(owner)), g = x && (PENSEE_GENRES.find(y => y[0] === x.genre) || PENSEE_GENRES[0]);
+  const tete = `<div class="pensee-tete"><span class="pensee-initiale" aria-hidden="true">${nom.slice(0, 1)}</span><b>${moi ? 'Ma pensée' : 'La pensée de ' + nom}</b>${x ? `<small>${g[2]} ${penseeQuand(x.date)}</small>` : ''}</div>`;
+  if (!x) return `<div class="pensee ${moi ? 'moi' : ''}">${tete}<p class="pensee-vide">${moi ? 'Un mot, une citation, ce que vous avez sur le cœur aujourd’hui…' : `${nom} n’a pas encore écrit de pensée.`}</p>${moi ? button('Écrire ma pensée du jour', 'pensee-ecrire', 'btn soft sm') : ''}</div>`;
+  return `<div class="pensee ${moi ? 'moi' : ''}">${tete}<blockquote>« ${esc(x.texte)} »</blockquote>${x.auteur ? `<cite>— ${esc(x.auteur)}</cite>` : ''}${moi ? `<div class="pensee-actions">${button(x.date === TODAY ? 'Modifier' : 'Écrire celle d’aujourd’hui', 'pensee-ecrire', 'btn ghost sm')}</div>` : ''}</div>`;
+}
+function penseeAccueil() {
+  const moi = penseeMoi(), autre = partnerOf(moi);
+  return `<section class="card pensees" aria-label="Nos pensées du jour"><div class="card-title"><h3>Nos pensées du jour</h3><span class="pill">💭</span></div><div class="pensees-grille">${penseeBloc(moi)}${penseeBloc(autre)}</div></section>`;
+}
+function penseeModal() {
+  if (modal?.type !== 'pensee') return '';
+  const x = (S.pensees || []).find(y => y.ownerId === penseeMoi() && y.date === TODAY);
+  const corps = `<div class="segmented pensee-genres" role="radiogroup" aria-label="Genre">${PENSEE_GENRES.map(g => `<label class="${(x?.genre || 'pensee') === g[0] ? 'active' : ''}"><input type="radio" name="genre" value="${g[0]}" ${(x?.genre || 'pensee') === g[0] ? 'checked' : ''} data-change="pensee-genre"> ${g[2]} ${g[1]}</label>`).join('')}</div><div class="field"><label for="f-texte">Votre pensée du jour</label><textarea id="f-texte" name="texte" maxlength="280" required placeholder="Ex. : Merci pour ta patience ce matin ♡">${esc(x?.texte || '')}</textarea></div>${field('auteur', 'Auteur (pour une citation, facultatif)', 'text', x?.auteur || '', 'maxlength="80" placeholder="Ex. : Antoine de Saint-Exupéry"')}<p class="quiet small">Elle s’affiche à l’Accueil, chez vous deux, jusqu’à la prochaine. ${esc(personName(partnerOf(penseeMoi())))} est prévenu·e.</p>`;
+  return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" aria-modal="true" aria-label="Ma pensée du jour" class="modal"><div class="modal-head"><h2>Ma pensée du jour</h2>${button('×', 'close', 'btn ghost sm')}</div><form id="modal-form" data-form="submit-pensee">${corps}<div class="form-actions">${x ? button('Effacer', 'pensee-effacer', 'btn danger') : ''}${button('Annuler', 'close', 'btn')}<button type="submit" class="btn primary">Partager</button></div></form></div></div>`;
+}
+function penseeAction(a) {
+  if (a === 'pensee-ecrire') { modal = { type: 'pensee' }; render(); return true; }
+  if (a === 'pensee-effacer') {
+    if (confirmDel('Effacer votre pensée du jour ?')) { S.pensees = (S.pensees || []).filter(y => !(y.ownerId === penseeMoi() && y.date === TODAY)); persist(); modal = null; render(); }
+    return true;
+  }
+  return false;
+}
+function penseeChanged(e) {
+  if (e.target.dataset.change !== 'pensee-genre') return false;
+  e.target.closest('.pensee-genres').querySelectorAll('label').forEach(l => l.classList.toggle('active', l.contains(e.target)));
+  return true;
+}
+function penseeSubmitted(action, d) {
+  if (action !== 'submit-pensee') return false;
+  const texte = String(d.texte || '').trim().slice(0, 280);
+  if (!texte) { toast('Écrivez quelques mots.'); return true; }
+  const moi = penseeMoi(), L = (S.pensees = S.pensees || []);
+  let x = L.find(y => y.ownerId === moi && y.date === TODAY);
+  if (!x) { x = { id: syncId(), ownerId: moi, date: TODAY, createdAt: new Date().toISOString() }; L.push(x); }
+  Object.assign(x, { texte, genre: PENSEE_GENRES.some(g => g[0] === d.genre) ? d.genre : 'pensee', auteur: String(d.auteur || '').trim().slice(0, 80), updatedAt: new Date().toISOString() });
+  persist(); modal = null; render(); sonsJouer('enregistrer'); toast(syncConnected() ? 'Pensée partagée. ♡' : 'Pensée enregistrée dans ce navigateur. ♡');
+  return true;
+}
 
 const app=$('#app');app.addEventListener('click',actions);app.addEventListener('change',changed);app.addEventListener('submit',submitted);app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id?.startsWith('task-')){e.preventDefault();const id=e.target.id.slice(5);const v=e.target.value.trim();if(v){S.projects.find(p=>p.id===id)?.tasks.push({id:Math.random().toString(36).slice(2,10),name:v,done:false});persist();render()}}});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal)close()});syncStart();
 })();
