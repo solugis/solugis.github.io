@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<script>window.ENTRE_NOUS_CONFIG={api:"https://script.google.com/macros/s/AKfycbwipAAin8VYydEkw-5hCUchITnwk3RZmX0qaOI7M2P5GVA6_aJjN4cPY1jTRUY6_BAWag/exec"};window.ENTRE_NOUS_VERSION={nom:"1.4",empreinte:"f6ad373f8daf"};</script>
+<script>window.ENTRE_NOUS_CONFIG={api:"https://script.google.com/macros/s/AKfycbwipAAin8VYydEkw-5hCUchITnwk3RZmX0qaOI7M2P5GVA6_aJjN4cPY1jTRUY6_BAWag/exec"};window.ENTRE_NOUS_VERSION={nom:"1.5",empreinte:"2a450434a95a"};</script>
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icones/icone-180.png" />
 <meta name="theme-color" content="#965d6b" />
@@ -181,6 +181,15 @@ img[data-vignette][src^="data:image/gif"]{opacity:0}
 /* Répartition du mois : un nom de catégorie long passe à la ligne au lieu de déborder sur la barre. */
 .bar-row{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto}
 .bar-row span:first-child{min-width:0;overflow-wrap:anywhere;line-height:1.3}
+/* Réactions à la pensée du jour (lot 1.5). */
+.reactions{display:grid;grid-template-columns:repeat(6,minmax(0,44px));gap:6px;margin:10px 0 2px}
+.reaction{font-size:22px;line-height:1;width:100%;aspect-ratio:1/1;height:auto;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center;padding:0;transition:transform .15s}
+.reaction:active{transform:scale(1.2)}
+.reaction.choisie{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--surface));transform:scale(1.08)}
+.reaction-recue{margin:10px 0 0;font-size:17px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.reaction-emoji{font-size:25px;line-height:1;animation:reaction-pop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes reaction-pop{from{transform:scale(.3)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.reaction-emoji{animation:none}}
 
 
 /* Anniversaires (lot 1.3, remarque 13) : cartes de l'Accueil et surprise du jour J. */
@@ -571,7 +580,7 @@ return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" a
 function close(){modal=null;render()}
 function changeMonth(d){const x=new Date(month+'-01T12:00:00');x.setMonth(x.getMonth()+d);month=monthKey(dstr(x));selected=month+'-01'}
 function confirmDel(q){return window.confirm(q)}
-function actions(e){const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='close-out'&&e.target!==b)return;sonsAction(a);if(emotionAction(a)||editAction(a)||syncAction(a)||albumAction(a)||notifAction(a)||penseeAction(a)||profilAction(a)||attenteAction(a)||feteAction(a))return;if(a==='close'||a==='close-out'){close();return}if(a.startsWith('nav:')){page=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('sub:')){page='us';sub=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('tab:')){sub=a.split(':')[1];render();return}if(a.startsWith('cal-view:')){calView=a.split(':')[1];render();return}if(a==='cal-prev'||a==='cal-next'){if(calView==='month')changeMonth(a==='cal-prev'?-1:1);else{selected=addDay(selected,(a==='cal-prev'?-1:1)*(calView==='week'?7:1));month=monthKey(selected)}render();return}if(a==='cal-today'){month=monthKey(TODAY);selected=TODAY;render();return}if(a.startsWith('select-date:')){selected=a.split(':')[1];month=monthKey(selected);render();return}if(a.startsWith('theme:')){S.theme=a.split(':')[1];persist();render();modal={type:'settings'};render();return}if(a.startsWith('new-')||a==='edit-budget'||a==='settings'){modal={type:a};render();return}if(a.startsWith('delete-event:')){if(confirmDel('Supprimer cet événement ?')){S.events=S.events.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-expense:')){if(confirmDel('Supprimer cette dépense ?')){S.expenses=S.expenses.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-goal:')){if(confirmDel('Supprimer cet objectif ?')){S.goals=S.goals.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-project:')){if(confirmDel('Supprimer le projet et toutes ses tâches ?')){S.projects=S.projects.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-task:')){const [,pid,tid]=a.split(':');let p=S.projects.find(p=>p.id===pid);if(p)p.tasks=p.tasks.filter(t=>t.id!==tid);persist();render();return}if(a.startsWith('add-task:')){let pid=a.split(':')[1],v=$('#task-'+pid)?.value.trim();if(!v){toast('Écrivez une tâche.');return}S.projects.find(p=>p.id===pid)?.tasks.push({id:id(),name:v,done:false});persist();render();return}if(a.startsWith('deposit:')){modal={type:'deposit',id:a.split(':')[1]};render();return}if(a.startsWith('delete-expectation:')){if(confirmDel('Supprimer cette attente personnelle ?')){S.expectations=S.expectations.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-rule:')){if(confirmDel('Retirer cette proposition ?')){S.rules=S.rules.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('suggest-rule:')){let r=S.rules.find(x=>x.id===a.split(':')[1]);if(r){S.rules.push({id:id(),category:r.category,body:r.body,status:'pending'});persist();render();toast('Proposition créée. Non validée par le partenaire.')}return}if(a.startsWith('delete-memory:')){if(confirmDel(albumQuestionSuppression(a.split(':')[1]))){albumOublierSouvenir(a.split(':')[1]);S.memories=S.memories.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a==='reset-demo'){if(confirmDel('Réinitialiser toutes les données du prototype avec les exemples initiaux ?')){S=EmotionCore.migrate(seed());persist();modal=null;page='home';render()}return}if(a==='clear-all'){if(confirmDel('Effacer toutes les données de cette démonstration ? Cette action est irréversible.')){let oldTheme=S.theme,first=S.couple.first,second=S.couple.second;S=EmotionCore.migrate(seed());Object.assign(S,{theme:oldTheme,events:[],moods:[],emotionEntries:[],projects:[],expenses:[],goals:[],expectations:[],rules:[],memories:[],media:[],documents:[],pensees:[],demo:false});S.couple={...S.couple,first,second};persist();modal=null;page='home';render();ficMenageDemo()}return}}
+function actions(e){const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='close-out'&&e.target!==b)return;sonsAction(a);if(emotionAction(a)||editAction(a)||syncAction(a)||albumAction(a)||notifAction(a)||penseeAction(a)||profilAction(a)||attenteAction(a)||feteAction(a)||reactionAction(a))return;if(a==='close'||a==='close-out'){close();return}if(a.startsWith('nav:')){page=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('sub:')){page='us';sub=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('tab:')){sub=a.split(':')[1];render();return}if(a.startsWith('cal-view:')){calView=a.split(':')[1];render();return}if(a==='cal-prev'||a==='cal-next'){if(calView==='month')changeMonth(a==='cal-prev'?-1:1);else{selected=addDay(selected,(a==='cal-prev'?-1:1)*(calView==='week'?7:1));month=monthKey(selected)}render();return}if(a==='cal-today'){month=monthKey(TODAY);selected=TODAY;render();return}if(a.startsWith('select-date:')){selected=a.split(':')[1];month=monthKey(selected);render();return}if(a.startsWith('theme:')){S.theme=a.split(':')[1];persist();render();modal={type:'settings'};render();return}if(a.startsWith('new-')||a==='edit-budget'||a==='settings'){modal={type:a};render();return}if(a.startsWith('delete-event:')){if(confirmDel('Supprimer cet événement ?')){S.events=S.events.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-expense:')){if(confirmDel('Supprimer cette dépense ?')){S.expenses=S.expenses.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-goal:')){if(confirmDel('Supprimer cet objectif ?')){S.goals=S.goals.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-project:')){if(confirmDel('Supprimer le projet et toutes ses tâches ?')){S.projects=S.projects.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-task:')){const [,pid,tid]=a.split(':');let p=S.projects.find(p=>p.id===pid);if(p)p.tasks=p.tasks.filter(t=>t.id!==tid);persist();render();return}if(a.startsWith('add-task:')){let pid=a.split(':')[1],v=$('#task-'+pid)?.value.trim();if(!v){toast('Écrivez une tâche.');return}S.projects.find(p=>p.id===pid)?.tasks.push({id:id(),name:v,done:false});persist();render();return}if(a.startsWith('deposit:')){modal={type:'deposit',id:a.split(':')[1]};render();return}if(a.startsWith('delete-expectation:')){if(confirmDel('Supprimer cette attente personnelle ?')){S.expectations=S.expectations.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-rule:')){if(confirmDel('Retirer cette proposition ?')){S.rules=S.rules.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('suggest-rule:')){let r=S.rules.find(x=>x.id===a.split(':')[1]);if(r){S.rules.push({id:id(),category:r.category,body:r.body,status:'pending'});persist();render();toast('Proposition créée. Non validée par le partenaire.')}return}if(a.startsWith('delete-memory:')){if(confirmDel(albumQuestionSuppression(a.split(':')[1]))){albumOublierSouvenir(a.split(':')[1]);S.memories=S.memories.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a==='reset-demo'){if(confirmDel('Réinitialiser toutes les données du prototype avec les exemples initiaux ?')){S=EmotionCore.migrate(seed());persist();modal=null;page='home';render()}return}if(a==='clear-all'){if(confirmDel('Effacer toutes les données de cette démonstration ? Cette action est irréversible.')){let oldTheme=S.theme,first=S.couple.first,second=S.couple.second;S=EmotionCore.migrate(seed());Object.assign(S,{theme:oldTheme,events:[],moods:[],emotionEntries:[],projects:[],expenses:[],goals:[],expectations:[],rules:[],memories:[],media:[],documents:[],pensees:[],demo:false});S.couple={...S.couple,first,second};persist();modal=null;page='home';render();ficMenageDemo()}return}}
 function changed(e){if(emotionChanged(e)||sonsChanged(e)||albumChanged(e)||notifChanged(e)||penseeChanged(e)||profilChanged(e)||depCatChanged(e))return;const c=e.target.dataset.change;if(!c)return;if(c==='intimacy'){S.privacy.showIntimacy=e.target.checked;persist();render();return}if(c.startsWith('task:')){const [,pid,tid]=c.split(':'),p=S.projects.find(x=>x.id===pid),t=p?.tasks.find(x=>x.id===tid);if(t){t.done=e.target.checked;persist();render()}return}}
 function submitted(e){const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();const action=f.dataset.form,d=Object.fromEntries(new FormData(f).entries());if(feteSubmitted(action,d)||penseeSubmitted(action,d)||albumSubmitted(action,d,f)||editSubmitted(action,d)||syncSubmitted(action,d))return;const req=(x)=>String(x||'').trim();const pos=(x)=>Number(x)>0&&Number.isFinite(Number(x));const bad=()=>toast('Vérifiez les informations saisies.');switch(action){case'submit-event':if(!req(d.title)||!d.date)return bad();S.events.push({id:id(),title:req(d.title),lieu:req(d.lieu),date:d.date,type:d.type||'rdv'});selected=d.date;month=monthKey(d.date);break;
 case'submit-project':if(!req(d.name))return bad();S.projects.push({id:id(),name:req(d.name),emoji:req(d.emoji)||'✨',due:d.due,tasks:[]});break;
@@ -755,7 +764,7 @@ const SYNC_CFG = (typeof window !== 'undefined' && window.ENTRE_NOUS_CONFIG) || 
 const SYNC_MODE = !SYNC_CFG.api ? 'demo' : SYNC_CFG.api === 'banc' ? 'banc' : 'ligne';
 const SYNC_PARAMS = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
 const SYNC_KEY = KEY + ':sync';
-const SYNC_COLS = ['events', 'projects', 'expenses', 'goals', 'expectations', 'rules', 'memories', 'media', 'documents', 'pensees', 'profils', 'voeux', 'emotionEntries'];
+const SYNC_COLS = ['events', 'projects', 'expenses', 'goals', 'expectations', 'rules', 'memories', 'media', 'documents', 'pensees', 'profils', 'voeux', 'reactions', 'emotionEntries'];
 const SYNC_EMPTY = { jeton: '', me: '', file: [], base: null, version: 0, maj: 0, partenaireActif: true, noms: {}, dernierProfil: 'partner-a' };
 function syncRead() { try { return Object.assign({}, SYNC_EMPTY, JSON.parse(localStorage.getItem(SYNC_KEY)) || {}); } catch (e) { return Object.assign({}, SYNC_EMPTY); } }
 let SY = syncRead();
@@ -770,7 +779,7 @@ function syncError(message, code) { const e = new Error(message); e.code = code 
 // A function declaration on purpose: load() calls it before this file's constants exist.
 function emptyState() {
   const s = seed();
-  return Object.assign(s, { couple: { ...s.couple, first: '', second: '' }, events: [], moods: [], projects: [], expenses: [], goals: [], expectations: [], memories: [], media: [], documents: [], pensees: [], profils: [], voeux: [], emotionEntries: [], rules: s.rules.filter(r => r.status === 'example'), demo: false });
+  return Object.assign(s, { couple: { ...s.couple, first: '', second: '' }, events: [], moods: [], projects: [], expenses: [], goals: [], expectations: [], memories: [], media: [], documents: [], pensees: [], profils: [], voeux: [], reactions: [], emotionEntries: [], rules: s.rules.filter(r => r.status === 'example'), demo: false });
 }
 
 // Options: delai (ms, 12 s by default) and essais (3 by default; 1 for a file chunk, whose resumption is checked first).
@@ -803,7 +812,7 @@ function syncWritable() {
   for (const col of SYNC_COLS) {
     out[col] = {};
     for (const item of S[col] || []) {
-      if (!item || !item.id || (col === 'rules' && item.status === 'example') || ((col === 'emotionEntries' || col === 'pensees' || col === 'profils' || col === 'voeux') && item.ownerId !== me)) continue;
+      if (!item || !item.id || (col === 'rules' && item.status === 'example') || ((col === 'emotionEntries' || col === 'pensees' || col === 'profils' || col === 'voeux' || col === 'reactions') && item.ownerId !== me)) continue;
       if ((col === 'expectations' || col === 'expenses') && !item.ownerId) item.ownerId = me;
       if (col === 'rules' && !item.proposedBy) item.proposedBy = me;
       out[col][item.id] = item;
@@ -1844,7 +1853,34 @@ function penseeBloc(owner) {
   const x = penseeDe(owner), moi = owner === penseeMoi(), nom = esc(personName(owner)), g = x && (PENSEE_GENRES.find(y => y[0] === x.genre) || PENSEE_GENRES[0]);
   const tete = `<div class="pensee-tete">${profilAvatar(owner, 'pensee-initiale')}<b>${moi ? 'Ma pensée' : 'La pensée de ' + nom}</b>${x ? `<small>${g[2]} ${penseeQuand(x.date)}</small>` : ''}</div>`;
   if (!x) return `<div class="pensee ${moi ? 'moi' : ''}">${tete}<p class="pensee-vide">${moi ? 'Un mot, une citation, ce que vous avez sur le cœur aujourd’hui…' : `${nom} n’a pas encore écrit de pensée.`}</p>${moi ? button('Écrire ma pensée du jour', 'pensee-ecrire', 'btn soft sm') : ''}</div>`;
-  return `<div class="pensee ${moi ? 'moi' : ''}">${tete}<blockquote>« ${esc(x.texte)} »</blockquote>${x.auteur ? `<cite>— ${esc(x.auteur)}</cite>` : ''}${moi ? `<div class="pensee-actions">${button(x.date === TODAY ? 'Modifier' : 'Écrire celle d’aujourd’hui', 'pensee-ecrire', 'btn ghost sm')}</div>` : ''}</div>`;
+  return `<div class="pensee ${moi ? 'moi' : ''}">${tete}<blockquote>« ${esc(x.texte)} »</blockquote>${x.auteur ? `<cite>— ${esc(x.auteur)}</cite>` : ''}${reactionBloc(x, moi)}${moi ? `<div class="pensee-actions">${button(x.date === TODAY ? 'Modifier' : 'Écrire celle d’aujourd’hui', 'pensee-ecrire', 'btn ghost sm')}</div>` : ''}</div>`;
+}
+
+/* ------------------------------------------------------------------ reactions (lot 1.5)
+   Under the partner's thought: six emojis, one touch to react, the same one again to withdraw it, another to change it.
+   Under one's own thought: the partner's reaction. One reaction per person and per thought (serveur/Code.gs, « reaction »). */
+const REACTIONS = [['❤️', 'J’adore'], ['🥰', 'Ça me touche'], ['😂', 'Ça me fait rire'], ['🙏', 'Merci'], ['🤗', 'Je t’embrasse'], ['🔥', 'Waouh']];
+const reactionId = (penseeId, owner) => 'rea-' + penseeId + '-' + owner;
+const reactionDe = (penseeId, owner) => (S.reactions || []).find(r => r.id === reactionId(penseeId, owner)) || null;
+function reactionBloc(x, moi) {
+  const lecteur = penseeMoi();
+  if (moi) {
+    const r = reactionDe(x.id, partnerOf(lecteur));
+    return r ? `<p class="reaction-recue"><span class="reaction-emoji">${esc(r.emoji)}</span> ${esc(personName(partnerOf(lecteur)))} a réagi à votre pensée</p>` : '';
+  }
+  const r = reactionDe(x.id, lecteur);
+  return `<div class="reactions" role="group" aria-label="Réagir à cette pensée">${REACTIONS.map(([e, t]) => `<button type="button" class="reaction${r && r.emoji === e ? ' choisie' : ''}" data-action="reaction:${x.id}:${e}" aria-pressed="${r && r.emoji === e ? 'true' : 'false'}" title="${t}" aria-label="${t}">${e}</button>`).join('')}</div>`;
+}
+function reactionAction(a) {
+  if (!a.startsWith('reaction:')) return false;
+  const [, penseeId, emoji] = a.split(':'), me = penseeMoi(), x = (S.pensees || []).find(p => p.id === penseeId);
+  if (!x || x.ownerId === me || !REACTIONS.some(r => r[0] === emoji)) return true;
+  const id = reactionId(penseeId, me), avant = reactionDe(penseeId, me);
+  S.reactions = (S.reactions || []).filter(r => r.id !== id);
+  if (!avant || avant.emoji !== emoji) S.reactions.push({ id, penseeId, emoji, ownerId: me, createdAt: new Date().toISOString() });
+  persist(); render(); sonsJouer('enregistrer');
+  if (!avant || avant.emoji !== emoji) toast(syncConnected() ? `${personName(x.ownerId)} verra votre réaction ${emoji}` : `Réaction ${emoji} enregistrée`);
+  return true;
 }
 function penseeAccueil() {
   const moi = penseeMoi(), autre = partnerOf(moi);
@@ -2038,7 +2074,7 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
 // What the partner added since this phone last looked (lot 1.3, user's remark): a red dot on the menu and on the tab,
 // then « Nouveau » on the items themselves. The mark (signalPar, signalLe) is set by the service on each real addition;
 // what this phone has seen is kept here, per section, as the latest mark already shown (service time, no clock gap).
-const NOUV_SECTIONS = { events: 'calendar', projects: 'projects', expenses: 'finance', goals: 'finance', rules: 'us/agreements', memories: 'us/memories', media: 'us/memories', documents: 'us/documents', emotionEntries: 'us/mood', pensees: 'home' };
+const NOUV_SECTIONS = { events: 'calendar', projects: 'projects', expenses: 'finance', goals: 'finance', rules: 'us/agreements', memories: 'us/memories', media: 'us/memories', documents: 'us/documents', emotionEntries: 'us/mood', pensees: 'home', reactions: 'home' };
 const NOUV_KEY = KEY + ':vus';
 const NOUV = { vus: (() => { try { return JSON.parse(localStorage.getItem(NOUV_KEY)) || {}; } catch (e) { return {}; } })(), avant: {}, ici: '' };
 const nouvSection = () => page === 'us' ? 'us/' + (sub || 'overview') : page;
@@ -2058,6 +2094,7 @@ function nouvElements(col, x) {
   for (const s of cible) document.querySelectorAll('#app ' + s).forEach(b => { const c = b.closest('.memory,.album-case,.doc-ligne,.rule,.event-line,.event,.entry,.project,.goal,article') || b.parentElement; if (c) L.add(c); });
   if (col === 'events') document.querySelectorAll(`#app [data-action="select-date:${x.date}"]`).forEach(b => b.classList.add('jour-nouveau'));
   if (col === 'pensees') document.querySelectorAll('#app .pensee:not(.moi)').forEach(c => L.add(c));
+  if (col === 'reactions') document.querySelectorAll('#app .pensee.moi').forEach(c => L.add(c));
   return [...L];
 }
 // The label sits right after the item's own title, so there is no doubt about which item is new.

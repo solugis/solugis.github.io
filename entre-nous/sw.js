@@ -1,7 +1,7 @@
 /* Entre Nous : la page s'ouvre aussitôt depuis l'appareil. Une nouvelle version (ce fichier change à chaque publication :
    le nom du cache porte l'empreinte de la page, calculée par build.py) se télécharge en arrière-plan ; quand elle est prête,
    la page affiche « Mettre à jour » (lot 1.4). Les échanges avec le service Google ne passent pas par ici. */
-const CACHE = 'entre-nous-f6ad373f8daf';
+const CACHE = 'entre-nous-2a450434a95a';
 // Session kept by the page for notifications (service address + token): never removed by an update.
 const SESSION = 'entre-nous-session';
 const FICHIERS = ['./', './index.html', './manifest.webmanifest', './icones/icone-180.png', './icones/icone-192.png'];
