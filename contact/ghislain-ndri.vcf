@@ -1,0 +1,11 @@
+BEGIN:VCARD
+VERSION:3.0
+N:N’Dri;Ghislain;;;
+FN:Ghislain N’Dri
+ORG:SoluGis
+TITLE:Directeur Général
+TEL;TYPE=CELL,VOICE:+225 01 72 76 77 91
+ADR;TYPE=WORK:;;;Abidjan;;;Côte d’Ivoire
+URL:https://solugis.github.io
+NOTE:SoluGis – Solutions numériques & IA. WhatsApp : +225 01 72 76 77 91
+END:VCARD
