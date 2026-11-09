@@ -1,6 +1,6 @@
 /* Entre Nous : la page s'ouvre aussitôt depuis l'appareil, puis se met à jour en arrière-plan
    (la nouvelle version s'affiche à l'ouverture suivante). Les échanges avec le service Google ne passent pas par ici. */
-const CACHE = 'entre-nous-v1.2';
+const CACHE = 'entre-nous-v1.3';
 // Session kept by the page for notifications (service address + token): never removed by an update.
 const SESSION = 'entre-nous-session';
 const FICHIERS = ['./', './index.html', './manifest.webmanifest', './icones/icone-180.png', './icones/icone-192.png'];
