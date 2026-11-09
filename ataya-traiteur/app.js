@@ -150,7 +150,7 @@
   }
 
   /* ================================================================== modales */
-  var PILE = [];
+  var PILE = [], GRAPHE = {};   // GRAPHE : barre choisie dans le graphique des comptes, par période
   function ouvrirModale(titre, html, o) {
     o = o || {};
     var el = document.createElement('div'); el.className = 'modale' + (o.plein ? ' plein' : '');
@@ -578,14 +578,22 @@
       '<div class="tuile c-violet">' + e('🛒') + '<span>Dépenses</span><b>' + F(r.depenses) + '</b><small>marché, gaz, emballages…</small></div>' +
       '<div class="tuile ' + (r.reste >= 0 ? 'c-vert' : 'c-orange') + '">' + e(r.reste >= 0 ? '💚' : '🧡') + '<span>Il vous reste</span><b>' + F(r.reste) + '</b><small>ventes moins dépenses</small></div></div>' +
       '<button class="btn plein violet geant" id="nouvelle-dep">' + e('➖') + ' Noter une dépense</button>';
-    /* graphique */
+    /* graphique : une barre par jour (semaine) ou par semaine (mois) ; toucher une barre affiche ses montants */
     if (NAV.periode !== 'jour') {
-      var cols = [];
-      if (NAV.periode === 'semaine') for (var i = 0; i < 7; i++) { var j = M.ajouter(b.deb, i), x = r.jours[j] || { ventes: 0, depenses: 0 }; cols.push({ l: M.JOURS[M.jourSemaine(j)].slice(0, 3), v: x.ventes, dp: x.depenses }); }
-      else { var s0 = M.debutSemaine(b.deb); for (var w = 0; w < 6; w++) { var dw = M.ajouter(s0, 7 * w); if (dw > b.fin) break; var tv = 0, td = 0; for (var q = 0; q < 7; q++) { var jq = M.ajouter(dw, q); if (jq < b.deb || jq > b.fin) continue; var y = r.jours[jq]; if (y) { tv += y.ventes; td += y.depenses; } } cols.push({ l: 'S' + (w + 1), v: tv, dp: td }); } }
+      var cols = [], maj1 = function (x) { return x.replace(/^./, function (c) { return c.toUpperCase(); }); };
+      if (NAV.periode === 'semaine') for (var i = 0; i < 7; i++) { var j = M.ajouter(b.deb, i), x = r.jours[j] || { ventes: 0, depenses: 0 }; cols.push({ l: maj1(M.JOURS[M.jourSemaine(j)].slice(0, 3)), titre: maj1(M.dateLongue(j)), v: x.ventes, dp: x.depenses, futur: j > a }); }
+      else { var s0 = M.debutSemaine(b.deb); for (var w = 0; w < 6; w++) { var dw = M.ajouter(s0, 7 * w); if (dw > b.fin) break; var tv = 0, td = 0, d1 = dw < b.deb ? b.deb : dw, d2 = M.ajouter(dw, 6) > b.fin ? b.fin : M.ajouter(dw, 6); for (var q = 0; q < 7; q++) { var jq = M.ajouter(dw, q); if (jq < b.deb || jq > b.fin) continue; var y = r.jours[jq]; if (y) { tv += y.ventes; td += y.depenses; } } cols.push({ l: 'S' + (w + 1), titre: d1 === d2 ? maj1(M.dateLongue(d1)) : 'Semaine du ' + M.dateCourte(d1) + ' au ' + M.dateCourte(d2), v: tv, dp: td, futur: d1 > a }); } }
       var mx = Math.max.apply(null, cols.map(function (c) { return Math.max(c.v, c.dp); }).concat([1]));
-      html += '<section class="carte"><div class="carte-tete">' + e('📊') + 'Ventes et dépenses</div><div class="barres">' + cols.map(function (c) { return '<div class="col"><div class="paire"><i style="height:' + Math.round(c.v * 100 / mx) + '%"></i><i class="dep" style="height:' + Math.round(c.dp * 100 / mx) + '%"></i></div><small>' + esc(c.l) + '</small></div>'; }).join('') + '</div>' +
-        '<div class="legende"><span><i style="background:var(--bleu)"></i>Ventes</span><span><i style="background:var(--violet)"></i>Dépenses</span></div></section>';
+      var cle = NAV.periode + '|' + b.deb, sel = GRAPHE[cle];
+      if (sel == null || !cols[sel] || cols[sel].futur) { sel = -1; cols.forEach(function (c, k) { if (!c.futur && (c.v || c.dp)) sel = k; }); if (sel < 0) cols.forEach(function (c, k) { if (!c.futur) sel = k; }); if (sel < 0) sel = 0; }
+      var cs = cols[sel], reste = cs.v - cs.dp;
+      html += '<section class="carte" id="graphe"><div class="carte-tete">' + e('📊') + 'Ventes et dépenses</div><div class="barres">' + cols.map(function (c, k) { return '<button class="col' + (k === sel ? ' on' : '') + (c.futur ? ' futur' : '') + '" data-col="' + k + '"' + (c.futur ? ' disabled' : '') + ' aria-label="' + esc(c.titre) + '"><div class="paire"><i style="height:' + Math.round(c.v * 100 / mx) + '%"></i><i class="dep" style="height:' + Math.round(c.dp * 100 / mx) + '%"></i></div><small>' + esc(c.l) + '</small></button>'; }).join('') + '</div>' +
+        '<div class="legende"><span><i style="background:var(--bleu)"></i>Ventes</span><span><i style="background:var(--violet)"></i>Dépenses</span></div>' +
+        '<div class="detail-barre"><b class="db-titre">' + e('📅') + esc(cs.titre) + '</b>' +
+        '<div class="db-l c-bleu"><span>' + e('🧾') + 'Ventes</span><b>' + F(cs.v) + '</b></div>' +
+        '<div class="db-l c-violet"><span>' + e('🛒') + 'Dépenses</span><b>' + F(cs.dp) + '</b></div>' +
+        '<div class="db-l ' + (reste >= 0 ? 'c-vert' : 'c-orange') + '"><span>' + e(reste >= 0 ? '💚' : '🧡') + 'Il reste</span><b>' + F(reste) + '</b></div></div>' +
+        '<p class="aide" style="text-align:center">👆 Touchez une barre pour voir ses chiffres.</p></section>';
     }
     /* argent reçu par moyen */
     var mo = Object.keys(r.parMoyen).sort(function (x, y) { return r.parMoyen[y] - r.parMoyen[x]; });
@@ -599,6 +607,7 @@
     v.innerHTML = html; brancher(v);
     $$('[data-per]', v).forEach(function (bt) { bt.onclick = function () { NAV.periode = bt.dataset.per; NAV.decal = 0; ecrireL('nav', NAV); Sons.jouer('onglet', 2); dessiner(); }; });
     $$('[data-dec]', v).forEach(function (bt) { bt.onclick = function () { var n = (NAV.decal || 0) + (+bt.dataset.dec); if (n > 0) return; NAV.decal = n; ecrireL('nav', NAV); Sons.jouer('onglet', 1); dessiner(); }; });
+    $$('[data-col]', v).forEach(function (bt) { bt.onclick = function () { GRAPHE[NAV.periode + '|' + b.deb] = +bt.dataset.col; Sons.jouer('coche'); var y = window.scrollY; dessiner(); window.scrollTo(0, y); }; });
     $('#nouvelle-dep', v).onclick = function () { formDepense(null); };
     $('#liste-dep', v).onclick = function () { listeDepenses(b.deb, fin, b.nom); };
   }
@@ -716,7 +725,16 @@
   document.addEventListener('pointerdown', function () { Sons.debloquer(); if (!dejaSonne) { dejaSonne = true; if (S.jeton || MODE === 'demo') Sons.jouer('ouverture'); } }, { once: true, capture: true });
   document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && MODE !== 'demo' && S.jeton && Date.now() - S.maj > 60000) rafraichir(); });
   window.addEventListener('online', function () { planifierSync(); });
-  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(function () { });
+  /* nouvelle version publiée : le cache se renouvelle puis la page se recharge une fois (sauf saisie en cours : ce sera à la prochaine ouverture) */
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    var avaitVersion = !!navigator.serviceWorker.controller, recharge = false;
+    navigator.serviceWorker.register('sw.js').catch(function () { });
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      var a = document.activeElement;
+      if (!avaitVersion || recharge || PILE.length || (a && /INPUT|TEXTAREA|SELECT/.test(a.tagName))) return;
+      recharge = true; location.reload();
+    });
+  }
   window.TRAITEUR = { S: S, aller: aller, fermer: fermerModales, doc: doc, tous: tous, ouvrir: { detailCommande: detailCommande, formEncaisser: formEncaisser, ficheClient: ficheClient, formClient: formClient, formDepense: formDepense, listeDepenses: listeDepenses, formMenu: formMenu, reglages: reglages, listePlats: listePlats, formPlat: formPlat, listeClients: listeClients, livrer: livrer } };
   demarrer();
 })();

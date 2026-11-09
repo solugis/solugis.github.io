@@ -202,12 +202,22 @@ a.btn { text-decoration: none; }
 .segments button { flex: 1; min-width: 0; padding: 12px 2px; border-radius: 14px; font-weight: 800; font-size: .88rem; color: var(--doux); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .segments button.on { background: var(--marque); color: #fff; }
 .barres { display: flex; align-items: flex-end; gap: 4px; height: 130px; padding-top: 6px; }
-.barres .col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%; }
+.barres { height: 150px; }
+.barres .col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; height: 100%; padding: 4px 1px 2px; border-radius: 10px; text-align: center; }
+.barres .col.on { background: var(--carte-2); }
+.barres .col.on small { color: var(--encre); font-weight: 900; }
+.barres .col:not(.on) .paire { opacity: .55; }
+.barres .col.futur { opacity: .35; }
+.detail-barre { margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: var(--carte-2); display: flex; flex-direction: column; gap: 6px; }
+.db-titre { display: flex; align-items: center; gap: 8px; font-size: .95rem; margin-bottom: 2px; }
+.db-l { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-weight: 750; }
+.db-l span { display: flex; align-items: center; gap: 8px; color: var(--c); }
+.db-l b { color: var(--c); font-size: 1.1rem; font-weight: 900; white-space: nowrap; }
 .barres .col i { display: block; width: 100%; max-width: 30px; border-radius: 6px 6px 2px 2px; background: var(--bleu); min-height: 2px; }
 .barres .col i.dep { background: var(--violet); opacity: .85; }
 .barres .col .paire { display: flex; align-items: flex-end; gap: 2px; width: 100%; justify-content: center; height: 100%; }
 .barres .col .paire i { width: 45%; }
-.barres .col small { font-size: .66rem; color: var(--doux); font-weight: 700; }
+.barres .col small { font-size: .72rem; color: var(--doux); font-weight: 700; }
 .legende { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: .8rem; font-weight: 700; color: var(--doux); }
 .legende i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; vertical-align: -1px; margin-right: 5px; }
 .rang { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--ligne); }
