@@ -1,12 +1,27 @@
-/* Entre Nous : la page s'ouvre aussitôt depuis l'appareil, puis se met à jour en arrière-plan
-   (la nouvelle version s'affiche à l'ouverture suivante). Les échanges avec le service Google ne passent pas par ici. */
-const CACHE = 'entre-nous-v1.3';
+/* Entre Nous : la page s'ouvre aussitôt depuis l'appareil. Une nouvelle version (ce fichier change à chaque publication :
+   le nom du cache porte l'empreinte de la page, calculée par build.py) se télécharge en arrière-plan ; quand elle est prête,
+   la page affiche « Mettre à jour » (lot 1.4). Les échanges avec le service Google ne passent pas par ici. */
+const CACHE = 'entre-nous-f6ad373f8daf';
 // Session kept by the page for notifications (service address + token): never removed by an update.
 const SESSION = 'entre-nous-session';
 const FICHIERS = ['./', './index.html', './manifest.webmanifest', './icones/icone-180.png', './icones/icone-192.png'];
 // One missing file (an icon not yet published) must not block the whole offline copy.
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => Promise.all(FICHIERS.map(f => c.add(new Request(f, { cache: 'reload' })).catch(() => {}))))); self.skipWaiting(); });
-self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(k => Promise.all(k.filter(n => n !== CACHE && n !== SESSION).map(n => caches.delete(n)))).then(() => self.clients.claim())); });
+self.addEventListener('activate', e => {
+  let maj = false;
+  e.waitUntil(caches.keys().then(k => { const vieux = k.filter(n => n !== CACHE && n !== SESSION); maj = vieux.some(n => n.startsWith('entre-nous-')); return Promise.all(vieux.map(n => caches.delete(n))); })
+    .then(() => self.clients.claim()).then(() => maj ? rechargerAnciennes() : null));
+});
+/* Les pages d'avant la 1.4 n'ont pas le bandeau « Mettre à jour » : elles ne répondent pas à la question « version ? » et sont
+   rechargées d'office (une seule fois, au passage à la 1.4). Les pages récentes répondent et affichent elles-mêmes le bandeau. */
+function rechargerAnciennes() {
+  return self.clients.matchAll({ type: 'window' }).then(L => Promise.all(L.map(c => new Promise(fin => {
+    const canal = new MessageChannel(); let repondu = false;
+    canal.port1.onmessage = () => { repondu = true; fin(); };
+    try { c.postMessage({ en: 'version?' }, [canal.port2]); } catch (x) { /* page fermée */ }
+    setTimeout(() => { if (!repondu && c.navigate) { try { c.navigate(c.url).catch(() => {}); } catch (x) { /* navigation refusée */ } } fin(); }, 2500);
+  }))));
+}
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(caches.open(CACHE).then(async c => {
