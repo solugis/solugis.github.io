@@ -175,7 +175,7 @@
 
   /* ================================================================== connexion (un seul profil : la patronne) */
   function porte() {
-    document.getElementById('app').innerHTML = '<div class="porte"><div class="porte-haut"><img src="icones/icone-192.png" alt=""><h1>' + esc(N.appli) + '</h1><p>' + esc(N.devise) + '</p></div>' +
+    document.getElementById('app').innerHTML = '<div class="porte"><div class="porte-haut"><img src="icone-192.png" alt=""><h1>' + esc(N.appli) + '</h1><p>' + esc(N.devise) + '</p></div>' +
       '<form class="carte formulaire porte-form" autocomplete="on">' + champ('Votre code personnel', '<input name="code" type="password" autocomplete="current-password" required>') +
       '<div class="nouveau formulaire" hidden>' + champ('Choisissez votre code (6 caractères au moins)', '<input name="nouveau" type="password" autocomplete="new-password" minlength="6">') + champ('Écrivez-le une seconde fois', '<input name="confirme" type="password" autocomplete="new-password">') + '</div>' +
       '<p class="erreur" role="alert"></p><button class="btn plein geant" type="submit">' + e('🔓') + ' Entrer</button></form><p class="porte-pied">Une solution SoluGis</p></div>';
@@ -203,7 +203,7 @@
   function charpente() {
     var a = activite();
     document.getElementById('app').innerHTML =
-      '<header class="barre"><img class="logo" src="icones/icone-192.png" alt=""><div class="barre-txt"><b>' + esc(a.nom || N.appli) + '</b><span>' + esc(N.appli) + (MODE === 'demo' ? '<em class="badge-demo">Démo</em>' : '') + '</span></div>' +
+      '<header class="barre"><img class="logo" src="icone-192.png" alt=""><div class="barre-txt"><b>' + esc(a.nom || N.appli) + '</b><span>' + esc(N.appli) + (MODE === 'demo' ? '<em class="badge-demo">Démo</em>' : '') + '</span></div>' +
       '<button class="btn-rond" id="btn-reglages" aria-label="Réglages">⚙️<span id="pastille" class="pastille"></span></button></header>' +
       '<main id="vue"></main>' +
       '<nav class="onglets">' + ONGLETS.map(function (o, i) { return '<button class="' + o[3] + '" data-vue="' + o[0] + '" data-i="' + i + '">' + e(o[2]) + '<span>' + o[1] + '</span></button>'; }).join('') + '</nav>';
