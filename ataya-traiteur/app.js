@@ -24,6 +24,7 @@
   function attendre(ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); }
   function e(x) { return '<i class="e">' + x + '</i>'; }
   function F(n) { return M.F(n); }
+  function logoMoyen(m, cls) { m = typeof m === 'string' ? M.moyen(m) : m; return m.logo ? '<img class="logo-moyen ' + (cls || '') + '" src="' + m.logo + '" alt="">' : '<span class="logo-moyen especes ' + (cls || '') + '">💵</span>'; }
   function champ(lib, html) { return '<label class="champ"><span>' + esc(lib) + '</span>' + html + '</label>'; }
   function champMontant(nom, v) { return '<input name="' + nom + '" class="gros" inputmode="numeric" autocomplete="off" value="' + (v ? M.nombre(v) : '') + '" placeholder="0">'; }
   function formaterMontants(r) { $$('input.gros', r).forEach(function (i) { i.addEventListener('input', function () { var n = M.lireMontant(i.value); i.value = n ? M.nombre(n) : ''; }); }); }
@@ -49,7 +50,7 @@
   }
   function D() { return { commandes: tous('commandes'), paiements: tous('paiements'), depenses: tous('depenses'), clients: tous('clients'), plats: tous('plats'), menus: tous('menus') }; }
   function activite() { return doc('reglages', 'activite') || { nom: '', prenom: '' }; }
-  function moyensActifs() { var d = doc('reglages', 'moyens'), L = d && d.liste && d.liste.length ? d.liste : ['especes', 'wave', 'om']; return M.MOYENS.filter(function (m) { return L.indexOf(m.id) >= 0; }); }
+  function moyensActifs() { var d = doc('reglages', 'moyens'), L = d && d.liste && d.liste.length ? d.liste : ['especes', 'wave', 'om', 'mtn', 'moov']; return M.MOYENS.filter(function (m) { return L.indexOf(m.id) >= 0; }); }
   function platsActifs() { return tous('plats').filter(function (p) { return p.actif !== false; }).sort(function (a, b) { return (a.ordre || 0) - (b.ordre || 0) || (a.nom < b.nom ? -1 : 1); }); }
   function client(id) { return id ? doc('clients', id) : null; }
   function couleurClient(k) { return M.COULEURS_CLIENTS[(+k.couleur || 0) % M.COULEURS_CLIENTS.length]; }
@@ -321,7 +322,7 @@
       '<div class="histo-l">' + e('📅') + '<div class="txt"><b>' + esc(M.dateLongue(c.date)) + (c.heure ? ' à ' + esc(c.heure.replace(':', 'h')) : '') + '</b><span>Livraison</span></div></div>' +
       (c.lieu ? '<div class="histo-l">' + e('📍') + '<div class="txt"><b>' + esc(c.lieu) + '</b><span>Lieu</span></div></div>' : '') +
       (c.note ? '<div class="histo-l">' + e('📝') + '<div class="txt"><b>' + esc(c.note) + '</b><span>Note</span></div></div>' : '') +
-      pai.map(function (p) { var m = M.moyen(p.moyen); return '<div class="histo-l">' + e('💵') + '<div class="txt"><b>Payé ' + esc(M.quand(p.date, auj())) + '</b><span>' + esc(m.nom) + '</span></div><span class="m plus">' + F(p.montant) + '</span></div>'; }).join('') +
+      pai.map(function (p) { var m = M.moyen(p.moyen); return '<div class="histo-l">' + logoMoyen(m, 'h') + '<div class="txt"><b>Payé ' + esc(M.quand(p.date, auj())) + '</b><span>' + esc(m.nom) + '</span></div><span class="m plus">' + F(p.montant) + '</span></div>'; }).join('') +
       '</div></section>' +
       '<div class="rang-btn">' + (c.livree ? '' : '<button class="btn bleu geant" id="livrer">' + e('🛵') + ' Marquer livrée</button>') +
       (s.reste > 0 ? '<button class="btn vert geant" id="encaisser">' + e('💵') + ' Encaisser ' + F(s.reste) + '</button>' : '') + '</div>' +
@@ -345,7 +346,7 @@
     if (s.reste <= 0) { okPlein('Livrée', 'bleu', 'coche'); dessiner(); return; }
     var r = ouvrirModale('🛵 Livrée ! Le client a-t-il payé ?',
       '<p style="font-weight:700;margin-bottom:6px">' + esc(nomCommande(c)) + ' · <b style="color:var(--orange)">' + F(s.reste) + '</b></p>' +
-      '<p class="aide">Touchez le moyen de paiement utilisé :</p><div class="moyens">' + moyensActifs().map(function (m) { return '<button class="moyen-btn" data-m="' + m.id + '" style="--mc:' + m.c + '"><i>' + esc(m.court[0]) + '</i>' + esc(m.nom) + '</button>'; }).join('') + '</div>' +
+      '<p class="aide">Touchez le moyen de paiement utilisé :</p><div class="moyens">' + moyensActifs().map(function (m) { return '<button class="moyen-btn" data-m="' + m.id + '" style="--mc:' + m.c + '">' + logoMoyen(m) + '' + esc(m.nom) + '</button>'; }).join('') + '</div>' +
       '<div class="rang-btn" style="flex-direction:column">' + (k ? '<button class="btn orange geant" id="credit">' + e('📒') + ' Non, il paiera plus tard (crédit)</button>' : '') + '<button class="btn sec" id="plus-tard">Je verrai plus tard</button></div>');
     $$('[data-m]', r).forEach(function (b) { b.onclick = function () { payerCommande(c, s.reste, b.dataset.m); fermerModale(); okPlein('Livrée et payée', 'vert', 'argent'); }; });
     if ($('#credit', r)) $('#credit', r).onclick = function () { c.mode = 'credit'; poser('commandes', c); fermerModale(); okPlein('Noté en crédit', 'orange', 'credit'); };
@@ -358,7 +359,7 @@
     var mo = moyensActifs(), choisi = mo[0].id;
     var r = ouvrirModale('💵 Encaisser', '<form class="formulaire">' + (o.titre ? '<p style="font-weight:800">' + esc(o.titre) + '</p>' : '') +
       champ('Montant reçu (F CFA)', champMontant('montant', o.montant)) +
-      '<div class="champ"><span>Moyen de paiement</span><div class="moyens" style="margin-top:0">' + mo.map(function (m) { return '<button type="button" class="moyen-btn' + (m.id === choisi ? ' on' : '') + '" data-m="' + m.id + '" style="--mc:' + m.c + '"><i>' + esc(m.court[0]) + '</i>' + esc(m.nom) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="champ"><span>Moyen de paiement</span><div class="moyens" style="margin-top:0">' + mo.map(function (m) { return '<button type="button" class="moyen-btn' + (m.id === choisi ? ' on' : '') + '" data-m="' + m.id + '" style="--mc:' + m.c + '">' + logoMoyen(m) + '' + esc(m.nom) + '</button>'; }).join('') + '</div></div>' +
       champ('Date', '<input name="date" type="date" value="' + auj() + '" max="' + auj() + '">') +
       '<p class="erreur"></p><button class="btn plein vert geant" type="submit">' + e('✅') + ' Enregistrer</button></form>');
     formaterMontants(r);
@@ -425,7 +426,7 @@
         '<button class="payer-btn c-vert' + (B.mode === 'paye' ? ' on' : '') + '" data-mode="paye">' + e('✅') + 'Payé</button>' +
         '<button class="payer-btn c-bleu' + (B.mode === 'livraison' ? ' on' : '') + '" data-mode="livraison">' + e('🛵') + 'À la livraison</button>' +
         '<button class="payer-btn c-orange' + (B.mode === 'credit' ? ' on' : '') + '" data-mode="credit">' + e('📒') + 'À crédit</button></div>';
-      if (B.mode === 'paye') html += '<div class="moyens">' + moyensActifs().map(function (m) { return '<button class="moyen-btn' + (B.moyen === m.id ? ' on' : '') + '" data-m="' + m.id + '" style="--mc:' + m.c + '"><i>' + esc(m.court[0]) + '</i>' + esc(m.nom) + '</button>'; }).join('') + '</div>' +
+      if (B.mode === 'paye') html += '<div class="moyens">' + moyensActifs().map(function (m) { return '<button class="moyen-btn' + (B.moyen === m.id ? ' on' : '') + '" data-m="' + m.id + '" style="--mc:' + m.c + '">' + logoMoyen(m) + '' + esc(m.nom) + '</button>'; }).join('') + '</div>' +
         '<div class="formulaire" style="margin-top:12px">' + champ('Montant reçu (s’il a donné moins, le reste passe en crédit)', champMontant('montant', B.montant || tot)) + '</div>';
       if (B.mode === 'credit' && passage) html += '<p class="erreur" style="margin-top:10px">Pour un crédit, choisissez le client ou créez-le (étape 1).</p>';
       if (B.mode === 'livraison') html += '<p class="aide">Quand vous marquerez la commande « livrée », l’application vous demandera s’il a payé.</p>';
@@ -501,7 +502,7 @@
     var d = D(), sit = M.situation(d), s = sit.cli[id], a = auj();
     var ev = [];
     d.commandes.filter(function (c) { return c.client === id; }).forEach(function (c) { var x = sit.cmd[c.id]; ev.push({ date: c.date, t: c.cree || 0, html: '<button class="histo-l" style="width:100%;text-align:left" data-cmd="' + c.id + '">' + e('🧾') + '<div class="txt"><b>Commande · ' + esc(M.dateCourte(c.date)) + '</b><span>' + esc(resumePlats(c)) + (x.reste > 0 ? ' · reste ' + F(x.reste) : ' · payée') + '</span></div><span class="m ' + (x.reste > 0 ? 'moins' : '') + '">' + F(x.total) + '</span></button>' }); });
-    d.paiements.filter(function (p) { return p.client === id; }).forEach(function (p) { ev.push({ date: p.date, t: p.cree || 1, html: '<div class="histo-l">' + e('💵') + '<div class="txt"><b>Paiement · ' + esc(M.dateCourte(p.date)) + '</b><span>' + esc(M.moyen(p.moyen).nom) + (p.commande ? ' · à la livraison' : '') + '</span></div><span class="m plus">+' + F(p.montant) + '</span></div>' }); });
+    d.paiements.filter(function (p) { return p.client === id; }).forEach(function (p) { ev.push({ date: p.date, t: p.cree || 1, html: '<div class="histo-l">' + logoMoyen(p.moyen, 'h') + '<div class="txt"><b>Paiement · ' + esc(M.dateCourte(p.date)) + '</b><span>' + esc(M.moyen(p.moyen).nom) + (p.commande ? ' · à la livraison' : '') + '</span></div><span class="m plus">+' + F(p.montant) + '</span></div>' }); });
     if (k.depart) ev.push({ date: k.departDate || '0000', t: 0, html: '<div class="histo-l">' + e('📓') + '<div class="txt"><b>Repris du cahier</b><span>' + esc(k.departDate ? M.dateCourte(k.departDate) : '') + '</span></div><span class="m moins">' + F(k.depart) + '</span></div>' });
     ev.sort(function (x, y) { return x.date < y.date ? 1 : x.date > y.date ? -1 : y.t - x.t; });
     var r = ouvrirModale(avatar(k, 'petit') + ' ' + esc(k.nom),
@@ -588,7 +589,7 @@
     }
     /* argent reçu par moyen */
     var mo = Object.keys(r.parMoyen).sort(function (x, y) { return r.parMoyen[y] - r.parMoyen[x]; });
-    if (mo.length) html += '<section class="carte c-vert"><div class="carte-tete">' + e('💵') + 'Argent reçu</div>' + mo.map(function (k) { var m = M.moyen(k); return '<div class="rang" style="--c:' + m.c + '"><span class="e" style="display:grid;place-items:center"><i style="width:28px;height:28px;border-radius:8px;background:' + m.c + ';color:#fff;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:.85rem">' + esc(m.court[0]) + '</i></span><div class="txt"><b>' + esc(m.nom) + '</b><div class="barre-fine"><i style="width:' + Math.round(r.parMoyen[k] * 100 / r.recu) + '%"></i></div></div><span class="m">' + F(r.parMoyen[k]) + '</span></div>'; }).join('') + '</section>';
+    if (mo.length) html += '<section class="carte c-vert"><div class="carte-tete">' + e('💵') + 'Argent reçu</div>' + mo.map(function (k) { var m = M.moyen(k); return '<div class="rang" style="--c:' + m.c + '">' + logoMoyen(m, 'r') + '<div class="txt"><b>' + esc(m.nom) + '</b><div class="barre-fine"><i style="width:' + Math.round(r.parMoyen[k] * 100 / r.recu) + '%"></i></div></div><span class="m">' + F(r.parMoyen[k]) + '</span></div>'; }).join('') + '</section>';
     /* dépenses par catégorie */
     var cats = Object.keys(r.parCat).sort(function (x, y) { return r.parCat[y] - r.parCat[x]; });
     html += '<section class="carte c-violet"><div class="carte-tete">' + e('🛒') + 'Dépenses<button class="lien" id="liste-dep">Le détail ›</button></div>' + (cats.length ? cats.map(function (k) { var c = M.categorie(k); return '<div class="rang">' + e(c.ic) + '<div class="txt"><b>' + esc(c.nom) + '</b><div class="barre-fine"><i style="width:' + Math.round(r.parCat[k] * 100 / r.depenses) + '%"></i></div></div><span class="m">' + F(r.parCat[k]) + '</span></div>'; }).join('') : '<p class="vide">Aucune dépense notée.</p>') + '</section>';
@@ -614,7 +615,7 @@
     var r = ouvrirModale(neuf ? '➖ Noter une dépense' : '✏️ Dépense', '<form class="formulaire">' +
       '<div class="champ"><span>Pour quoi ?</span><div class="plats-choix" style="grid-template-columns:repeat(3,minmax(0,1fr))">' + M.CATEGORIES.map(function (c) { return '<button type="button" class="plat-tuile' + (c.id === cat ? ' on' : '') + '" data-cat="' + c.id + '" style="padding:10px 4px;' + (c.id === cat ? 'border-color:var(--violet);background:var(--violet-fond)' : '') + '">' + e(c.ic) + '<b style="font-size:.74rem;overflow-wrap:normal;hyphens:auto;-webkit-hyphens:auto">' + esc(c.nom) + '</b></button>'; }).join('') + '</div></div>' +
       champ('Montant (F CFA)', champMontant('montant', x.montant)) +
-      '<div class="champ"><span>Payé avec</span><div class="moyens" style="margin-top:0">' + mo.map(function (m) { return '<button type="button" class="moyen-btn' + (m.id === moy ? ' on' : '') + '" data-m="' + m.id + '" style="--mc:' + m.c + '"><i>' + esc(m.court[0]) + '</i>' + esc(m.nom) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="champ"><span>Payé avec</span><div class="moyens" style="margin-top:0">' + mo.map(function (m) { return '<button type="button" class="moyen-btn' + (m.id === moy ? ' on' : '') + '" data-m="' + m.id + '" style="--mc:' + m.c + '">' + logoMoyen(m) + '' + esc(m.nom) + '</button>'; }).join('') + '</div></div>' +
       champ('Détail (facultatif)', '<input name="note" value="' + esc(x.note || '') + '" placeholder="Ex. : poissons, tomates, oignons">') +
       champ('Date', '<input name="date" type="date" value="' + esc(x.date) + '" max="' + auj() + '">') +
       '<p class="erreur"></p><button class="btn plein violet geant" type="submit">' + e('✅') + ' Enregistrer</button>' + (!neuf ? '<div class="rang-btn"><button type="button" class="btn sec danger" id="suppr">' + e('🗑️') + ' Supprimer</button></div>' : '') + '</form>');
@@ -648,10 +649,10 @@
       '<section class="carte"><div class="carte-tete">' + e('🔠') + 'Taille du texte</div><div class="puces">' + [['normal', 'Normale'], ['grand', 'Grande'], ['tresgrand', 'Très grande']].map(function (x) { return '<button class="puce' + (R.taille === x[0] ? ' on' : '') + '" data-taille="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
       '<div class="carte-tete" style="margin-top:16px">' + e('🌓') + 'Affichage</div><div class="puces">' + [['clair', '☀️ Clair'], ['sombre', '🌙 Sombre']].map(function (x) { return '<button class="puce' + (R.theme === x[0] ? ' on' : '') + '" data-theme="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
       '<button class="ligne-reg" id="r-sons" style="margin-top:8px">' + e('🔔') + '<div class="txt"><b>Sons</b><span>Petite musique à chaque enregistrement</span></div><span class="interrupteur' + (R.sons ? ' on' : '') + '"></span></button></section>' +
-      '<section class="carte"><div class="carte-tete">' + e('💳') + 'Moyens de paiement acceptés</div>' + M.MOYENS.map(function (m) { return '<button class="ligne-reg" data-moy="' + m.id + '"><span class="e" style="display:grid;place-items:center"><i style="width:30px;height:30px;border-radius:9px;background:' + m.c + ';color:#fff;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:.9rem">' + esc(m.court[0]) + '</i></span><div class="txt"><b>' + esc(m.nom) + '</b></div><span class="interrupteur' + (actifs.indexOf(m.id) >= 0 ? ' on' : '') + '"></span></button>'; }).join('') + '</section>' +
+      '<section class="carte"><div class="carte-tete">' + e('💳') + 'Moyens de paiement acceptés</div>' + M.MOYENS.map(function (m) { return '<button class="ligne-reg" data-moy="' + m.id + '">' + logoMoyen(m, 'r') + '<div class="txt"><b>' + esc(m.nom) + '</b></div><span class="interrupteur' + (actifs.indexOf(m.id) >= 0 ? ' on' : '') + '"></span></button>'; }).join('') + '</section>' +
       '<section class="carte"><div class="carte-tete">' + e('💾') + 'Mes données</div><button class="btn plein sec" id="exporter">' + e('⬇️') + ' Télécharger une copie</button>' +
       (MODE === 'demo' ? '<button class="btn plein sec danger" id="raz">' + e('↩️') + ' Remettre la démo à zéro</button>' : '<button class="btn plein sec" id="sync">' + e('🔄') + ' Synchroniser maintenant</button><button class="btn plein sec danger" id="deco">' + e('🚪') + ' Se déconnecter</button>') + '</section>' +
-      '<p class="porte-pied">' + esc(N.appli) + ' · une solution SoluGis</p>', { plein: true });
+      '<p class="porte-pied">' + esc(N.appli) + ' · une solution SoluGis</p><p class="porte-pied" style="font-size:.72rem">Logos de paiement : Wave © Wave ; Orange Money et MTN (Wikimedia Commons, domaine public) ; Moov Money © Moov Africa (Wikimedia Commons, CC BY-SA 4.0). Marques de leurs propriétaires.</p>', { plein: true });
     $('#f-act', r).onsubmit = function (ev) { ev.preventDefault(); var f = ev.target; poser('reglages', Object.assign({}, a, { id: 'activite', nom: f.nom.value.trim(), prenom: f.prenom.value.trim(), tel: f.tel.value.trim() })); okPlein('Enregistré', 'bleu'); charpente(); dessiner(); };
     $('#r-plats', r).onclick = listePlats;
     $('#r-clients', r).onclick = listeClients;
@@ -701,7 +702,7 @@
   /* ================================================================== démarrage */
   function demarrer() {
     appliquerApparence();
-    if (MODE === 'demo') { if (!S.data || PARAMS.get('raz')) { S.data = window.TRAITEUR_DEMO(auj()); sauver(); B = null; } }
+    if (MODE === 'demo') { var DEMO_V = 2; if (!S.data || PARAMS.get('raz') || lireL('demoV', 0) !== DEMO_V) { S.data = window.TRAITEUR_DEMO(auj()); sauver(); ecrireL('demoV', DEMO_V); B = null; } }   // DEMO_V : à augmenter quand les données fictives changent
     else if (!S.jeton) { porte(); return; }
     if (!S.data) S.data = {};
     if (PARAMS.get('vue')) { NAV.vue = PARAMS.get('vue'); }

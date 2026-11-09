@@ -165,7 +165,10 @@ a.btn { text-decoration: none; }
 .payer-btn.on { border-color: var(--c); background: var(--cf); color: var(--c); }
 .moyens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
 .moyen-btn { display: flex; align-items: center; gap: 10px; padding: 12px; min-height: 58px; border-radius: 16px; background: var(--carte); box-shadow: var(--ombre); border: 3px solid transparent; font-weight: 800; font-size: .92rem; min-width: 0; }
-.moyen-btn i { width: 30px; height: 30px; border-radius: 9px; background: var(--mc); flex: none; display: grid; place-items: center; font-style: normal; color: #fff; font-size: .95rem; font-weight: 900; }
+.logo-moyen { width: 36px; height: 36px; border-radius: 10px; flex: none; object-fit: contain; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .08); display: inline-grid; place-items: center; font-size: 22px; line-height: 1; }
+.logo-moyen.especes { background: var(--vert-fond); box-shadow: none; }
+.logo-moyen.h { width: 30px; height: 30px; border-radius: 8px; font-size: 18px; }
+.logo-moyen.r { width: 34px; height: 34px; }
 .moyen-btn.on { border-color: var(--mc); background: var(--carte-2); }
 .total-barre { position: sticky; bottom: calc(82px + var(--sur)); z-index: 5; margin: 18px 0 0; padding: 10px 10px 10px 16px; border-radius: 22px; background: var(--carte); box-shadow: 0 -2px 24px rgba(27, 36, 32, .18); display: flex; align-items: center; gap: 12px; }
 .total-ligne { flex: 1; min-width: 0; display: flex; flex-direction: column; }

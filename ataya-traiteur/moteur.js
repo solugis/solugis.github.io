@@ -4,12 +4,13 @@ window.TM = (function () {
   'use strict';
 
   /* ------------------------------------------------------------ listes de base */
+  /* logos : vrais logos des opérateurs (sources et droits dans LISEZMOI.md) ; espèces = billet */
   var MOYENS = [
-    { id: 'especes', nom: 'Espèces', court: 'Espèces', ic: '💵', c: '#1f8a4c' },
-    { id: 'wave', nom: 'Wave', court: 'Wave', ic: '🐧', c: '#1aa7e0' },
-    { id: 'om', nom: 'Orange Money', court: 'Orange', ic: '🟠', c: '#f07800' },
-    { id: 'mtn', nom: 'MTN MoMo', court: 'MTN', ic: '🟡', c: '#d9a800' },
-    { id: 'moov', nom: 'Moov Money', court: 'Moov', ic: '🔵', c: '#0b63b6' }
+    { id: 'especes', nom: 'Espèces', court: 'Espèces', ic: '💵', c: '#1f8a4c', logo: '' },
+    { id: 'wave', nom: 'Wave', court: 'Wave', ic: '🐧', c: '#1dc4ff', logo: 'moyen-wave.png' },
+    { id: 'om', nom: 'Orange Money', court: 'Orange', ic: '🟠', c: '#ff7900', logo: 'moyen-om.svg' },
+    { id: 'mtn', nom: 'MTN MoMo', court: 'MTN', ic: '🟡', c: '#e0b000', logo: 'moyen-mtn.svg' },
+    { id: 'moov', nom: 'Moov Money', court: 'Moov', ic: '🔵', c: '#f07d1e', logo: 'moyen-moov.png' }
   ];
   var CATEGORIES = [
     { id: 'marche', nom: 'Marché', ic: '🛒' },

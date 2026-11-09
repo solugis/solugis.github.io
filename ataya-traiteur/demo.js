@@ -11,7 +11,7 @@ window.TRAITEUR_DEMO = function (auj) {
   var base = Date.now() - 40 * 864e5;
 
   d.reglages.activite = { id: 'activite', nom: 'Les Délices d’Adjoua', prenom: 'Adjoua', tel: '07 00 00 00 00', lieu: 'Cocody, Abidjan' };
-  d.reglages.moyens = { id: 'moyens', liste: ['especes', 'wave', 'om', 'mtn'] };
+  d.reglages.moyens = { id: 'moyens', liste: ['especes', 'wave', 'om', 'mtn', 'moov'] };
 
   var P = [
     ['p1', 'Attiéké poisson braisé', '🐟', 2500], ['p2', 'Riz sauce graine', '🍲', 2000], ['p3', 'Poulet braisé et alloco', '🍗', 3000],
@@ -79,11 +79,11 @@ window.TRAITEUR_DEMO = function (auj) {
       var c = commande(jour, 'c3', entre(3, 5), menu, { heure: '12:00', livree: livre(rang++) }); moisC3.push(c);
       if (js === 3) c7.push(commande(jour, 'c7', 10, menu, { heure: '12:00', livree: livre(rang++), note: 'Repas des enseignants' }));
     }
-    if (hasard() < 0.45) { var e = commande(jour, 'c4', entre(1, 2), menu, { heure: '13:00', livree: livre(rang++) }); if (e.livree) payer(jour, 'c4', M.total(e), 'om', e); }
+    if (hasard() < 0.45) { var e = commande(jour, 'c4', entre(1, 2), menu, { heure: '13:00', livree: livre(rang++) }); if (e.livree) payer(jour, 'c4', M.total(e), hasard() < 0.6 ? 'om' : 'moov', e); }
     if (hasard() < 0.3) { var f = commande(jour, 'c5', 2, menu, { heure: '13:00', livree: livre(rang++) }); if (hasard() < 0.4 && f.livree) payer(jour, 'c5', M.total(f), 'especes', f); }
-    if (hasard() < 0.5) { var g = commande(jour, 'c6', 1, menu, { heure: '12:30', livree: livre(rang++) }); if (g.livree) payer(jour, 'c6', k === -3 ? 1000 : M.total(g), 'especes', g); }
+    if (hasard() < 0.5) { var g = commande(jour, 'c6', 1, menu, { heure: '12:30', livree: livre(rang++) }); if (g.livree) payer(jour, 'c6', k === -3 ? 1000 : M.total(g), hasard() < 0.5 ? 'especes' : 'mtn', g); }
     var np = entre(2, 4);
-    for (var i = 0; i < np; i++) { var h = commande(jour, '', entre(1, 2), menu, { passage: parmi(['Client du marché', 'Passant', 'Livreur', 'Voisin', '']), lieu: 'Sur place', heure: parmi(['11:30', '12:00', '12:30', '13:00', '13:30']), livree: livre(rang++) }); if (h.livree) payer(jour, '', M.total(h), hasard() < 0.7 ? 'especes' : 'wave', h); }
+    for (var i = 0; i < np; i++) { var h = commande(jour, '', entre(1, 2), menu, { passage: parmi(['Client du marché', 'Passant', 'Livreur', 'Voisin', '']), lieu: 'Sur place', heure: parmi(['11:30', '12:00', '12:30', '13:00', '13:30']), livree: livre(rang++) }); if (h.livree) payer(jour, '', M.total(h), parmi(['especes', 'especes', 'especes', 'wave', 'wave', 'om', 'mtn', 'moov']), h); }
     /* Atlantique BTP : a réglé une fois, en début de période ; le reste attend (ancien crédit) */
     if (js === 5 && k < -14) { var s = moisC3.reduce(function (t, x) { return t + M.total(x); }, 0); if (s) payer(jour, 'c3', s, 'especes'); moisC3 = []; }
     /* École : règle les repas des enseignants deux semaines plus tard */
