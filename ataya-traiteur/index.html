@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#075234">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ataya Traiteur">
+<meta name="description" content="Ataya Traiteur — le cahier du traiteur dans le téléphone : menu du jour, commandes et livraisons, crédits des clients, dépenses et comptes. Une solution SoluGis.">
+<title>Ataya Traiteur – démonstration</title>
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icones/favicon.png">
+<link rel="apple-touch-icon" href="icones/icone-180.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app"><p style="text-align:center;margin-top:40vh;color:#4f5b55;font:18px sans-serif">Ouverture…</p></div>
+<script src="config.js"></script>
+<script src="marque.js"></script>
+<script src="moteur.js"></script>
+<script src="sons.js"></script>
+<script src="demo.js"></script>
+<script src="app.js"></script>
+<script>/* filet de sécurité : si un fichier n'a pas pu arriver (réseau mobile), proposer de réessayer au lieu de rester sur « Ouverture… » */
+setTimeout(function () { if (!window.TRAITEUR) document.getElementById('app').innerHTML = '<div style="text-align:center;margin-top:35vh;font:18px sans-serif;color:#1b2420;padding:0 20px"><p>L’ouverture n’a pas abouti (réseau).</p><button onclick="location.reload()" style="margin-top:16px;font:700 18px sans-serif;padding:16px 28px;border:0;border-radius:16px;background:#075234;color:#fff">🔄 Réessayer</button></div>'; }, 6000);</script>
+</body>
+</html>
