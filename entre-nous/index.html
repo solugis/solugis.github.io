@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<script>window.ENTRE_NOUS_CONFIG={api:"https://script.google.com/macros/s/AKfycbwipAAin8VYydEkw-5hCUchITnwk3RZmX0qaOI7M2P5GVA6_aJjN4cPY1jTRUY6_BAWag/exec"};window.ENTRE_NOUS_VERSION={nom:"1.8",empreinte:"15fe1a39a5ab"};</script>
+<script>window.ENTRE_NOUS_CONFIG={api:"https://script.google.com/macros/s/AKfycbwipAAin8VYydEkw-5hCUchITnwk3RZmX0qaOI7M2P5GVA6_aJjN4cPY1jTRUY6_BAWag/exec"};window.ENTRE_NOUS_VERSION={nom:"1.9",empreinte:"b0453af95a48"};</script>
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icones/icone-180.png" />
 <meta name="theme-color" content="#965d6b" />
@@ -2859,7 +2859,7 @@ function jardinQuestions() {
 /* ----- screens ----- */
 const jardinTete = sousTitre => `<div class="jardin-tete"><div class="jardin-logo">🌹</div><div><h2>Jardin secret</h2><p class="quiet small">${sousTitre}</p></div></div>`;
 function jardinChoixNiveau(actuel) {
-  return `<div class="jardin-niveaux" role="radiogroup" aria-label="Mon niveau">${JARDIN_NIVEAUX.map(([n, nom, e, desc]) => `<label class="jardin-niveau${actuel === n ? ' choisi' : ''}"><input type="radio" name="niveau" value="${n}" ${actuel === n ? 'checked' : ''}><span class="jardin-emoji grand">${e}</span><b>${nom}</b><small>${desc}</small></label>`).join('')}</div>`;
+  return `<div class="jardin-niveaux" role="radiogroup" aria-label="Mon niveau">${JARDIN_NIVEAUX.map(([n, nom, e, desc]) => `<label class="jardin-niveau"><input type="radio" name="niveau" value="${n}" ${actuel === n ? 'checked' : ''}><span class="jardin-emoji grand">${e}</span><b>${nom}</b><small>${desc}</small></label>`).join('')}</div>`;
 }
 function jardinVue() {
   const moi = jardinMoi(), autre = partnerOf(moi), nomAutre = esc(personName(autre)), jm = jardinDe(moi), ja = jardinDe(autre);
@@ -2880,7 +2880,9 @@ function jardinVue() {
   const n = jardinNiv(jardinNiveau()), onglet = JARDIN.onglet, o = (v, t) => `<button type="button" class="pill-btn${onglet === v ? ' active' : ''}" data-action="jardin-onglet:${v}">${t}</button>`;
   const corps = onglet === 'invitation' ? jardinInvitation() : onglet === 'cartes' ? jardinCartes() : onglet === 'bons' ? jardinBons() : onglet === 'parlons' ? jardinQuestions() : onglet === 'ephemeres' ? jardinEphemeres() : onglet === 'kama' ? jardinKama() : onglet === 'histoires' ? jardinHistoires() : jardinEnvies();
   const aOuvrir = (S.ephemeres || []).filter(x => x.pour === moi && !x.vu && !x.expire).length;
-  return `<div class="jardin">${jardinTete(`Niveau ${n[2]} ${n[1]} · le plus prudent de vous deux`)}<div class="jardin-barre">${button('⏸️ Pause', 'jardin-pause', 'btn ghost sm')}${button('⚙️ Réglages', 'jardin-reglages', 'btn ghost sm')}${button('🔒 Verrouiller', 'jardin-verrouiller', 'btn ghost sm')}</div>${reglages}<div class="jardin-tuiles" role="group" aria-label="Rubriques du jardin">${[['envies', '💞', 'Envies'], ['invitation', '🕯️', 'Invitation'], ['ephemeres', '🔥', 'Éphémères'], ['cartes', '🎴', 'Cartes'], ['bons', '🎟️', 'Bons'], ['kama', '💑', 'Kamasutra'], ['histoires', '📚', 'Histoires'], ['parlons', '💬', 'Parlons-en']].map(([v, e, t]) => `<button type="button" class="jardin-tuile${onglet === v ? ' active' : ''}" data-action="jardin-onglet:${v}"><span>${e}</span>${t}${v === 'ephemeres' && aOuvrir ? `<i class="pastille" aria-label="${aOuvrir} à ouvrir"></i>` : ''}</button>`).join('')}</div>${corps}</div>`;
+  const histNonLues = HISTOIRES.filter(h => h[1] <= jardinNiveau() && !histLire('lues', []).includes(h[0])).length;
+  if (onglet === 'histoires') histCharger();
+  return `<div class="jardin">${jardinTete(`Niveau ${n[2]} ${n[1]} · le plus prudent de vous deux`)}<div class="jardin-barre">${button('⏸️ Pause', 'jardin-pause', 'btn ghost sm')}${button('⚙️ Réglages', 'jardin-reglages', 'btn ghost sm')}${button('🔒 Verrouiller', 'jardin-verrouiller', 'btn ghost sm')}</div>${reglages}<div class="jardin-tuiles" role="group" aria-label="Rubriques du jardin">${[['envies', '💞', 'Envies'], ['invitation', '🕯️', 'Invitation'], ['ephemeres', '🔥', 'Éphémères'], ['cartes', '🎴', 'Cartes'], ['bons', '🎟️', 'Bons'], ['kama', '💑', 'Kamasutra'], ['histoires', '📚', 'Histoires'], ['parlons', '💬', 'Parlons-en']].map(([v, e, t]) => `<button type="button" class="jardin-tuile${onglet === v ? ' active' : ''}" data-action="jardin-onglet:${v}"><span>${e}</span>${t}${v === 'ephemeres' && aOuvrir ? `<i class="pastille" aria-label="${aOuvrir} à ouvrir"></i>` : ''}${v === 'histoires' && histNonLues ? `<i class="pastille" aria-label="${histNonLues} histoire${histNonLues > 1 ? 's' : ''} à lire"></i>` : ''}</button>`).join('')}</div>${corps}</div>`;
 }
 function jardinReglages(jm) {
   const v = jardinVerrou() || {}, face = jardinFaceDisponible();
@@ -3241,92 +3243,120 @@ function kamaDessin(p, classe = '') {
 }
 if (typeof module !== 'undefined') module.exports = { KAMA, KAMA_POSES, KAMA_TRADITIONS, KAMA_ETIQUETTES };
 
-// Histoires coquines (lot 1.8, Jardin secret): stories and reader-style testimonies written for Entre Nous, in the spirit of
-// the old couple magazines, never copied. Hot and bold, but suggestive rather than graphic. New ones come with later updates.
-// [id, level, genre, title, standfirst, text (paragraphs separated by a blank line), date added]
+// Histoires coquines (Jardin secret). Source: src/histoires.json, published next to the page as « histoires.json » (lot 1.9).
+// The page carries a copy (first opening, no network); at each opening, and when the section is shown, it re-reads the
+// published file: new stories arrive without a new version of the app. Written for Entre Nous, by level.
 const HIST_GENRES = { recit: '📖 Récit', temoignage: '💌 Témoignage', fantasme: '💭 Fantasme' };
-const HISTOIRES = [
-  ['h01', 1, 'recit', 'La panne de courant', 'Un soir d’orage à Cocody, l’électricité saute. Ils n’ont plus qu’une bougie… et toute la nuit devant eux.',
-`La pluie tambourinait sur le toit quand tout s’est éteint d’un coup. Plus de climatiseur, plus de télévision, plus de téléphone chargé. Juste le bruit de l’orage et le souffle de Nadia, quelque part dans le noir du salon.
-
-« Ne bouge pas, je cherche une bougie », a dit Marc. Il a renversé un verre, juré tout bas, et elle a ri. Quand la petite flamme s’est enfin dressée entre eux, elle a vu son visage autrement : plus proche, plus doré, presque inconnu.
-
-Il faisait chaud. Elle a défait les premiers boutons de sa chemise sans y penser, puis elle a vu qu’il la regardait faire. Alors elle a continué, plus lentement, pour lui.
-
-Ils ont oublié l’orage. Ils ont oublié qu’ils étaient mariés depuis sept ans et qu’ils connaissaient chaque recoin l’un de l’autre. À la lueur de cette bougie, tout redevenait une découverte : la courbe d’une épaule, le goût d’un cou, la lenteur qu’on ne s’accorde plus jamais.
-
-Le courant est revenu vers deux heures du matin. Ils ont éteint la lumière tout de suite.`, '2026-11-10'],
-  ['h02', 1, 'temoignage', 'Le petit mot dans la poche', 'Awa, 34 ans, Yopougon : « Je n’aurais jamais cru qu’un simple papier puisse me mettre dans cet état. »',
-`« Ça fait dix ans que je vis avec Serge. On s’aime, mais vous savez ce que c’est : le travail, les enfants, les factures. Le désir, on le range au fond d’un tiroir.
-
-Un lundi, en sortant mes clés au bureau, j’ai trouvé un papier plié dans ma poche. Trois lignes de son écriture penchée : ce qu’il avait envie de me faire ce soir-là, dans l’ordre. Je suis devenue toute rouge devant mes collègues.
-
-Toute la journée, j’y ai pensé. En réunion, dans le gbaka du retour, en faisant les courses. Chaque heure, le petit papier brûlait un peu plus dans ma poche.
-
-Quand je suis rentrée, les enfants étaient chez sa mère. Il m’attendait, une chemise blanche que je ne lui connaissais pas, et il n’a pas dit un mot. Il a seulement repris le papier dans ma main, il l’a relu à voix basse, et il a tenu chacune de ses promesses.
-
-Depuis, c’est moi qui glisse des mots dans ses poches. »`, '2026-11-10'],
-  ['h03', 2, 'recit', 'La chambre 214', 'Un week-end à Assinie, un hôtel au bord de la lagune, et une règle du jeu : faire semblant de ne pas se connaître.',
-`Elle est arrivée au bar de l’hôtel la première, comme convenu. Robe noire, rouge à lèvres qu’elle ne porte jamais. Lui s’est assis trois tabourets plus loin et a commandé un jus de gingembre sans la regarder.
-
-C’était son idée à elle : un soir, redevenir deux inconnus. Il a fini par se tourner vers elle. « Vous êtes ici pour le travail ? » Elle a inventé un métier, une ville, un prénom. Il a joué le jeu avec un sérieux qui l’a fait fondre.
-
-Ils ont parlé une heure. Il la frôlait à peine, et chaque frôlement l’électrisait davantage. Quand il a posé la clé de la chambre 214 sur le comptoir, entre leurs deux verres, elle a fait mine d’hésiter.
-
-Dans l’ascenseur, l’inconnu l’a plaquée doucement contre le miroir. Il embrassait comme son mari, mais avec une faim qu’elle ne lui connaissait plus. Elle a gardé son faux prénom jusqu’au matin. Lui l’a murmuré toute la nuit.`, '2026-11-10'],
-  ['h04', 2, 'temoignage', 'Le massage', 'Karim, 41 ans, Marcory : « Elle m’a interdit de bouger. C’est la chose la plus difficile que j’aie jamais faite. »',
-`« Pour mon anniversaire, ma femme m’a annoncé un cadeau spécial : un massage. J’ai pensé à un bon pour un spa. Le soir venu, elle a éteint les lumières, allumé des bougies et sorti une bouteille d’huile tiède.
-
-Une seule règle : je n’avais pas le droit de bouger. Pas les mains, pas un geste. Si je bougeais, elle s’arrêtait.
-
-Elle a commencé par mes épaules, très sagement. Puis le dos, lentement, si lentement. Ses mains descendaient, remontaient, s’attardaient là où je ne les attendais pas. Je l’entendais sourire dans le noir chaque fois que ma respiration changeait.
-
-J’ai tenu vingt minutes. Vingt minutes à serrer les draps. Quand j’ai enfin craqué, elle s’est arrêtée net, comme promis… et m’a dit que c’était à mon tour de lui obéir.
-
-Je ne vous raconte pas la suite. Disons seulement que je n’ai plus jamais regardé une bouteille d’huile de la même façon. »`, '2026-11-10'],
-  ['h05', 2, 'fantasme', 'Le message de 15 heures', 'Elle reçoit un message en pleine réunion. Une photo, une phrase, et l’après-midi devient interminable.',
-`15 h 02. Le téléphone vibre sur la table de réunion. Elle jette un œil distrait : une photo. Lui, torse nu dans le miroir de la salle de bain, avec une seule phrase : « Je rentre tôt. Toi aussi. »
-
-Elle retourne le téléphone, le cœur battant, et fait semblant de suivre le tableau de chiffres projeté au mur. Impossible. Chaque mot du directeur lui passe au-dessus de la tête.
-
-15 h 40. Deuxième message : « J’ai choisi la musique. » 16 h 15 : « Ne mets rien sous ta robe en rentrant. »
-
-Elle croise et décroise les jambes. Sa voisine lui demande si elle a chaud. Oui. Très chaud.
-
-À 17 h pile, elle est dans le taxi. Elle ne se souvient plus d’un seul chiffre de la réunion, mais elle connaît par cœur chacun de ses messages. Quand la porte s’ouvre, la musique joue déjà. Il n’a pas menti.`, '2026-11-10'],
-  ['h06', 3, 'recit', 'Les yeux bandés', 'Un foulard de soie, une promesse de confiance, et tous les autres sens qui se réveillent.',
-`Il a sorti le foulard de soie rouge qu’elle lui avait offert, et il a demandé : « Tu me fais confiance ? » Elle a hoché la tête. Le monde a disparu.
-
-Sans la vue, tout devient immense. Le froissement de sa chemise qui tombe. Le parquet qui craque quand il fait le tour du lit. Son souffle, d’abord près de son oreille, puis plus nulle part. Elle attend, tendue comme une corde.
-
-Quelque chose de frais glisse sur sa clavicule. Un glaçon. Elle sursaute, rit, puis ne rit plus du tout quand le froid est remplacé par la chaleur de sa bouche. Il alterne, sans prévenir, le froid et le chaud, la plume et les dents, la douceur et l’audace.
-
-Elle ne sait jamais où il sera la seconde d’après. C’est à la fois insupportable et merveilleux. Elle supplie, elle exige, elle négocie. Il ne cède rien.
-
-Quand enfin il dénoue le foulard, la lumière de la lampe lui paraît aveuglante. Il la regarde comme s’il venait de la rencontrer. « À ton tour la semaine prochaine », souffle-t-elle.`, '2026-11-10'],
-  ['h07', 3, 'temoignage', 'La terrasse', 'Fatou, 29 ans, Grand-Bassam : « On s’est dit qu’à cette heure-là, personne ne nous verrait. On avait presque raison. »',
-`« On fêtait nos trois ans dans une petite maison louée face à la mer, à Bassam. Il était plus de minuit, la plage était déserte, et la terrasse donnait sur l’océan, juste éclairée par la lune.
-
-On avait bu un peu de vin de palme, on dansait pieds nus. Il m’a soulevée pour m’asseoir sur la balustrade, la mer dans mon dos, et il m’a embrassée comme on n’ose pas le faire dehors.
-
-Le vent soulevait ma robe, le bruit des vagues couvrait tout. J’avais à la fois peur et une envie folle. Chaque bruit me faisait sursauter, et ça rendait tout plus fort.
-
-Au moment où on oubliait vraiment le monde, une lampe torche a balayé la plage : le gardien faisait sa ronde. On s’est jetés à plat ventre derrière le muret, morts de rire, ma robe à moitié remontée.
-
-Il n’a rien vu. On est rentrés finir la nuit à l’intérieur, mais je crois qu’on pense encore tous les deux à cette terrasse… et qu’on y retournera. »`, '2026-11-10'],
-  ['h08', 3, 'fantasme', 'Une nuit où tu décides de tout', 'Pour une nuit, elle décide de tout. Il n’a le droit que de dire oui.',
-`Ce soir, c’est elle qui commande. C’était écrit sur le bon qu’il lui avait offert : « Une nuit où tu décides de tout ». Elle compte bien l’utiliser jusqu’à la dernière minute.
-
-Elle le fait asseoir sur le fauteuil, au milieu de la chambre. « Tu ne te lèves pas avant que je te le dise. » Il sourit, un peu trop sûr de lui. Elle éteint le plafonnier, ne laisse que la petite lampe, et lance la musique qu’elle a choisie.
-
-Elle danse pour lui, lentement, tout près, sans jamais le laisser la toucher. Quand ses mains se lèvent, elle les repose sur les accoudoirs. « Pas encore. » Elle aime voir sa mâchoire se serrer.
-
-Elle lui donne des ordres à l’oreille, un à un. Il obéit à tous, et chaque obéissance la grise un peu plus. Elle découvre le plaisir de mener, de faire attendre, de décider du moment exact.
-
-Bien plus tard, allongée contre lui, elle lui rend son bon déchiré en deux. « La prochaine fois, c’est toi qui décides. » Il a déjà l’air d’avoir des idées.`, '2026-11-10']
-];
+const HIST_COPIE = {
+ "version": "2026-11-10",
+ "genres": {
+  "recit": "📖 Récit",
+  "temoignage": "💌 Témoignage",
+  "fantasme": "💭 Fantasme"
+ },
+ "histoires": [
+  {
+   "id": "h01",
+   "niveau": 1,
+   "genre": "recit",
+   "titre": "La panne de courant",
+   "chapeau": "Un soir d’orage à Cocody, l’électricité saute. Ils n’ont plus qu’une bougie… et toute la nuit devant eux.",
+   "texte": "La pluie tambourinait sur le toit quand tout s’est éteint d’un coup. Plus de climatiseur, plus de télévision, plus de téléphone chargé. Juste le bruit de l’orage et le souffle de Nadia, quelque part dans le noir du salon.\n\n« Ne bouge pas, je cherche une bougie », a dit Marc. Il a renversé un verre, juré tout bas, et elle a ri. Quand la petite flamme s’est enfin dressée entre eux, elle a vu son visage autrement : plus proche, plus doré, presque inconnu.\n\nIl faisait chaud. Elle a défait les premiers boutons de sa chemise sans y penser, puis elle a vu qu’il la regardait faire. Alors elle a continué, plus lentement, pour lui.\n\nIls ont oublié l’orage. Ils ont oublié qu’ils étaient mariés depuis sept ans et qu’ils connaissaient chaque recoin l’un de l’autre. À la lueur de cette bougie, tout redevenait une découverte : la courbe d’une épaule, le goût d’un cou, la lenteur qu’on ne s’accorde plus jamais.\n\nLe courant est revenu vers deux heures du matin. Ils ont éteint la lumière tout de suite.",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h02",
+   "niveau": 1,
+   "genre": "temoignage",
+   "titre": "Le petit mot dans la poche",
+   "chapeau": "Awa, 34 ans, Yopougon : « Je n’aurais jamais cru qu’un simple papier puisse me mettre dans cet état. »",
+   "texte": "« Ça fait dix ans que je vis avec Serge. On s’aime, mais vous savez ce que c’est : le travail, les enfants, les factures. Le désir, on le range au fond d’un tiroir.\n\nUn lundi, en sortant mes clés au bureau, j’ai trouvé un papier plié dans ma poche. Trois lignes de son écriture penchée : ce qu’il avait envie de me faire ce soir-là, dans l’ordre. Je suis devenue toute rouge devant mes collègues.\n\nToute la journée, j’y ai pensé. En réunion, dans le gbaka du retour, en faisant les courses. Chaque heure, le petit papier brûlait un peu plus dans ma poche.\n\nQuand je suis rentrée, les enfants étaient chez sa mère. Il m’attendait, une chemise blanche que je ne lui connaissais pas, et il n’a pas dit un mot. Il a seulement repris le papier dans ma main, il l’a relu à voix basse, et il a tenu chacune de ses promesses.\n\nDepuis, c’est moi qui glisse des mots dans ses poches. »",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h03",
+   "niveau": 2,
+   "genre": "recit",
+   "titre": "La chambre 214",
+   "chapeau": "Un week-end à Assinie, un hôtel au bord de la lagune, et une règle du jeu : faire semblant de ne pas se connaître.",
+   "texte": "Elle est arrivée au bar de l’hôtel la première, comme convenu. Robe noire, rouge à lèvres qu’elle ne porte jamais. Lui s’est assis trois tabourets plus loin et a commandé un jus de gingembre sans la regarder.\n\nC’était son idée à elle : un soir, redevenir deux inconnus. Il a fini par se tourner vers elle. « Vous êtes ici pour le travail ? » Elle a inventé un métier, une ville, un prénom. Il a joué le jeu avec un sérieux qui l’a fait fondre.\n\nIls ont parlé une heure. Il la frôlait à peine, et chaque frôlement l’électrisait davantage. Quand il a posé la clé de la chambre 214 sur le comptoir, entre leurs deux verres, elle a fait mine d’hésiter.\n\nDans l’ascenseur, l’inconnu l’a plaquée doucement contre le miroir. Il embrassait comme son mari, mais avec une faim qu’elle ne lui connaissait plus. Elle a gardé son faux prénom jusqu’au matin. Lui l’a murmuré toute la nuit.",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h04",
+   "niveau": 2,
+   "genre": "temoignage",
+   "titre": "Le massage",
+   "chapeau": "Karim, 41 ans, Marcory : « Elle m’a interdit de bouger. C’est la chose la plus difficile que j’aie jamais faite. »",
+   "texte": "« Pour mon anniversaire, ma femme m’a annoncé un cadeau spécial : un massage. J’ai pensé à un bon pour un spa. Le soir venu, elle a éteint les lumières, allumé des bougies et sorti une bouteille d’huile tiède.\n\nUne seule règle : je n’avais pas le droit de bouger. Pas les mains, pas un geste. Si je bougeais, elle s’arrêtait.\n\nElle a commencé par mes épaules, très sagement. Puis le dos, lentement, si lentement. Ses mains descendaient, remontaient, s’attardaient là où je ne les attendais pas. Je l’entendais sourire dans le noir chaque fois que ma respiration changeait.\n\nJ’ai tenu vingt minutes. Vingt minutes à serrer les draps. Quand j’ai enfin craqué, elle s’est arrêtée net, comme promis… et m’a dit que c’était à mon tour de lui obéir.\n\nJe ne vous raconte pas la suite. Disons seulement que je n’ai plus jamais regardé une bouteille d’huile de la même façon. »",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h05",
+   "niveau": 2,
+   "genre": "fantasme",
+   "titre": "Le message de 15 heures",
+   "chapeau": "Elle reçoit un message en pleine réunion. Une photo, une phrase, et l’après-midi devient interminable.",
+   "texte": "15 h 02. Le téléphone vibre sur la table de réunion. Elle jette un œil distrait : une photo. Lui, torse nu dans le miroir de la salle de bain, avec une seule phrase : « Je rentre tôt. Toi aussi. »\n\nElle retourne le téléphone, le cœur battant, et fait semblant de suivre le tableau de chiffres projeté au mur. Impossible. Chaque mot du directeur lui passe au-dessus de la tête.\n\n15 h 40. Deuxième message : « J’ai choisi la musique. » 16 h 15 : « Ne mets rien sous ta robe en rentrant. »\n\nElle croise et décroise les jambes. Sa voisine lui demande si elle a chaud. Oui. Très chaud.\n\nÀ 17 h pile, elle est dans le taxi. Elle ne se souvient plus d’un seul chiffre de la réunion, mais elle connaît par cœur chacun de ses messages. Quand la porte s’ouvre, la musique joue déjà. Il n’a pas menti.",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h06",
+   "niveau": 3,
+   "genre": "recit",
+   "titre": "Les yeux bandés",
+   "chapeau": "Un foulard de soie, une promesse de confiance, et tous les autres sens qui se réveillent.",
+   "texte": "Il a sorti le foulard de soie rouge qu’elle lui avait offert, et il a demandé : « Tu me fais confiance ? » Elle a hoché la tête. Le monde a disparu.\n\nSans la vue, tout devient immense. Le froissement de sa chemise qui tombe. Le parquet qui craque quand il fait le tour du lit. Son souffle, d’abord près de son oreille, puis plus nulle part. Elle attend, tendue comme une corde.\n\nQuelque chose de frais glisse sur sa clavicule. Un glaçon. Elle sursaute, rit, puis ne rit plus du tout quand le froid est remplacé par la chaleur de sa bouche. Il alterne, sans prévenir, le froid et le chaud, la plume et les dents, la douceur et l’audace.\n\nElle ne sait jamais où il sera la seconde d’après. C’est à la fois insupportable et merveilleux. Elle supplie, elle exige, elle négocie. Il ne cède rien.\n\nQuand enfin il dénoue le foulard, la lumière de la lampe lui paraît aveuglante. Il la regarde comme s’il venait de la rencontrer. « À ton tour la semaine prochaine », souffle-t-elle.",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h07",
+   "niveau": 3,
+   "genre": "temoignage",
+   "titre": "La terrasse",
+   "chapeau": "Fatou, 29 ans, Grand-Bassam : « On s’est dit qu’à cette heure-là, personne ne nous verrait. On avait presque raison. »",
+   "texte": "« On fêtait nos trois ans dans une petite maison louée face à la mer, à Bassam. Il était plus de minuit, la plage était déserte, et la terrasse donnait sur l’océan, juste éclairée par la lune.\n\nOn avait bu un peu de vin de palme, on dansait pieds nus. Il m’a soulevée pour m’asseoir sur la balustrade, la mer dans mon dos, et il m’a embrassée comme on n’ose pas le faire dehors.\n\nLe vent soulevait ma robe, le bruit des vagues couvrait tout. J’avais à la fois peur et une envie folle. Chaque bruit me faisait sursauter, et ça rendait tout plus fort.\n\nAu moment où on oubliait vraiment le monde, une lampe torche a balayé la plage : le gardien faisait sa ronde. On s’est jetés à plat ventre derrière le muret, morts de rire, ma robe à moitié remontée.\n\nIl n’a rien vu. On est rentrés finir la nuit à l’intérieur, mais je crois qu’on pense encore tous les deux à cette terrasse… et qu’on y retournera. »",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h08",
+   "niveau": 3,
+   "genre": "fantasme",
+   "titre": "Une nuit où tu décides de tout",
+   "chapeau": "Pour une nuit, elle décide de tout. Il n’a le droit que de dire oui.",
+   "texte": "Ce soir, c’est elle qui commande. C’était écrit sur le bon qu’il lui avait offert : « Une nuit où tu décides de tout ». Elle compte bien l’utiliser jusqu’à la dernière minute.\n\nElle le fait asseoir sur le fauteuil, au milieu de la chambre. « Tu ne te lèves pas avant que je te le dise. » Il sourit, un peu trop sûr de lui. Elle éteint le plafonnier, ne laisse que la petite lampe, et lance la musique qu’elle a choisie.\n\nElle danse pour lui, lentement, tout près, sans jamais le laisser la toucher. Quand ses mains se lèvent, elle les repose sur les accoudoirs. « Pas encore. » Elle aime voir sa mâchoire se serrer.\n\nElle lui donne des ordres à l’oreille, un à un. Il obéit à tous, et chaque obéissance la grise un peu plus. Elle découvre le plaisir de mener, de faire attendre, de décider du moment exact.\n\nBien plus tard, allongée contre lui, elle lui rend son bon déchiré en deux. « La prochaine fois, c’est toi qui décides. » Il a déjà l’air d’avoir des idées.",
+   "ajout": "2026-11-10"
+  }
+ ]
+};
+const HIST = { lu: 0, version: '' };
+let HISTOIRES = [];
+// Internal form: [id, level, genre, title, standfirst, text, date added]; anything malformed in the file is ignored.
+function histAppliquer(o) {
+  if (!o || !Array.isArray(o.histoires)) return false;
+  const L = o.histoires.filter(h => h && /^h\d{2,4}$/.test(h.id) && [1, 2, 3].includes(h.niveau) && HIST_GENRES[h.genre] && typeof h.titre === 'string' && typeof h.texte === 'string')
+    .map(h => [h.id, h.niveau, h.genre, h.titre, String(h.chapeau || ''), h.texte, String(h.ajout || '')]);
+  if (!L.length) return false;
+  HISTOIRES = L; HIST.version = String(o.version || ''); return true;
+}
+histAppliquer(HIST_COPIE);
+try { const g = JSON.parse(localStorage.getItem(KEY + ':hist-fichier')); if (g && String(g.version || '') > HIST.version) histAppliquer(g); } catch (e) { /* pas de copie gardée */ }
+function histCharger(force) {
+  if (typeof fetch !== 'function' || typeof location === 'undefined' || !/^https?:$/.test(location.protocol)) return;
+  if (!force && Date.now() - HIST.lu < 600000) return;
+  HIST.lu = Date.now();
+  fetch('histoires.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).then(o => {
+    if (!o || String(o.version || '') <= HIST.version || !histAppliquer(o)) return;
+    try { localStorage.setItem(KEY + ':hist-fichier', JSON.stringify(o)); } catch (e) { /* stockage plein */ }
+    if (page === 'us' && sub === 'jardin' && !modal) render();
+  }).catch(() => {});
+}
+if (typeof document !== 'undefined' && document.addEventListener) {
+  if (typeof addEventListener === 'function') addEventListener('load', () => histCharger(true));
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') histCharger(); });
+}
 const HIST_MOTS = t => t.split(/\s+/).length;
-if (typeof module !== 'undefined') module.exports = { HISTOIRES, HIST_GENRES };
+if (typeof module !== 'undefined') module.exports = { HIST_GENRES };
 
 // Jardin secret, lot 1.8: Kamasutra (positions to tick, shared by the couple) and Histoires coquines (stories to read).
 // Positions: collection « positions » (common): one document per position ticked « Déjà fait », « À essayer » or « Favori ».

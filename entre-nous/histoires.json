@@ -1,0 +1,82 @@
+{
+ "version": "2026-11-10",
+ "genres": {
+  "recit": "📖 Récit",
+  "temoignage": "💌 Témoignage",
+  "fantasme": "💭 Fantasme"
+ },
+ "histoires": [
+  {
+   "id": "h01",
+   "niveau": 1,
+   "genre": "recit",
+   "titre": "La panne de courant",
+   "chapeau": "Un soir d’orage à Cocody, l’électricité saute. Ils n’ont plus qu’une bougie… et toute la nuit devant eux.",
+   "texte": "La pluie tambourinait sur le toit quand tout s’est éteint d’un coup. Plus de climatiseur, plus de télévision, plus de téléphone chargé. Juste le bruit de l’orage et le souffle de Nadia, quelque part dans le noir du salon.\n\n« Ne bouge pas, je cherche une bougie », a dit Marc. Il a renversé un verre, juré tout bas, et elle a ri. Quand la petite flamme s’est enfin dressée entre eux, elle a vu son visage autrement : plus proche, plus doré, presque inconnu.\n\nIl faisait chaud. Elle a défait les premiers boutons de sa chemise sans y penser, puis elle a vu qu’il la regardait faire. Alors elle a continué, plus lentement, pour lui.\n\nIls ont oublié l’orage. Ils ont oublié qu’ils étaient mariés depuis sept ans et qu’ils connaissaient chaque recoin l’un de l’autre. À la lueur de cette bougie, tout redevenait une découverte : la courbe d’une épaule, le goût d’un cou, la lenteur qu’on ne s’accorde plus jamais.\n\nLe courant est revenu vers deux heures du matin. Ils ont éteint la lumière tout de suite.",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h02",
+   "niveau": 1,
+   "genre": "temoignage",
+   "titre": "Le petit mot dans la poche",
+   "chapeau": "Awa, 34 ans, Yopougon : « Je n’aurais jamais cru qu’un simple papier puisse me mettre dans cet état. »",
+   "texte": "« Ça fait dix ans que je vis avec Serge. On s’aime, mais vous savez ce que c’est : le travail, les enfants, les factures. Le désir, on le range au fond d’un tiroir.\n\nUn lundi, en sortant mes clés au bureau, j’ai trouvé un papier plié dans ma poche. Trois lignes de son écriture penchée : ce qu’il avait envie de me faire ce soir-là, dans l’ordre. Je suis devenue toute rouge devant mes collègues.\n\nToute la journée, j’y ai pensé. En réunion, dans le gbaka du retour, en faisant les courses. Chaque heure, le petit papier brûlait un peu plus dans ma poche.\n\nQuand je suis rentrée, les enfants étaient chez sa mère. Il m’attendait, une chemise blanche que je ne lui connaissais pas, et il n’a pas dit un mot. Il a seulement repris le papier dans ma main, il l’a relu à voix basse, et il a tenu chacune de ses promesses.\n\nDepuis, c’est moi qui glisse des mots dans ses poches. »",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h03",
+   "niveau": 2,
+   "genre": "recit",
+   "titre": "La chambre 214",
+   "chapeau": "Un week-end à Assinie, un hôtel au bord de la lagune, et une règle du jeu : faire semblant de ne pas se connaître.",
+   "texte": "Elle est arrivée au bar de l’hôtel la première, comme convenu. Robe noire, rouge à lèvres qu’elle ne porte jamais. Lui s’est assis trois tabourets plus loin et a commandé un jus de gingembre sans la regarder.\n\nC’était son idée à elle : un soir, redevenir deux inconnus. Il a fini par se tourner vers elle. « Vous êtes ici pour le travail ? » Elle a inventé un métier, une ville, un prénom. Il a joué le jeu avec un sérieux qui l’a fait fondre.\n\nIls ont parlé une heure. Il la frôlait à peine, et chaque frôlement l’électrisait davantage. Quand il a posé la clé de la chambre 214 sur le comptoir, entre leurs deux verres, elle a fait mine d’hésiter.\n\nDans l’ascenseur, l’inconnu l’a plaquée doucement contre le miroir. Il embrassait comme son mari, mais avec une faim qu’elle ne lui connaissait plus. Elle a gardé son faux prénom jusqu’au matin. Lui l’a murmuré toute la nuit.",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h04",
+   "niveau": 2,
+   "genre": "temoignage",
+   "titre": "Le massage",
+   "chapeau": "Karim, 41 ans, Marcory : « Elle m’a interdit de bouger. C’est la chose la plus difficile que j’aie jamais faite. »",
+   "texte": "« Pour mon anniversaire, ma femme m’a annoncé un cadeau spécial : un massage. J’ai pensé à un bon pour un spa. Le soir venu, elle a éteint les lumières, allumé des bougies et sorti une bouteille d’huile tiède.\n\nUne seule règle : je n’avais pas le droit de bouger. Pas les mains, pas un geste. Si je bougeais, elle s’arrêtait.\n\nElle a commencé par mes épaules, très sagement. Puis le dos, lentement, si lentement. Ses mains descendaient, remontaient, s’attardaient là où je ne les attendais pas. Je l’entendais sourire dans le noir chaque fois que ma respiration changeait.\n\nJ’ai tenu vingt minutes. Vingt minutes à serrer les draps. Quand j’ai enfin craqué, elle s’est arrêtée net, comme promis… et m’a dit que c’était à mon tour de lui obéir.\n\nJe ne vous raconte pas la suite. Disons seulement que je n’ai plus jamais regardé une bouteille d’huile de la même façon. »",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h05",
+   "niveau": 2,
+   "genre": "fantasme",
+   "titre": "Le message de 15 heures",
+   "chapeau": "Elle reçoit un message en pleine réunion. Une photo, une phrase, et l’après-midi devient interminable.",
+   "texte": "15 h 02. Le téléphone vibre sur la table de réunion. Elle jette un œil distrait : une photo. Lui, torse nu dans le miroir de la salle de bain, avec une seule phrase : « Je rentre tôt. Toi aussi. »\n\nElle retourne le téléphone, le cœur battant, et fait semblant de suivre le tableau de chiffres projeté au mur. Impossible. Chaque mot du directeur lui passe au-dessus de la tête.\n\n15 h 40. Deuxième message : « J’ai choisi la musique. » 16 h 15 : « Ne mets rien sous ta robe en rentrant. »\n\nElle croise et décroise les jambes. Sa voisine lui demande si elle a chaud. Oui. Très chaud.\n\nÀ 17 h pile, elle est dans le taxi. Elle ne se souvient plus d’un seul chiffre de la réunion, mais elle connaît par cœur chacun de ses messages. Quand la porte s’ouvre, la musique joue déjà. Il n’a pas menti.",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h06",
+   "niveau": 3,
+   "genre": "recit",
+   "titre": "Les yeux bandés",
+   "chapeau": "Un foulard de soie, une promesse de confiance, et tous les autres sens qui se réveillent.",
+   "texte": "Il a sorti le foulard de soie rouge qu’elle lui avait offert, et il a demandé : « Tu me fais confiance ? » Elle a hoché la tête. Le monde a disparu.\n\nSans la vue, tout devient immense. Le froissement de sa chemise qui tombe. Le parquet qui craque quand il fait le tour du lit. Son souffle, d’abord près de son oreille, puis plus nulle part. Elle attend, tendue comme une corde.\n\nQuelque chose de frais glisse sur sa clavicule. Un glaçon. Elle sursaute, rit, puis ne rit plus du tout quand le froid est remplacé par la chaleur de sa bouche. Il alterne, sans prévenir, le froid et le chaud, la plume et les dents, la douceur et l’audace.\n\nElle ne sait jamais où il sera la seconde d’après. C’est à la fois insupportable et merveilleux. Elle supplie, elle exige, elle négocie. Il ne cède rien.\n\nQuand enfin il dénoue le foulard, la lumière de la lampe lui paraît aveuglante. Il la regarde comme s’il venait de la rencontrer. « À ton tour la semaine prochaine », souffle-t-elle.",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h07",
+   "niveau": 3,
+   "genre": "temoignage",
+   "titre": "La terrasse",
+   "chapeau": "Fatou, 29 ans, Grand-Bassam : « On s’est dit qu’à cette heure-là, personne ne nous verrait. On avait presque raison. »",
+   "texte": "« On fêtait nos trois ans dans une petite maison louée face à la mer, à Bassam. Il était plus de minuit, la plage était déserte, et la terrasse donnait sur l’océan, juste éclairée par la lune.\n\nOn avait bu un peu de vin de palme, on dansait pieds nus. Il m’a soulevée pour m’asseoir sur la balustrade, la mer dans mon dos, et il m’a embrassée comme on n’ose pas le faire dehors.\n\nLe vent soulevait ma robe, le bruit des vagues couvrait tout. J’avais à la fois peur et une envie folle. Chaque bruit me faisait sursauter, et ça rendait tout plus fort.\n\nAu moment où on oubliait vraiment le monde, une lampe torche a balayé la plage : le gardien faisait sa ronde. On s’est jetés à plat ventre derrière le muret, morts de rire, ma robe à moitié remontée.\n\nIl n’a rien vu. On est rentrés finir la nuit à l’intérieur, mais je crois qu’on pense encore tous les deux à cette terrasse… et qu’on y retournera. »",
+   "ajout": "2026-11-10"
+  },
+  {
+   "id": "h08",
+   "niveau": 3,
+   "genre": "fantasme",
+   "titre": "Une nuit où tu décides de tout",
+   "chapeau": "Pour une nuit, elle décide de tout. Il n’a le droit que de dire oui.",
+   "texte": "Ce soir, c’est elle qui commande. C’était écrit sur le bon qu’il lui avait offert : « Une nuit où tu décides de tout ». Elle compte bien l’utiliser jusqu’à la dernière minute.\n\nElle le fait asseoir sur le fauteuil, au milieu de la chambre. « Tu ne te lèves pas avant que je te le dise. » Il sourit, un peu trop sûr de lui. Elle éteint le plafonnier, ne laisse que la petite lampe, et lance la musique qu’elle a choisie.\n\nElle danse pour lui, lentement, tout près, sans jamais le laisser la toucher. Quand ses mains se lèvent, elle les repose sur les accoudoirs. « Pas encore. » Elle aime voir sa mâchoire se serrer.\n\nElle lui donne des ordres à l’oreille, un à un. Il obéit à tous, et chaque obéissance la grise un peu plus. Elle découvre le plaisir de mener, de faire attendre, de décider du moment exact.\n\nBien plus tard, allongée contre lui, elle lui rend son bon déchiré en deux. « La prochaine fois, c’est toi qui décides. » Il a déjà l’air d’avoir des idées.",
+   "ajout": "2026-11-10"
+  }
+ ]
+}

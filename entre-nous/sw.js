@@ -1,10 +1,10 @@
 /* Entre Nous : la page s'ouvre aussitôt depuis l'appareil. Une nouvelle version (ce fichier change à chaque publication :
    le nom du cache porte l'empreinte de la page, calculée par build.py) se télécharge en arrière-plan ; quand elle est prête,
    la page affiche « Mettre à jour » (lot 1.4). Les échanges avec le service Google ne passent pas par ici. */
-const CACHE = 'entre-nous-15fe1a39a5ab';
+const CACHE = 'entre-nous-b0453af95a48';
 // Session kept by the page for notifications (service address + token): never removed by an update.
 const SESSION = 'entre-nous-session';
-const FICHIERS = ['./', './index.html', './manifest.webmanifest', './icones/icone-180.png', './icones/icone-192.png'];
+const FICHIERS = ['./', './index.html', './manifest.webmanifest', './histoires.json', './icones/icone-180.png', './icones/icone-192.png'];
 // One missing file (an icon not yet published) must not block the whole offline copy.
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => Promise.all(FICHIERS.map(f => c.add(new Request(f, { cache: 'reload' })).catch(() => {}))))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
@@ -24,6 +24,8 @@ function rechargerAnciennes() {
 }
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
+  // Stories (lot 1.9): network first, so that new ones appear at once; the copy serves without network.
+  if (new URL(e.request.url).pathname.endsWith('/histoires.json')) { e.respondWith(caches.open(CACHE).then(c => fetch(e.request).then(r => { if (r.ok) c.put(e.request, r.clone()); return r; }).catch(() => c.match(e.request, { ignoreSearch: true })))); return; }
   e.respondWith(caches.open(CACHE).then(async c => {
     const enCache = await c.match(e.request, { ignoreSearch: true });
     const frais = fetch(e.request).then(r => { if (r.ok) c.put(e.request, r.clone()); return r; }).catch(() => enCache);
