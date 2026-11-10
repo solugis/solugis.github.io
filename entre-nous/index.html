@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<script>window.ENTRE_NOUS_CONFIG={api:"https://script.google.com/macros/s/AKfycbwipAAin8VYydEkw-5hCUchITnwk3RZmX0qaOI7M2P5GVA6_aJjN4cPY1jTRUY6_BAWag/exec"};window.ENTRE_NOUS_VERSION={nom:"1.5",empreinte:"2a450434a95a"};</script>
+<script>window.ENTRE_NOUS_CONFIG={api:"https://script.google.com/macros/s/AKfycbwipAAin8VYydEkw-5hCUchITnwk3RZmX0qaOI7M2P5GVA6_aJjN4cPY1jTRUY6_BAWag/exec"};window.ENTRE_NOUS_VERSION={nom:"1.8",empreinte:"15fe1a39a5ab"};</script>
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icones/icone-180.png" />
 <meta name="theme-color" content="#965d6b" />
@@ -190,6 +190,123 @@ img[data-vignette][src^="data:image/gif"]{opacity:0}
 .reaction-emoji{font-size:25px;line-height:1;animation:reaction-pop .5s cubic-bezier(.3,1.6,.5,1)}
 @keyframes reaction-pop{from{transform:scale(.3)}to{transform:none}}
 @media (prefers-reduced-motion:reduce){.reaction-emoji{animation:none}}
+/* Jardin secret (lot 1.6). */
+.jardin{display:grid;gap:14px}
+.jardin-tete{display:flex;gap:12px;align-items:center}
+.jardin-tete h2{margin:0;font:400 28px/1.15 var(--serif)}
+.jardin-tete p{margin:2px 0 0}
+.jardin-logo{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:30px;background:linear-gradient(135deg,#5a1d3e,#c2185b);box-shadow:0 8px 20px rgba(194,24,91,.25);flex:none}
+.jardin-regles{margin:0;padding-left:18px;display:grid;gap:8px;line-height:1.5}
+.jardin-niveaux{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.jardin-niveau{display:grid;justify-items:center;text-align:center;gap:4px;padding:12px 6px;border:1px solid var(--line);border-radius:16px;background:var(--surface);cursor:pointer;color:var(--ink);font:inherit}
+.jardin-niveau input{position:absolute;opacity:0;pointer-events:none}
+.jardin-niveau small{font-size:14px;color:var(--muted);line-height:1.3}
+.jardin-niveau.choisi,.jardin-niveau:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.jardin-emoji{font-size:21px;line-height:1;flex:none}
+.jardin-emoji.grand{font-size:30px}
+.jardin-barre,.jardin-choix{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.jardin-choix{margin-top:10px}
+.jardin-onglets,.jardin-quand{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.jardin-onglets::-webkit-scrollbar,.jardin-quand::-webkit-scrollbar{display:none}
+.jardin-envie{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.jardin-envie:last-child{border-bottom:0}
+.jardin-revoir .jardin-envie{grid-template-columns:auto minmax(0,1fr)}
+.jardin-revoir .jardin-choix{grid-column:1/-1;margin-top:0}
+.jardin-carte{border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 9%,var(--surface)),var(--surface))}
+.jardin-carte p{display:flex;gap:12px;align-items:center;font:400 21px/1.35 var(--serif);margin:8px 0 4px}
+.jardin-carte small,.jardin-secret{color:var(--muted)}
+.jardin-invit blockquote{margin:10px 0;font:italic 400 19px/1.45 var(--serif)}
+.jardin-invit-tete{font-size:18px}
+.jardin-etat{font-weight:700;color:var(--accent);margin:8px 0 0}
+.jardin-mots{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 6px}
+.jardin-mot{border:1px dashed var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 11px;font:inherit;font-size:17px;cursor:pointer;text-align:left}
+.jardin-q{font:400 23px/1.4 var(--serif);margin:6px 0 10px}
+.jardin-verrou .card{text-align:center}
+.jardin-verrou .field{text-align:left;max-width:260px;margin-left:auto;margin-right:auto}
+.jardin-cadenas{font-size:47px;margin:4px 0 10px}
+.jardin-oubli{margin-top:14px}
+.jardin-onglets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;overflow:visible}
+.jardin-onglets .pill-btn{white-space:normal;text-align:center;justify-content:center;padding-left:6px;padding-right:6px;line-height:1.25;min-height:40px}
+/* Jardin secret, lot 1.7 : cartes, bons, limites. */
+.jardin-onglets{grid-template-columns:repeat(3,minmax(0,1fr))}
+.jardin-tirage{text-align:center}
+.jardin-dos{width:120px;height:160px;margin:6px auto 12px;border-radius:16px;display:grid;place-items:center;font-size:49px;background:linear-gradient(135deg,#5a1d3e,#c2185b);box-shadow:0 12px 26px rgba(194,24,91,.28)}
+.jardin-tiree{border-radius:20px;padding:20px 16px;margin:4px 0 10px;background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 14%,var(--surface)),var(--surface));border:1px solid var(--line);animation:jardin-retourne .6s cubic-bezier(.2,.9,.3,1.1)}
+.jardin-tiree small{color:var(--muted)}
+.jardin-tiree-emoji{font-size:47px;margin:8px 0}
+.jardin-tiree p{font:400 22px/1.4 var(--serif);margin:0}
+.jardin-choix.centre{justify-content:center}
+@keyframes jardin-retourne{from{transform:perspective(600px) rotateY(90deg);opacity:0}to{transform:none;opacity:1}}
+.jardin-mini-carte{border:1px dashed var(--line);border-radius:14px;padding:10px 12px;margin:10px 0;display:grid;gap:3px}
+.jardin-mini-carte small{color:var(--muted)}
+.jardin-bon{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;padding:12px;border:1px dashed var(--accent);border-radius:14px;margin:8px 0;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.jardin-bon .jardin-choix{grid-column:1/-1;margin-top:0}
+.jardin-bon b{display:block}
+.jardin-bon small{color:var(--muted)}
+.jardin-bon.utilise{opacity:.7;border-style:solid;border-color:var(--line)}
+.jardin-bon-icone{font-size:28px}
+.jardin-limites{display:flex;flex-wrap:wrap;gap:6px}
+.jardin-limite{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 12px;font:inherit;font-size:17px;cursor:pointer}
+.jardin-limite.active{border-color:#b3261e;color:#b3261e;background:color-mix(in srgb,#b3261e 8%,var(--surface))}
+@media (prefers-reduced-motion:reduce){.jardin-tiree{animation:none}}
+/* Jardin secret, lot 1.8 : menu en tuiles, éphémères, kamasutra, histoires. */
+.jardin-tuiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.jardin-tuile{position:relative;display:grid;justify-items:center;gap:3px;padding:9px 2px 8px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer;min-width:0}
+.jardin-tuile span{font-size:23px;line-height:1}
+.jardin-tuile.active{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--accent)}
+.jardin-tuile .pastille{position:absolute;top:5px;right:7px}
+.eph-ligne{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.eph-ligne:last-child{border-bottom:0}
+.eph-ligne small{display:block;color:var(--muted)}
+.eph-icone{font-size:25px}
+.eph-avert{margin-top:10px}
+.album-choix.disabled{opacity:.6;pointer-events:none}
+.eph-vue{position:fixed;inset:0;z-index:9500;background:#0b0710;display:grid;grid-template-rows:auto minmax(0,1fr);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.eph-haut{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top)) 14px 10px;color:#f6dfe8;font-size:17px}
+.eph-cadre{position:relative;display:grid;place-items:center;overflow:hidden;margin:0 10px max(14px,env(safe-area-inset-bottom));border-radius:18px;background:#000}
+.eph-media{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none;-webkit-user-drag:none}
+.eph-charge{color:#f6dfe8;text-align:center;padding:20px}
+.eph-gratter{position:absolute;inset:0;width:100%;height:100%;touch-action:none;transition:opacity .6s}
+.eph-gratter.fini{opacity:0}
+.kama-grille{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.kama-case{display:grid;gap:2px;justify-items:center;text-align:center;padding:8px 6px 10px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;min-width:0}
+.kama-case b{font-size:17px;line-height:1.25}
+.kama-case small{color:var(--muted);font-size:14px}
+.kama-case.faite{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
+.kama-dessin{width:100%;height:auto}
+.kama-dessin.grand{max-width:360px;margin:0 auto 6px;display:block}
+.kama-lit{fill:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.kama-sol,.kama-meuble{stroke:var(--line);stroke-width:3;fill:none;stroke-linecap:round}
+.kama-progres{margin:4px 0 10px}
+.hist-carte{display:grid;gap:4px;text-align:left;width:100%;font:inherit;color:var(--ink);cursor:pointer}
+.hist-carte b{font:400 21px/1.3 var(--serif)}
+.hist-carte span{color:var(--muted);font-size:17px;line-height:1.45}
+.hist-tete{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.hist-tete small{color:var(--muted)}
+.hist-lecture h2{font:400 30px/1.2 var(--serif);margin:8px 0}
+.hist-lecture p{font-size:18px;line-height:1.7;margin:0 0 14px}
+.hist-chapeau{font-style:italic;color:var(--muted)}
+/* Kamasutra, « Ligne de soie » (choix de l'utilisateur) : trait fin, médaillon cerclé d'or. */
+.kama-fond{fill:color-mix(in srgb,var(--accent) 7%,var(--surface))}
+.kama-or{fill:none;stroke:#c9a46a}
+.kama-etoile{font-size:12px;fill:#c9a46a}
+.kama-a{stroke:var(--accent)}
+.kama-b{stroke:#5a3d6b}
+:root[data-theme="nocturne"] .kama-b,:root[data-theme="velours"] .kama-b{stroke:#cbb3dd}
+.kama-case b{font:400 18px/1.2 var(--serif)}
+.kama-origine{color:#a8885a;font-size:13px;letter-spacing:.04em}
+.kama-detail .kama-origine{margin:-4px 0 6px}
+.kama-traditions{margin-top:6px}
+/* Photos de profil un peu plus grandes, et visibles en grand d'un toucher (lot 1.8). */
+.avatars .avatar{width:46px;height:46px}
+.avatar.a-photo{cursor:zoom-in}
+.pensee-initiale{width:32px;height:32px;font-size:17px}
+.avatar.profil-grand{width:76px;height:76px}
+@media(max-width:640px){.avatars .avatar{width:42px;height:42px}.avatars .avatar+.avatar{margin-left:-16px}.avatars{margin-left:0}.top-actions{gap:4px}}
+.profil-vue{position:fixed;inset:0;z-index:9600;background:rgba(15,8,14,.86);display:grid;place-items:center;align-content:center;gap:18px;padding:20px;animation:appear .2s;cursor:zoom-out}
+.profil-vue figure{margin:0;display:grid;justify-items:center;gap:12px}
+.profil-vue img{width:min(78vw,380px);aspect-ratio:1;object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.85);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.profil-vue figcaption{color:#fff;font:400 25px var(--serif)}
 
 
 /* Anniversaires (lot 1.3, remarque 13) : cartes de l'Accueil et surprise du jour J. */
@@ -538,7 +655,7 @@ function toast(msg){document.querySelector('.toast')?.remove();const n=document.
 function iconBtn(name,action,label='Action'){return `<button type="button" class="small-icon" data-action="${esc(action)}" aria-label="${esc(label)}">${svg(name)}</button>`}
 const NAV=[['home','Accueil','house'],['calendar','Calendrier','calendar'],['projects','Projets','projects'],['finance','Finances','wallet'],['us','Nous','heart']];
 function shell(){return `<div class="app"><aside class="sidebar"><div class="brand"><div class="logo">e.</div><div><div class="brand-name">Entre Nous</div><div class="brand-sub">Un univers à deux</div></div></div><div class="side-label">Votre espace</div><nav class="nav">${NAV.map(x=>`<button class="nav-button ${page===x[0]?'active':''}" data-action="nav:${x[0]}">${svg(x[2])}${x[1]}</button>`).join('')}</nav><div class="side-spacer"></div><div class="side-note"><strong>Une histoire, à votre rythme ♡</strong>${syncConnected()?'Vos saisies sont partagées avec votre partenaire et gardées sur cet appareil.':"Ce prototype conserve vos saisies dans ce navigateur uniquement. Aucun partenaire n'y est connecté."}</div><div class="side-bottom"><div class="mini-profile">${profilAvatar(emotionViewer)}<span>${esc(personName(emotionViewer))}</span></div>${iconBtn('gear','settings','Personnaliser')}</div></aside><main class="main"><header class="topbar"><div class="top-marque"><div class="logo" aria-hidden="true">e.</div><div><div class="top-nom">Entre Nous${syncConnected()?'':' <span class="top-demo">Découverte</span>'}</div><div class="top-devise">Votre histoire, votre rythme.</div></div></div><div class="top-actions"><span class="topdate">${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</span>${iconBtn('gear','settings','Réglages')}<div class="avatars">${profilAvatar('partner-a')}${profilAvatar('partner-b')}</div></div></header>${simulationBanner()}<div class="page">${renderPage()}</div></main><nav class="mobile-nav">${NAV.map(x=>`<button data-action="nav:${x[0]}" class="${page===x[0]?'active':''}">${svg(x[2])}<span>${x[1]}</span></button>`).join('')}</nav></div>${modal?renderModal():''}`}
-function render(){document.documentElement.dataset.theme=S.theme;const a=$('#app');a.innerHTML=shell();fillEdit();albumApresRendu();salutApresRendu();nouvApresRendu();feteApresRendu()}
+function render(){document.documentElement.dataset.theme=S.theme;const a=$('#app');a.innerHTML=shell();fillEdit();albumApresRendu();salutApresRendu();nouvApresRendu();feteApresRendu();jardinApresRendu()}
 function pageHead(kicker,title,desc,actions=''){return `<div class="welcome"><div><div class="eyebrow">${kicker}</div><h1 class="display">${title}</h1><p class="lede">${desc}</p></div>${actions}</div>`}
 function renderPage(){switch(page){case'calendar':return emotionCalendar();case'projects':return projects();case'finance':return finance();case'us':return us();default:return home()}}
 function evList(evs,withRemove=false){evs=visibleEvents(evs);return evs.length?evs.map(e=>`<div class="event-line"><div class="date-chip"><b>${Number(e.date.slice(-2))}</b><span>${new Date(e.date+'T12:00').toLocaleDateString('fr-FR',{month:'short'})}</span></div><span class="event-symbol">${e.type==='intime'&&!S.privacy.showIntimacy?'🔒':TYPES[e.type]?.emoji||'📅'}</span><div class="event-desc"><b>${e.type==='intime'&&!S.privacy.showIntimacy?'Moment privé':esc(e.title)}</b><small>${TYPES[e.type]?.name||'Événement'} · ${fullDate(e.date)}${e.lieu&&!(e.type==='intime'&&!S.privacy.showIntimacy)?' · 📍 '+esc(e.lieu):''}</small></div>${withRemove?`${e.type==='intime'&&!S.privacy.showIntimacy?'':editButton('event',e,'Modifier l’événement')}<button class="remove" title="Supprimer" data-action="delete-event:${e.id}">×</button>`:''}</div>`).join(''):`<div class="empty">Aucun événement pour le moment.<br>Ajoutez une date importante pour commencer.</div>`}
@@ -555,7 +672,7 @@ const dayEv=S.events.filter(e=>e.date===selected);let body='';if(calView==='mont
 return `${pageHead('Tous nos instants','Notre <em>calendrier</em>','Rendez-vous, projets, souvenirs et moments intimes : l’histoire de votre quotidien.',button(`${svg('plus')} Nouvel événement`,'new-event','btn primary'))}<div class="card"><div class="calendar-head"><div class="month-title">${monthName(month+'-01').replace(/^./,c=>c.toUpperCase())}</div><div class="cal-controls"><div class="segmented">${['month','week','day'].map((v,i)=>`<button class="${calView===v?'active':''}" data-action="cal-view:${v}">${['Mois','Semaine','Jour'][i]}</button>`).join('')}</div>${iconBtn('back','cal-prev','Précédent')}${iconBtn('arrow','cal-next','Suivant')}${button('Aujourd’hui','cal-today','btn sm')}</div></div>${body}<div class="cal-legend"><span>🔞 Moments intimes</span><span>💝 Dates spéciales</span><span>📅 Rendez-vous</span><span>✅ Projets</span></div><div class="selected-date"><div class="selected-date-head"><b>${fullDate(selected)}</b>${button(`${svg('plus')} Ajouter`,'new-event','btn sm soft')}</div>${calView==='day'?'':evList(dayEv,true)}</div><div style="margin-top:13px" class="toggle-row"><div><b>Afficher les icônes 🔞</b><small>Visible par défaut dans les cases des jours concernés. À désactiver pour un affichage discret.</small></div><label class="switch"><input type="checkbox" data-change="intimacy" ${S.privacy.showIntimacy?'checked':''}/><span></span></label></div><div class="notice warning">Confidentialité : cette version enregistre localement les informations dans le navigateur, sans chiffrement spécifique ni synchronisation. Évitez les détails sensibles sur un appareil partagé.</div></div>`}
 function projects(){const [done,total]=taskCount();return `${pageHead('Organiser demain','Nos <em>projets</em>','Des grandes ambitions aux petites tâches du quotidien, avançons ensemble.',button(`${svg('plus')} Nouveau projet`,'new-project','btn primary'))}<div class="grid-3" style="margin-bottom:20px"><div class="stat-tile"><div class="smallcaps">Projets actifs</div><div class="stat-number">${S.projects.length}</div><div class="stat-label">Objectifs partagés</div></div><div class="stat-tile"><div class="smallcaps">Tâches accomplies</div><div class="stat-number">${done} <span class="quiet" style="font:17px var(--sans)">/ ${total}</span></div><div class="stat-label">Étapes réalisées</div></div><div class="stat-tile"><div class="smallcaps">Progression globale</div><div class="stat-number">${total?Math.round(done/total*100):0}%</div><div class="progress"><div style="width:${total?done/total*100:0}%"></div></div></div></div><div class="grid-even">${S.projects.map(p=>{const done=p.tasks.filter(t=>t.done).length;return `<section class="project"><div class="project-head"><div><div class="proj-icon">${esc(p.emoji||'♡')}</div><h3>${esc(p.name)}</h3><div class="quiet tiny">Échéance : ${p.due?fullDate(p.due):'Non définie'}</div></div><div class="item-actions">${button('Modifier','edit-item:project:'+p.id,'btn ghost sm')}${button('Supprimer','delete-project:'+p.id,'btn ghost sm danger')}</div></div><div><div class="section-hint"><span class="small">Notre progression</span><span class="tiny quiet">${done} / ${p.tasks.length} étapes</span></div><div class="progress" style="margin-top:10px"><div style="width:${p.tasks.length?done/p.tasks.length*100:0}%"></div></div></div><div>${p.tasks.map(t=>`<div class="task ${t.done?'done':''}"><input type="checkbox" data-change="task:${p.id}:${t.id}" ${t.done?'checked':''} aria-label="Terminer ${esc(t.name)}"/><span class="task-text">${esc(t.name)}</span>${editButton('task',{id:p.id,name:t.name},'Renommer la tâche',':'+t.id)}<button data-action="delete-task:${p.id}:${t.id}" class="remove" title="Retirer la tâche">×</button></div>`).join('')||'<div class="quiet small">Aucune tâche pour le moment.</div>'}</div><div class="task-editor"><input id="task-${p.id}" placeholder="Ajouter une tâche…" aria-label="Nouvelle tâche"/><button data-action="add-task:${p.id}" aria-label="Ajouter une tâche">+</button></div></section>`}).join('')||'<div class="empty">Aucun projet encore. Créez votre premier projet commun.</div>'}</div>`}
 function finance(){const spent=monthlyExpenses(),remaining=S.budget-spent,cat={};S.expenses.filter(x=>monthKey(x.date)===monthKey(TODAY)).forEach(e=>cat[e.category]=(cat[e.category]||0)+Number(e.amount));const max=Math.max(...Object.values(cat),1);return `${pageHead('Construire ensemble','Nos <em>finances</em>','Un espace simple pour suivre les dépenses communes et donner vie à vos projets.',button(`${svg('plus')} Ajouter une dépense`,'new-expense','btn primary'))}<div class="grid-2"><div class="stack"><section class="card budget-hero"><div class="finance-top"><div><div class="smallcaps">NOTRE BUDGET · ${monthName(TODAY).toUpperCase()}</div><div class="finance-amount">${fmt(remaining)} <span style="font:17px var(--sans)">FCFA</span></div><div class="finance-hero-note">Disponibles sur un budget mensuel de ${fmt(S.budget)} FCFA</div></div>${iconBtn('edit','edit-budget','Modifier le budget')}</div><div class="progress" style="margin:20px 0 10px"><div style="width:${Math.min(100,S.budget?spent/S.budget*100:0)}%"></div></div><div class="section-hint"><span class="small">${fmt(spent)} FCFA dépensés</span><span class="small">${S.budget?Math.round(spent/S.budget*100):0}% utilisés</span></div></section><section class="card"><div class="card-title"><h3>Nos dépenses</h3>${button(`${svg('plus')} Ajouter`,'new-expense','btn soft sm')}</div>${S.expenses.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,10).map(e=>`<div class="finance-entry"><div class="finance-symbol">${depCatIcone(e.category)}</div><div class="entry-description"><b>${esc(e.name)}</b><small>${esc(e.category)} · ${fullDate(e.date)} · ${esc(e.paidBy)}${e.visibility==='prive'?' · 🔒 Privé':''}</small></div><div class="entry-amount">– ${fmt(e.amount)}</div>${editButton('expense',e,'Modifier la dépense')}<button class="remove" data-action="delete-expense:${e.id}" title="Supprimer">×</button></div>`).join('')||'<div class="empty">Ajoutez une dépense pour commencer.</div>'}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>Répartition du mois</h3><span class="smallcaps">Dépenses</span></div>${Object.keys(cat).length?`<div class="bar-rows">${Object.entries(cat).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="bar-row"><span>${depCatIcone(k)} ${esc(k)}</span><div class="progress"><div style="width:${Math.round(v/max*100)}%"></div></div><span>${fmt(v)}</span></div>`).join('')}</div>`:'<div class="empty">Pas de dépenses ce mois-ci.</div>'}</section><section class="card"><div class="card-title"><h3>Nos objectifs</h3>${button(`${svg('plus')} Nouvel objectif`,'new-goal','btn soft sm')}</div>${S.goals.map(g=>`<div class="goal"><div class="goal-top"><div class="goal-name">🎯 ${esc(g.name)}</div>${button('Ajouter','deposit:'+g.id,'btn sm soft')}</div><div class="progress"><div style="width:${Math.min(100,g.target?g.saved/g.target*100:0)}%"></div></div><div class="section-hint"><span class="quiet tiny">${fmt(g.saved)} / ${fmt(g.target)} FCFA</span><span class="tiny">${g.target&&g.saved>=g.target?'Atteint ✓':(g.target?Math.round(g.saved/g.target*100):0)+'%'}</span></div><div style="text-align:right;margin-top:8px">${button('Modifier','edit-item:goal:'+g.id,'btn ghost sm')}${button('Supprimer','delete-goal:'+g.id,'btn ghost sm danger')}</div></div>`).join('')||'<div class="empty">Votre premier objectif d’épargne vous attend.</div>'}<div class="notice">Les cagnottes sont des suivis virtuels : aucun argent n’est détenu ou transféré dans cette application.</div></section></div></div>`}
-function us(){const subs=[['overview','Notre relation'],['mood','Mood'],['stats','Statistiques'],['agreements','Nos engagements'],['memories','Souvenirs'],['documents','Documents']];let content=sub==='mood'?'<section class="card">'+emotionEditor()+'</section>':sub==='stats'?emotionalStats():sub==='agreements'?agreements():sub==='memories'?albumSouvenirs():sub==='documents'?albumDocuments():overview();return `${pageHead('Notre histoire','Juste <em>nous deux.</em>','Les émotions, les petits instants et les engagements qui rendent votre histoire unique.') }<div class="subtabs">${subs.map(x=>`<button data-action="tab:${x[0]}" class="${sub===x[0]?'active':''}">${x[1]}</button>`).join('')}</div>${content}`}
+function us(){const subs=[['overview','Notre relation'],['mood','Mood'],['stats','Statistiques'],['agreements','Nos engagements'],['memories','Souvenirs'],['documents','Documents'],['jardin','🌹 Jardin secret']];let content=sub==='mood'?'<section class="card">'+emotionEditor()+'</section>':sub==='stats'?emotionalStats():sub==='agreements'?agreements():sub==='memories'?albumSouvenirs():sub==='jardin'?jardinVue():sub==='documents'?albumDocuments():overview();return `${pageHead('Notre histoire','Juste <em>nous deux.</em>','Les émotions, les petits instants et les engagements qui rendent votre histoire unique.') }<div class="subtabs">${subs.map(x=>`<button data-action="tab:${x[0]}" class="${sub===x[0]?'active':''}">${x[1]}</button>`).join('')}</div>${content}`}
 function overview(){const t=moodToday(),active=S.rules.filter(r=>r.status==='accepted').length;return `<div class="grid-2"><div class="stack"><section class="hero"><div class="hero-main"><div class="smallcaps">L'HISTOIRE QUE NOUS ÉCRIVONS</div><div class="h-title">Un jour à la fois,<br>et toujours <em>ensemble.</em></div><p>Racontez vos moments, exprimez vos ressentis et gardez ce qui compte.</p>${button('Ajouter un souvenir','new-memory','btn soft')}</div><div class="hero-ornament">♡</div></section><section class="card">${emotionEditor()}</section></div><div class="stack"><section class="card"><div class="card-title"><h3>Notre charte</h3>${button(svg('arrow'),'tab:agreements','btn ghost sm')}</div><div class="two-mini"><div class="stat-tile"><div class="stat-number">${S.expectations.length}</div><div class="stat-label">Mes attentes privées</div></div><div class="stat-tile"><div class="stat-number">${active}</div><div class="stat-label">Engagements acceptés à deux</div></div></div><p class="quiet small" style="line-height:1.65">Les propositions ne deviennent communes qu’après l’accord réel de chaque partenaire dans une future version synchronisée.</p>${button('Voir nos engagements','tab:agreements','btn soft sm')}</section><section class="card"><div class="card-title"><h3>Notre histoire en chiffres</h3>${button(svg('arrow'),'tab:stats','btn ghost sm')}</div><div class="two-mini"><div class="stat-tile"><div class="stat-number">${S.privacy.showIntimacy?S.events.filter(e=>e.type==='intime').length:'—'}</div><div class="stat-label">${S.privacy.showIntimacy?'Moments intimes 🔞 inscrits':'Moments privés masqués'}</div></div><div class="stat-tile"><div class="stat-number">${S.memories.length}</div><div class="stat-label">Souvenirs précieux</div></div></div>${button('Voir toutes les statistiques','tab:stats','btn soft sm')}</section></div></div>`}
 function stats(){const thisMonth=S.events.filter(e=>monthKey(e.date)===monthKey(TODAY)),intimes=thisMonth.filter(e=>e.type==='intime').length, outings=thisMonth.filter(e=>e.type==='sortie'||e.type==='special').length,mood=S.moods.filter(e=>monthKey(e.date)===monthKey(TODAY)),relation=mood.filter(m=>m.relation>0),positive=relation.filter(m=>m.relation>=4).length,[done,total]=taskCount(),spent=monthlyExpenses();let last7=Array.from({length:7},(_,i)=>{const d=addDay(TODAY,i-6),x=S.moods.find(m=>m.date===d);return {d,x}});return `<div class="grid-3" style="margin-bottom:20px"><div class="stat-tile"><div class="smallcaps">Moments 🔞 / mois</div><div class="stat-number">${intimes}</div><div class="stat-label">Dates enregistrées, sans jugement</div></div><div class="stat-tile"><div class="smallcaps">Ressentis positifs</div><div class="stat-number">${relation.length?Math.round(positive/relation.length*100)+' %':'—'}</div><div class="stat-label">Sur ${relation.length} jour(s) renseigné(s)</div></div><div class="stat-tile"><div class="smallcaps">Moments à deux</div><div class="stat-number">${outings}</div><div class="stat-label">Sorties et dates spéciales ce mois-ci</div></div><div class="stat-tile"><div class="smallcaps">Tâches achevées</div><div class="stat-number">${total?Math.round(done/total*100)+' %':'—'}</div><div class="stat-label">${done} tâche(s) sur ${total}</div></div><div class="stat-tile"><div class="smallcaps">Dépenses communes saisies</div><div class="stat-number" style="font-size:26px">${fmt(spent)}</div><div class="stat-label">FCFA ce mois-ci, toutes visibilités</div></div><div class="stat-tile"><div class="smallcaps">Souvenirs</div><div class="stat-number">${S.memories.length}</div><div class="stat-label">Moments précieux enregistrés</div></div></div><div class="grid-even"><section class="card"><div class="card-title"><h3>Ressenti relationnel</h3><span class="smallcaps">7 derniers jours</span></div><div class="chart">${last7.map(o=>`<div class="chart-column"><div class="chart-bar" style="height:${o.x&&o.x.relation?(o.x.relation/5*100):2}%;opacity:${o.x&&o.x.relation?1:.17}" data-val="${o.x&&o.x.relation?o.x.relation+'/5':'—'}"></div><small>${new Date(o.d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short'})}</small></div>`).join('')}</div><p class="quiet small">Le graphique reflète seulement les jours où un ressenti a été saisi.</p></section><section class="card"><div class="card-title"><h3>Notre rétrospective</h3><span class="smallcaps">${monthName(TODAY)}</span></div><div class="hero" style="min-height:220px;padding:24px"><div class="hero-main"><div class="smallcaps">CE MOIS-CI ♡</div><div style="font:normal 26px/1.35 var(--serif);margin:14px 0">${intimes} moment${intimes>1?'s':''} 🔞, ${outings} sortie${outings>1?'s':''} et ${done} tâche${done>1?'s':''} accomplie${done>1?'s':''}.</div><p>Chaque histoire évolue à son rythme. Ces chiffres sont des souvenirs, pas des objectifs à atteindre.</p></div></div></section></div>`}
 function agreements(){const expectations=S.expectations;const pending=S.rules.filter(r=>r.status!=='example'),suggested=S.rules.filter(r=>r.status==='example');return `<div class="grid-even"><section class="card"><div class="card-title"><h3>Mes attentes</h3><span class="pill private">${svg('lock')} Espace privé</span></div><p class="quiet small" style="line-height:1.65">Écrivez vos besoins, valeurs ou limites personnelles. Elles restent privées : pour en parler à deux, « Proposer comme engagement » prépare une proposition que vous relisez avant de l’envoyer.</p>${expectations.map(e=>`<div class="rule"><h4>${esc(e.title)}</h4><p>${esc(e.body)}</p>${attenteBouton(e)}<div class="rule-meta">${attenteEtat(e)}<span class="item-actions">${button('Modifier','edit-item:expectation:'+e.id,'btn ghost sm')}${button('Supprimer','delete-expectation:'+e.id,'btn ghost sm danger')}</span></div></div>`).join('')||'<div class="empty">Notez vos premières attentes personnelles.</div>'}${button(`${svg('plus')} Ajouter une attente`,'new-expectation','btn soft')}</section><section class="card"><div class="card-title"><h3>Nos règles</h3><span class="pill pending">Accord mutuel requis</span></div><p class="quiet small" style="line-height:1.65">Proposez des engagements. ${syncConnected()?'Une proposition devient un engagement quand l’autre personne l’accepte depuis son téléphone.':"Dans ce prototype local, aucune proposition n'est validée au nom de l'autre personne."}</p>${pending.map(r=>`<div class="rule"><h4>${esc(r.category)}</h4><p>« ${esc(r.body)} »</p><div class="rule-meta">${ruleMeta(r)}</div></div>`).join('')||'<div class="empty">Aucune proposition pour le moment. Créez votre première règle à discuter ensemble.</div>'}${button(`${svg('plus')} Proposer une règle`,'new-rule','btn primary')}<div class="divider"></div><div class="smallcaps" style="margin-bottom:12px">Idées pour commencer</div><div class="idea-list">${suggested.map(r=>`<button class="suggestion" data-action="suggest-rule:${r.id}"><b>${esc(r.category)}</b><br>${esc(r.body)}<br><span style="color:var(--accent);font-weight:700">+ Proposer</span></button>`).join('')}</div></section></div><div class="notice warning" style="margin-top:16px">Les règles ne remplacent jamais le consentement du moment, notamment pour l'intimité. Pas de sanctions, de points de bonne conduite ni de suivi automatique des « infractions ».</div>`}
@@ -580,9 +697,9 @@ return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" a
 function close(){modal=null;render()}
 function changeMonth(d){const x=new Date(month+'-01T12:00:00');x.setMonth(x.getMonth()+d);month=monthKey(dstr(x));selected=month+'-01'}
 function confirmDel(q){return window.confirm(q)}
-function actions(e){const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='close-out'&&e.target!==b)return;sonsAction(a);if(emotionAction(a)||editAction(a)||syncAction(a)||albumAction(a)||notifAction(a)||penseeAction(a)||profilAction(a)||attenteAction(a)||feteAction(a)||reactionAction(a))return;if(a==='close'||a==='close-out'){close();return}if(a.startsWith('nav:')){page=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('sub:')){page='us';sub=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('tab:')){sub=a.split(':')[1];render();return}if(a.startsWith('cal-view:')){calView=a.split(':')[1];render();return}if(a==='cal-prev'||a==='cal-next'){if(calView==='month')changeMonth(a==='cal-prev'?-1:1);else{selected=addDay(selected,(a==='cal-prev'?-1:1)*(calView==='week'?7:1));month=monthKey(selected)}render();return}if(a==='cal-today'){month=monthKey(TODAY);selected=TODAY;render();return}if(a.startsWith('select-date:')){selected=a.split(':')[1];month=monthKey(selected);render();return}if(a.startsWith('theme:')){S.theme=a.split(':')[1];persist();render();modal={type:'settings'};render();return}if(a.startsWith('new-')||a==='edit-budget'||a==='settings'){modal={type:a};render();return}if(a.startsWith('delete-event:')){if(confirmDel('Supprimer cet événement ?')){S.events=S.events.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-expense:')){if(confirmDel('Supprimer cette dépense ?')){S.expenses=S.expenses.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-goal:')){if(confirmDel('Supprimer cet objectif ?')){S.goals=S.goals.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-project:')){if(confirmDel('Supprimer le projet et toutes ses tâches ?')){S.projects=S.projects.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-task:')){const [,pid,tid]=a.split(':');let p=S.projects.find(p=>p.id===pid);if(p)p.tasks=p.tasks.filter(t=>t.id!==tid);persist();render();return}if(a.startsWith('add-task:')){let pid=a.split(':')[1],v=$('#task-'+pid)?.value.trim();if(!v){toast('Écrivez une tâche.');return}S.projects.find(p=>p.id===pid)?.tasks.push({id:id(),name:v,done:false});persist();render();return}if(a.startsWith('deposit:')){modal={type:'deposit',id:a.split(':')[1]};render();return}if(a.startsWith('delete-expectation:')){if(confirmDel('Supprimer cette attente personnelle ?')){S.expectations=S.expectations.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-rule:')){if(confirmDel('Retirer cette proposition ?')){S.rules=S.rules.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('suggest-rule:')){let r=S.rules.find(x=>x.id===a.split(':')[1]);if(r){S.rules.push({id:id(),category:r.category,body:r.body,status:'pending'});persist();render();toast('Proposition créée. Non validée par le partenaire.')}return}if(a.startsWith('delete-memory:')){if(confirmDel(albumQuestionSuppression(a.split(':')[1]))){albumOublierSouvenir(a.split(':')[1]);S.memories=S.memories.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a==='reset-demo'){if(confirmDel('Réinitialiser toutes les données du prototype avec les exemples initiaux ?')){S=EmotionCore.migrate(seed());persist();modal=null;page='home';render()}return}if(a==='clear-all'){if(confirmDel('Effacer toutes les données de cette démonstration ? Cette action est irréversible.')){let oldTheme=S.theme,first=S.couple.first,second=S.couple.second;S=EmotionCore.migrate(seed());Object.assign(S,{theme:oldTheme,events:[],moods:[],emotionEntries:[],projects:[],expenses:[],goals:[],expectations:[],rules:[],memories:[],media:[],documents:[],pensees:[],demo:false});S.couple={...S.couple,first,second};persist();modal=null;page='home';render();ficMenageDemo()}return}}
-function changed(e){if(emotionChanged(e)||sonsChanged(e)||albumChanged(e)||notifChanged(e)||penseeChanged(e)||profilChanged(e)||depCatChanged(e))return;const c=e.target.dataset.change;if(!c)return;if(c==='intimacy'){S.privacy.showIntimacy=e.target.checked;persist();render();return}if(c.startsWith('task:')){const [,pid,tid]=c.split(':'),p=S.projects.find(x=>x.id===pid),t=p?.tasks.find(x=>x.id===tid);if(t){t.done=e.target.checked;persist();render()}return}}
-function submitted(e){const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();const action=f.dataset.form,d=Object.fromEntries(new FormData(f).entries());if(feteSubmitted(action,d)||penseeSubmitted(action,d)||albumSubmitted(action,d,f)||editSubmitted(action,d)||syncSubmitted(action,d))return;const req=(x)=>String(x||'').trim();const pos=(x)=>Number(x)>0&&Number.isFinite(Number(x));const bad=()=>toast('Vérifiez les informations saisies.');switch(action){case'submit-event':if(!req(d.title)||!d.date)return bad();S.events.push({id:id(),title:req(d.title),lieu:req(d.lieu),date:d.date,type:d.type||'rdv'});selected=d.date;month=monthKey(d.date);break;
+function actions(e){const b=e.target.closest('[data-action]');if(!b)return;const a=b.dataset.action;if(a==='close-out'&&e.target!==b)return;sonsAction(a);if(emotionAction(a)||editAction(a)||syncAction(a)||albumAction(a)||notifAction(a)||penseeAction(a)||profilAction(a)||attenteAction(a)||feteAction(a)||reactionAction(a)||jardinAction(a)||ephAction(a)||kamaAction(a)||histAction(a))return;if(a==='close'||a==='close-out'){close();return}if(a.startsWith('nav:')){page=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('sub:')){page='us';sub=a.split(':')[1];window.scrollTo(0,0);render();return}if(a.startsWith('tab:')){sub=a.split(':')[1];render();return}if(a.startsWith('cal-view:')){calView=a.split(':')[1];render();return}if(a==='cal-prev'||a==='cal-next'){if(calView==='month')changeMonth(a==='cal-prev'?-1:1);else{selected=addDay(selected,(a==='cal-prev'?-1:1)*(calView==='week'?7:1));month=monthKey(selected)}render();return}if(a==='cal-today'){month=monthKey(TODAY);selected=TODAY;render();return}if(a.startsWith('select-date:')){selected=a.split(':')[1];month=monthKey(selected);render();return}if(a.startsWith('theme:')){S.theme=a.split(':')[1];persist();render();modal={type:'settings'};render();return}if(a.startsWith('new-')||a==='edit-budget'||a==='settings'){modal={type:a};render();return}if(a.startsWith('delete-event:')){if(confirmDel('Supprimer cet événement ?')){S.events=S.events.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-expense:')){if(confirmDel('Supprimer cette dépense ?')){S.expenses=S.expenses.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-goal:')){if(confirmDel('Supprimer cet objectif ?')){S.goals=S.goals.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-project:')){if(confirmDel('Supprimer le projet et toutes ses tâches ?')){S.projects=S.projects.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-task:')){const [,pid,tid]=a.split(':');let p=S.projects.find(p=>p.id===pid);if(p)p.tasks=p.tasks.filter(t=>t.id!==tid);persist();render();return}if(a.startsWith('add-task:')){let pid=a.split(':')[1],v=$('#task-'+pid)?.value.trim();if(!v){toast('Écrivez une tâche.');return}S.projects.find(p=>p.id===pid)?.tasks.push({id:id(),name:v,done:false});persist();render();return}if(a.startsWith('deposit:')){modal={type:'deposit',id:a.split(':')[1]};render();return}if(a.startsWith('delete-expectation:')){if(confirmDel('Supprimer cette attente personnelle ?')){S.expectations=S.expectations.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('delete-rule:')){if(confirmDel('Retirer cette proposition ?')){S.rules=S.rules.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a.startsWith('suggest-rule:')){let r=S.rules.find(x=>x.id===a.split(':')[1]);if(r){S.rules.push({id:id(),category:r.category,body:r.body,status:'pending'});persist();render();toast('Proposition créée. Non validée par le partenaire.')}return}if(a.startsWith('delete-memory:')){if(confirmDel(albumQuestionSuppression(a.split(':')[1]))){albumOublierSouvenir(a.split(':')[1]);S.memories=S.memories.filter(x=>x.id!==a.split(':')[1]);persist();render()}return}if(a==='reset-demo'){if(confirmDel('Réinitialiser toutes les données du prototype avec les exemples initiaux ?')){S=EmotionCore.migrate(seed());persist();modal=null;page='home';render()}return}if(a==='clear-all'){if(confirmDel('Effacer toutes les données de cette démonstration ? Cette action est irréversible.')){let oldTheme=S.theme,first=S.couple.first,second=S.couple.second;S=EmotionCore.migrate(seed());Object.assign(S,{theme:oldTheme,events:[],moods:[],emotionEntries:[],projects:[],expenses:[],goals:[],expectations:[],rules:[],memories:[],media:[],documents:[],pensees:[],demo:false});S.couple={...S.couple,first,second};persist();modal=null;page='home';render();ficMenageDemo()}return}}
+function changed(e){if(emotionChanged(e)||sonsChanged(e)||albumChanged(e)||notifChanged(e)||penseeChanged(e)||profilChanged(e)||depCatChanged(e)||ephChanged(e))return;const c=e.target.dataset.change;if(!c)return;if(c==='intimacy'){S.privacy.showIntimacy=e.target.checked;persist();render();return}if(c.startsWith('task:')){const [,pid,tid]=c.split(':'),p=S.projects.find(x=>x.id===pid),t=p?.tasks.find(x=>x.id===tid);if(t){t.done=e.target.checked;persist();render()}return}}
+function submitted(e){const f=e.target.closest('[data-form]');if(!f)return;e.preventDefault();const action=f.dataset.form,d=Object.fromEntries(new FormData(f).entries());if(jardinSubmitted(action,d)||feteSubmitted(action,d)||penseeSubmitted(action,d)||albumSubmitted(action,d,f)||editSubmitted(action,d)||syncSubmitted(action,d))return;const req=(x)=>String(x||'').trim();const pos=(x)=>Number(x)>0&&Number.isFinite(Number(x));const bad=()=>toast('Vérifiez les informations saisies.');switch(action){case'submit-event':if(!req(d.title)||!d.date)return bad();S.events.push({id:id(),title:req(d.title),lieu:req(d.lieu),date:d.date,type:d.type||'rdv'});selected=d.date;month=monthKey(d.date);break;
 case'submit-project':if(!req(d.name))return bad();S.projects.push({id:id(),name:req(d.name),emoji:req(d.emoji)||'✨',due:d.due,tasks:[]});break;
 case'submit-expense':if(!req(d.name)||!pos(d.amount)||!d.date||!depCatValeur(d))return bad();S.expenses.push({id:id(),name:req(d.name),amount:Number(d.amount),date:d.date,category:depCatValeur(d),paidBy:d.paidBy,visibility:'partage'});break;
 case'submit-budget':if(Number(d.budget)<0||!Number.isFinite(Number(d.budget)))return bad();S.budget=Number(d.budget);break;
@@ -764,7 +881,7 @@ const SYNC_CFG = (typeof window !== 'undefined' && window.ENTRE_NOUS_CONFIG) || 
 const SYNC_MODE = !SYNC_CFG.api ? 'demo' : SYNC_CFG.api === 'banc' ? 'banc' : 'ligne';
 const SYNC_PARAMS = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
 const SYNC_KEY = KEY + ':sync';
-const SYNC_COLS = ['events', 'projects', 'expenses', 'goals', 'expectations', 'rules', 'memories', 'media', 'documents', 'pensees', 'profils', 'voeux', 'reactions', 'emotionEntries'];
+const SYNC_COLS = ['events', 'projects', 'expenses', 'goals', 'expectations', 'rules', 'memories', 'media', 'documents', 'pensees', 'profils', 'voeux', 'reactions', 'jardin', 'envies', 'invitations', 'bons', 'ephemeres', 'positions', 'emotionEntries'];
 const SYNC_EMPTY = { jeton: '', me: '', file: [], base: null, version: 0, maj: 0, partenaireActif: true, noms: {}, dernierProfil: 'partner-a' };
 function syncRead() { try { return Object.assign({}, SYNC_EMPTY, JSON.parse(localStorage.getItem(SYNC_KEY)) || {}); } catch (e) { return Object.assign({}, SYNC_EMPTY); } }
 let SY = syncRead();
@@ -779,7 +896,7 @@ function syncError(message, code) { const e = new Error(message); e.code = code 
 // A function declaration on purpose: load() calls it before this file's constants exist.
 function emptyState() {
   const s = seed();
-  return Object.assign(s, { couple: { ...s.couple, first: '', second: '' }, events: [], moods: [], projects: [], expenses: [], goals: [], expectations: [], memories: [], media: [], documents: [], pensees: [], profils: [], voeux: [], reactions: [], emotionEntries: [], rules: s.rules.filter(r => r.status === 'example'), demo: false });
+  return Object.assign(s, { couple: { ...s.couple, first: '', second: '' }, events: [], moods: [], projects: [], expenses: [], goals: [], expectations: [], memories: [], media: [], documents: [], pensees: [], profils: [], voeux: [], reactions: [], jardin: [], envies: [], invitations: [], bons: [], ephemeres: [], positions: [], jardinAccords: {}, jardinExclus: [], emotionEntries: [], rules: s.rules.filter(r => r.status === 'example'), demo: false });
 }
 
 // Options: delai (ms, 12 s by default) and essais (3 by default; 1 for a file chunk, whose resumption is checked first).
@@ -812,7 +929,7 @@ function syncWritable() {
   for (const col of SYNC_COLS) {
     out[col] = {};
     for (const item of S[col] || []) {
-      if (!item || !item.id || (col === 'rules' && item.status === 'example') || ((col === 'emotionEntries' || col === 'pensees' || col === 'profils' || col === 'voeux' || col === 'reactions') && item.ownerId !== me)) continue;
+      if (!item || !item.id || (col === 'rules' && item.status === 'example') || ((col === 'emotionEntries' || col === 'pensees' || col === 'profils' || col === 'voeux' || col === 'reactions' || col === 'jardin' || col === 'envies') && item.ownerId !== me)) continue;
       if ((col === 'expectations' || col === 'expenses') && !item.ownerId) item.ownerId = me;
       if (col === 'rules' && !item.proposedBy) item.proposedBy = me;
       out[col][item.id] = item;
@@ -889,6 +1006,7 @@ async function syncRefresh() {
 function syncApply(data, r) {
   const examples = S.rules.filter(x => x.status === 'example');
   for (const col of SYNC_COLS) S[col] = Object.values(data[col] || {});
+  S.jardinAccords = data.jardinAccords || {}; S.jardinExclus = data.jardinExclus || [];
   S.rules = S.rules.concat(examples);
   S.couple = { ...S.couple, id: r.coupleId || S.couple.id };
   const c = (data.couple || {}).couple;
@@ -2013,11 +2131,21 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
 
 // Profile photos: each partner's picture replaces their initial everywhere (header, menu, thoughts of the day).
 // A small square JPEG (256 px) kept with the couple's data; connected, each one changes only their own (serveur/Code.gs, « profil »).
-const PROFIL_COTE = 256;
+const PROFIL_COTE = 480;   // lot 1.8: sharper, since the photo can now be shown large (256 before)
 const profilPhoto = owner => ((S.profils || []).find(x => x.id === 'photo-' + owner) || {}).photo || '';
 const profilInterieur = owner => { const p = profilPhoto(owner); return p ? `<img src="${p}" alt="">` : esc(personName(owner).slice(0, 1)); };
 // Every avatar carries data-avatar: a new photo appears at once, without redrawing an open form.
-const profilAvatar = (owner, classe = 'avatar') => `<div class="${classe}${profilPhoto(owner) ? ' a-photo' : ''}" data-avatar="${owner}" title="${esc(personName(owner))}">${profilInterieur(owner)}</div>`;
+// With a photo, a touch shows it large (lot 1.8).
+const profilAvatar = (owner, classe = 'avatar') => `<div class="${classe}${profilPhoto(owner) ? ' a-photo' : ''}" data-avatar="${owner}" data-action="profil-voir:${owner}" title="${esc(personName(owner))}">${profilInterieur(owner)}</div>`;
+function profilVoir(owner) {
+  const p = profilPhoto(owner);
+  if (!p || typeof document === 'undefined' || !document.body || !document.body.appendChild) return;
+  const el = document.createElement('div');
+  el.className = 'profil-vue'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Photo de ' + personName(owner));
+  el.innerHTML = `<figure><img src="${p}" alt="Photo de ${esc(personName(owner))}"><figcaption>${esc(personName(owner))}</figcaption></figure><button type="button" class="btn sm">Fermer</button>`;
+  el.addEventListener('click', () => el.remove());
+  document.body.appendChild(el);
+}
 function profilMaj(owner) { document.querySelectorAll(`[data-avatar="${owner}"]`).forEach(el => { el.innerHTML = profilInterieur(owner); el.classList.toggle('a-photo', !!profilPhoto(owner)); }); document.querySelectorAll(`[data-profil-retirer="${owner}"]`).forEach(el => { el.hidden = !profilPhoto(owner); }); document.querySelectorAll(`[data-profil-choix="${owner}"]`).forEach(el => { el.textContent = profilPhoto(owner) ? 'Changer la photo' : 'Choisir une photo'; }); }
 const profilModifiable = owner => !syncConnected() || owner === SY.me;
 // Settings, under the first names: each partner's photo, with « Choisir une photo » for the one this phone may change.
@@ -2046,6 +2174,7 @@ function profilChanged(e) {
   return true;
 }
 function profilAction(a) {
+  if (a.startsWith('profil-voir:')) { profilVoir(a.slice(12)); return true; }
   if (!a.startsWith('profil-retirer:')) return false;
   const owner = a.slice(15);
   if (profilModifiable(owner) && confirmDel('Retirer cette photo de profil ?')) { profilPoser(owner, ''); toast('Photo retirée.'); }
@@ -2074,7 +2203,7 @@ if (typeof document !== 'undefined' && document.addEventListener) document.addEv
 // What the partner added since this phone last looked (lot 1.3, user's remark): a red dot on the menu and on the tab,
 // then « Nouveau » on the items themselves. The mark (signalPar, signalLe) is set by the service on each real addition;
 // what this phone has seen is kept here, per section, as the latest mark already shown (service time, no clock gap).
-const NOUV_SECTIONS = { events: 'calendar', projects: 'projects', expenses: 'finance', goals: 'finance', rules: 'us/agreements', memories: 'us/memories', media: 'us/memories', documents: 'us/documents', emotionEntries: 'us/mood', pensees: 'home', reactions: 'home' };
+const NOUV_SECTIONS = { events: 'calendar', projects: 'projects', expenses: 'finance', goals: 'finance', rules: 'us/agreements', memories: 'us/memories', media: 'us/memories', documents: 'us/documents', emotionEntries: 'us/mood', pensees: 'home', reactions: 'home', invitations: 'us/jardin', jardin: 'us/jardin', bons: 'us/jardin', ephemeres: 'us/jardin' };
 const NOUV_KEY = KEY + ':vus';
 const NOUV = { vus: (() => { try { return JSON.parse(localStorage.getItem(NOUV_KEY)) || {}; } catch (e) { return {}; } })(), avant: {}, ici: '' };
 const nouvSection = () => page === 'us' ? 'us/' + (sub || 'overview') : page;
@@ -2283,11 +2412,11 @@ function feteAccueil() {
 function feteModal() {
   if (modal?.type !== 'fete-voeux') return '';
   const autre = partnerOf(feteMoi()), v = feteMonVoeu(), nom = esc(personName(autre)), j = feteProchain(autre);
-  return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" aria-modal="true" aria-label="Mes vœux pour ${nom}" class="modal"><div class="modal-head"><h2>Mes vœux pour ${nom}</h2>${button('×', 'close', 'btn ghost sm')}</div><form data-form="submit-voeux"><p class="quiet small">Anniversaire le ${feteDateLongue(j)}. ${feteJours(TODAY, j) > 0 ? `${nom} ne verra ce texte que ce jour-là, dans sa surprise : aucune notification ne le trahira.` : `${nom} le verra dans sa surprise.`}</p><div class="field"><label for="f-voeu">Votre message</label><textarea id="f-voeu" name="texte" maxlength="1000" required placeholder="Joyeux anniversaire, mon cœur…">${esc(v ? v.texte : '')}</textarea></div><div class="form-actions">${v ? button('Retirer mes vœux', 'fete-voeux-retirer', 'btn ghost sm danger') : ''}<button class="btn primary" type="submit">Enregistrer mes vœux</button></div></form></div></div>`;
+  return `<div class="modal-backdrop" data-action="close-out"><div role="dialog" aria-modal="true" aria-label="Mes vœux pour ${nom}" class="modal"><div class="modal-head"><h2>Mes vœux pour ${nom}</h2>${button('×', 'close', 'btn ghost sm')}</div><form data-form="submit-voeux"><p class="quiet small">Anniversaire le ${feteDateLongue(j)}. ${feteJours(TODAY, j) > 0 ? `${nom} ne verra ce texte que ce jour-là, dans sa surprise : aucune notification ne le trahira.` : `${nom} le verra dans sa surprise.`}</p><div class="field"><label for="f-voeu">Votre message</label><textarea id="f-voeu" name="texte" maxlength="10000" required placeholder="Joyeux anniversaire, mon cœur…">${esc(v ? v.texte : '')}</textarea></div><div class="form-actions">${v ? button('Retirer mes vœux', 'fete-voeux-retirer', 'btn ghost sm danger') : ''}<button class="btn primary" type="submit">Enregistrer mes vœux</button></div></form></div></div>`;
 }
 function feteSubmitted(action, d) {
   if (action !== 'submit-voeux') return false;
-  const moi = feteMoi(), autre = partnerOf(moi), j = feteProchain(autre), texte = String(d.texte || '').trim().slice(0, 1000);
+  const moi = feteMoi(), autre = partnerOf(moi), j = feteProchain(autre), texte = String(d.texte || '').trim().slice(0, 10000);
   if (!j || !texte) { toast('Écrivez quelques mots.'); return true; }
   const id = feteVoeuId(moi, j);
   S.voeux = (S.voeux || []).filter(x => x.id !== id).concat({ id, ownerId: moi, pour: autre, jour: j, texte, updatedAt: new Date().toISOString() });
@@ -2437,6 +2566,831 @@ if (typeof navigator !== 'undefined' && navigator.serviceWorker && typeof locati
     }).catch(() => {});
   });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') majVerifier(); });
+}
+
+// Jardin secret (lot 1.6): editorial library written for Entre Nous, suggestive but never explicit, for adults.
+// Levels: 1 Tendre · 2 Complice · 3 Audacieux. The garden shows the level of the more cautious of the two.
+// Envies: [id, level, emoji, text]. Ids are stable (answers are kept by id): add new ones at the end, never renumber.
+const JARDIN_NIVEAUX = [[1, 'Tendre', '🌷', 'Tendresse, câlins et attentions'], [2, 'Complice', '🌹', 'Séduction, jeux et complicité'], [3, 'Audacieux', '🔥', 'Pour oser, ensemble et en confiance']];
+const JARDIN_ENVIES = [
+  ['e001', 1, '🤗', 'Un long câlin, sans téléphone ni montre'],
+  ['e002', 1, '🛁', 'Un bain ou une douche à deux, sans se presser'],
+  ['e003', 1, '💆', 'Un massage du dos aux huiles, à tour de rôle'],
+  ['e004', 1, '🌙', 'S’endormir l’un contre l’autre'],
+  ['e005', 1, '🥐', 'Un petit-déjeuner au lit, préparé pour l’autre'],
+  ['e006', 1, '💃', 'Danser un slow dans le salon'],
+  ['e007', 1, '💋', 'Des baisers dans le cou, par surprise'],
+  ['e008', 1, '👀', 'Se dire ce qu’on aime chez l’autre, les yeux dans les yeux'],
+  ['e009', 1, '🏨', 'Une nuit à l’hôtel, rien que nous deux'],
+  ['e010', 1, '💌', 'Des mots doux glissés dans la journée'],
+  ['e011', 1, '🕯️', 'Une soirée à la lueur des bougies'],
+  ['e012', 1, '⏳', 'Prendre tout notre temps, sans rien prévoir après'],
+  ['e013', 2, '📱', 'Un message coquin au milieu de la journée'],
+  ['e014', 2, '👗', 'Une tenue choisie pour plaire à l’autre'],
+  ['e015', 2, '💆', 'Un massage complet, de la tête aux pieds'],
+  ['e016', 2, '🍷', 'Un rendez-vous où l’on se séduit comme au premier soir'],
+  ['e017', 2, '🙈', 'Les yeux bandés, pour mieux ressentir'],
+  ['e018', 2, '🎲', 'Décider à tour de rôle du programme de la soirée'],
+  ['e019', 2, '✨', 'Une tenue surprise, dévoilée le soir venu'],
+  ['e020', 2, '🎶', 'Une danse lascive, rien que pour l’autre'],
+  ['e021', 2, '😏', 'Un jeu de regards discret, en public'],
+  ['e022', 2, '🚪', 'Changer de pièce, pour changer d’habitude'],
+  ['e023', 2, '🔥', 'Prendre l’initiative plus souvent, chacun son tour'],
+  ['e024', 2, '🌅', 'Un réveil tout en caresses'],
+  ['e025', 3, '🎭', 'Un jeu de rôle, avec des personnages inventés ensemble'],
+  ['e026', 3, '🧣', 'Des liens tout doux, un foulard par exemple'],
+  ['e027', 3, '🗝️', 'Se laisser guider entièrement par l’autre'],
+  ['e028', 3, '🌴', 'Un lieu inhabituel, à l’abri des regards'],
+  ['e029', 3, '🎁', 'Un accessoire à découvrir ensemble'],
+  ['e030', 3, '🎲', 'Un jeu de dés coquin'],
+  ['e031', 3, '💭', 'Se raconter un fantasme, sans obligation de le vivre'],
+  ['e032', 3, '🛏️', 'Un week-end en amoureux sans sortir de la chambre'],
+  ['e033', 3, '🚿', 'Une douche très, très câline'],
+  ['e034', 3, '⏰', 'Faire durer le plaisir, sans regarder l’heure'],
+  ['e035', 3, '👑', 'Une soirée où l’un décide de tout, l’autre se laisse faire'],
+  ['e036', 3, '🌶️', 'Pimenter avec un défi lancé par l’autre']
+];
+// « Parlons-en »: questions to talk about together, by level: [id, level, text].
+const JARDIN_QUESTIONS = [
+  ['q01', 1, 'Quel geste de tendresse te fait le plus de bien ?'],
+  ['q02', 1, 'Quel moment à deux t’a laissé le plus beau souvenir ?'],
+  ['q03', 1, 'Qu’est-ce qui te met dans l’ambiance après une longue journée ?'],
+  ['q04', 1, 'Plutôt câlin du matin ou câlin du soir ?'],
+  ['q05', 1, 'Quel mot doux aimerais-tu entendre plus souvent ?'],
+  ['q06', 1, 'Où aimerais-tu qu’on passe une nuit rien qu’à nous ?'],
+  ['q07', 1, 'Qu’est-ce qui te donne le sentiment d’être désiré(e) ?'],
+  ['q08', 1, 'Comment aimes-tu qu’on te montre qu’on a envie de toi ?'],
+  ['q09', 1, 'Qu’est-ce qui t’aide à te sentir en confiance avec moi ?'],
+  ['q10', 1, 'Quelle chanson te fait penser à nous deux ?'],
+  ['q11', 2, 'Quelle tenue de l’autre te fait le plus d’effet ?'],
+  ['q12', 2, 'Qu’aimerais-tu que je fasse plus souvent ?'],
+  ['q13', 2, 'As-tu une envie que tu n’as jamais osé me dire ?'],
+  ['q14', 2, 'Qu’est-ce qui te fait craquer chez moi, sans que je le sache ?'],
+  ['q15', 2, 'Plutôt surprise ou plutôt rendez-vous préparé ?'],
+  ['q16', 2, 'Quel souvenir intime aimerais-tu revivre ?'],
+  ['q17', 2, 'Qu’est-ce qui t’a séduit(e) chez moi la première fois ?'],
+  ['q18', 2, 'Quel message aimerais-tu recevoir de moi au milieu de la journée ?'],
+  ['q19', 2, 'Y a-t-il un compliment qui te touche plus que les autres ?'],
+  ['q20', 2, 'Quel serait ton rendez-vous idéal, du début à la fin ?'],
+  ['q21', 3, 'Quel fantasme aimerais-tu me raconter, juste le raconter ?'],
+  ['q22', 3, 'Y a-t-il un lieu qui t’attire pour un moment à deux ?'],
+  ['q23', 3, 'Préfères-tu mener ou te laisser guider ?'],
+  ['q24', 3, 'Quelle limite aimerais-tu qu’on respecte toujours ?'],
+  ['q25', 3, 'Qu’est-ce qui te donnerait plus confiance pour oser ?'],
+  ['q26', 3, 'Si on avait une nuit sans aucune contrainte, à quoi ressemblerait-elle ?'],
+  ['q27', 3, 'Quel mot ou quel geste pourrait vouloir dire « on fait une pause » entre nous ?'],
+  ['q28', 3, 'Qu’est-ce que tu n’as jamais essayé mais qui te rend curieux(se) ?'],
+  ['q29', 3, 'Qu’est-ce qui rend un moment à deux inoubliable pour toi ?'],
+  ['q30', 3, 'Y a-t-il quelque chose que tu aimerais que je te demande plus souvent ?']
+];
+// Suggested words for an invitation (the person writes their own if they prefer).
+const JARDIN_MOTS = ['Et si on se gardait la soirée rien que pour nous ?', 'J’ai envie de toi ce soir… ♡', 'Rendez-vous à 21 h, je m’occupe de l’ambiance.', 'Ce soir, je t’enlève. Laisse-toi faire.', 'Un bain, des bougies, et toi ?', 'Tu m’as manqué aujourd’hui. Rattrapons ça ce soir.'];
+// Lot 1.7. Cards: [id, level, type, emoji, text]; type 🎯 défi · 🌙 soirée · 🎲 jeu. Proposed to the other as an invitation.
+const JARDIN_TYPES = { defi: '🎯 Défi', soiree: '🌙 Idée de soirée', jeu: '🎲 Jeu' };
+const JARDIN_CARTES = [
+  ['c001', 1, 'soiree', '🕯️', 'Un dîner aux chandelles à la maison, téléphones éteints'],
+  ['c002', 1, 'defi', '💬', 'Trois compliments sincères chacun, les yeux dans les yeux'],
+  ['c003', 1, 'defi', '🤲', 'Un massage des mains et des pieds, dix minutes chacun'],
+  ['c004', 1, 'jeu', '💞', 'Chacun raconte le moment où il est tombé amoureux de l’autre'],
+  ['c005', 1, 'soiree', '🛁', 'Un bain moussant et une musique douce'],
+  ['c006', 1, 'defi', '💋', 'Un baiser de trente secondes, sans rire'],
+  ['c007', 1, 'jeu', '💌', 'Écrire un mot doux et le cacher quelque part pour l’autre'],
+  ['c008', 1, 'soiree', '📷', 'Revoir les photos de vos débuts, blottis l’un contre l’autre'],
+  ['c009', 1, 'defi', '🤝', 'S’endormir main dans la main'],
+  ['c010', 1, 'soiree', '🧺', 'Un pique-nique sur le lit'],
+  ['c011', 1, 'jeu', '❓', 'Cinq questions pour deviner les préférences de l’autre, à tour de rôle'],
+  ['c012', 1, 'defi', '🎶', 'Danser un slow sur votre chanson'],
+  ['c013', 2, 'defi', '📱', 'Envoyer un message coquin à l’autre avant ce soir'],
+  ['c014', 2, 'jeu', '🌡️', 'Le jeu du chaud-froid : guider l’autre jusqu’à l’endroit où vous aimez les baisers'],
+  ['c015', 2, 'soiree', '🍷', 'Se préparer chacun de son côté et se retrouver comme pour un premier rendez-vous'],
+  ['c016', 2, 'defi', '🙈', 'Les yeux bandés, deviner trois saveurs que l’autre vous fait goûter'],
+  ['c017', 2, 'defi', '👗', 'Choisir la tenue de l’autre pour la soirée'],
+  ['c018', 2, 'jeu', '🎭', 'Action ou vérité, version douce'],
+  ['c019', 2, 'soiree', '💆', 'Un massage complet aux huiles, vingt minutes chacun'],
+  ['c020', 2, 'defi', '💃', 'Une danse rien que pour l’autre, sur la chanson de son choix'],
+  ['c021', 2, 'jeu', '🎲', 'Les dés coquins : un dé pour le geste, un dé pour l’endroit'],
+  ['c022', 2, 'defi', '😏', 'Un regard complice en public, sans que personne ne le remarque'],
+  ['c023', 2, 'soiree', '🚿', 'Une douche à deux, sans se presser'],
+  ['c024', 2, 'jeu', '🤫', 'Le premier qui parle a perdu… et offre un baiser'],
+  ['c025', 3, 'jeu', '🎭', 'Jeu de rôle : vous vous rencontrez pour la première fois dans un bar'],
+  ['c026', 3, 'defi', '🗝️', 'Se laisser guider entièrement par l’autre pendant quinze minutes'],
+  ['c027', 3, 'defi', '🧣', 'Un foulard, et toute la confiance du monde'],
+  ['c028', 3, 'soiree', '🏨', 'Une nuit à l’hôtel, réservée en secret par l’un des deux'],
+  ['c029', 3, 'jeu', '💭', 'Raconter un fantasme, juste le raconter'],
+  ['c030', 3, 'defi', '🚪', 'Changer de pièce, et d’habitudes'],
+  ['c031', 3, 'defi', '👑', 'Ce soir, l’un décide de tout, l’autre se laisse faire'],
+  ['c032', 3, 'jeu', '🎁', 'Un accessoire choisi ensemble, à découvrir à deux'],
+  ['c033', 3, 'soiree', '🛏️', 'Un week-end sans sortir de la chambre'],
+  ['c034', 3, 'defi', '⏳', 'Faire durer le plaisir : interdiction de se presser'],
+  ['c035', 3, 'jeu', '🃏', 'Un strip-poker, avec vos propres règles'],
+  ['c036', 3, 'defi', '✨', 'Réaliser une des envies que vous avez cochées tous les deux']
+];
+// Coupons to give: [id, level, text]. The person can also write their own.
+const JARDIN_BONS = [
+  ['b01', 1, 'Bon pour un massage de vingt minutes'], ['b02', 1, 'Bon pour un petit-déjeuner au lit'], ['b03', 1, 'Bon pour une soirée film de ton choix'], ['b04', 1, 'Bon pour un câlin à la demande, n’importe quand'],
+  ['b05', 2, 'Bon pour un slow, là, tout de suite'], ['b06', 2, 'Bon pour une soirée où tu décides de tout'], ['b07', 2, 'Bon pour un massage complet aux huiles'], ['b08', 2, 'Bon pour une tenue de ton choix'],
+  ['b09', 3, 'Bon pour réaliser une de nos envies communes'], ['b10', 3, 'Bon pour une nuit où tu mènes la danse'], ['b11', 3, 'Bon pour un jeu de ton choix'], ['b12', 3, 'Bon pour un réveil très câlin']
+];
+// « Mes limites »: themes each person can rule out. Anything tagged with a limit of either partner is never suggested
+// (envies, cards, coupons, questions), without saying whose limit it is.
+const JARDIN_LIMITES = [['messages', 'Messages coquins'], ['tenues', 'Tenues et lingerie'], ['danse', 'Danses et effeuillages'], ['public', 'Jeux de séduction en public'], ['yeux', 'Yeux bandés'], ['liens', 'Liens et foulards'], ['pouvoir', 'Mener ou se laisser guider'], ['roles', 'Jeux de rôle'], ['lieux', 'Lieux inhabituels'], ['accessoires', 'Accessoires'], ['fantasmes', 'Parler de fantasmes']];
+const JARDIN_ETIQUETTES = {
+  e013: ['messages'], e014: ['tenues'], e017: ['yeux'], e019: ['tenues'], e020: ['danse'], e021: ['public'], e025: ['roles'], e026: ['liens'], e027: ['pouvoir'], e028: ['lieux'], e029: ['accessoires'], e031: ['fantasmes'], e035: ['pouvoir'],
+  c013: ['messages'], c016: ['yeux'], c017: ['tenues'], c020: ['danse'], c022: ['public'], c025: ['roles'], c026: ['pouvoir'], c027: ['liens'], c029: ['fantasmes'], c030: ['lieux'], c031: ['pouvoir'], c032: ['accessoires'], c035: ['tenues', 'danse'],
+  b08: ['tenues'], b10: ['pouvoir'],
+  q11: ['tenues'], q21: ['fantasmes'], q22: ['lieux'], q23: ['pouvoir']
+};
+if (typeof module !== 'undefined') module.exports = { JARDIN_NIVEAUX, JARDIN_ENVIES, JARDIN_QUESTIONS, JARDIN_MOTS, JARDIN_TYPES, JARDIN_CARTES, JARDIN_BONS, JARDIN_LIMITES, JARDIN_ETIQUETTES };
+
+// Jardin secret (lot 1.6): « Nous » › « 🌹 Jardin secret ». Opens only when both have opened their door, at the level of the
+// more cautious of the two; either can pause it at any time, without saying why. A second lock (code of the garden, Face ID if
+// wanted) guards it on each phone. Three modules: Nos envies (only shared envies are revealed), L'invitation (« Ce soir ? »),
+// Parlons-en (questions to talk about together). Nothing explicit in notifications; no scores, no statistics.
+const JARDIN = { ouvert: false, vu: 0, onglet: 'envies', revoir: false, plusTard: [], q: 0, quand: 'soir', reglages: false, essais: 0, bloque: 0, faceDispo: null, carte: null, tirees: [] };
+const jardinMoi = () => syncConnected() ? SY.me : emotionViewer;
+const jardinDe = o => (S.jardin || []).find(x => x.id === 'jardin-' + o) || null;
+const jardinNiveau = () => { const a = jardinDe(jardinMoi()), b = jardinDe(partnerOf(jardinMoi())); return Math.min((a && a.niveau) || 1, (b && b.niveau) || 1); };
+const jardinNiv = n => JARDIN_NIVEAUX.find(x => x[0] === n) || JARDIN_NIVEAUX[0];
+const jardinIphone = () => typeof navigator !== 'undefined' && /iPhone|iPad/.test(navigator.userAgent || '');
+const jardinFaceNom = () => jardinIphone() ? 'Face ID' : 'le déverrouillage de l’appareil';
+
+/* ----- the lock (per phone and per sign-in: a new sign-in asks for a new code, which is how a forgotten code is reset) ----- */
+function jardinHache(sel, code) {
+  let a = 0x811c9dc5, b = 0x01000193 ^ 0x5bd1e995; const t = sel + '|' + code;
+  for (let r = 0; r < 4000; r++) for (let i = 0; i < t.length; i++) { const c = t.charCodeAt(i) + r; a = Math.imul(a ^ c, 16777619) >>> 0; b = Math.imul(b ^ (c + a), 2246822507) >>> 0; }
+  return a.toString(16).padStart(8, '0') + b.toString(16).padStart(8, '0');
+}
+function jardinCleVerrou() {
+  const j = syncConnected() ? SY.jeton || '' : 'demo';
+  return KEY + ':jardin-verrou:' + jardinMoi() + ':' + jardinHache('cle', j).slice(0, 10);
+}
+const jardinVerrou = () => { try { return JSON.parse(localStorage.getItem(jardinCleVerrou())) || null; } catch (e) { return null; } };
+const jardinGarderVerrou = v => { try { if (v) localStorage.setItem(jardinCleVerrou(), JSON.stringify(v)); else localStorage.removeItem(jardinCleVerrou()); } catch (e) { /* stockage bloqué */ } };
+function jardinPoserCode(code) { const sel = Math.random().toString(36).slice(2, 12), v = jardinVerrou() || {}; jardinGarderVerrou(Object.assign(v, { sel, empreinte: jardinHache(sel, code) })); }
+const jardinCodeValide = code => /^\d{4,6}$/.test(String(code || ''));
+const jardinOuvrir = () => { JARDIN.ouvert = true; JARDIN.vu = Date.now(); JARDIN.essais = 0; };
+const jardinFermer = () => { JARDIN.ouvert = false; JARDIN.reglages = false; JARDIN.revoir = false; };
+// Face ID (WebAuthn, platform authenticator): only unlocks this phone's garden; nothing is sent to the service.
+const jardinB64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const jardinDeB64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+function jardinFaceDisponible() {
+  if (JARDIN.faceDispo === null) {
+    JARDIN.faceDispo = false;
+    try { if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable && window.isSecureContext) PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().then(ok => { JARDIN.faceDispo = !!ok; if (ok && page === 'us' && sub === 'jardin') render(); }).catch(() => {}); } catch (e) { /* indisponible */ }
+  }
+  return JARDIN.faceDispo;
+}
+async function jardinFaceCreer() {
+  const c = await navigator.credentials.create({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), rp: { name: 'Entre Nous' },
+    user: { id: crypto.getRandomValues(new Uint8Array(16)), name: 'jardin-' + jardinMoi(), displayName: 'Jardin secret · ' + personName(jardinMoi()) },
+    pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+    authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' }, attestation: 'none', timeout: 60000 } });
+  jardinGarderVerrou(Object.assign(jardinVerrou() || {}, { face: jardinB64(c.rawId) }));
+}
+async function jardinFaceOuvrir() {
+  const v = jardinVerrou();
+  await navigator.credentials.get({ publicKey: { challenge: crypto.getRandomValues(new Uint8Array(32)), allowCredentials: [{ type: 'public-key', id: jardinDeB64(v.face) }], userVerification: 'required', timeout: 60000 } });
+}
+
+/* ----- envies ----- */
+const jardinMesEnvies = () => (S.envies || []).find(x => x.id === 'env-' + jardinMoi()) || null;
+function jardinRepondre(id, rep) {
+  const moi = jardinMoi(), doc = jardinMesEnvies() || { id: 'env-' + moi, ownerId: moi, reponses: {} };
+  doc.reponses = Object.assign({}, doc.reponses, { [id]: rep }); doc.updatedAt = new Date().toISOString();
+  S.envies = (S.envies || []).filter(x => x.id !== doc.id).concat(doc);
+  persist();
+}
+// « Mes limites » (lot 1.7): mine, plus the union of both given by the service (without saying whose), filter every suggestion.
+const jardinMesLimites = () => (jardinMesEnvies() || {}).limites || [];
+function jardinExclus() {
+  const L = new Set(jardinMesLimites());
+  if (syncConnected()) (S.jardinExclus || []).forEach(t => L.add(t)); else (S.envies || []).forEach(e => (e.limites || []).forEach(t => L.add(t)));
+  return [...L];
+}
+const jardinPermis = (id, ex = jardinExclus()) => !(JARDIN_ETIQUETTES[id] || []).some(t => ex.includes(t));
+function jardinLimite(tag) {
+  const moi = jardinMoi(), doc = jardinMesEnvies() || { id: 'env-' + moi, ownerId: moi, reponses: {} }, L = new Set(doc.limites || []);
+  L.has(tag) ? L.delete(tag) : L.add(tag);
+  doc.limites = [...L]; doc.updatedAt = new Date().toISOString();
+  S.envies = (S.envies || []).filter(x => x.id !== doc.id).concat(doc); persist();
+}
+// Shared envies: given by the service when connected (the other's answers never reach this phone); computed here in the demo.
+function jardinAccords() {
+  if (syncConnected()) return S.jardinAccords || {};
+  const a = ((S.envies || []).find(x => x.id === 'env-partner-a') || {}).reponses || {}, b = ((S.envies || []).find(x => x.id === 'env-partner-b') || {}).reponses || {}, out = {};
+  const ja = jardinDe('partner-a'), jb = jardinDe('partner-b');
+  if (!(ja && jb && ja.actif && jb.actif && !ja.veille && !jb.veille)) return out;
+  for (const k of Object.keys(a)) if (/^(oui|peutetre)$/.test(a[k]) && /^(oui|peutetre)$/.test(b[k] || '')) out[k] = a[k] === 'oui' && b[k] === 'oui' ? 'oui' : 'explorer';
+  return out;
+}
+function jardinEnvies() {
+  const moi = jardinMoi(), autre = esc(personName(partnerOf(moi))), n = jardinNiveau(), monNiv = (jardinDe(moi) || {}).niveau || 1;
+  const ex = jardinExclus(), acc = jardinAccords(), communs = JARDIN_ENVIES.filter(e => acc[e[0]] && e[1] <= n && jardinPermis(e[0], ex));
+  const rep = (jardinMesEnvies() || {}).reponses || {}, aMoi = JARDIN_ENVIES.filter(e => e[1] <= monNiv && jardinPermis(e[0], ex)), faites = aMoi.filter(e => rep[e[0]]).length;
+  const suivante = aMoi.find(e => !rep[e[0]] && !JARDIN.plusTard.includes(e[0]));
+  const ligneCommune = e => `<div class="jardin-envie commune"><span class="jardin-emoji">${e[2]}</span><span>${esc(e[3])}</span><span class="pill ${acc[e[0]] === 'oui' ? 'accepted' : 'pending'}">${acc[e[0]] === 'oui' ? 'Tous les deux ✨' : 'À explorer'}</span></div>`;
+  const choix = (e, petit) => [['oui', 'Oui ♡'], ['peutetre', 'Peut-être'], ['non', 'Pas pour moi']].map(([v, t]) => button(t, `jardin-envie:${e[0]}:${v}`, 'btn sm ' + (rep[e[0]] === v ? 'primary' : petit ? 'ghost' : 'soft'))).join('');
+  const carte = suivante ? `<div class="jardin-carte"><small>${jardinNiv(suivante[1])[2]} ${jardinNiv(suivante[1])[1]} · ${faites + 1} sur ${aMoi.length}</small><p><span class="jardin-emoji grand">${suivante[2]}</span>${esc(suivante[3])}</p><div class="jardin-choix">${choix(suivante)}</div>${button('Plus tard', 'jardin-plus-tard:' + suivante[0], 'btn ghost sm')}</div>`
+    : `<p class="quiet small">Vous avez répondu à toutes les envies de votre niveau. ${faites ? 'Vous pouvez revoir vos réponses à tout moment.' : ''}</p>`;
+  const revoir = JARDIN.revoir ? `<div class="jardin-revoir">${aMoi.map(e => `<div class="jardin-envie"><span class="jardin-emoji">${e[2]}</span><span>${esc(e[3])}</span><div class="jardin-choix petit">${choix(e, true)}</div></div>`).join('')}</div>` : '';
+  return `<section class="card"><div class="card-title"><h3>Nos envies en commun</h3><span class="pill">${communs.length}</span></div>${communs.length ? communs.map(ligneCommune).join('') : `<p class="quiet small">Pas encore d’envie en commun. Répondez de votre côté : seules les envies que vous partagez tous les deux s’afficheront ici.</p>`}</section>
+  <section class="card"><div class="card-title"><h3>Mes réponses</h3><span class="smallcaps">${faites} / ${aMoi.length}</span></div><p class="quiet small jardin-secret">🔒 Vos réponses restent secrètes : ${autre} ne voit que les envies que vous partagez tous les deux, jamais un « non ».</p>${carte}${faites ? button(JARDIN.revoir ? 'Masquer mes réponses' : 'Revoir mes réponses', 'jardin-revoir', 'btn ghost sm') : ''}${revoir}</section>`;
+}
+
+/* ----- l'invitation ----- */
+const INVIT_REPONSES = { oui: 'Avec plaisir ♡', demain: 'Plutôt demain ?', non: 'Pas ce soir' };
+const invitQuand = d => d === TODAY ? 'ce soir' : d === jardinDemain() ? 'demain soir' : 'le ' + new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+const jardinDemain = () => new Date(Date.parse(TODAY + 'T12:00:00Z') + 864e5).toISOString().slice(0, 10);
+const invitActives = () => (S.invitations || []).filter(x => x.date >= TODAY).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+function jardinInvitation() {
+  const moi = jardinMoi(), autre = esc(personName(partnerOf(moi))), L = invitActives();
+  const recue = L.find(x => x.pour === moi), envoyee = L.find(x => x.de === moi);
+  let h = '';
+  if (recue) {
+    const mot = jardinCarteDans(recue) + (recue.message ? `<blockquote>« ${esc(recue.message)} »</blockquote>` : '');
+    h += `<section class="card jardin-invit"><div class="jardin-invit-tete">🕯️ <b>${autre} vous invite ${invitQuand(recue.date)}</b></div>${mot}` + (recue.reponse
+      ? `<p class="quiet small">Vous avez répondu : <b>${INVIT_REPONSES[recue.reponse]}</b></p>${recue.reponse === 'oui' ? button('Noter au calendrier 🔞', 'invit-calendrier:' + recue.id, 'btn soft sm') : ''}`
+      : `<div class="jardin-choix">${button('Avec plaisir ♡', 'invit-reponse:' + recue.id + ':oui', 'btn primary sm')}${button('Plutôt demain ?', 'invit-reponse:' + recue.id + ':demain', 'btn soft sm')}${button('Pas ce soir', 'invit-reponse:' + recue.id + ':non', 'btn ghost sm')}</div><p class="quiet small">Répondre « Pas ce soir » est toujours permis, sans avoir à se justifier.</p>`) + `</section>`;
+  }
+  if (envoyee) {
+    const etat = !envoyee.reponse ? `En attente de la réponse de ${autre}…` : envoyee.reponse === 'oui' ? '✨ Avec plaisir ♡' : envoyee.reponse === 'demain' ? `${autre} propose plutôt demain.` : 'Pas ce soir : ce sera pour une autre fois ♡';
+    h += `<section class="card jardin-invit"><div class="jardin-invit-tete">🕯️ <b>Votre invitation pour ${invitQuand(envoyee.date)}</b></div>${jardinCarteDans(envoyee)}${envoyee.message ? `<blockquote>« ${esc(envoyee.message)} »</blockquote>` : ''}<p class="jardin-etat">${etat}</p><div class="jardin-choix">${envoyee.reponse === 'oui' ? button('Noter au calendrier 🔞', 'invit-calendrier:' + envoyee.id, 'btn soft sm') : ''}${button('Retirer l’invitation', 'invit-retirer:' + envoyee.id, 'btn ghost sm danger')}</div></section>`;
+  } else {
+    const q = JARDIN.quand, pill = (v, t) => `<button type="button" class="pill-btn${q === v ? ' active' : ''}" data-action="invit-quand:${v}">${t}</button>`;
+    h += `<section class="card"><div class="card-title"><h3>Envoyer une invitation</h3><span class="pill">🕯️</span></div><form data-form="submit-invitation"><div class="jardin-quand" role="group" aria-label="Quand">${pill('soir', 'Ce soir')}${pill('demain', 'Demain')}${pill('date', 'Un autre jour')}</div>${q === 'date' ? field('date', 'Date', 'date', jardinDemain(), `min="${TODAY}" required`) : ''}<div class="field"><label for="f-invit-mot">Un petit mot (facultatif)</label><textarea id="f-invit-mot" name="message" maxlength="140" placeholder="Et si on se gardait la soirée rien que pour nous ?"></textarea></div><div class="jardin-mots">${JARDIN_MOTS.map((m, i) => `<button type="button" class="jardin-mot" data-action="invit-mot:${i}">${esc(m)}</button>`).join('')}</div><div class="form-actions"><button class="btn primary" type="submit">Envoyer l’invitation</button></div><p class="quiet small">${autre} recevra une notification discrète : « une invitation vous attend ».</p></form></section>`;
+  }
+  return h;
+}
+
+/* ----- les cartes (lot 1.7) ----- */
+const jardinCarte = idc => JARDIN_CARTES.find(c => c[0] === idc) || null;
+const jardinCarteDans = inv => { const c = inv && inv.carte && jardinCarte(inv.carte); return c ? `<div class="jardin-mini-carte"><small>🎴 ${JARDIN_TYPES[c[2]]}</small><b>${c[3]} ${esc(c[4])}</b></div>` : ''; };
+function jardinTirer() {
+  const n = jardinNiveau(), ex = jardinExclus(), ok = JARDIN_CARTES.filter(c => c[1] <= n && jardinPermis(c[0], ex));
+  if (!ok.length) return null;
+  const neuves = ok.filter(c => !JARDIN.tirees.includes(c[0]) && c[0] !== JARDIN.carte), L = neuves.length ? neuves : ok.filter(c => c[0] !== JARDIN.carte);
+  const c = (L.length ? L : ok)[Math.floor(Math.random() * (L.length ? L : ok).length)];
+  JARDIN.tirees.push(c[0]); return c[0];
+}
+function jardinCartes() {
+  const c = JARDIN.carte && jardinCarte(JARDIN.carte), autre = esc(personName(partnerOf(jardinMoi())));
+  if (!c || !jardinPermis(c[0]) || c[1] > jardinNiveau()) return `<section class="card jardin-tirage"><div class="jardin-dos">🎴</div><p>Un défi doux, une idée de soirée ou un jeu, au niveau du plus prudent de vous deux.</p><div class="form-actions">${button('Tirer une carte', 'jardin-tirer', 'btn primary')}</div><p class="quiet small">Les cartes respectent les limites de chacun de vous deux.</p></section>`;
+  return `<section class="card jardin-tirage"><div class="jardin-tiree"><small>${JARDIN_TYPES[c[2]]} · ${jardinNiv(c[1])[2]} ${jardinNiv(c[1])[1]}</small><div class="jardin-tiree-emoji">${c[3]}</div><p>${esc(c[4])}</p></div><div class="jardin-choix centre">${button('Proposer pour ce soir 🕯️', 'jardin-carte-proposer:' + c[0], 'btn primary sm')}${button('Autre carte', 'jardin-tirer', 'btn soft sm')}</div><p class="quiet small">${autre} recevra une invitation discrète et pourra répondre « Avec plaisir ♡ », « Plutôt demain ? » ou « Pas ce soir ».</p></section>`;
+}
+
+/* ----- les bons (lot 1.7) ----- */
+function jardinBons() {
+  const moi = jardinMoi(), autre = esc(personName(partnerOf(moi))), L = (S.bons || []).slice().sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+  const recus = L.filter(b => b.pour === moi), offerts = L.filter(b => b.de === moi), jour = d => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+  const ticket = (b, actions, etat) => `<div class="jardin-bon${b.statut === 'utilise' ? ' utilise' : ''}"><span class="jardin-bon-icone">🎟️</span><div><b>${esc(b.titre)}</b><small>${etat}</small></div><div class="jardin-choix">${actions}</div></div>`;
+  const ex = jardinExclus(), n = jardinNiveau(), idees = JARDIN_BONS.filter(b => b[1] <= n && jardinPermis(b[0], ex));
+  return `<section class="card"><div class="card-title"><h3>Mes bons</h3><span class="pill">${recus.filter(b => b.statut === 'offert').length}</span></div>${recus.length ? recus.map(b => ticket(b, b.statut === 'offert' ? button('Utiliser ce bon', 'jardin-bon-utiliser:' + b.id, 'btn primary sm') : button('Ranger', 'jardin-bon-ranger:' + b.id, 'btn ghost sm'), b.statut === 'offert' ? `Offert par ${autre}` : `Utilisé le ${jour(b.utiliseLe)}`)).join('') : `<p class="quiet small">${autre} ne vous a pas encore offert de bon.</p>`}</section>
+  <section class="card"><div class="card-title"><h3>Offrir un bon</h3><span class="pill">🎟️</span></div><form data-form="submit-bon"><div class="field"><label for="f-bon">Bon pour…</label><input id="f-bon" name="titre" type="text" maxlength="80" required placeholder="Bon pour un massage de vingt minutes"></div><div class="jardin-mots">${idees.map(b => `<button type="button" class="jardin-mot" data-action="jardin-bon-idee:${b[0]}">${esc(b[2])}</button>`).join('')}</div><div class="form-actions"><button class="btn primary" type="submit">Offrir le bon</button></div></form>${offerts.length ? `<div class="smallcaps" style="margin:16px 0 6px">CEUX QUE J’AI OFFERTS</div>${offerts.map(b => ticket(b, b.statut === 'offert' ? button('Retirer', 'jardin-bon-retirer:' + b.id, 'btn ghost sm danger') : '', b.statut === 'offert' ? 'Pas encore utilisé' : `✨ Utilisé le ${jour(b.utiliseLe)}`)).join('')}` : ''}</section>`;
+}
+
+/* ----- parlons-en ----- */
+const JARDIN_PARLE = () => { try { return JSON.parse(localStorage.getItem(KEY + ':jardin-parle')) || []; } catch (e) { return []; } };
+function jardinQuestions() {
+  const n = jardinNiveau(), ex = jardinExclus(), faites = JARDIN_PARLE(), ok = JARDIN_QUESTIONS.filter(q => q[1] <= n && jardinPermis(q[0], ex)), L = ok.filter(q => !faites.includes(q[0])), base = L.length ? L : ok;
+  const debut = [...TODAY].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 3), q = base[(debut + JARDIN.q) % base.length];
+  return `<section class="card jardin-question"><div class="card-title"><h3>Parlons-en</h3><span class="pill">${jardinNiv(q[1])[2]} ${jardinNiv(q[1])[1]}</span></div><p class="jardin-q">${esc(q[2])}</p><p class="quiet small">Une question à lire ensemble, pour en parler de vive voix. Rien n’est enregistré.</p><div class="jardin-choix">${button('Autre question', 'jardin-question-autre', 'btn soft sm')}${button('On en a parlé ✓', 'jardin-question-parle:' + q[0], 'btn ghost sm')}</div></section>`;
+}
+
+/* ----- screens ----- */
+const jardinTete = sousTitre => `<div class="jardin-tete"><div class="jardin-logo">🌹</div><div><h2>Jardin secret</h2><p class="quiet small">${sousTitre}</p></div></div>`;
+function jardinChoixNiveau(actuel) {
+  return `<div class="jardin-niveaux" role="radiogroup" aria-label="Mon niveau">${JARDIN_NIVEAUX.map(([n, nom, e, desc]) => `<label class="jardin-niveau${actuel === n ? ' choisi' : ''}"><input type="radio" name="niveau" value="${n}" ${actuel === n ? 'checked' : ''}><span class="jardin-emoji grand">${e}</span><b>${nom}</b><small>${desc}</small></label>`).join('')}</div>`;
+}
+function jardinVue() {
+  const moi = jardinMoi(), autre = partnerOf(moi), nomAutre = esc(personName(autre)), jm = jardinDe(moi), ja = jardinDe(autre);
+  if (!jm || !jm.actif) {
+    return `<div class="jardin">${jardinTete('Un espace rien qu’à vous deux, pour parler de vos envies en toute confiance.')}<section class="card"><ul class="jardin-regles"><li>Il s’ouvre quand <b>vous l’avez activé tous les deux</b>.</li><li>Chacun choisit son niveau ; le jardin s’affiche au niveau <b>du plus prudent</b> de vous deux.</li><li>Chacun peut le <b>mettre en pause</b> à tout moment, sans avoir à se justifier.</li><li>Vos réponses restent secrètes : seules les envies que vous partagez tous les deux sont révélées.</li><li>Rien d’explicite dans les notifications ; un code protège l’entrée sur ce téléphone.</li></ul></section>
+      <section class="card"><form data-form="submit-jardin-activer"><div class="smallcaps" style="margin-bottom:10px">MON NIVEAU</div>${jardinChoixNiveau((jm && jm.niveau) || 1)}<div class="smallcaps" style="margin:16px 0 4px">LE CODE DU JARDIN, SUR CE TÉLÉPHONE</div><div class="form-row">${field('code', 'Code (4 à 6 chiffres)', 'password', '', 'required inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="6" autocomplete="off"')}${field('code2', 'Confirmez le code', 'password', '', 'required inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="6" autocomplete="off"')}</div><div class="form-actions"><button class="btn primary" type="submit">🌹 Ouvrir ma porte du jardin</button></div><p class="quiet small">${ja && ja.actif ? `${nomAutre} a déjà ouvert sa porte : le jardin s’ouvrira aussitôt.` : `${nomAutre} recevra une notification discrète et pourra ouvrir sa porte à son tour.`}</p></form></section></div>`;
+  }
+  if (!jardinVerrou()) {
+    return `<div class="jardin">${jardinTete('Choisissez le code du jardin pour ce téléphone.')}<section class="card"><form data-form="submit-jardin-code"><div class="form-row">${field('code', 'Code (4 à 6 chiffres)', 'password', '', 'required inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="6" autocomplete="off"')}${field('code2', 'Confirmez le code', 'password', '', 'required inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="6" autocomplete="off"')}</div><div class="form-actions"><button class="btn primary" type="submit">Enregistrer le code</button></div></form></section></div>`;
+  }
+  if (!JARDIN.ouvert) {
+    const v = jardinVerrou(), attente = JARDIN.bloque > Date.now();
+    return `<div class="jardin jardin-verrou">${jardinTete('Entrée protégée')}<section class="card"><div class="jardin-cadenas">🔒</div>${v.face ? `<div class="form-actions">${button('Ouvrir avec ' + jardinFaceNom(), 'jardin-faceid-ouvrir', 'btn primary')}</div><p class="quiet small" style="text-align:center">ou avec le code du jardin :</p>` : ''}<form data-form="submit-jardin-ouvrir"><div class="field"><label for="f-code">Code du jardin</label><input id="f-code" name="code" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off" ${attente ? 'disabled' : ''} required></div><div class="form-actions"><button class="btn ${v.face ? 'soft' : 'primary'}" type="submit" ${attente ? 'disabled' : ''}>Entrer</button></div></form>${attente ? '<p class="quiet small" style="text-align:center">Trop d’essais : réessayez dans une minute.</p>' : ''}<p class="quiet small jardin-oubli">Code oublié ? Déconnectez-vous de cet appareil (Réglages), puis reconnectez-vous avec votre code Entre Nous : vous choisirez un nouveau code du jardin.</p></section></div>`;
+  }
+  const reglages = JARDIN.reglages ? jardinReglages(jm) : '';
+  if (!ja || !ja.actif) return `<div class="jardin">${jardinTete('Votre porte est ouverte.')}<section class="card"><p>🌱 En attente de <b>${nomAutre}</b> : le jardin s’ouvrira quand vous l’aurez activé tous les deux.</p><div class="jardin-choix">${button('⚙️ Mes réglages', 'jardin-reglages', 'btn ghost sm')}${button('🔒 Verrouiller', 'jardin-verrouiller', 'btn ghost sm')}</div></section>${reglages}</div>`;
+  if (jm.veille || ja.veille) return `<div class="jardin">${jardinTete('En pause')}<section class="card"><p>⏸️ Le jardin est en pause pour l’instant. ♡</p>${jm.veille ? `<div class="jardin-choix">${button('Rouvrir le jardin', 'jardin-reprendre', 'btn primary sm')}</div>` : ''}<div class="jardin-choix">${button('⚙️ Mes réglages', 'jardin-reglages', 'btn ghost sm')}${button('🔒 Verrouiller', 'jardin-verrouiller', 'btn ghost sm')}</div></section>${reglages}</div>`;
+  const n = jardinNiv(jardinNiveau()), onglet = JARDIN.onglet, o = (v, t) => `<button type="button" class="pill-btn${onglet === v ? ' active' : ''}" data-action="jardin-onglet:${v}">${t}</button>`;
+  const corps = onglet === 'invitation' ? jardinInvitation() : onglet === 'cartes' ? jardinCartes() : onglet === 'bons' ? jardinBons() : onglet === 'parlons' ? jardinQuestions() : onglet === 'ephemeres' ? jardinEphemeres() : onglet === 'kama' ? jardinKama() : onglet === 'histoires' ? jardinHistoires() : jardinEnvies();
+  const aOuvrir = (S.ephemeres || []).filter(x => x.pour === moi && !x.vu && !x.expire).length;
+  return `<div class="jardin">${jardinTete(`Niveau ${n[2]} ${n[1]} · le plus prudent de vous deux`)}<div class="jardin-barre">${button('⏸️ Pause', 'jardin-pause', 'btn ghost sm')}${button('⚙️ Réglages', 'jardin-reglages', 'btn ghost sm')}${button('🔒 Verrouiller', 'jardin-verrouiller', 'btn ghost sm')}</div>${reglages}<div class="jardin-tuiles" role="group" aria-label="Rubriques du jardin">${[['envies', '💞', 'Envies'], ['invitation', '🕯️', 'Invitation'], ['ephemeres', '🔥', 'Éphémères'], ['cartes', '🎴', 'Cartes'], ['bons', '🎟️', 'Bons'], ['kama', '💑', 'Kamasutra'], ['histoires', '📚', 'Histoires'], ['parlons', '💬', 'Parlons-en']].map(([v, e, t]) => `<button type="button" class="jardin-tuile${onglet === v ? ' active' : ''}" data-action="jardin-onglet:${v}"><span>${e}</span>${t}${v === 'ephemeres' && aOuvrir ? `<i class="pastille" aria-label="${aOuvrir} à ouvrir"></i>` : ''}</button>`).join('')}</div>${corps}</div>`;
+}
+function jardinReglages(jm) {
+  const v = jardinVerrou() || {}, face = jardinFaceDisponible();
+  return `<section class="card jardin-reglages"><div class="card-title"><h3>Mes réglages du jardin</h3>${button('×', 'jardin-reglages', 'btn ghost sm')}</div><div class="smallcaps" style="margin-bottom:8px">MON NIVEAU</div><div class="jardin-niveaux">${JARDIN_NIVEAUX.map(([n, nom, e]) => `<button type="button" class="jardin-niveau${jm.niveau === n ? ' choisi' : ''}" data-action="jardin-niveau:${n}"><span class="jardin-emoji grand">${e}</span><b>${nom}</b></button>`).join('')}</div><p class="quiet small">Le jardin s’affiche au niveau du plus prudent de vous deux. Votre partenaire ne voit pas votre choix.</p><div class="smallcaps" style="margin:14px 0 8px">🔒 MES LIMITES</div><p class="quiet small">Touchez ce que vous ne souhaitez pas voir proposé. Rien de ce qui touche à vos limites (ou à celles de votre partenaire) ne sera suggéré, sans jamais dire de qui elles viennent.</p><div class="jardin-limites">${JARDIN_LIMITES.map(([t, nom]) => `<button type="button" class="jardin-limite${jardinMesLimites().includes(t) ? ' active' : ''}" data-action="jardin-limite:${t}" aria-pressed="${jardinMesLimites().includes(t)}">${jardinMesLimites().includes(t) ? '🚫 ' : ''}${esc(nom)}</button>`).join('')}</div><div class="smallcaps" style="margin:14px 0 8px">ENTRÉE</div>${v.face ? `<p class="small">✅ ${jardinFaceNom()} ouvre le jardin sur ce téléphone.</p>${button('Ne plus utiliser ' + jardinFaceNom(), 'jardin-faceid-retirer', 'btn ghost sm')}` : face ? button('Ouvrir avec ' + jardinFaceNom(), 'jardin-faceid', 'btn soft sm') : ''}${button('Changer le code du jardin', 'jardin-code-changer', 'btn ghost sm')}<div class="smallcaps" style="margin:14px 0 8px">MA PORTE</div>${button('Fermer ma porte du jardin', 'jardin-desactiver', 'btn ghost sm danger')}<p class="quiet small">Le jardin se ferme pour vous deux. Vos réponses sont gardées, invisibles tant qu’il est fermé.</p></section>`;
+}
+
+/* ----- events ----- */
+function jardinPoser(o, champs) {
+  const id = 'jardin-' + o, x = Object.assign({ id, ownerId: o, actif: false, veille: false, niveau: 1 }, jardinDe(o) || {}, champs, { updatedAt: new Date().toISOString() });
+  S.jardin = (S.jardin || []).filter(y => y.id !== id).concat(x); persist();
+}
+function jardinSubmitted(action, d) {
+  const moi = jardinMoi();
+  if (action === 'submit-jardin-activer' || action === 'submit-jardin-code') {
+    if (!jardinCodeValide(d.code)) { toast('Le code du jardin compte 4 à 6 chiffres.'); return true; }
+    if (d.code !== d.code2) { toast('Les deux codes ne sont pas identiques.'); return true; }
+    jardinPoserCode(d.code);
+    if (action === 'submit-jardin-activer') jardinPoser(moi, { actif: true, veille: false, niveau: [1, 2, 3].includes(+d.niveau) ? +d.niveau : 1 });
+    jardinOuvrir(); render(); sonsJouer('enregistrer');
+    toast(action === 'submit-jardin-activer' ? 'Votre porte du jardin est ouverte. 🌹' : 'Code du jardin enregistré.');
+    return true;
+  }
+  if (action === 'submit-jardin-ouvrir') {
+    const v = jardinVerrou();
+    if (JARDIN.bloque > Date.now()) return true;
+    if (v && jardinHache(v.sel, String(d.code || '')) === v.empreinte) { jardinOuvrir(); render(); return true; }
+    if (++JARDIN.essais >= 5) { JARDIN.bloque = Date.now() + 60000; JARDIN.essais = 0; render(); }
+    toast('Code incorrect.'); return true;
+  }
+  if (action === 'submit-bon') {
+    const titre = String(d.titre || '').trim().slice(0, 80);
+    if (!titre) { toast('Écrivez ce que le bon offre.'); return true; }
+    S.bons = (S.bons || []).concat({ id: 'bon-' + id(), de: moi, pour: partnerOf(moi), titre, statut: 'offert', createdAt: new Date().toISOString() });
+    persist(); render(); sonsJouer('enregistrer'); toast(`Bon offert à ${personName(partnerOf(moi))}. 🎟️`);
+    return true;
+  }
+  if (action === 'submit-invitation') {
+    const date = JARDIN.quand === 'soir' ? TODAY : JARDIN.quand === 'demain' ? jardinDemain() : d.date;
+    if (!date || date < TODAY) { toast('Choisissez une date à venir.'); return true; }
+    S.invitations = (S.invitations || []).concat({ id: 'inv-' + id(), de: moi, pour: partnerOf(moi), date, message: String(d.message || '').trim().slice(0, 140), reponse: null, createdAt: new Date().toISOString() });
+    JARDIN.quand = 'soir'; persist(); render(); sonsJouer('enregistrer');
+    toast(syncConnected() ? 'Invitation envoyée. 🕯️' : 'Invitation enregistrée dans ce navigateur. 🕯️');
+    return true;
+  }
+  return false;
+}
+function jardinAction(a) {
+  if (!a.startsWith('jardin-') && !a.startsWith('invit-')) return false;
+  const moi = jardinMoi(), [nom, x, y] = a.split(':');
+  JARDIN.vu = Date.now();
+  if (nom === 'jardin-onglet') JARDIN.onglet = x;
+  else if (nom === 'jardin-envie') { jardinRepondre(x, y); JARDIN.plusTard = JARDIN.plusTard.filter(k => k !== x); }
+  else if (nom === 'jardin-plus-tard') JARDIN.plusTard.push(x);
+  else if (nom === 'jardin-revoir') JARDIN.revoir = !JARDIN.revoir;
+  else if (nom === 'jardin-reglages') JARDIN.reglages = !JARDIN.reglages;
+  else if (nom === 'jardin-verrouiller') jardinFermer();
+  else if (nom === 'jardin-pause') { if (confirmDel('Mettre le jardin en pause ? Il se rouvre quand vous le souhaitez.')) { jardinPoser(moi, { veille: true }); toast('Le jardin est en pause. ♡'); } }
+  else if (nom === 'jardin-reprendre') { jardinPoser(moi, { veille: false }); toast('Le jardin est rouvert. 🌹'); }
+  else if (nom === 'jardin-niveau') jardinPoser(moi, { niveau: [1, 2, 3].includes(+x) ? +x : 1 });
+  else if (nom === 'jardin-desactiver') { if (confirmDel('Fermer votre porte du jardin ? Il se ferme pour vous deux ; vos réponses sont gardées.')) { jardinPoser(moi, { actif: false, veille: false }); jardinFermer(); } }
+  else if (nom === 'jardin-code-changer') { const v = jardinVerrou(); jardinGarderVerrou(v && v.face ? { face: v.face } : null); toast('Choisissez votre nouveau code du jardin.'); }
+  else if (nom === 'jardin-faceid') { jardinFaceCreer().then(() => { toast(jardinFaceNom() + ' ouvrira le jardin sur ce téléphone.'); render(); }).catch(() => toast(jardinFaceNom() + ' n’a pas pu être activé.')); return true; }
+  else if (nom === 'jardin-faceid-retirer') { const v = jardinVerrou(); if (v) { delete v.face; jardinGarderVerrou(v); } }
+  else if (nom === 'jardin-faceid-ouvrir') { jardinFaceOuvrir().then(() => { jardinOuvrir(); render(); }).catch(() => toast('Ouverture annulée. Vous pouvez entrer avec le code.')); return true; }
+  else if (nom === 'jardin-question-autre') JARDIN.q++;
+  else if (nom === 'jardin-limite') jardinLimite(x);
+  else if (nom === 'jardin-tirer') { JARDIN.carte = jardinTirer(); if (!JARDIN.carte) toast('Aucune carte ne correspond à vos limites pour l’instant.'); }
+  else if (nom === 'jardin-carte-proposer') {
+    S.invitations = (S.invitations || []).filter(i => !(i.de === moi && !i.reponse && i.date >= TODAY));
+    S.invitations.push({ id: 'inv-' + id(), de: moi, pour: partnerOf(moi), date: TODAY, carte: x, message: '', reponse: null, createdAt: new Date().toISOString() });
+    JARDIN.carte = null; JARDIN.onglet = 'invitation'; persist(); sonsJouer('enregistrer'); toast('Carte proposée pour ce soir. 🕯️');
+  }
+  else if (nom === 'jardin-bon-idee') { const b = JARDIN_BONS.find(z => z[0] === x), t = document.querySelector && document.querySelector('#f-bon'); if (b && t) { t.value = b[2]; t.focus(); } return true; }
+  else if (nom === 'jardin-bon-utiliser') { const b = (S.bons || []).find(z => z.id === x); if (b && b.pour === moi && b.statut === 'offert' && confirmDel('Utiliser ce bon maintenant ? ' + personName(partnerOf(moi)) + ' sera prévenu(e).')) { b.statut = 'utilise'; b.utiliseLe = new Date().toISOString(); persist(); sonsJouer('enregistrer'); toast('Bon utilisé. Profitez-en ♡'); } }
+  else if (nom === 'jardin-bon-retirer' || nom === 'jardin-bon-ranger') { if (confirmDel(nom === 'jardin-bon-retirer' ? 'Retirer ce bon ?' : 'Ranger ce bon utilisé ?')) { S.bons = (S.bons || []).filter(z => z.id !== x); persist(); } }
+  else if (nom === 'jardin-question-parle') { const L = JARDIN_PARLE(); if (!L.includes(x)) L.push(x); try { localStorage.setItem(KEY + ':jardin-parle', JSON.stringify(L)); } catch (e) { /* stockage bloqué */ } toast('Belle conversation. ♡'); }
+  else if (nom === 'invit-quand') JARDIN.quand = x;
+  else if (nom === 'invit-mot') { const t = document.querySelector && document.querySelector('#f-invit-mot'); if (t) { t.value = JARDIN_MOTS[+x] || ''; t.focus(); } return true; }
+  else if (nom === 'invit-reponse') {
+    const inv = (S.invitations || []).find(i => i.id === x);
+    if (inv && inv.pour === moi && INVIT_REPONSES[y]) { inv.reponse = y; inv.updatedAt = new Date().toISOString(); persist(); sonsJouer('enregistrer'); toast(y === 'oui' ? 'Réponse envoyée : avec plaisir ♡' : 'Réponse envoyée. ♡'); }
+  }
+  else if (nom === 'invit-retirer') { if (confirmDel('Retirer cette invitation ?')) { S.invitations = (S.invitations || []).filter(i => i.id !== x); persist(); } }
+  else if (nom === 'invit-calendrier') {
+    const inv = (S.invitations || []).find(i => i.id === x);
+    if (inv && !S.events.some(e => e.type === 'intime' && e.date === inv.date && e.invitation === inv.id)) { S.events.push({ id: id(), title: 'Notre soirée', date: inv.date, type: 'intime', invitation: inv.id }); persist(); toast('Ajouté au calendrier 🔞'); }
+  }
+  render();
+  return true;
+}
+// After each render: the garden locks itself when one leaves it, and after 5 minutes without a touch.
+function jardinApresRendu() {
+  if (!(page === 'us' && sub === 'jardin') || Date.now() - JARDIN.vu > 300000) jardinFermer();
+  if (JARDIN.ouvert) JARDIN.vu = Date.now();
+}
+if (typeof document !== 'undefined' && document.addEventListener) {
+  const verrouiller = () => { if (!JARDIN.ouvert) return; jardinFermer(); if (page === 'us' && sub === 'jardin' && !modal) render(); };
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') verrouiller(); });
+  if (typeof setInterval === 'function') setInterval(() => { if (JARDIN.ouvert && Date.now() - JARDIN.vu > 300000) verrouiller(); }, 30000);
+}
+
+// Éphémères (lot 1.8, Jardin secret): a photo, a GIF or a short video (15 s at most, played in a loop like a GIF) sent to the
+// other, who can open it ONCE. Optionally a scratch card: the picture is hidden under a golden layer scratched off with a finger.
+// As soon as it is shown it is marked seen; the service then deletes the file permanently from the Drive (never seen: 7 days).
+// Nothing is kept on either phone: no local copy, no saving by a long press. A screenshot cannot be prevented by a web app.
+const EPH = { envoi: false, gratter: true, vue: null };
+const EPH_LIMITES = { photo: 25 * FIC_MO, gif: 10 * FIC_MO, video: 25 * FIC_MO, secondes: 15 };
+const EPH_NOMS = { photo: 'Photo', gif: 'GIF', video: 'Courte vidéo' };
+const ephDe = () => jardinMoi();
+const ephListe = () => (S.ephemeres || []).slice().sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+function jardinEphemeres() {
+  const moi = ephDe(), autre = esc(personName(partnerOf(moi))), L = ephListe(), recus = L.filter(x => x.pour === moi), envoyes = L.filter(x => x.de === moi);
+  const quand = x => new Date(x.createdAt).toLocaleString('fr-FR', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+  const aOuvrir = recus.filter(x => !x.vu && !x.expire);
+  const ligneRecue = x => `<div class="eph-ligne"><span class="eph-icone">${x.gratter ? '🎰' : '🔥'}</span><div><b>${EPH_NOMS[x.kind] || 'Photo'} de ${autre}</b><small>${quand(x)} · à ouvrir une seule fois${x.gratter ? ' · carte à gratter' : ''}</small></div>${button('Ouvrir', 'eph-ouvrir:' + x.id, 'btn primary sm')}</div>`;
+  const etat = x => x.vu ? `👀 Vue ${x.vuLe ? 'le ' + new Date(x.vuLe).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}` : x.expire ? '⌛ Jamais ouverte : effacée' : 'Pas encore ouverte';
+  const ligneEnvoyee = x => `<div class="eph-ligne envoyee"><span class="eph-icone">${x.vu ? '✓' : x.gratter ? '🎰' : '🔥'}</span><div><b>${EPH_NOMS[x.kind] || 'Photo'}${x.gratter ? ' à gratter' : ''}</b><small>${quand(x)} · ${etat(x)}</small></div>${button(x.vu || x.expire ? 'Ranger' : 'Retirer', 'eph-retirer:' + x.id, 'btn ghost sm' + (x.vu || x.expire ? '' : ' danger'))}</div>`;
+  return `<section class="card"><div class="card-title"><h3>Pour vous</h3><span class="pill">${aOuvrir.length}</span></div>${aOuvrir.length ? aOuvrir.map(ligneRecue).join('') : `<p class="quiet small">Rien à ouvrir pour l’instant.</p>`}</section>
+  <section class="card"><div class="card-title"><h3>Envoyer un éphémère</h3><span class="pill">🔥</span></div>
+    <p class="quiet small">Une photo, un GIF ou une courte vidéo (${EPH_LIMITES.secondes} secondes au plus). ${autre} pourra l’ouvrir <b>une seule fois</b> ; ensuite, elle est effacée définitivement. Jamais ouverte, elle disparaît au bout de 7 jours.</p>
+    <div class="toggle-row"><div><b>Carte à gratter</b><small>${autre} la découvre en grattant du doigt</small></div><label class="switch"><input type="checkbox" data-change="eph-gratter" ${EPH.gratter ? 'checked' : ''}/><span></span></label></div>
+    <div class="form-actions"><label class="btn primary album-choix${EPH.envoi ? ' disabled' : ''}">${EPH.envoi ? 'Envoi en cours…' : '📸 Choisir une photo, un GIF ou une vidéo'}<input class="album-input" type="file" accept="image/*,video/*" data-change="eph-fichier" ${EPH.envoi ? 'disabled' : ''}></label></div>
+    <p class="quiet small eph-avert">⚠️ L’application ne peut ni empêcher ni détecter une capture d’écran. N’envoyez que ce que vous confiez en toute confiance.</p>
+    ${envoyes.length ? `<div class="smallcaps" style="margin:14px 0 4px">MES ENVOIS</div>${envoyes.slice(0, 12).map(ligneEnvoyee).join('')}` : ''}</section>`;
+}
+const ephSorte = f => f.type === 'image/gif' ? 'gif' : (f.type || '').startsWith('image/') ? 'photo' : ((f.type || '').startsWith('video/') || /\.(mov|mp4|m4v|webm)$/i.test(f.name || '')) ? 'video' : '';
+function ephDuree(file) {
+  return new Promise(ok => { const v = document.createElement('video'), u = URL.createObjectURL(file); const fin = d => { URL.revokeObjectURL(u); ok(d); }; v.preload = 'metadata'; v.onloadedmetadata = () => fin(v.duration || 0); v.onerror = () => fin(0); setTimeout(() => fin(0), 8000); v.src = u; });
+}
+async function ephPreparer(file) {
+  const kind = ephSorte(file);
+  if (!kind) throw new Error('ce n’est ni une photo, ni un GIF, ni une vidéo.');
+  if (file.size > EPH_LIMITES[kind]) throw new Error(`${ficTaille(file.size)}, au-delà de ${ficTaille(EPH_LIMITES[kind])}.`);
+  if (kind === 'video') { const d = await ephDuree(file); if (d > EPH_LIMITES.secondes + 0.5) throw new Error(`vidéo de ${Math.round(d)} secondes : ${EPH_LIMITES.secondes} au plus (raccourcissez-la dans Photos).`); return { kind, blob: file, nom: file.name || 'video.mov' }; }
+  if (kind === 'gif') return { kind, blob: file, nom: 'ephemere.gif' };
+  const img = await ficImage(file);
+  return { kind, blob: await ficReduire(img, img.naturalWidth, img.naturalHeight, { cote: 1600, qualite: 0.85 }), nom: 'ephemere.jpg' };
+}
+async function ephEnvoyer(file) {
+  const moi = ephDe(), autre = personName(partnerOf(moi));
+  if (!confirmDel(`Envoyer à ${autre} ? Elle ou il ne pourra l’ouvrir qu’une seule fois.`)) return;
+  EPH.envoi = true; render();
+  try {
+    const p = await ephPreparer(file);
+    const f = await ficEnvoyer(p.blob, 'ephemeres', p.nom, null, () => {});
+    S.ephemeres = (S.ephemeres || []).concat({ id: 'eph-' + syncId(), de: moi, pour: partnerOf(moi), kind: p.kind, gratter: EPH.gratter, fileId: f.id, type: p.blob.type || 'image/jpeg', taille: f.taille, vu: false, createdAt: new Date().toISOString() });
+    persist(); sonsJouer('enregistrer'); toast(`Envoyé à ${autre}. 🔥`);
+  } catch (e) { toast('Non envoyé : ' + (e.message || 'envoi impossible.')); }
+  finally { EPH.envoi = false; render(); }
+}
+// Reading without any local copy (the usual reader keeps one for souvenirs; not here).
+async function ephLire(x) {
+  if (!syncConnected()) { const l = await ficLocal(x.fileId); if (!l || !l.blob) throw new Error('absent'); return l.blob; }
+  const parts = []; let recu = 0, taille = x.taille || 1;
+  do { const r = await syncCall('fichierLire', { id: x.fileId, debut: recu }, { delai: 120000 }); const b = await ficDeBase64(r.donnees, x.type); parts.push(b); recu += b.size; taille = r.taille; } while (recu < taille);
+  return new Blob(parts, { type: x.type || 'image/jpeg' });
+}
+function ephMarquerVu(x) {
+  if (x.vu) return;
+  Object.assign(x, { vu: true, vuLe: new Date().toISOString() });
+  const f = x.fileId; delete x.fileId;
+  if (!syncConnected() && f) ficOublier([f]);
+  persist();
+}
+async function ephOuvrir(idEph) {
+  const x = (S.ephemeres || []).find(y => y.id === idEph);
+  if (!x || x.vu || x.expire || x.pour !== ephDe() || EPH.vue) return;
+  const el = document.createElement('div');
+  el.className = 'eph-vue'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Éphémère');
+  el.innerHTML = `<div class="eph-haut"><span>🔥 Vue unique · disparaît à la fermeture</span><button type="button" class="btn sm" data-eph="fermer">Fermer</button></div><div class="eph-cadre"><p class="eph-charge">Ouverture…</p></div>`;
+  el.addEventListener('contextmenu', e => e.preventDefault());
+  el.querySelector('[data-eph="fermer"]').addEventListener('click', () => ephFermer());
+  document.body.appendChild(el); EPH.vue = { el, url: '' };
+  try {
+    const blob = await ephLire(x), url = URL.createObjectURL(blob); EPH.vue.url = url;
+    const cadre = el.querySelector('.eph-cadre');
+    cadre.innerHTML = x.kind === 'video' ? `<video class="eph-media" src="${url}" autoplay loop muted playsinline disablepictureinpicture controlslist="nodownload"></video>` : `<img class="eph-media" src="${url}" alt="" draggable="false">`;
+    ephMarquerVu(x);   // shown: it will not open again
+    if (x.gratter) ephGratter(cadre);
+  } catch (e) { el.querySelector('.eph-cadre').innerHTML = '<p class="eph-charge">Impossible de l’ouvrir pour l’instant : réessayez avec du réseau.</p>'; }
+}
+function ephFermer() {
+  if (!EPH.vue) return;
+  const { el, url } = EPH.vue; EPH.vue = null;
+  el.querySelectorAll('video').forEach(v => { try { v.pause(); v.removeAttribute('src'); v.load(); } catch (e) { /* déjà arrêtée */ } });
+  if (url) URL.revokeObjectURL(url);
+  el.remove(); render();
+}
+// Scratch card: a golden layer erased with the finger; once about half of it is gone, the rest fades away.
+function ephGratter(cadre) {
+  const c = document.createElement('canvas'), r = cadre.getBoundingClientRect(), k = Math.min(2, window.devicePixelRatio || 1);
+  c.className = 'eph-gratter'; c.width = Math.max(1, r.width * k); c.height = Math.max(1, r.height * k); cadre.appendChild(c);
+  const g = c.getContext('2d'); g.scale(k, k);
+  const fond = g.createLinearGradient(0, 0, r.width, r.height); fond.addColorStop(0, '#d9b45a'); fond.addColorStop(.5, '#f3dc9a'); fond.addColorStop(1, '#b98f3a');
+  g.fillStyle = fond; g.fillRect(0, 0, r.width, r.height);
+  g.fillStyle = 'rgba(90,29,62,.85)'; g.font = '600 22px system-ui, sans-serif'; g.textAlign = 'center'; g.fillText('✨ Grattez du doigt ✨', r.width / 2, r.height / 2);
+  g.globalCompositeOperation = 'destination-out';
+  let actif = false, n = 0, dernier = null;
+  const gratte = e => {
+    if (!actif) return; e.preventDefault();
+    const b = c.getBoundingClientRect(), x = e.clientX - b.left, y = e.clientY - b.top;
+    g.lineWidth = 46; g.lineCap = 'round'; g.beginPath(); g.moveTo(dernier ? dernier[0] : x, dernier ? dernier[1] : y); g.lineTo(x, y); g.stroke(); dernier = [x, y];
+    if (++n % 12 === 0) { const d = g.getImageData(0, 0, c.width, c.height).data; let vide = 0; for (let i = 3; i < d.length; i += 64) if (d[i] === 0) vide++; if (vide / (d.length / 64) > 0.5) { c.classList.add('fini'); setTimeout(() => c.remove(), 700); } }
+  };
+  c.addEventListener('pointerdown', e => { actif = true; dernier = null; c.setPointerCapture && c.setPointerCapture(e.pointerId); gratte(e); });
+  c.addEventListener('pointermove', gratte);
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => c.addEventListener(t, () => { actif = false; dernier = null; }));
+}
+function ephChanged(e) {
+  const c = (e.target.dataset || {}).change || '';
+  if (c === 'eph-gratter') { EPH.gratter = !!e.target.checked; return true; }
+  if (c !== 'eph-fichier') return false;
+  const f = e.target.files && e.target.files[0]; e.target.value = '';
+  if (f) ephEnvoyer(f);
+  return true;
+}
+function ephAction(a) {
+  if (a.startsWith('eph-ouvrir:')) { ephOuvrir(a.slice(11)); return true; }
+  if (a.startsWith('eph-retirer:')) {
+    const x = (S.ephemeres || []).find(y => y.id === a.slice(12));
+    if (x && confirmDel(x.vu || x.expire ? 'Ranger cet envoi ?' : 'Retirer cet envoi ? Il sera effacé sans avoir été vu.')) { S.ephemeres = S.ephemeres.filter(y => y !== x); if (!syncConnected() && x.fileId) ficOublier([x.fileId]); persist(); render(); }
+    return true;
+  }
+  return false;
+}
+if (typeof document !== 'undefined' && document.addEventListener) document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') ephFermer(); });
+
+// Kamasutra (lot 1.8, Jardin secret). Drawings: ORIGINAL, « Ligne de soie » style chosen by the user (fine continuous line,
+// gold-ringed medallion), one colour per partner. Names come from old texts that are free of rights (Kama Sutra and Ananga
+// Ranga · India, the Tao of love of Dongxuanzi · China, Le Jardin parfumé of Nefzaoui · Maghreb) or from common usage;
+// every description is written for Entre Nous. No names invented and attributed to a tradition.
+// A drawing: joints in a 160 × 110 frame. t head, c neck, b pelvis, arms [elbow x, y, hand x, y], legs [knee x, y, foot x, y].
+const KAMA_TRADITIONS = { ks: 'Kama Sutra · Inde', ar: 'Ananga Ranga · Inde', tao: 'Tao de l’amour · Chine', jp: 'Le Jardin parfumé · Maghreb', cl: 'Classique' };
+const KAMA_POSES = {
+  mis: { sol: 'lit', B: { t: [26, 78], c: [36, 80], b: [68, 82], bras: [[48, 66, 58, 58]], jambes: [[82, 66, 98, 80], [86, 68, 102, 82]] }, A: { t: [34, 62], c: [44, 66], b: [76, 72], bras: [[40, 76, 34, 82]], jambes: [[98, 80, 122, 84], [96, 82, 120, 86]] } },
+  misLarge: { sol: 'lit', B: { t: [26, 78], c: [36, 80], b: [68, 82], bras: [[48, 66, 58, 58]], jambes: [[80, 58, 102, 64], [76, 60, 92, 50]] }, A: { t: [34, 62], c: [44, 66], b: [76, 72], bras: [[40, 76, 34, 82]], jambes: [[98, 80, 122, 84]] } },
+  misHaut: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [66, 82], bras: [[44, 70, 52, 74]], jambes: [[72, 58, 74, 32], [76, 58, 82, 34]] }, A: { t: [80, 40], c: [80, 48], b: [82, 76], bras: [[78, 58, 76, 46]], jambes: [[100, 86, 120, 88]] } },
+  misUnHaut: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [66, 82], bras: [[44, 70, 52, 74]], jambes: [[74, 58, 76, 36], [92, 84, 116, 86]] }, A: { t: [70, 38], c: [72, 46], b: [82, 74], bras: [[66, 60, 58, 78]], jambes: [[100, 86, 120, 88]] } },
+  misSerre: { sol: 'lit', B: { t: [24, 80], c: [34, 82], b: [66, 84], bras: [[46, 70, 56, 66]], jambes: [[92, 84, 118, 86]] }, A: { t: [30, 66], c: [40, 70], b: [72, 74], bras: [[36, 80, 30, 84]], jambes: [[96, 78, 122, 80]] } },
+  misEnlace: { sol: 'lit', B: { t: [26, 78], c: [36, 80], b: [68, 82], bras: [[48, 66, 58, 58]], jambes: [[86, 62, 72, 58], [90, 64, 78, 60]] }, A: { t: [34, 62], c: [44, 66], b: [76, 72], bras: [[40, 76, 34, 82]], jambes: [[98, 80, 122, 84]] } },
+  misEpaules: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [64, 82], bras: [[42, 70, 50, 74]], jambes: [[70, 58, 64, 36]] }, A: { t: [56, 46], c: [62, 52], b: [86, 70], bras: [[54, 64, 46, 80]], jambes: [[104, 82, 126, 86]] } },
+  misGenoux: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [62, 82], bras: [[44, 70, 54, 64]], jambes: [[56, 60, 72, 54]] }, A: { t: [96, 32], c: [94, 40], b: [86, 70], bras: [[82, 52, 74, 56]], jambes: [[90, 86, 110, 88]] } },
+  dessus: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [64, 82], bras: [[42, 70, 50, 66]], jambes: [[86, 80, 110, 82], [84, 76, 106, 82]] }, A: { t: [60, 34], c: [62, 42], b: [66, 72], bras: [[54, 56, 46, 68]], jambes: [[52, 82, 72, 86]] } },
+  dessusPenche: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [64, 82], bras: [[40, 72, 48, 66]], jambes: [[86, 80, 110, 82], [84, 76, 106, 82]] }, A: { t: [36, 52], c: [44, 56], b: [66, 74], bras: [[36, 68, 32, 78]], jambes: [[54, 84, 74, 88]] } },
+  dessusInverse: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [64, 82], bras: [[40, 72, 48, 70]], jambes: [[86, 80, 110, 82], [84, 76, 106, 82]] }, A: { t: [76, 36], c: [72, 44], b: [64, 72], bras: [[80, 58, 90, 70]], jambes: [[78, 82, 58, 86]] } },
+  dessusAccroupi: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [64, 82], bras: [[40, 72, 48, 66]], jambes: [[86, 80, 110, 82], [84, 76, 106, 82]] }, A: { t: [62, 32], c: [64, 40], b: [66, 68], bras: [[54, 54, 50, 66]], jambes: [[82, 60, 76, 86]] } },
+  dessusAllonge: { sol: 'lit', B: { t: [24, 80], c: [34, 82], b: [66, 84], bras: [[46, 70, 56, 66]], jambes: [[92, 84, 118, 86]] }, A: { t: [126, 70], c: [116, 72], b: [84, 76], bras: [[108, 80, 116, 84]], jambes: [[60, 78, 36, 80]] } },
+  levrette: { sol: 'lit', B: { t: [36, 60], c: [44, 64], b: [78, 66], bras: [[44, 76, 42, 86]], jambes: [[80, 86, 100, 88]] }, A: { t: [100, 30], c: [98, 38], b: [90, 66], bras: [[92, 52, 82, 62]], jambes: [[96, 86, 116, 88]] } },
+  levretteCoudes: { sol: 'lit', B: { t: [34, 78], c: [42, 76], b: [78, 64], bras: [[42, 86, 34, 88]], jambes: [[80, 86, 100, 88]] }, A: { t: [100, 30], c: [98, 38], b: [90, 64], bras: [[92, 50, 82, 60]], jambes: [[96, 86, 116, 88]] } },
+  levretteAllongee: { sol: 'lit', B: { t: [24, 80], c: [34, 82], b: [66, 84], bras: [[30, 74, 22, 84]], jambes: [[88, 84, 112, 86], [90, 86, 114, 88]] }, A: { t: [32, 70], c: [42, 74], b: [72, 76], bras: [[36, 82, 28, 84]], jambes: [[94, 78, 118, 80]] } },
+  levretteDebout: { sol: '', meuble: true, B: { t: [44, 44], c: [52, 48], b: [82, 56], bras: [[46, 58, 40, 66]], jambes: [[84, 78, 84, 100]] }, A: { t: [102, 24], c: [100, 32], b: [94, 58], bras: [[94, 44, 86, 54]], jambes: [[98, 80, 100, 100], [94, 80, 90, 100]] } },
+  cuillere: { sol: 'lit', B: { t: [34, 70], c: [42, 74], b: [72, 78], bras: [[52, 82, 62, 84]], jambes: [[88, 72, 100, 84], [86, 76, 104, 86]] }, A: { t: [42, 64], c: [50, 68], b: [80, 72], bras: [[60, 76, 52, 80]], jambes: [[96, 66, 108, 80], [94, 70, 112, 82]] } },
+  face: { sol: 'lit', B: { t: [28, 70], c: [36, 74], b: [66, 78], bras: [[50, 66, 60, 62]], jambes: [[84, 74, 104, 84], [82, 80, 102, 86]] }, A: { t: [126, 70], c: [118, 74], b: [90, 78], bras: [[104, 66, 96, 62]], jambes: [[74, 74, 56, 84]] } },
+  ciseaux: { sol: 'lit', B: { t: [20, 78], c: [30, 80], b: [62, 82], bras: [[42, 70, 50, 66]], jambes: [[82, 76, 100, 70], [80, 84, 104, 86]] }, A: { t: [140, 66], c: [130, 70], b: [98, 80], bras: [[118, 62, 110, 58]], jambes: [[80, 74, 62, 70]] } },
+  lotus: { sol: 'lit', B: { t: [68, 40], c: [70, 48], b: [74, 80], bras: [[84, 56, 92, 50]], jambes: [[56, 80, 84, 86], [92, 80, 64, 86]] }, A: { t: [94, 44], c: [92, 52], b: [86, 76], bras: [[78, 56, 70, 52]], jambes: [[66, 70, 58, 80]] } },
+  y: { sol: 'lit', B: { t: [34, 44], c: [38, 52], b: [62, 80], bras: [[30, 66, 24, 80]], jambes: [[82, 74, 100, 80]] }, A: { t: [126, 44], c: [122, 52], b: [98, 80], bras: [[130, 66, 136, 80]], jambes: [[78, 74, 60, 80]] } },
+  chaise: { sol: 'chaise', B: { t: [80, 32], c: [80, 40], b: [80, 70], bras: [[96, 46, 104, 42]], jambes: [[100, 70, 102, 98]] }, A: { t: [108, 30], c: [106, 38], b: [96, 64], bras: [[92, 44, 84, 42]], jambes: [[78, 62, 72, 76]] } },
+  chaiseDos: { sol: 'chaise', B: { t: [84, 34], c: [84, 42], b: [82, 70], bras: [[96, 52, 104, 56]], jambes: [[100, 70, 102, 98]] }, A: { t: [102, 30], c: [100, 38], b: [94, 64], bras: [[108, 50, 112, 60]], jambes: [[112, 66, 116, 96]] } },
+  debout: { sol: '', B: { t: [92, 30], c: [92, 38], b: [90, 64], bras: [[84, 46, 74, 42]], jambes: [[90, 82, 90, 100], [86, 82, 84, 100]] }, A: { t: [66, 26], c: [66, 34], b: [66, 62], bras: [[74, 44, 84, 40]], jambes: [[66, 82, 64, 100], [70, 82, 72, 100]] } },
+  porte: { sol: '', B: { t: [88, 26], c: [86, 34], b: [78, 62], bras: [[74, 40, 68, 36]], jambes: [[62, 58, 58, 72]] }, A: { t: [68, 28], c: [68, 36], b: [70, 64], bras: [[76, 52, 82, 60]], jambes: [[70, 82, 70, 100], [66, 82, 62, 100]] } },
+  brouette: { sol: '', B: { t: [28, 86], c: [38, 84], b: [72, 70], bras: [[34, 92, 30, 100]], jambes: [[86, 64, 98, 60]] }, A: { t: [104, 26], c: [104, 34], b: [100, 64], bras: [[94, 48, 90, 62]], jambes: [[102, 82, 104, 100], [98, 82, 96, 100]] } },
+  papillon: { sol: 'lit', B: { t: [20, 80], c: [30, 81], b: [70, 82], bras: [[46, 70, 54, 76]], jambes: [[86, 64, 98, 44]] }, A: { t: [110, 22], c: [110, 30], b: [104, 62], bras: [[100, 42, 98, 48]], jambes: [[106, 82, 108, 100]] } },
+  table: { sol: '', table: true, B: { t: [58, 30], c: [60, 38], b: [64, 64], bras: [[76, 44, 84, 40]], jambes: [[84, 60, 98, 52]] }, A: { t: [96, 26], c: [94, 34], b: [88, 62], bras: [[80, 44, 70, 42]], jambes: [[90, 82, 92, 100], [86, 82, 82, 100]] } },
+  soixanteNeuf: { sol: 'lit', B: { t: [24, 80], c: [34, 81], b: [70, 82], bras: [[46, 70, 56, 66]], jambes: [[92, 78, 116, 82], [90, 82, 112, 86]] }, A: { t: [114, 66], c: [104, 68], b: [68, 70], bras: [[106, 78, 112, 82]], jambes: [[46, 80, 26, 84]] } }
+};
+// [id, level, name, description, pose, tradition]
+const KAMA = [
+  ['k01', 1, 'Le missionnaire', 'Face à face, l’un allongé sur le dos, l’autre au-dessus en appui sur les avant-bras. Le grand classique, pour se regarder et s’embrasser.', 'mis', 'cl'],
+  ['k02', 1, 'La cuillère', 'Allongés sur le côté, l’un blotti contre le dos de l’autre. Tendre et sans effort, idéale pour les matins paresseux.', 'cuillere', 'cl'],
+  ['k03', 1, 'L’Andromaque', 'L’un allongé sur le dos, l’autre assis à califourchon, qui mène la danse et le rythme.', 'dessus', 'cl'],
+  ['k04', 1, 'Le lotus', 'Assis face à face, l’un sur les genoux de l’autre, jambes enlacées. Les visages sont tout près, les souffles se mêlent.', 'lotus', 'ks'],
+  ['k05', 1, 'Le face-à-face allongé', 'Allongés sur le côté, face à face, jambes mêlées. Tout en douceur et en regards.', 'face', 'cl'],
+  ['k06', 2, 'La levrette', 'L’un à quatre pattes, l’autre à genoux derrière. Puissante et complice ; les mains sur les hanches guident le rythme.', 'levrette', 'cl'],
+  ['k07', 2, 'L’Andromaque inversée', 'À califourchon, mais dos tourné vers le visage de l’autre. Une vue nouvelle, et toujours le contrôle du rythme.', 'dessusInverse', 'cl'],
+  ['k08', 2, 'La chaise', 'L’un assis sur une chaise, l’autre sur ses genoux, face à lui. On s’enlace, on s’embrasse, on prend son temps.', 'chaise', 'cl'],
+  ['k09', 2, 'Le papillon', 'L’un allongé au bord du lit, jambes relevées sur les épaules de l’autre, qui se tient debout.', 'papillon', 'cl'],
+  ['k10', 2, 'Les ciseaux', 'Allongés, les jambes entrecroisées comme les lames de ciseaux. Lent, profond, avec beaucoup de caresses possibles.', 'ciseaux', 'cl'],
+  ['k11', 2, 'La levrette allongée', 'L’un à plat ventre, l’autre allongé sur lui. Enveloppante, avec des baisers dans la nuque.', 'levretteAllongee', 'cl'],
+  ['k12', 2, 'Le missionnaire enlacé', 'Comme le missionnaire, mais les jambes de celui qui est dessous entourent le dos de l’autre pour le garder tout contre soi.', 'misEnlace', 'cl'],
+  ['k13', 2, 'Le Y', 'Assis face à face, adossés sur les mains, jambes croisées en Y. On se regarde, on ralentit, on savoure.', 'y', 'cl'],
+  ['k14', 3, 'La brouette', 'L’un en appui sur les mains, l’autre debout derrière qui lui tient les jambes. Sportive et joueuse : à essayer en riant.', 'brouette', 'cl'],
+  ['k15', 3, 'L’étreinte debout', 'L’un porte l’autre, dont les jambes entourent sa taille. Passionnée ; un mur offre un appui bienvenu.', 'porte', 'cl'],
+  ['k16', 3, 'L’enclume', 'Jambes relevées très haut sur les épaules de l’autre. Intense : à adopter doucement, en se parlant.', 'misEpaules', 'cl'],
+  ['k17', 3, 'Le 69', 'Tête-bêche, l’un au-dessus de l’autre, pour se donner du plaisir en même temps.', 'soixanteNeuf', 'cl'],
+  ['k18', 3, 'La levrette debout', 'L’un penché en avant, mains en appui sur un meuble, l’autre debout derrière. Spontanée, pour les envies pressantes.', 'levretteDebout', 'cl'],
+  ['k19', 3, 'Le bord de la table', 'L’un assis au bord d’une table, l’autre debout entre ses jambes. Face à face, à la bonne hauteur.', 'table', 'cl'],
+  ['k20', 3, 'La catapulte', 'Genoux ramenés contre la poitrine pour l’un, appui sur ses jambes pour l’autre, à genoux. Pour les plus souples.', 'misGenoux', 'cl'],
+  // Kama Sutra (Inde) — noms des postures décrites par Vatsyayana.
+  ['k21', 1, 'La posture épanouie', 'Allongé sur le dos, l’un s’ouvre largement et accueille l’autre tout contre lui. Une invitation simple et généreuse.', 'misLarge', 'ks'],
+  ['k22', 2, 'La posture bâillante', 'Les jambes levées haut et écartées, comme une fleur qui s’ouvre. Plus de profondeur, à doser ensemble.', 'misHaut', 'ks'],
+  ['k23', 2, 'La posture d’Indrani', 'Genoux repliés contre la poitrine, du nom de l’épouse du dieu Indra. Demande un peu de souplesse et beaucoup de complicité.', 'misGenoux', 'ks'],
+  ['k24', 1, 'La posture serrante', 'Allongés l’un sur l’autre, jambes tendues et serrées. Les corps s’ajustent entièrement, sans un espace entre eux.', 'misSerre', 'ks'],
+  ['k25', 1, 'La posture enlaçante', 'Une jambe enroule la cuisse de l’autre comme une liane autour d’un arbre. Tendre et enveloppante.', 'misEnlace', 'ks'],
+  ['k26', 2, 'La jument', 'Celui qui est dessus se resserre et retient l’autre, comme une cavalière qui tient sa monture. Toute en maîtrise.', 'dessus', 'ks'],
+  ['k27', 2, 'La posture montante', 'Les deux jambes tendues vers le ciel, droites et réunies. Une sensation plus serrée, très intense.', 'misHaut', 'ks'],
+  ['k28', 3, 'Le bambou fendu', 'Une jambe sur l’épaule de l’autre, l’autre allongée, puis on alterne. Un jeu de rythme et d’équilibre.', 'misUnHaut', 'ks'],
+  ['k29', 3, 'Le clou', 'Un talon posé haut, près du front de l’autre, la seconde jambe tendue. Pour les plus souples, avec douceur.', 'misUnHaut', 'ks'],
+  ['k30', 2, 'Le crabe', 'Les jambes repliées sur le ventre, ramassées comme une pince. Proche, enveloppant, et très complice.', 'misGenoux', 'ks'],
+  ['k31', 3, 'La posture tournante', 'Celui qui est dessus pivote lentement, sans se séparer de l’autre, jusqu’à lui tourner le dos. Un art qui demande de l’entraînement… et du rire.', 'dessusInverse', 'ks'],
+  ['k32', 3, 'L’union suspendue', 'L’un, adossé à un mur, porte l’autre qui l’enlace des bras et des jambes. Passion et force réunies.', 'porte', 'ks'],
+  ['k33', 3, 'L’union de la vache', 'Penché en avant, mains au sol ou sur un meuble, l’un est rejoint par l’autre debout derrière lui. Instinctive et puissante.', 'levretteDebout', 'ks'],
+  ['k34', 2, 'L’union debout', 'Debout face à face, appuyés l’un contre l’autre ou contre un mur. Pour les étreintes qui n’attendent pas.', 'debout', 'ks'],
+  // Ananga Ranga (Inde) — les grandes familles de postures décrites par Kalyanamalla.
+  ['k35', 1, 'Uttana-bandha', 'La famille des postures où l’un est allongé sur le dos et l’autre face à lui : la base de toutes les variations.', 'mis', 'ar'],
+  ['k36', 1, 'Tiryak-bandha', 'Les postures sur le côté, face à face. Lentes, câlines, parfaites pour les soirées tendres.', 'face', 'ar'],
+  ['k37', 2, 'Upavishta-bandha', 'Les postures assises : on s’enlace, on se tient, on se regarde. Idéales pour faire durer.', 'y', 'ar'],
+  ['k38', 3, 'Utthita-bandha', 'Les postures debout, qui demandent force et équilibre, et font monter la température.', 'debout', 'ar'],
+  ['k39', 2, 'Vyanta-bandha', 'Les postures où l’un rejoint l’autre par derrière, qu’il soit à genoux, allongé ou debout.', 'levrette', 'ar'],
+  ['k40', 2, 'Purushayita', 'Celui ou celle qui est d’habitude dessous prend les commandes et passe au-dessus. Le plaisir d’inverser les rôles.', 'dessusPenche', 'ar'],
+  // Tao de l'amour (Chine) — noms poétiques des trente postures de Dongxuanzi.
+  ['k41', 1, 'Le déroulement de la soie', 'Allongés face à face, l’un enroule ses jambes autour de l’autre, lentement, comme on dévide un fil de soie.', 'misEnlace', 'tao'],
+  ['k42', 2, 'Le dragon qui se retourne', 'Les jambes de l’un ramenées vers sa poitrine, l’autre au-dessus qui ondule. Souple et puissante.', 'misGenoux', 'tao'],
+  ['k43', 1, 'Les poissons qui se regardent', 'Allongés sur le côté, les yeux dans les yeux, comme deux poissons nageant côte à côte.', 'face', 'tao'],
+  ['k44', 1, 'Les hirondelles cœur à cœur', 'Face à face, poitrine contre poitrine, enlacés. La plus tendre des étreintes du Tao.', 'mis', 'tao'],
+  ['k45', 1, 'Les martins-pêcheurs unis', 'L’un assis jambes croisées, l’autre installé sur lui. Un nid à deux, tout en lenteur.', 'lotus', 'tao'],
+  ['k46', 1, 'Les canards mandarins', 'Sur le côté, l’un niché derrière l’autre, symboles d’un amour fidèle en Chine.', 'cuillere', 'tao'],
+  ['k47', 2, 'Les papillons qui volettent', 'L’un sur le dos, l’autre au-dessus, face à lui, qui monte et descend avec légèreté.', 'dessus', 'tao'],
+  ['k48', 2, 'Les canards sauvages dos à dos', 'Au-dessus, mais tourné vers les pieds de l’autre. Le Tao l’associe à l’envol.', 'dessusInverse', 'tao'],
+  ['k49', 1, 'Le pin couché', 'Allongés l’un sur l’autre, jambes croisées, comme les branches d’un vieux pin. Calme et profond.', 'misSerre', 'tao'],
+  ['k50', 2, 'Les bambous près de l’autel', 'Debout face à face, serrés comme deux tiges de bambou. Pour un élan soudain.', 'debout', 'tao'],
+  ['k51', 2, 'Le phénix qui tient son petit', 'Assis, l’un accueille l’autre sur ses genoux et le berce dans ses bras.', 'chaise', 'tao'],
+  ['k52', 2, 'Les mouettes qui planent', 'L’un allongé au bord du lit, l’autre debout qui le rejoint. Deux oiseaux au-dessus de la mer.', 'papillon', 'tao'],
+  ['k53', 3, 'Les chevaux sauvages qui bondissent', 'Jambes posées sur les épaules de l’autre : fougueuse, à prendre au galop… ou au pas.', 'misEpaules', 'tao'],
+  ['k54', 3, 'Le coursier au galop', 'Une jambe levée, l’autre étendue, et un rythme qui s’emballe.', 'misUnHaut', 'tao'],
+  ['k55', 2, 'Le tigre blanc qui bondit', 'L’un à genoux, penché en avant, l’autre agenouillé derrière lui. Le Tao y voit la force du tigre.', 'levrette', 'tao'],
+  ['k56', 2, 'La cigale sur la branche', 'L’un à plat ventre, l’autre allongé sur son dos, accroché comme une cigale à sa branche.', 'levretteAllongee', 'tao'],
+  ['k57', 2, 'La chèvre face à l’arbre', 'Assis, l’un accueille l’autre sur ses genoux, dos tourné vers lui. Les mains sont libres de caresser.', 'chaiseDos', 'tao'],
+  ['k58', 3, 'Le singe qui grimpe à l’arbre', 'L’un porte l’autre, qui s’agrippe à son cou et à sa taille. Pour les audacieux en forme.', 'porte', 'tao'],
+  ['k59', 2, 'Le chat et la souris dans le même trou', 'L’un allongé sur le dos, l’autre étendu de tout son long sur lui. Complice et taquine.', 'dessusAllonge', 'tao'],
+  // Le Jardin parfumé (Maghreb) — manières décrites par le cheikh Nefzaoui.
+  ['k61', 2, 'La manière de la grenouille', 'Les genoux ramenés vers la poitrine, l’un est rejoint par l’autre accroupi devant lui. Ramassée et intense.', 'misGenoux', 'jp'],
+  ['k62', 2, 'Le bouchon', 'Les jambes de l’un serrées l’une contre l’autre, l’autre au-dessus qui l’enserre. Un ajustement parfait.', 'misSerre', 'jp'],
+  ['k63', 3, 'La manière du bélier', 'L’un à genoux, les avant-bras sur le lit, l’autre derrière. Le Jardin parfumé en vante l’ardeur.', 'levretteCoudes', 'jp'],
+  ['k64', 2, 'La première manière', 'Allongé sur le dos, les cuisses relevées, l’un accueille l’autre entre ses jambes : la base, selon Nefzaoui.', 'misLarge', 'jp'],
+  ['k65', 3, 'La manière accroupie', 'Au-dessus, accroupi sur ses pieds, celui qui mène règle seul la profondeur et le rythme.', 'dessusAccroupi', 'jp']
+];
+const KAMA_ETIQUETTES = { k14: ['lieux'], k18: ['lieux'], k19: ['lieux'], k33: ['lieux'] };
+// « Ligne de soie »: a fine smoothed line for each partner, framed in a gold-ringed medallion, automatically scaled to fit.
+function kamaLisse(pts) {
+  if (pts.length < 3) return 'M' + pts.map(p => p.join(' ')).join('L');
+  let d = 'M' + pts[0].join(' ');
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2, r = v => Math.round(v * 10) / 10;
+    d += `C${r(p1[0] + (p2[0] - p0[0]) / 6)} ${r(p1[1] + (p2[1] - p0[1]) / 6)} ${r(p2[0] - (p3[0] - p1[0]) / 6)} ${r(p2[1] - (p3[1] - p1[1]) / 6)} ${p2.join(' ')}`;
+  }
+  return d;
+}
+function kamaCadre(d, x, y, w, h) {
+  const pts = [];
+  for (const f of [d.A, d.B]) { pts.push([f.t[0] - 8, f.t[1] - 8], [f.t[0] + 8, f.t[1] + 8], f.c, f.b); for (const q of f.bras || []) pts.push([q[0], q[1]], [q[2], q[3]]); for (const q of f.jambes || []) pts.push([q[0], q[1]], [q[2], q[3]]); }
+  const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), k = Math.min(w / (x1 - x0), h / (y1 - y0), 2.4);
+  return { t: `translate(${(x + (w - (x1 - x0) * k) / 2 - x0 * k).toFixed(1)} ${(y + h - (y1 - y0) * k - y0 * k).toFixed(1)}) scale(${k.toFixed(3)})`, k, bas: y + h };
+}
+function kamaDessin(p, classe = '') {
+  const d = KAMA_POSES[p[4]] || KAMA_POSES.mis, c = kamaCadre(d, 30, 38, 100, 82), w = (1.7 / c.k).toFixed(2);
+  const lig = f => `<path d="${kamaLisse([[f.t[0], f.t[1] + 6], f.c, f.b])}"/>` + (f.bras || []).map(([ex, ey, hx, hy]) => `<path d="${kamaLisse([f.c, [ex, ey], [hx, hy]])}"/>`).join('') + (f.jambes || []).map(([gx, gy, px, py]) => `<path d="${kamaLisse([f.b, [gx, gy], [px, py]])}"/>`).join('') + `<circle cx="${f.t[0]}" cy="${f.t[1]}" r="6.5"/>`;
+  return `<svg class="kama-dessin ${classe}" viewBox="0 0 160 160" role="img" aria-label="${esc(p[2])}"><circle cx="80" cy="80" r="74" class="kama-fond"/><circle cx="80" cy="80" r="74" class="kama-or" stroke-width="1.2"/><circle cx="80" cy="80" r="70" class="kama-or" stroke-width=".5"/><text x="80" y="24" text-anchor="middle" class="kama-etoile">✦</text><path d="M24 ${c.bas + 3} Q80 ${c.bas - 1} 136 ${c.bas + 3}" class="kama-or" stroke-width=".8"/><g transform="${c.t}" fill="none" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"><g class="kama-b">${lig(d.B)}</g><g class="kama-a">${lig(d.A)}</g></g></svg>`;
+}
+if (typeof module !== 'undefined') module.exports = { KAMA, KAMA_POSES, KAMA_TRADITIONS, KAMA_ETIQUETTES };
+
+// Histoires coquines (lot 1.8, Jardin secret): stories and reader-style testimonies written for Entre Nous, in the spirit of
+// the old couple magazines, never copied. Hot and bold, but suggestive rather than graphic. New ones come with later updates.
+// [id, level, genre, title, standfirst, text (paragraphs separated by a blank line), date added]
+const HIST_GENRES = { recit: '📖 Récit', temoignage: '💌 Témoignage', fantasme: '💭 Fantasme' };
+const HISTOIRES = [
+  ['h01', 1, 'recit', 'La panne de courant', 'Un soir d’orage à Cocody, l’électricité saute. Ils n’ont plus qu’une bougie… et toute la nuit devant eux.',
+`La pluie tambourinait sur le toit quand tout s’est éteint d’un coup. Plus de climatiseur, plus de télévision, plus de téléphone chargé. Juste le bruit de l’orage et le souffle de Nadia, quelque part dans le noir du salon.
+
+« Ne bouge pas, je cherche une bougie », a dit Marc. Il a renversé un verre, juré tout bas, et elle a ri. Quand la petite flamme s’est enfin dressée entre eux, elle a vu son visage autrement : plus proche, plus doré, presque inconnu.
+
+Il faisait chaud. Elle a défait les premiers boutons de sa chemise sans y penser, puis elle a vu qu’il la regardait faire. Alors elle a continué, plus lentement, pour lui.
+
+Ils ont oublié l’orage. Ils ont oublié qu’ils étaient mariés depuis sept ans et qu’ils connaissaient chaque recoin l’un de l’autre. À la lueur de cette bougie, tout redevenait une découverte : la courbe d’une épaule, le goût d’un cou, la lenteur qu’on ne s’accorde plus jamais.
+
+Le courant est revenu vers deux heures du matin. Ils ont éteint la lumière tout de suite.`, '2026-11-10'],
+  ['h02', 1, 'temoignage', 'Le petit mot dans la poche', 'Awa, 34 ans, Yopougon : « Je n’aurais jamais cru qu’un simple papier puisse me mettre dans cet état. »',
+`« Ça fait dix ans que je vis avec Serge. On s’aime, mais vous savez ce que c’est : le travail, les enfants, les factures. Le désir, on le range au fond d’un tiroir.
+
+Un lundi, en sortant mes clés au bureau, j’ai trouvé un papier plié dans ma poche. Trois lignes de son écriture penchée : ce qu’il avait envie de me faire ce soir-là, dans l’ordre. Je suis devenue toute rouge devant mes collègues.
+
+Toute la journée, j’y ai pensé. En réunion, dans le gbaka du retour, en faisant les courses. Chaque heure, le petit papier brûlait un peu plus dans ma poche.
+
+Quand je suis rentrée, les enfants étaient chez sa mère. Il m’attendait, une chemise blanche que je ne lui connaissais pas, et il n’a pas dit un mot. Il a seulement repris le papier dans ma main, il l’a relu à voix basse, et il a tenu chacune de ses promesses.
+
+Depuis, c’est moi qui glisse des mots dans ses poches. »`, '2026-11-10'],
+  ['h03', 2, 'recit', 'La chambre 214', 'Un week-end à Assinie, un hôtel au bord de la lagune, et une règle du jeu : faire semblant de ne pas se connaître.',
+`Elle est arrivée au bar de l’hôtel la première, comme convenu. Robe noire, rouge à lèvres qu’elle ne porte jamais. Lui s’est assis trois tabourets plus loin et a commandé un jus de gingembre sans la regarder.
+
+C’était son idée à elle : un soir, redevenir deux inconnus. Il a fini par se tourner vers elle. « Vous êtes ici pour le travail ? » Elle a inventé un métier, une ville, un prénom. Il a joué le jeu avec un sérieux qui l’a fait fondre.
+
+Ils ont parlé une heure. Il la frôlait à peine, et chaque frôlement l’électrisait davantage. Quand il a posé la clé de la chambre 214 sur le comptoir, entre leurs deux verres, elle a fait mine d’hésiter.
+
+Dans l’ascenseur, l’inconnu l’a plaquée doucement contre le miroir. Il embrassait comme son mari, mais avec une faim qu’elle ne lui connaissait plus. Elle a gardé son faux prénom jusqu’au matin. Lui l’a murmuré toute la nuit.`, '2026-11-10'],
+  ['h04', 2, 'temoignage', 'Le massage', 'Karim, 41 ans, Marcory : « Elle m’a interdit de bouger. C’est la chose la plus difficile que j’aie jamais faite. »',
+`« Pour mon anniversaire, ma femme m’a annoncé un cadeau spécial : un massage. J’ai pensé à un bon pour un spa. Le soir venu, elle a éteint les lumières, allumé des bougies et sorti une bouteille d’huile tiède.
+
+Une seule règle : je n’avais pas le droit de bouger. Pas les mains, pas un geste. Si je bougeais, elle s’arrêtait.
+
+Elle a commencé par mes épaules, très sagement. Puis le dos, lentement, si lentement. Ses mains descendaient, remontaient, s’attardaient là où je ne les attendais pas. Je l’entendais sourire dans le noir chaque fois que ma respiration changeait.
+
+J’ai tenu vingt minutes. Vingt minutes à serrer les draps. Quand j’ai enfin craqué, elle s’est arrêtée net, comme promis… et m’a dit que c’était à mon tour de lui obéir.
+
+Je ne vous raconte pas la suite. Disons seulement que je n’ai plus jamais regardé une bouteille d’huile de la même façon. »`, '2026-11-10'],
+  ['h05', 2, 'fantasme', 'Le message de 15 heures', 'Elle reçoit un message en pleine réunion. Une photo, une phrase, et l’après-midi devient interminable.',
+`15 h 02. Le téléphone vibre sur la table de réunion. Elle jette un œil distrait : une photo. Lui, torse nu dans le miroir de la salle de bain, avec une seule phrase : « Je rentre tôt. Toi aussi. »
+
+Elle retourne le téléphone, le cœur battant, et fait semblant de suivre le tableau de chiffres projeté au mur. Impossible. Chaque mot du directeur lui passe au-dessus de la tête.
+
+15 h 40. Deuxième message : « J’ai choisi la musique. » 16 h 15 : « Ne mets rien sous ta robe en rentrant. »
+
+Elle croise et décroise les jambes. Sa voisine lui demande si elle a chaud. Oui. Très chaud.
+
+À 17 h pile, elle est dans le taxi. Elle ne se souvient plus d’un seul chiffre de la réunion, mais elle connaît par cœur chacun de ses messages. Quand la porte s’ouvre, la musique joue déjà. Il n’a pas menti.`, '2026-11-10'],
+  ['h06', 3, 'recit', 'Les yeux bandés', 'Un foulard de soie, une promesse de confiance, et tous les autres sens qui se réveillent.',
+`Il a sorti le foulard de soie rouge qu’elle lui avait offert, et il a demandé : « Tu me fais confiance ? » Elle a hoché la tête. Le monde a disparu.
+
+Sans la vue, tout devient immense. Le froissement de sa chemise qui tombe. Le parquet qui craque quand il fait le tour du lit. Son souffle, d’abord près de son oreille, puis plus nulle part. Elle attend, tendue comme une corde.
+
+Quelque chose de frais glisse sur sa clavicule. Un glaçon. Elle sursaute, rit, puis ne rit plus du tout quand le froid est remplacé par la chaleur de sa bouche. Il alterne, sans prévenir, le froid et le chaud, la plume et les dents, la douceur et l’audace.
+
+Elle ne sait jamais où il sera la seconde d’après. C’est à la fois insupportable et merveilleux. Elle supplie, elle exige, elle négocie. Il ne cède rien.
+
+Quand enfin il dénoue le foulard, la lumière de la lampe lui paraît aveuglante. Il la regarde comme s’il venait de la rencontrer. « À ton tour la semaine prochaine », souffle-t-elle.`, '2026-11-10'],
+  ['h07', 3, 'temoignage', 'La terrasse', 'Fatou, 29 ans, Grand-Bassam : « On s’est dit qu’à cette heure-là, personne ne nous verrait. On avait presque raison. »',
+`« On fêtait nos trois ans dans une petite maison louée face à la mer, à Bassam. Il était plus de minuit, la plage était déserte, et la terrasse donnait sur l’océan, juste éclairée par la lune.
+
+On avait bu un peu de vin de palme, on dansait pieds nus. Il m’a soulevée pour m’asseoir sur la balustrade, la mer dans mon dos, et il m’a embrassée comme on n’ose pas le faire dehors.
+
+Le vent soulevait ma robe, le bruit des vagues couvrait tout. J’avais à la fois peur et une envie folle. Chaque bruit me faisait sursauter, et ça rendait tout plus fort.
+
+Au moment où on oubliait vraiment le monde, une lampe torche a balayé la plage : le gardien faisait sa ronde. On s’est jetés à plat ventre derrière le muret, morts de rire, ma robe à moitié remontée.
+
+Il n’a rien vu. On est rentrés finir la nuit à l’intérieur, mais je crois qu’on pense encore tous les deux à cette terrasse… et qu’on y retournera. »`, '2026-11-10'],
+  ['h08', 3, 'fantasme', 'Une nuit où tu décides de tout', 'Pour une nuit, elle décide de tout. Il n’a le droit que de dire oui.',
+`Ce soir, c’est elle qui commande. C’était écrit sur le bon qu’il lui avait offert : « Une nuit où tu décides de tout ». Elle compte bien l’utiliser jusqu’à la dernière minute.
+
+Elle le fait asseoir sur le fauteuil, au milieu de la chambre. « Tu ne te lèves pas avant que je te le dise. » Il sourit, un peu trop sûr de lui. Elle éteint le plafonnier, ne laisse que la petite lampe, et lance la musique qu’elle a choisie.
+
+Elle danse pour lui, lentement, tout près, sans jamais le laisser la toucher. Quand ses mains se lèvent, elle les repose sur les accoudoirs. « Pas encore. » Elle aime voir sa mâchoire se serrer.
+
+Elle lui donne des ordres à l’oreille, un à un. Il obéit à tous, et chaque obéissance la grise un peu plus. Elle découvre le plaisir de mener, de faire attendre, de décider du moment exact.
+
+Bien plus tard, allongée contre lui, elle lui rend son bon déchiré en deux. « La prochaine fois, c’est toi qui décides. » Il a déjà l’air d’avoir des idées.`, '2026-11-10']
+];
+const HIST_MOTS = t => t.split(/\s+/).length;
+if (typeof module !== 'undefined') module.exports = { HISTOIRES, HIST_GENRES };
+
+// Jardin secret, lot 1.8: Kamasutra (positions to tick, shared by the couple) and Histoires coquines (stories to read).
+// Positions: collection « positions » (common): one document per position ticked « Déjà fait », « À essayer » or « Favori ».
+// Stories: what has been read and favourites stay on this phone.
+const KAMA_VUE = { filtre: 'toutes', tradition: '', ouverte: null };
+const kamaEtat = idk => (S.positions || []).find(x => x.id === 'pos-' + idk) || {};
+function kamaPoser(idk, champs) {
+  const id = 'pos-' + idk, x = Object.assign({ id }, kamaEtat(idk), champs, { updatedAt: new Date().toISOString() });
+  S.positions = (S.positions || []).filter(y => y.id !== id).concat(x); persist();
+}
+function jardinKama() {
+  const n = jardinNiveau(), ex = jardinExclus(), L = KAMA.filter(p => p[1] <= n && !(KAMA_ETIQUETTES[p[0]] || []).some(t => ex.includes(t)));
+  const faites = L.filter(p => kamaEtat(p[0]).fait).length, f = KAMA_VUE.filtre;
+  const tr = KAMA_VUE.tradition, vues = L.filter(p => { const e = kamaEtat(p[0]); return (!tr || p[5] === tr) && (f === 'faites' ? e.fait : f === 'essayer' ? e.essayer && !e.fait : f === 'favoris' ? e.favori : true); });
+  const trad = (v, t) => `<button type="button" class="pill-btn${tr === v ? ' active' : ''}" data-action="kama-tradition:${v}">${t}</button>`;
+  const o = KAMA_VUE.ouverte && L.find(p => p[0] === KAMA_VUE.ouverte);
+  const pill = (v, t) => `<button type="button" class="pill-btn${f === v ? ' active' : ''}" data-action="kama-filtre:${v}">${t}</button>`;
+  const fiche = p => { const e = kamaEtat(p[0]); return `<button type="button" class="kama-case${e.fait ? ' faite' : ''}" data-action="kama-ouvrir:${p[0]}">${kamaDessin(p)}<b>${esc(p[2])}</b><small class="kama-origine">${esc(KAMA_TRADITIONS[p[5]] || '')}</small><small>${jardinNiv(p[1])[2]}${e.fait ? ' · ✓ fait' : e.essayer ? ' · 💭 à essayer' : ''}${e.favori ? ' · ⭐' : ''}</small></button>`; };
+  const detail = o ? (() => { const e = kamaEtat(o[0]); return `<section class="card kama-detail">${kamaDessin(o, 'grand')}<div class="card-title"><h3>${esc(o[2])}</h3><span class="pill">${jardinNiv(o[1])[2]} ${jardinNiv(o[1])[1]}</span></div><p class="kama-origine">${esc(KAMA_TRADITIONS[o[5]] || '')}</p><p>${esc(o[3])}</p>${e.fait ? `<p class="quiet small">✓ Déjà fait${e.faitLe ? ' : première fois le ' + new Date(e.faitLe + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}</p>` : ''}<div class="jardin-choix">${button(e.fait ? '✓ Déjà fait' : 'Cocher « déjà fait »', 'kama-fait:' + o[0], 'btn sm ' + (e.fait ? 'primary' : 'soft'))}${button('💭 À essayer', 'kama-essayer:' + o[0], 'btn sm ' + (e.essayer ? 'primary' : 'ghost'))}${button(e.favori ? '⭐ Favori' : '☆ Favori', 'kama-favori:' + o[0], 'btn sm ' + (e.favori ? 'primary' : 'ghost'))}</div><div class="jardin-choix">${button('Proposer pour ce soir 🕯️', 'kama-proposer:' + o[0], 'btn soft sm')}${button('Fermer', 'kama-ouvrir:', 'btn ghost sm')}</div></section>`; })() : '';
+  return `<section class="card"><div class="card-title"><h3>Kamasutra</h3><span class="pill">${faites} / ${L.length} faites</span></div><div class="progress kama-progres"><div style="width:${L.length ? Math.round(faites / L.length * 100) : 0}%"></div></div><p class="quiet small">Positions de quatre traditions (Inde, Chine, Maghreb) et classiques, dessinées pour Entre Nous. Cochez ensemble celles que vous avez déjà essayées ; vos coches sont partagées entre vous deux.</p><div class="jardin-quand">${pill('toutes', 'Toutes')}${pill('essayer', '💭 À essayer')}${pill('faites', '✓ Déjà faites')}${pill('favoris', '⭐ Favoris')}</div><div class="jardin-quand kama-traditions">${trad('', 'Toutes origines')}${Object.entries(KAMA_TRADITIONS).map(([k, v]) => trad(k, v.split(' · ')[0])).join('')}</div></section>${detail}<div class="kama-grille">${vues.map(fiche).join('') || '<p class="quiet small">Aucune position ici pour l’instant.</p>'}</div>`;
+}
+function kamaAction(a) {
+  if (!a.startsWith('kama-')) return false;
+  const [nom, x] = a.split(':'), e = kamaEtat(x || '');
+  if (nom === 'kama-filtre') KAMA_VUE.filtre = x;
+  else if (nom === 'kama-tradition') KAMA_VUE.tradition = x || '';
+  else if (nom === 'kama-ouvrir') { KAMA_VUE.ouverte = x || null; render(); if (x && typeof document !== 'undefined' && document.querySelector) { const d = document.querySelector('.kama-detail'); if (d && d.scrollIntoView) d.scrollIntoView({ block: 'start', behavior: 'smooth' }); } return true; }
+  else if (nom === 'kama-fait') { kamaPoser(x, e.fait ? { fait: false, faitLe: '' } : { fait: true, faitLe: e.faitLe || TODAY, essayer: false }); if (!e.fait) { sonsJouer('enregistrer'); toast('Cochée ✓ Une de plus à votre carnet.'); } }
+  else if (nom === 'kama-essayer') kamaPoser(x, { essayer: !e.essayer });
+  else if (nom === 'kama-favori') kamaPoser(x, { favori: !e.favori });
+  else if (nom === 'kama-proposer') {
+    const p = KAMA.find(q => q[0] === x), moi = jardinMoi();
+    if (p) {
+      S.invitations = (S.invitations || []).filter(i => !(i.de === moi && !i.reponse && i.date >= TODAY));
+      S.invitations.push({ id: 'inv-' + id(), de: moi, pour: partnerOf(moi), date: TODAY, message: ('Et si on essayait « ' + p[2] + ' » ce soir ? ♡').slice(0, 140), reponse: null, createdAt: new Date().toISOString() });
+      persist(); JARDIN.onglet = 'invitation'; sonsJouer('enregistrer'); toast('Invitation envoyée pour ce soir. 🕯️');
+    }
+  }
+  render();
+  return true;
+}
+
+/* ----- Histoires coquines ----- */
+const HIST_VUE = { ouverte: null, genre: '' };
+const histLire = (k, d) => { try { return JSON.parse(localStorage.getItem(KEY + ':hist-' + k)) || d; } catch (e) { return d; } };
+const histGarder = (k, v) => { try { localStorage.setItem(KEY + ':hist-' + k, JSON.stringify(v)); } catch (e) { /* stockage bloqué */ } };
+const histMinutes = h => Math.max(1, Math.round(h[5].split(/\s+/).length / 200));
+function jardinHistoires() {
+  const n = jardinNiveau(), lues = histLire('lues', []), fav = histLire('favoris', []), g = HIST_VUE.genre;
+  const L = HISTOIRES.filter(h => h[1] <= n && (!g || (g === 'favoris' ? fav.includes(h[0]) : h[2] === g))).slice().sort((a, b) => b[6].localeCompare(a[6]) || a[0].localeCompare(b[0]));
+  const o = HIST_VUE.ouverte && HISTOIRES.find(h => h[0] === HIST_VUE.ouverte && h[1] <= n);
+  if (o) return `<section class="card hist-lecture"><div class="smallcaps">${HIST_GENRES[o[2]]} · ${jardinNiv(o[1])[2]} ${jardinNiv(o[1])[1]} · ${histMinutes(o)} min</div><h2>${esc(o[3])}</h2><p class="hist-chapeau">${esc(o[4])}</p>${o[5].split(/\n\n+/).map(par => `<p>${esc(par)}</p>`).join('')}<div class="jardin-choix">${button(fav.includes(o[0]) ? '⭐ Dans mes favoris' : '☆ Ajouter aux favoris', 'hist-favori:' + o[0], 'btn sm ' + (fav.includes(o[0]) ? 'primary' : 'soft'))}${button('← Toutes les histoires', 'hist-ouvrir:', 'btn ghost sm')}</div></section>`;
+  const pill = (v, t) => `<button type="button" class="pill-btn${g === v ? ' active' : ''}" data-action="hist-genre:${v}">${t}</button>`;
+  const nouv = h => !lues.includes(h[0]) ? '<span class="pill pending">Nouvelle</span>' : '<span class="pill">Lue ✓</span>';
+  return `<section class="card"><div class="card-title"><h3>Histoires coquines</h3><span class="pill">${HISTOIRES.filter(h => h[1] <= n && !lues.includes(h[0])).length} à lire</span></div><p class="quiet small">Récits, témoignages et fantasmes écrits pour Entre Nous, à lire seul… ou à voix haute, à deux. De nouvelles histoires arrivent avec les mises à jour.</p><div class="jardin-quand">${pill('', 'Toutes')}${pill('recit', '📖 Récits')}${pill('temoignage', '💌 Témoignages')}${pill('fantasme', '💭 Fantasmes')}${pill('favoris', '⭐ Favoris')}</div></section>${L.map(h => `<button type="button" class="card hist-carte" data-action="hist-ouvrir:${h[0]}"><div class="hist-tete"><small>${HIST_GENRES[h[2]]} · ${jardinNiv(h[1])[2]} · ${histMinutes(h)} min</small>${nouv(h)}</div><b>${esc(h[3])}</b><span>${esc(h[4])}</span></button>`).join('') || '<p class="quiet small">Aucune histoire ici pour l’instant.</p>'}`;
+}
+function histAction(a) {
+  if (!a.startsWith('hist-')) return false;
+  const [nom, x] = a.split(':');
+  if (nom === 'hist-ouvrir') { HIST_VUE.ouverte = x || null; if (x) { const L = histLire('lues', []); if (!L.includes(x)) histGarder('lues', L.concat(x)); } if (typeof window !== 'undefined' && window.scrollTo) window.scrollTo(0, 0); }
+  else if (nom === 'hist-genre') HIST_VUE.genre = x || '';
+  else if (nom === 'hist-favori') { const L = histLire('favoris', []); histGarder('favoris', L.includes(x) ? L.filter(y => y !== x) : L.concat(x)); }
+  render();
+  return true;
 }
 
 const app=$('#app');app.addEventListener('click',actions);app.addEventListener('change',changed);app.addEventListener('submit',submitted);app.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id?.startsWith('task-')){e.preventDefault();const id=e.target.id.slice(5);const v=e.target.value.trim();if(v){S.projects.find(p=>p.id===id)?.tasks.push({id:Math.random().toString(36).slice(2,10),name:v,done:false});persist();render()}}});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal)close()});syncStart();
