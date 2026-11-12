@@ -4,97 +4,651 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SoluGis – Solutions numériques &amp; IA</title>
-<meta name="description" content="SoluGis conçoit des applications simples pour les familles, les associations et les entreprises, installées sur leur propre compte Google.">
-<meta name="theme-color" content="#0d1b2e">
+<meta name="description" content="SoluGis conçoit des applications, des sites internet et des automatisations sur mesure pour les commerçants, les entreprises, les associations et les particuliers de Côte d’Ivoire, sur téléphone, tablette et ordinateur.">
+<meta name="theme-color" content="#070f1c">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SoluGis – Solutions numériques & IA">
+<meta property="og:description" content="Applications, sites internet et automatisation sur mesure, sur tous vos écrans. Ataya, MonEmpire, Adya, MonDjè, Kalan, HydroPlomb.">
+<meta property="og:url" content="https://solugis.github.io/">
+<meta property="og:image" content="https://solugis.github.io/accueil/apercu.png">
+<meta property="og:locale" content="fr_FR">
 <link rel="apple-touch-icon" href="icone-180.png">
 <link rel="icon" type="image/png" href="icone-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --nuit: #0d1b2e; --turquoise: #2ab7c9; --creme: #f3ead8; --fond: #f6f7f9; --carte: #ffffff; --texte: #142235; --doux: #5a6778; --ligne: #dfe3ea; }
-  @media (prefers-color-scheme: dark) { :root { --fond: #0a1524; --carte: #122238; --texte: #e8edf4; --doux: #a3b0c2; --ligne: #22344d; } }
+  :root {
+    --nuit: #070f1c; --nuit-2: #0d1b2e; --nuit-3: #13243b;
+    --creme: #fbeee4; --cuivre: #e3ad8c; --cuivre-fonce: #b9774f;
+    --turquoise: #3fd0f5; --turquoise-fonce: #1596d6;
+    --texte: #eef2f7; --doux: #9fb0c5; --ligne: rgba(227, 173, 140, .16);
+    --verre: rgba(255, 255, 255, .045);
+    --titre: "Sora", "Avenir Next", -apple-system, "Segoe UI", system-ui, sans-serif;
+    --corps: "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+    --courbe: cubic-bezier(.2, .8, .2, 1);
+  }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; background: var(--fond); color: var(--texte); font: 17px/1.55 -apple-system, "Avenir Next", "Segoe UI", system-ui, sans-serif; }
-  .tete { background: var(--nuit); color: var(--creme); }
-  .tete-in, main { max-width: 980px; margin: 0 auto; padding: 0 16px; }
-  .tete-in { padding-top: 28px; padding-bottom: 44px; }
-  .marque { display: flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
-  .marque { gap: 14px; }
-  .marque img { width: 52px; height: auto; }
-  .nom-marque { letter-spacing: 0.22em; font-weight: 700; background: linear-gradient(180deg, #fbeee4, #e3ad8c); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.12; margin: 34px 0 12px; letter-spacing: -0.02em; text-wrap: balance; }
-  .tete p { color: #cfd6e2; font-size: 19px; max-width: 640px; margin: 0; }
-  h2 { font-size: 24px; margin: 40px 0 14px; }
-  .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
-  .carte { background: var(--carte); border: 1px solid var(--ligne); border-radius: 18px; padding: 20px; display: grid; gap: 8px; align-content: start; }
-  .carte h3 { margin: 0; font-size: 20px; }
-  .carte p { margin: 0; color: var(--doux); font-size: 15.5px; }
-  .carte a { justify-self: start; margin-top: 6px; padding: 11px 18px; border-radius: 12px; background: var(--nuit); color: #fff; font-weight: 700; text-decoration: none; }
-  @media (prefers-color-scheme: dark) { .carte a { background: var(--turquoise); color: var(--nuit); } }
-  .etiquette { justify-self: start; font-size: 13px; font-weight: 700; color: var(--doux); border: 1px solid var(--ligne); border-radius: 999px; padding: 2px 10px; }
-  ul.points { padding-left: 20px; }
-  ul.points li { margin: 6px 0; }
-  .contact { margin-top: 40px; background: var(--carte); border: 1px solid var(--ligne); border-radius: 18px; padding: 20px; display: grid; gap: 12px; }
-  .contact h2 { margin: 0; }
-  .contact p { margin: 0; color: var(--doux); }
-  .contact .actions { display: flex; flex-wrap: wrap; gap: 10px; }
-  .contact .actions a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 12px; font-weight: 700; text-decoration: none; }
-  .contact .wa { background: #1f8f4e; color: #fff; }
-  .contact .tel { border: 2px solid var(--ligne); color: var(--texte); }
-  .video { margin: 18px 0 0; }
-  .video video { display: block; width: 100%; height: auto; border-radius: 18px; background: var(--nuit); box-shadow: 0 12px 40px rgba(13, 27, 46, .18); }
-  .video figcaption { margin-top: 10px; color: var(--doux); font-size: 14.5px; }
-  .signe { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; }
-  .signe img { width: 22px; height: auto; }
-  @media (prefers-color-scheme: dark) { .signe img { content: url(symbole.svg); } }
-  footer { margin: 40px auto 0; padding: 18px 16px 40px; max-width: 980px; color: var(--doux); font-size: 14px; border-top: 1px solid var(--ligne); }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body { margin: 0; background: var(--nuit); color: var(--texte); font: 17px/1.6 var(--corps); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  img { max-width: 100%; }
+  a { color: inherit; }
+  .bord { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+  ::selection { background: rgba(227, 173, 140, .35); }
+
+  /* ---------- Barre de navigation ---------- */
+  .nav { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .4s, border-color .4s, backdrop-filter .4s; border-bottom: 1px solid transparent; padding-top: env(safe-area-inset-top); }
+  .nav.pleine { background: rgba(7, 15, 28, .72); backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%); border-color: var(--ligne); }
+  .nav .bord { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; }
+  .logo img { width: 34px; height: auto; }
+  .logo span { font: 600 15px/1 var(--titre); letter-spacing: .34em; background: linear-gradient(180deg, var(--creme), var(--cuivre)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .nav nav { display: flex; align-items: center; gap: 26px; }
+  .nav nav a { text-decoration: none; color: var(--doux); font-size: 15px; transition: color .25s; }
+  .nav nav a:hover { color: var(--texte); }
+  .nav nav a.bouton { color: var(--nuit); }
+  @media (max-width: 760px) { .nav nav a:not(.bouton) { display: none; } }
+
+  /* ---------- Boutons ---------- */
+  .bouton { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 12px 22px; border-radius: 999px; font: 600 15.5px/1 var(--corps); text-decoration: none; border: 0; cursor: pointer; transition: transform .3s var(--courbe), box-shadow .3s, background .3s; will-change: transform; }
+  .bouton svg { width: 18px; height: 18px; flex: none; }
+  .bouton.or { color: var(--nuit); background: linear-gradient(135deg, #fde9da, var(--cuivre) 55%, #c88a63); box-shadow: 0 10px 30px -10px rgba(227, 173, 140, .55), inset 0 1px 0 rgba(255, 255, 255, .6); }
+  .bouton.or:hover { box-shadow: 0 16px 40px -10px rgba(227, 173, 140, .75), inset 0 1px 0 rgba(255, 255, 255, .6); }
+  .bouton.verre { color: var(--texte); background: var(--verre); border: 1px solid rgba(255, 255, 255, .14); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .bouton.verre:hover { background: rgba(255, 255, 255, .09); }
+  .bouton:focus-visible, a:focus-visible { outline: 2px solid var(--turquoise); outline-offset: 3px; }
+  .nav .bouton { min-height: 44px; padding: 12px 18px; font-size: 14.5px; }
+
+  /* ---------- Ouverture ---------- */
+  .ouverture { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: hidden; isolation: isolate; padding: 120px 0 90px; }
+  .ouverture canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: .9; }
+  .aurore { position: absolute; z-index: -2; border-radius: 50%; filter: blur(70px); opacity: .55; pointer-events: none; }
+  .aurore.a1 { width: 620px; height: 620px; left: -160px; top: -120px; background: radial-gradient(circle, rgba(227, 173, 140, .55), transparent 65%); animation: flotte 18s ease-in-out infinite alternate; }
+  .aurore.a2 { width: 560px; height: 560px; right: -160px; top: 18%; background: radial-gradient(circle, rgba(63, 208, 245, .42), transparent 65%); animation: flotte 22s ease-in-out infinite alternate-reverse; }
+  .aurore.a3 { width: 520px; height: 520px; left: 30%; bottom: -260px; background: radial-gradient(circle, rgba(21, 150, 214, .35), transparent 65%); animation: flotte 26s ease-in-out infinite alternate; }
+  @keyframes flotte { 0% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(60px, 40px, 0) scale(1.12); } 100% { transform: translate3d(-40px, 70px, 0) scale(.95); } }
+  .ouverture::after { content: ""; position: absolute; inset: auto 0 0; height: 220px; background: linear-gradient(transparent, var(--nuit)); z-index: -1; }
+  .ouverture .bord { display: grid; grid-template-columns: 1.3fr .7fr; align-items: center; gap: 40px; }
+  @media (max-width: 980px) { .ouverture .bord { grid-template-columns: 1fr; text-align: center; } }
+  .surtitre { display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 8px; border-radius: 999px; border: 1px solid var(--ligne); background: rgba(13, 27, 46, .55); color: var(--cuivre); font: 500 13.5px/1 var(--corps); letter-spacing: .02em; }
+  .surtitre i { width: 8px; height: 8px; border-radius: 50%; background: var(--turquoise); box-shadow: 0 0 0 0 rgba(63, 208, 245, .6); animation: pouls 2.4s infinite; }
+  @keyframes pouls { 0% { box-shadow: 0 0 0 0 rgba(63, 208, 245, .55); } 70% { box-shadow: 0 0 0 10px rgba(63, 208, 245, 0); } 100% { box-shadow: 0 0 0 0 rgba(63, 208, 245, 0); } }
+  h1 { font: 700 clamp(36px, 5.4vw, 68px)/1.04 var(--titre); letter-spacing: -.035em; margin: 22px 0 22px; text-wrap: balance; }
+  h1 .ligne { display: block; overflow: hidden; padding-bottom: .06em; }
+  h1 .ligne > span { display: inline-block; transform: translateY(105%); animation: monte 1s var(--courbe) forwards; }
+  h1 .ligne:nth-child(2) > span { animation-delay: .12s; }
+  h1 .ligne:nth-child(3) > span { animation-delay: .24s; }
+  h1 .ligne:nth-child(4) > span { animation-delay: .36s; }
+  @media (min-width: 481px) { h1 .ligne { white-space: nowrap; } }
+  @keyframes monte { to { transform: translateY(0); } }
+  .brillant { background: linear-gradient(100deg, var(--creme) 0%, var(--cuivre) 30%, #fff4ea 45%, var(--cuivre) 60%, var(--turquoise) 100%); background-size: 220% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: lueur 7s linear infinite; }
+  @keyframes lueur { from { background-position: 120% 0; } to { background-position: -100% 0; } }
+  .chapeau { font-size: clamp(17px, 2vw, 20px); color: var(--doux); max-width: 580px; margin: 0 0 32px; opacity: 0; animation: apparait 1s .5s var(--courbe) forwards; }
+  @media (max-width: 980px) { .chapeau { margin-left: auto; margin-right: auto; } }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; opacity: 0; animation: apparait 1s .7s var(--courbe) forwards; }
+  @media (max-width: 980px) { .actions { justify-content: center; } }
+  @keyframes apparait { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  .embleme { position: relative; justify-self: center; width: min(420px, 78vw); aspect-ratio: 1; opacity: 0; animation: apparait 1.4s .3s var(--courbe) forwards; }
+  .embleme .halo { position: absolute; inset: 8%; border-radius: 50%; background: conic-gradient(from 0deg, rgba(227, 173, 140, .0), rgba(227, 173, 140, .35), rgba(63, 208, 245, .35), rgba(227, 173, 140, .0)); filter: blur(30px); animation: tourne 14s linear infinite; }
+  .embleme .orbite { position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(227, 173, 140, .18); }
+  .embleme .orbite.o2 { inset: 13%; border-color: rgba(63, 208, 245, .14); border-style: dashed; animation: tourne 60s linear infinite reverse; }
+  .embleme .orbite::before { content: ""; position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; border-radius: 50%; background: var(--cuivre); box-shadow: 0 0 16px var(--cuivre); }
+  .embleme .orbite.o1 { animation: tourne 30s linear infinite; }
+  .embleme .orbite.o2::before { background: var(--turquoise); box-shadow: 0 0 16px var(--turquoise); }
+  @keyframes tourne { to { transform: rotate(360deg); } }
+  .embleme svg { position: absolute; inset: 22%; width: 56%; height: 56%; overflow: visible; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .45)); }
+  .embleme .trace { stroke-dasharray: 520; stroke-dashoffset: 520; animation: dessine 2.2s .6s var(--courbe) forwards; }
+  .embleme .goutte { transform-box: fill-box; transform-origin: center; transform: scale(0); animation: goutte 1s 2.1s cubic-bezier(.3, 1.6, .5, 1) forwards, respire 4s 3.2s ease-in-out infinite; }
+  @keyframes dessine { to { stroke-dashoffset: 0; } }
+  @keyframes goutte { to { transform: scale(1); } }
+  @keyframes respire { 0%, 100% { filter: drop-shadow(0 0 0 rgba(63, 208, 245, 0)); } 50% { filter: drop-shadow(0 0 18px rgba(63, 208, 245, .8)); } }
+
+  @media (max-width: 980px) { .defile { display: none !important; } .embleme { width: min(300px, 70vw); margin-top: 8px; } }
+  .defile { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); color: var(--doux); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; display: grid; justify-items: center; gap: 10px; text-decoration: none; }
+  .defile b { width: 22px; height: 36px; border-radius: 12px; border: 1.5px solid rgba(255, 255, 255, .25); position: relative; }
+  .defile b::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: var(--cuivre); animation: roule 1.8s infinite; }
+  @keyframes roule { 0% { opacity: 0; transform: translateY(0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(12px); } }
+
+  /* ---------- Bandeau des atouts ---------- */
+  .bandeau { border-block: 1px solid var(--ligne); background: rgba(13, 27, 46, .5); overflow: hidden; padding: 18px 0; mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .bandeau .piste { display: flex; gap: 48px; width: max-content; animation: glisse 38s linear infinite; }
+  .bandeau:hover .piste { animation-play-state: paused; }
+  .bandeau span { display: inline-flex; align-items: center; gap: 12px; color: var(--doux); font-size: 15px; white-space: nowrap; }
+  .bandeau span::before { content: ""; width: 6px; height: 6px; transform: rotate(45deg); background: var(--cuivre); }
+  @keyframes glisse { to { transform: translateX(-50%); } }
+
+  /* ---------- Sections ---------- */
+  section.bloc { padding: 110px 0; position: relative; }
+  .entete { max-width: 720px; margin: 0 auto 56px; text-align: center; }
+  .etiquette { display: inline-block; font: 600 12.5px/1 var(--corps); letter-spacing: .22em; text-transform: uppercase; color: var(--cuivre); margin-bottom: 16px; }
+  h2 { font: 700 clamp(32px, 4.6vw, 52px)/1.08 var(--titre); letter-spacing: -.03em; margin: 0 0 18px; text-wrap: balance; }
+  .entete p { color: var(--doux); font-size: 18px; margin: 0; }
+
+  .revele { opacity: 0; transform: translateY(34px); transition: opacity 1s var(--courbe), transform 1s var(--courbe); transition-delay: var(--delai, 0s); }
+  .revele.vu { opacity: 1; transform: none; }
+
+  /* ---------- Offre ---------- */
+  .cibles { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: -24px auto 44px; max-width: 880px; }
+  .cibles span { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--ligne); background: rgba(13, 27, 46, .6); color: var(--creme); font-size: 14.5px; }
+  .offre { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 1020px) { .offre { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 680px) { .offre { grid-template-columns: 1fr; } }
+  .service { position: relative; padding: 28px 26px; border-radius: 24px; background: linear-gradient(180deg, rgba(19, 36, 59, .85), rgba(10, 20, 36, .9)); border: 1px solid rgba(255, 255, 255, .08); transition: border-color .4s, transform .5s var(--courbe), box-shadow .5s; overflow: hidden; }
+  .service:hover { border-color: var(--ligne); transform: translateY(-5px); box-shadow: 0 30px 60px -30px rgba(227, 173, 140, .35); }
+  .service .icone { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(140deg, rgba(227, 173, 140, .22), rgba(63, 208, 245, .12)); border: 1px solid var(--ligne); margin-bottom: 18px; }
+  .service .icone svg { width: 26px; height: 26px; }
+  .service h3 { font: 600 21px/1.25 var(--titre); margin: 0 0 10px; letter-spacing: -.01em; }
+  .service p { margin: 0; color: var(--doux); font-size: 15.5px; }
+  .service p strong { color: var(--creme); font-weight: 600; }
+  .service.grand { grid-column: span 2; display: grid; grid-template-columns: 1fr 1.1fr; gap: 26px; align-items: center; background: radial-gradient(120% 120% at 0% 0%, rgba(227, 173, 140, .14), transparent 55%), linear-gradient(180deg, rgba(19, 36, 59, .9), rgba(10, 20, 36, .92)); }
+  @media (max-width: 1020px) { .service.grand { grid-column: 1 / -1; } }
+  @media (max-width: 680px) { .service.grand { grid-template-columns: 1fr; } }
+  .appareils svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 20px 30px rgba(0, 0, 0, .45)); }
+  .appareils svg rect[opacity] { animation: pulse-barre 4s ease-in-out infinite alternate; }
+  .appareils svg rect[opacity]:nth-of-type(2n) { animation-delay: 1.2s; }
+  @keyframes pulse-barre { from { opacity: .25; } to { opacity: .85; } }
+  .puces { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; color: var(--doux); font-size: 15px; }
+  .puces li { display: flex; gap: 10px; }
+  .puces li::before { content: ""; flex: none; width: 7px; height: 7px; margin-top: 9px; transform: rotate(45deg); background: var(--turquoise); }
+
+  /* ---------- Catalogue ---------- */
+  .catalogue { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  @media (max-width: 1020px) { .catalogue { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 680px) { .catalogue { grid-template-columns: 1fr; } }
+  .produit { --mx: 50%; --my: 50%; --teinte: 227, 173, 140; position: relative; border-radius: 26px; padding: 1px; background: linear-gradient(160deg, rgba(var(--teinte), .35), rgba(255, 255, 255, .06) 40%, rgba(255, 255, 255, .04)); transform-style: preserve-3d; transition: transform .5s var(--courbe), box-shadow .5s; }
+  .produit:hover { box-shadow: 0 30px 70px -30px rgba(var(--teinte), .45); }
+  .produit .dedans { position: relative; height: 100%; border-radius: 25px; padding: 28px 26px 26px; background: linear-gradient(180deg, rgba(19, 36, 59, .92), rgba(10, 20, 36, .96)); overflow: hidden; display: flex; flex-direction: column; gap: 14px; }
+  .produit .dedans::before { content: ""; position: absolute; inset: 0; background: radial-gradient(420px circle at var(--mx) var(--my), rgba(var(--teinte), .16), transparent 45%); opacity: 0; transition: opacity .4s; pointer-events: none; }
+  .produit:hover .dedans::before { opacity: 1; }
+  .produit .tete { display: flex; align-items: center; gap: 14px; }
+  .produit .tete img { width: 58px; height: 58px; border-radius: 15px; box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .6), 0 0 0 1px rgba(255, 255, 255, .08); transition: transform .5s var(--courbe); }
+  .produit:hover .tete img { transform: translateZ(30px) scale(1.06) rotate(-3deg); }
+  .produit h3 { margin: 0; font: 700 24px/1.1 var(--titre); letter-spacing: -.02em; }
+  .produit .pour { margin: 3px 0 0; color: rgb(var(--teinte)); font: 600 13px/1.3 var(--corps); letter-spacing: .03em; }
+  .produit .accroche { margin: 4px 0 0; font: 600 17.5px/1.4 var(--titre); color: var(--texte); letter-spacing: -.01em; }
+  .produit ul { list-style: none; padding: 0; margin: 2px 0 6px; display: grid; gap: 8px; color: var(--doux); font-size: 15.5px; }
+  .produit li { display: flex; gap: 10px; align-items: flex-start; }
+  .produit li::before { content: ""; flex: none; width: 16px; height: 16px; margin-top: 4px; border-radius: 50%; background: rgba(var(--teinte), .16) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.2 2.2 4.8-4.8' fill='none' stroke='%23e3ad8c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat; }
+  .produit .edition { margin-top: 2px; padding: 12px 14px; border-radius: 14px; border: 1px dashed rgba(var(--teinte), .35); font-size: 14.5px; color: var(--doux); }
+  .produit .edition b { color: var(--texte); }
+  .produit .edition a { display: inline-flex; align-items: center; min-height: 44px; color: rgb(var(--teinte)); font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .produit .liens { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .produit .liens a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 10px 16px; border-radius: 999px; font: 600 14.5px/1 var(--corps); text-decoration: none; transition: background .3s, color .3s, gap .3s; }
+  .produit .liens a.principal { background: rgba(var(--teinte), .95); color: #0a1424; }
+  .produit .liens a.principal:hover { gap: 12px; }
+  .produit .liens a.second { border: 1px solid rgba(255, 255, 255, .14); color: var(--texte); }
+  .produit .liens a.second:hover { background: rgba(255, 255, 255, .07); }
+  .produit .liens svg { width: 16px; height: 16px; }
+  .produit.adya { --teinte: 245, 196, 95; }
+  .produit.mondje { --teinte: 232, 190, 140; }
+  .produit.ataya { --teinte: 215, 182, 92; }
+  .produit.kalan { --teinte: 120, 196, 255; }
+  .produit.hydro { --teinte: 63, 208, 245; }
+  .produit.empire { --teinte: 227, 173, 140; }
+
+  /* ---------- Atouts ---------- */
+  .atouts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  @media (max-width: 1020px) { .atouts { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .atouts { grid-template-columns: 1fr; } }
+  .atout { padding: 28px 24px; border-radius: 22px; background: var(--verre); border: 1px solid rgba(255, 255, 255, .08); transition: border-color .4s, transform .4s var(--courbe); }
+  .atout:hover { border-color: var(--ligne); transform: translateY(-4px); }
+  .atout .icone { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; background: linear-gradient(140deg, rgba(227, 173, 140, .22), rgba(63, 208, 245, .12)); border: 1px solid var(--ligne); margin-bottom: 18px; }
+  .atout .icone svg { width: 26px; height: 26px; }
+  .atout h3 { font: 600 19px/1.25 var(--titre); margin: 0 0 8px; }
+  .atout p { margin: 0; color: var(--doux); font-size: 15.5px; }
+
+  /* ---------- Vidéo ---------- */
+  .ecran { position: relative; max-width: 980px; margin: 0 auto; border-radius: 28px; padding: 12px; background: linear-gradient(160deg, rgba(227, 173, 140, .35), rgba(255, 255, 255, .05) 45%, rgba(63, 208, 245, .25)); box-shadow: 0 50px 120px -40px rgba(0, 0, 0, .9), 0 0 0 1px rgba(255, 255, 255, .05); }
+  .ecran video { display: block; width: 100%; height: auto; border-radius: 18px; background: var(--nuit-2); }
+  .ecran-note { text-align: center; color: var(--doux); font-size: 15px; margin-top: 18px; }
+  .ecran-note a { display: inline-flex; align-items: center; min-height: 44px; color: var(--cuivre); }
+
+  /* ---------- Méthode ---------- */
+  .etapes { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  @media (max-width: 900px) { .etapes { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .etapes { grid-template-columns: 1fr; } }
+  .etapes::before { content: ""; position: absolute; left: 6%; right: 6%; top: 31px; height: 2px; background: linear-gradient(90deg, var(--cuivre), var(--turquoise)); transform: scaleX(var(--avance, 0)); transform-origin: left; transition: transform 1.6s var(--courbe); opacity: .7; }
+  @media (max-width: 900px) { .etapes::before { display: none; } }
+  .etape { position: relative; text-align: center; padding: 0 8px; }
+  .etape .num { width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; display: grid; place-items: center; font: 700 20px/1 var(--titre); color: var(--nuit); background: linear-gradient(135deg, #fde9da, var(--cuivre)); box-shadow: 0 0 0 8px var(--nuit), 0 0 0 9px var(--ligne), 0 12px 30px -10px rgba(227, 173, 140, .6); position: relative; z-index: 1; }
+  .etape h3 { font: 600 19px/1.25 var(--titre); margin: 0 0 8px; }
+  .etape p { margin: 0; color: var(--doux); font-size: 15.5px; }
+
+  /* ---------- Appel final ---------- */
+  .appel { position: relative; overflow: hidden; border-radius: 34px; padding: 72px 28px; text-align: center; background: radial-gradient(120% 140% at 50% 0%, #1a2f4c 0%, var(--nuit-2) 55%, var(--nuit) 100%); border: 1px solid var(--ligne); isolation: isolate; }
+  .appel::before { content: ""; position: absolute; inset: -40%; background: conic-gradient(from 0deg, transparent 0 70%, rgba(227, 173, 140, .25) 80%, rgba(63, 208, 245, .25) 88%, transparent 95%); animation: tourne 12s linear infinite; z-index: -1; }
+  .appel::after { content: ""; position: absolute; inset: 1px; border-radius: 33px; background: radial-gradient(120% 140% at 50% 0%, #182c48 0%, var(--nuit-2) 55%, #08111f 100%); z-index: -1; }
+  .appel h2 { max-width: 760px; margin: 0 auto 16px; }
+  .appel p { color: var(--doux); max-width: 600px; margin: 0 auto 30px; font-size: 18px; }
+  .appel .actions { justify-content: center; opacity: 1; animation: none; }
+  .coordonnees { margin: 34px auto 0 !important; line-height: 1.5; color: var(--doux); font-size: 15px; }
+  .coordonnees a { display: inline-flex; align-items: center; min-height: 44px; color: var(--cuivre); text-decoration: none; }
+
+  /* ---------- Pied de page ---------- */
+  footer { padding: 46px 0 calc(40px + env(safe-area-inset-bottom)); border-top: 1px solid var(--ligne); margin-top: 10px; }
+  footer .bord { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; color: var(--doux); font-size: 14.5px; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 20px; }
+  footer nav a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; }
+  footer .logo { min-height: 44px; }
+  footer nav a:hover { color: var(--texte); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .revele { opacity: 1; transform: none; }
+    .embleme .trace { stroke-dashoffset: 0; }
+    .embleme .goutte { transform: none; }
+    h1 .ligne > span { transform: none; }
+  }
 </style>
 </head>
 <body>
-<div class="tete"><div class="tete-in">
-  <div class="marque"><img src="symbole.svg" alt="" width="52" height="47"><span class="nom-marque">SOLUGIS</span></div>
-  <h1>Des applications simples, qui travaillent pour vous.</h1>
-  <p>Solutions numériques &amp; IA pour les familles, les associations et les entreprises de Côte d’Ivoire.</p>
-</div></div>
-<main>
-  <h2>Nos solutions</h2>
-  <div class="grille">
-    <div class="carte">
-      <h3>Adya</h3>
-      <p>Unis, solidaires, organisés : l’application des familles, amicales et associations qui veulent avancer ensemble. Vie du groupe, solidarité, décisions, projets et cotisations.</p>
-      <a href="adya/">Découvrir Adya</a>
+
+<header class="nav" id="nav">
+  <div class="bord">
+    <a class="logo" href="#haut" aria-label="SoluGis, retour en haut"><img src="symbole.svg" alt="" width="34" height="31"><span>SOLUGIS</span></a>
+    <nav aria-label="Navigation principale">
+      <a href="#offre">Notre offre</a>
+      <a href="#solutions">Solutions</a>
+      <a href="#methode">Méthode</a>
+      <a class="bouton or" href="#contact">Nous contacter</a>
+    </nav>
+  </div>
+</header>
+
+<main id="haut">
+  <section class="ouverture" aria-label="Présentation">
+    <div class="aurore a1"></div><div class="aurore a2"></div><div class="aurore a3"></div>
+    <canvas id="reseau" aria-hidden="true"></canvas>
+    <div class="bord">
+      <div>
+        <span class="surtitre"><i></i>Solutions numériques &amp; IA · Abidjan</span>
+        <h1>
+          <span class="ligne"><span>Le numérique</span></span>
+          <span class="ligne"><span>sur mesure,</span></span>
+          <span class="ligne"><span class="brillant">qui travaille</span></span>
+          <span class="ligne"><span class="brillant">pour vous.</span></span>
+        </h1>
+        <p class="chapeau">Applications, sites internet et automatisation des tâches : SoluGis conçoit des solutions élégantes et fiables pour les commerçants, les entreprises, les associations et les particuliers de Côte d’Ivoire. Sur téléphone, tablette et ordinateur.</p>
+        <div class="actions">
+          <a class="bouton or aimant" href="#offre">Découvrir notre offre
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="bouton verre aimant" href="https://wa.me/2250172767791?text=Bonjour%20SoluGis%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20vos%20applications." target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.6-4.4A8.4 8.4 0 1 1 20.5 11.6z"/><path d="M9 8.5c.2 2.8 3.3 5.9 6.2 6.2l1.1-1.4-2-1-1 .8c-1-.5-2-1.5-2.5-2.5l.8-1-1-2z"/></svg>Parler à un conseiller</a>
+        </div>
+      </div>
+      <div class="embleme" aria-hidden="true">
+        <div class="halo"></div>
+        <div class="orbite o1"></div>
+        <div class="orbite o2"></div>
+        <svg viewBox="60 40 440 400">
+          <defs>
+            <linearGradient id="cremeH" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbeee4"/><stop offset=".55" stop-color="#f2d2bd"/><stop offset="1" stop-color="#e3ad8c"/></linearGradient>
+            <linearGradient id="versT" x1="340" y1="215" x2="400" y2="300" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f2d2bd"/><stop offset=".45" stop-color="#bfe6f2"/><stop offset="1" stop-color="#3fd0f5"/></linearGradient>
+            <radialGradient id="goutteH" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#6fe3ff"/><stop offset=".6" stop-color="#2cc3f2"/><stop offset="1" stop-color="#1596d6"/></radialGradient>
+          </defs>
+          <path class="trace" d="M238 196 L176 306" stroke="url(#cremeH)" stroke-width="30" stroke-linecap="round" fill="none"/>
+          <path class="trace" d="M344 196 L410 312" stroke="url(#versT)" stroke-width="30" stroke-linecap="round" fill="none"/>
+          <circle class="trace" cx="290" cy="140" r="70" fill="none" stroke="url(#cremeH)" stroke-width="30"/>
+          <circle class="trace" cx="148" cy="355" r="55" fill="none" stroke="url(#cremeH)" stroke-width="27"/>
+          <circle class="goutte" cx="425" cy="356" r="68" fill="url(#goutteH)"/>
+        </svg>
+      </div>
     </div>
-    <div class="carte">
-      <h3>HydroPlomb</h3>
-      <p>Le suivi des demandes d’intervention en plomberie et hydraulique : déclaration, suivi et forfait mensuel.</p>
-      <span class="etiquette">Bientôt en ligne</span>
+    <a class="defile" href="#offre" aria-label="Voir la suite"><b></b>Découvrir</a>
+  </section>
+
+  <div class="bandeau" aria-label="Nos engagements">
+    <div class="piste">
+      <span>Installées dans votre compte Google</span><span>Vos données restent chez vous</span><span>Face ID et code personnel</span><span>Pensées pour les réseaux mobiles</span><span>Téléphone, tablette et ordinateur</span><span>Sites internet et automatisation</span><span>Démonstration avant tout engagement</span><span>Paiement par Wave, Orange Money, MTN ou Moov</span><span>Accompagnement depuis Abidjan</span>
+      <span aria-hidden="true">Installées dans votre compte Google</span><span aria-hidden="true">Vos données restent chez vous</span><span aria-hidden="true">Face ID et code personnel</span><span aria-hidden="true">Pensées pour les réseaux mobiles</span><span aria-hidden="true">Téléphone, tablette et ordinateur</span><span aria-hidden="true">Sites internet et automatisation</span><span aria-hidden="true">Démonstration avant tout engagement</span><span aria-hidden="true">Paiement par Wave, Orange Money, MTN ou Moov</span><span aria-hidden="true">Accompagnement depuis Abidjan</span>
     </div>
   </div>
 
-  <h2>Adya en vidéo</h2>
-  <figure class="video">
-    <video controls playsinline preload="none" poster="adya/adya-video.jpg" width="1280" height="720">
-      <source src="adya/adya-video.mp4" type="video/mp4">
-      Votre navigateur ne lit pas cette vidéo. <a href="adya/adya-video.mp4">Télécharger la vidéo</a>.
-    </video>
-    <figcaption>Une journée avec Adya, sur le téléphone, la tablette et l’ordinateur (1 min 27, avec musique). <a href="adya/">Découvrir Adya</a></figcaption>
-  </figure>
+  <section class="bloc" id="offre">
+    <div class="bord">
+      <div class="entete revele">
+        <span class="etiquette">Notre offre</span>
+        <h2>Tout le numérique de votre activité, au même endroit.</h2>
+        <p>De l’application de caisse du commerçant au tableau de bord du dirigeant, nous concevons, installons et faisons vivre vos outils numériques.</p>
+      </div>
+      <div class="cibles revele" aria-label="Pour qui">
+        <span>Commerçants</span><span>Restaurateurs</span><span>Entreprises et PME</span><span>Dirigeants de groupes</span><span>Associations et familles</span><span>Écoles et élèves</span><span>Particuliers</span>
+      </div>
+      <div class="offre">
+        <article class="service grand revele">
+          <div class="appareils" aria-hidden="true">
+            <svg viewBox="0 0 320 170" fill="none">
+              <defs><linearGradient id="trait" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbeee4"/><stop offset="1" stop-color="#e3ad8c"/></linearGradient>
+              <linearGradient id="ecr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a2f4c"/><stop offset="1" stop-color="#0d1b2e"/></linearGradient></defs>
+              <rect x="40" y="14" width="190" height="122" rx="9" fill="url(#ecr)" stroke="url(#trait)" stroke-width="2.5"/>
+              <path d="M20 146h230l-10 10H30z" fill="#13243b" stroke="url(#trait)" stroke-width="2.5" stroke-linejoin="round"/>
+              <rect x="58" y="32" width="70" height="8" rx="4" fill="#e3ad8c" opacity=".8"/><rect x="58" y="48" width="110" height="6" rx="3" fill="#9fb0c5" opacity=".35"/>
+              <rect x="58" y="70" width="44" height="46" rx="6" fill="#3fd0f5" opacity=".28"/><rect x="110" y="84" width="44" height="32" rx="6" fill="#e3ad8c" opacity=".35"/><rect x="162" y="62" width="44" height="54" rx="6" fill="#3fd0f5" opacity=".18"/>
+              <rect x="214" y="58" width="74" height="100" rx="9" fill="url(#ecr)" stroke="url(#trait)" stroke-width="2.5"/>
+              <rect x="226" y="74" width="50" height="6" rx="3" fill="#e3ad8c" opacity=".8"/><rect x="226" y="88" width="50" height="22" rx="5" fill="#3fd0f5" opacity=".25"/><rect x="226" y="116" width="50" height="6" rx="3" fill="#9fb0c5" opacity=".35"/>
+              <rect x="268" y="96" width="40" height="70" rx="9" fill="url(#ecr)" stroke="url(#trait)" stroke-width="2.5"/>
+              <rect x="276" y="110" width="24" height="5" rx="2.5" fill="#e3ad8c" opacity=".8"/><rect x="276" y="122" width="24" height="18" rx="4" fill="#3fd0f5" opacity=".3"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Applications sur mesure</h3>
+            <p>Caisse et stock, suivi des clients et des crédits, plannings, registres, gestion d’équipe, pilotage de plusieurs sociétés : une application pensée pour votre métier, sur <strong>téléphone, tablette et ordinateur</strong>.</p>
+            <ul class="puces"><li>Connexion par Face ID ou code personnel</li><li>Plusieurs utilisateurs, chacun avec ses droits</li><li>Fonctionne même avec une connexion faible</li></ul>
+          </div>
+        </article>
+        <article class="service revele" style="--delai:.08s">
+          <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="#e3ad8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/><path d="M8 14l2 2-2 2M13 18h3"/></svg></div>
+          <h3>Sites internet</h3>
+          <p>Site vitrine, catalogue de produits, page de réservation ou de contact : un site élégant et rapide, à l’image de votre marque, qui donne envie de vous contacter.</p>
+        </article>
+        <article class="service revele">
+          <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="#e3ad8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
+          <h3>Automatisation des processus</h3>
+          <p>Rapports mensuels produits tout seuls, relances clients, import de fichiers, sauvegardes, alertes : les tâches répétitives se font sans vous, et sans erreur.</p>
+        </article>
+        <article class="service revele" style="--delai:.08s">
+          <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="#e3ad8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div>
+          <h3>Tableaux de bord et analyses</h3>
+          <p>Vos chiffres rassemblés et lisibles d’un coup d’œil : ventes, dépenses, tendances, alertes, avec des assistants qui répondent à vos questions et vous conseillent.</p>
+        </article>
+        <article class="service revele" style="--delai:.16s">
+          <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="#e3ad8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-3A3.5 3.5 0 0 0 7 18.5V20"/><circle cx="12" cy="8" r="3.5"/><path d="M20 20v-1a3 3 0 0 0-2-2.8M4 20v-1a3 3 0 0 1 2-2.8"/></svg></div>
+          <h3>Formation et accompagnement</h3>
+          <p>Prise en main, formation de vos équipes, assistance et nouvelles fonctions : un interlocuteur à Abidjan, joignable sur WhatsApp.</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-  <h2>Notre approche</h2>
-  <ul class="points">
-    <li>Vos applications sont installées dans <strong>votre propre compte Google</strong> : vos données restent chez vous.</li>
-    <li>Pensées pour le téléphone et pour les réseaux mobiles d’ici.</li>
-    <li>Pas de logiciel à installer : une icône sur l’écran d’accueil suffit.</li>
-  </ul>
+  <section class="bloc" id="solutions">
+    <div class="bord">
+      <div class="entete revele">
+        <span class="etiquette">Nos solutions</span>
+        <h2>Six applications prêtes à l’emploi.</h2>
+        <p>Des applications déjà en service, que nous adaptons à votre activité. Essayez-les dès maintenant, sans rien installer.</p>
+      </div>
 
-  <section class="contact" id="contact">
-    <h2>Nous contacter</h2>
-    <p>Ghislain N’Dri, Directeur Général · Abidjan, Côte d’Ivoire</p>
-    <div class="actions">
-      <a class="wa" href="https://wa.me/2250172767791?text=Bonjour%20SoluGis%2C%20je%20souhaite%20en%20savoir%20plus%20sur%20vos%20solutions." target="_blank" rel="noopener">Écrire sur WhatsApp</a>
-      <a class="tel" href="tel:+2250172767791">Appeler le <span style="white-space:nowrap">+225 01 72 76 77 91</span></a>
+      <div class="catalogue">
+        <article class="produit ataya revele">
+          <div class="dedans">
+            <div class="tete"><img src="accueil/ataya.png" alt="" width="58" height="58" loading="lazy"><div><h3>Ataya</h3><p class="pour">Boutiques · maquis · artisans</p></div></div>
+            <p class="accroche">La caisse, le stock et les crédits de votre commerce, enfin sous contrôle.</p>
+            <ul>
+              <li>Ventes, stock et crédits clients en temps réel</li>
+              <li>Patron et vendeurs, un ou plusieurs points de vente</li>
+              <li>Conseil du jour et réponses à vos questions</li>
+            </ul>
+            <p class="edition"><b>Ataya Traiteur</b>, l’édition pour la restauration : livraisons, menu du jour et crédits. <a href="ataya-traiteur/">Voir la démo →</a></p>
+            <div class="liens">
+              <a class="principal" href="mes-finances/commerce/">Essayer la démo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="produit empire revele" style="--delai:.08s">
+          <div class="dedans">
+            <div class="tete"><img src="accueil/monempire.svg" alt="" width="58" height="58" loading="lazy"><div><h3>MonEmpire</h3><p class="pour">Dirigeants · groupes de sociétés</p></div></div>
+            <p class="accroche">Le bureau privé des dirigeants : tout votre groupe, d’un seul regard.</p>
+            <ul>
+              <li>Sociétés, branches, biens et projets réunis</li>
+              <li>Factures, paiements, dépenses et trésorerie</li>
+              <li>Équipes, tâches et accès cloisonnés par rôle</li>
+            </ul>
+            <p class="edition"><b>À votre nom :</b> MonEmpire est livrée aux couleurs de votre entreprise. L’application porte le nom et le logo de votre société.</p>
+            <div class="liens">
+              <a class="principal" href="https://wa.me/2250172767791?text=Bonjour%20SoluGis%2C%20je%20souhaite%20une%20d%C3%A9monstration%20priv%C3%A9e%20de%20MonEmpire." target="_blank" rel="noopener">Démonstration privée <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="produit adya revele" style="--delai:.16s">
+          <div class="dedans">
+            <div class="tete"><img src="accueil/adya.png" alt="" width="58" height="58" loading="lazy"><div><h3>Adya</h3><p class="pour">Familles · amicales · associations</p></div></div>
+            <p class="accroche">Unis, solidaires, organisés : ensemble, allons plus loin.</p>
+            <ul>
+              <li>Cotisations, fonds de solidarité et projets du groupe</li>
+              <li>Propositions, votes et décisions partagées</li>
+              <li>Reçus authentifiés, attestations, arbre généalogique</li>
+            </ul>
+            <div class="liens">
+              <a class="principal" href="adya/demo/">Essayer la démo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <a class="second" href="adya/">Découvrir</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="produit mondje revele">
+          <div class="dedans">
+            <div class="tete"><img src="accueil/mondje.png" alt="" width="58" height="58" loading="lazy"><div><h3>MonDjè</h3><p class="pour">Finances personnelles</p></div></div>
+            <p class="accroche">Gérez votre argent, vivez sereinement.</p>
+            <ul>
+              <li>Dépenses et revenus classés, poste par poste</li>
+              <li>Budget du mois, épargne et projets suivis</li>
+              <li>Tableau de bord clair, protégé par Face ID</li>
+            </ul>
+            <div class="liens">
+              <a class="principal" href="mondje/demo/">Essayer la démo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <a class="second" href="mondje/">Découvrir</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="produit kalan revele" style="--delai:.08s">
+          <div class="dedans">
+            <div class="tete"><img src="accueil/kalan.png" alt="" width="58" height="58" loading="lazy"><div><h3>Kalan</h3><p class="pour">Élèves · parents · écoles</p></div></div>
+            <p class="accroche">L’application qui accompagne l’élève, chaque jour.</p>
+            <ul>
+              <li>Emploi du temps, programme, notes et moyennes</li>
+              <li>Fiches de révision et cartes de mémorisation</li>
+              <li>El Profesor, le conseiller qui guide les révisions</li>
+            </ul>
+            <div class="liens">
+              <a class="principal" href="kalan/">Essayer la démo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="produit hydro revele" style="--delai:.16s">
+          <div class="dedans">
+            <div class="tete"><img src="accueil/hydroplomb.png" alt="" width="58" height="58" loading="lazy"><div><h3>HydroPlomb</h3><p class="pour">Eau · plomberie · sanitaire</p></div></div>
+            <p class="accroche">Vos installations d’eau, entre de bonnes mains.</p>
+            <ul>
+              <li>Demandes d’intervention déclarées en quelques gestes</li>
+              <li>Suivi de chaque dossier, photos et pièces jointes</li>
+              <li>Espace client sécurisé par Face ID</li>
+            </ul>
+            <div class="liens">
+              <a class="principal" href="https://hydroplomb.github.io/demo/">Essayer la démo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloc" id="atouts">
+    <div class="bord">
+      <div class="entete revele">
+        <span class="etiquette">Nos atouts</span>
+        <h2>Le meilleur du numérique, adapté à votre réalité.</h2>
+        <p>Conçues ici, pour vos écrans et vos réseaux : téléphone, tablette et ordinateur.</p>
+      </div>
+      <div class="atouts">
+        <div class="atout revele">
+          <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="#e3ad8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+          <h3>Vos données chez vous</h3>
+          <p>L’application s’installe dans votre propre compte Google. Vous gardez la main sur vos informations, et l’export reste toujours possible.</p>
+        </div>
+        <div class="atout revele" style="--delai:.08s">
+          <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="#e3ad8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
+          <h3>Sur tous vos écrans</h3>
+          <p>Téléphone, tablette ou ordinateur : une icône sur l’écran, un affichage immédiat, et des reprises automatiques en cas de coupure réseau.</p>
+        </div>
+        <div class="atout revele" style="--delai:.16s">
+          <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="#e3ad8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4H6a2 2 0 0 0-2 2v2M16 4h2a2 2 0 0 1 2 2v2M8 20H6a2 2 0 0 1-2-2v-2M16 20h2a2 2 0 0 0 2-2v-2"/><path d="M9 9v1M15 9v1M12 9v4h-1M9.5 16c1.5 1 3.5 1 5 0"/></svg></div>
+          <h3>Sécurisées</h3>
+          <p>Connexion par Face ID ou empreinte, codes personnels protégés, droits d’accès adaptés au rôle de chacun.</p>
+        </div>
+        <div class="atout revele" style="--delai:.24s">
+          <div class="icone"><svg viewBox="0 0 24 24" fill="none" stroke="#e3ad8c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.6-4.4A8.4 8.4 0 1 1 20.5 11.6z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg></div>
+          <h3>Un vrai accompagnement</h3>
+          <p>Installation, prise en main et mises à jour, avec un interlocuteur à Abidjan, joignable sur WhatsApp.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloc" id="video">
+    <div class="bord">
+      <div class="entete revele">
+        <span class="etiquette">En vidéo</span>
+        <h2>Nos applications à l’œuvre.</h2>
+        <p>Premier épisode : une journée avec Adya, sur le téléphone, la tablette et l’ordinateur. Les vidéos des autres applications arrivent.</p>
+      </div>
+      <div class="ecran revele">
+        <video controls playsinline preload="none" poster="adya/adya-video.jpg" width="1280" height="720">
+          <source src="adya/adya-video.mp4" type="video/mp4">
+          Votre navigateur ne lit pas cette vidéo. <a href="adya/adya-video.mp4">Télécharger la vidéo</a>.
+        </video>
+      </div>
+      <p class="ecran-note revele">1 min 27, avec musique · <a href="adya/">Découvrir Adya</a></p>
+    </div>
+  </section>
+
+  <section class="bloc" id="methode">
+    <div class="bord">
+      <div class="entete revele">
+        <span class="etiquette">Notre méthode</span>
+        <h2>De votre idée à votre écran d’accueil.</h2>
+        <p>Une démarche claire, sans jargon, où vous gardez la décision à chaque étape.</p>
+      </div>
+      <div class="etapes" id="etapes">
+        <div class="etape revele"><div class="num">1</div><h3>Écoute</h3><p>Nous comprenons votre activité, vos habitudes et ce qui vous fait perdre du temps.</p></div>
+        <div class="etape revele" style="--delai:.12s"><div class="num">2</div><h3>Démonstration</h3><p>Vous essayez l’application avec des données d’exemple, avant tout engagement.</p></div>
+        <div class="etape revele" style="--delai:.24s"><div class="num">3</div><h3>Installation</h3><p>Dans votre compte Google, sur vos téléphones, tablettes et ordinateurs, avec Face ID.</p></div>
+        <div class="etape revele" style="--delai:.36s"><div class="num">4</div><h3>Accompagnement</h3><p>Prise en main, conseils et nouvelles fonctions au fil de vos besoins.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloc" id="contact">
+    <div class="bord">
+      <div class="appel revele">
+        <span class="etiquette">Parlons de votre projet</span>
+        <h2>Votre activité mérite une application à sa hauteur.</h2>
+        <p>Une solution du catalogue ou une application conçue sur mesure : écrivez-nous, nous vous répondons rapidement.</p>
+        <div class="actions">
+          <a class="bouton or aimant" href="https://wa.me/2250172767791?text=Bonjour%20SoluGis%2C%20je%20souhaite%20discuter%20d%E2%80%99un%20projet%20d%E2%80%99application." target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.4 8.4 0 0 1-12.4 7.4L3.5 20.5l1.6-4.4A8.4 8.4 0 1 1 20.5 11.6z"/><path d="M9 8.5c.2 2.8 3.3 5.9 6.2 6.2l1.1-1.4-2-1-1 .8c-1-.5-2-1.5-2.5-2.5l.8-1-1-2z"/></svg>Écrire sur WhatsApp</a>
+          <a class="bouton verre aimant" href="tel:+2250172767791">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3.5h3.2l1.6 4.2-2.1 1.4a11 11 0 0 0 5.2 5.2l1.4-2.1 4.2 1.6V17a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 3 5.7 2 2 0 0 1 5 3.5z"/></svg>Appeler</a>
+        </div>
+        <p class="coordonnees">Ghislain N’Dri, Directeur Général · <span style="white-space:nowrap">+225 01 72 76 77 91</span> · Abidjan, Côte d’Ivoire · <a href="contact/">Carte de contact</a></p>
+      </div>
     </div>
   </section>
 </main>
-<footer><span class="signe"><img src="symbole-cuivre.svg" alt="" width="22" height="20">© SoluGis</span> · Solutions numériques &amp; IA · Abidjan, Côte d’Ivoire</footer>
+
+<footer>
+  <div class="bord">
+    <a class="logo" href="#haut" aria-label="SoluGis, retour en haut"><img src="symbole.svg" alt="" width="34" height="31"><span>SOLUGIS</span></a>
+    <nav aria-label="Liens du pied de page">
+      <a href="#offre">Offre</a><a href="#solutions">Solutions</a><a href="#methode">Méthode</a><a href="contact/">Contact</a>
+    </nav>
+    <span>© 2026 SoluGis · Solutions numériques &amp; IA · Abidjan</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var calme = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var tactile = window.matchMedia('(hover: none)').matches;
+
+  /* Barre de navigation : verre dépoli après le défilement */
+  var nav = document.getElementById('nav');
+  function surDefile() { nav.classList.toggle('pleine', window.scrollY > 24); }
+  surDefile(); window.addEventListener('scroll', surDefile, { passive: true });
+
+  /* Apparitions au défilement */
+  var elements = document.querySelectorAll('.revele');
+  if ('IntersectionObserver' in window && !calme) {
+    var obs = new IntersectionObserver(function (entrees) {
+      entrees.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('vu'); obs.unobserve(e.target); } });
+    }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+    elements.forEach(function (el) { obs.observe(el); });
+  } else { elements.forEach(function (el) { el.classList.add('vu'); }); }
+
+  /* Ligne des étapes qui se trace */
+  var etapes = document.getElementById('etapes');
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (e, o) { if (e[0].isIntersecting) { etapes.style.setProperty('--avance', 1); o.disconnect(); } }, { threshold: 0.4 }).observe(etapes);
+  } else { etapes.style.setProperty('--avance', 1); }
+
+  /* Cartes : halo qui suit le doigt ou la souris, légère inclinaison sur ordinateur */
+  document.querySelectorAll('.produit').forEach(function (carte) {
+    carte.addEventListener('pointermove', function (ev) {
+      var r = carte.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top;
+      carte.style.setProperty('--mx', x + 'px'); carte.style.setProperty('--my', y + 'px');
+      if (!tactile && !calme) {
+        var rx = ((y / r.height) - .5) * -6, ry = ((x / r.width) - .5) * 6;
+        carte.style.transform = 'perspective(900px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-4px)';
+      }
+    });
+    carte.addEventListener('pointerleave', function () { carte.style.transform = ''; });
+  });
+
+  /* Boutons « aimantés » sur ordinateur */
+  if (!tactile && !calme) {
+    document.querySelectorAll('.aimant').forEach(function (b) {
+      b.addEventListener('pointermove', function (ev) {
+        var r = b.getBoundingClientRect();
+        b.style.transform = 'translate(' + (ev.clientX - r.left - r.width / 2) * .18 + 'px,' + (ev.clientY - r.top - r.height / 2) * .3 + 'px)';
+      });
+      b.addEventListener('pointerleave', function () { b.style.transform = ''; });
+    });
+  }
+
+  /* Réseau de points reliés, comme les anneaux du logo */
+  var toile = document.getElementById('reseau');
+  var ctx = toile.getContext && toile.getContext('2d');
+  if (!ctx) return;
+  var points = [], L = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2), actif = true, souris = { x: -999, y: -999 };
+  function dimensionner() {
+    var r = toile.getBoundingClientRect(); L = r.width; H = r.height;
+    toile.width = L * dpr; toile.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var n = Math.round(Math.min(80, Math.max(28, L * H / 16000)));
+    points = [];
+    for (var i = 0; i < n; i++) {
+      points.push({ x: Math.random() * L, y: Math.random() * H, vx: (Math.random() - .5) * .28, vy: (Math.random() - .5) * .28, r: Math.random() * 1.6 + .6, t: Math.random() < .22 });
+    }
+  }
+  function dessiner() {
+    ctx.clearRect(0, 0, L, H);
+    var max = Math.min(150, L / 6);
+    for (var i = 0; i < points.length; i++) {
+      var p = points[i];
+      if (!calme) { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > L) p.vx *= -1; if (p.y < 0 || p.y > H) p.vy *= -1; }
+      for (var j = i + 1; j < points.length; j++) {
+        var q = points[j], dx = p.x - q.x, dy = p.y - q.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < max) { ctx.strokeStyle = 'rgba(227,173,140,' + (1 - d / max) * .22 + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke(); }
+      }
+      var ds = Math.hypot(p.x - souris.x, p.y - souris.y);
+      if (ds < 170) { ctx.strokeStyle = 'rgba(63,208,245,' + (1 - ds / 170) * .45 + ')'; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(souris.x, souris.y); ctx.stroke(); }
+      ctx.fillStyle = p.t ? 'rgba(63,208,245,.9)' : 'rgba(251,238,228,.75)';
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+    }
+    if (actif && !calme) requestAnimationFrame(dessiner);
+  }
+  dimensionner(); dessiner();
+  var minuteur; window.addEventListener('resize', function () { clearTimeout(minuteur); minuteur = setTimeout(function () { dimensionner(); if (calme) dessiner(); }, 200); });
+  toile.parentElement.addEventListener('pointermove', function (ev) { var r = toile.getBoundingClientRect(); souris.x = ev.clientX - r.left; souris.y = ev.clientY - r.top; });
+  toile.parentElement.addEventListener('pointerleave', function () { souris.x = souris.y = -999; });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (e) { var etait = actif; actif = e[0].isIntersecting; if (actif && !etait && !calme) requestAnimationFrame(dessiner); }).observe(toile);
+  }
+  document.addEventListener('visibilitychange', function () { var etait = actif; actif = !document.hidden; if (actif && !etait && !calme) requestAnimationFrame(dessiner); });
+})();
+</script>
 </body>
 </html>
