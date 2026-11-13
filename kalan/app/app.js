@@ -210,7 +210,7 @@
     o = o || {};
     var el = document.createElement('div'); el.className = 'modale' + (o.plein ? ' plein' : '');
     el.innerHTML = '<div class="voile"></div><div class="feuille" role="dialog" aria-label="' + esc(titre) + '"><div class="feuille-tete"><h2>' + esc(titre) + '</h2><button class="btn-rond fermer" aria-label="Fermer">' + ico('croix') + '</button></div><div class="feuille-corps">' + html + '</div></div>';
-    document.body.appendChild(el); PILE.push(el); document.body.classList.add('modale-ouverte');
+    document.body.appendChild(el); PILE.push(el); document.documentElement.classList.add('modale-ouverte');
     el.querySelector('.voile').onclick = fermerModale; el.querySelector('.fermer').onclick = fermerModale;
     requestAnimationFrame(function () { el.classList.add('on'); });
     return el.querySelector('.feuille-corps');
@@ -218,9 +218,9 @@
   function fermerModale() {
     var el = PILE.pop(); if (!el) return;
     el.classList.remove('on'); setTimeout(function () { el.remove(); }, 250);
-    if (!PILE.length) { document.body.classList.remove('modale-ouverte'); if (aRedessiner) { aRedessiner = false; dessiner(); } else dessiner(); }
+    if (!PILE.length) { document.documentElement.classList.remove('modale-ouverte'); if (aRedessiner) { aRedessiner = false; dessiner(); } else dessiner(); }
   }
-  function fermerModales() { while (PILE.length) { var el = PILE.pop(); el.remove(); } document.body.classList.remove('modale-ouverte'); }
+  function fermerModales() { while (PILE.length) { var el = PILE.pop(); el.remove(); } document.documentElement.classList.remove('modale-ouverte'); }
   function demander(texte, lib) {
     return new Promise(function (ok) {
       var c = ouvrirModale('Confirmer', '<p class="texte">' + esc(texte) + '</p><div class="rang-btn"><button class="btn sec" data-r="0">Annuler</button><button class="btn danger" data-r="1">' + esc(lib || 'Confirmer') + '</button></div>');
@@ -245,6 +245,7 @@
   /* ================================================================== porte (connexion) */
   function porte() {
     var choix = lireL('profilPorte', 'eleve');
+    document.getElementById('app').className = '';
     document.getElementById('app').innerHTML = '<div class="porte"><div class="porte-haut">' + LOGO + '<h1>' + esc(N.appli) + '</h1><p>' + esc(N.devise) + '</p></div>' +
       '<form class="carte porte-form" autocomplete="on"><div class="choix-profil">' +
       '<button type="button" data-p="eleve" class="' + (choix === 'eleve' ? 'on' : '') + '">' + ico('personne') + '<span>Élève</span></button>' +
@@ -276,6 +277,7 @@
   /* ================================================================== charpente */
   var ONGLETS = [['accueil', 'Accueil', 'maison'], ['agenda', 'Agenda', 'calendrier'], ['notes', 'Notes', 'graphique'], ['cours', 'Cours', 'livre'], ['koro', N.conseillerOnglet, 'bulle']];
   function charpente() {
+    document.getElementById('app').className = 'cadre';   // mise en page tablette et ordinateur (style.css)
     document.getElementById('app').innerHTML =
       '<header class="barre"><div class="marque">' + LOGO + '<b>' + esc(N.appli) + '</b>' + (MODE === 'demo' ? '<span class="badge-demo">Démo</span>' : '') + '</div>' +
       '<div class="barre-actions"><span id="pastille" class="pastille"></span><button class="btn-rond" id="btn-reglages" aria-label="Réglages">' + ico('reglages') + '</button></div></header>' +
@@ -817,7 +819,7 @@
     }
     html += repli('r-donnees', '<span>' + ico('telecharger') + ' Mes données</span>', '<p class="texte">' + (MODE === 'demo' ? 'Démonstration : les données sont fictives et restent sur cet appareil.' : 'Tes données sont enregistrées dans le compte Google de ta famille, et gardées sur ce téléphone pour s’ouvrir même sans réseau.' + (S.maj ? ' Dernier échange : ' + esc(new Date(S.maj).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })) + '.' : '') + (S.file.length ? ' ' + pluriel(S.file.length, 'modification') + ' en attente d’envoi.' : '')) + '</p>' +
       '<div class="rang-btn col"><button class="btn sec" id="exporter">' + ico('telecharger') + ' Télécharger une copie (fichier)</button>' + (MODE === 'demo' ? '<button class="btn sec danger" id="raz">' + ico('retourner') + ' Remettre la démo à zéro</button>' : '<button class="btn sec" id="sync">' + ico('sync') + ' Synchroniser maintenant</button>') + '</div>');
-    html += repli('r-apropos', '<span>' + ico('info') + ' À propos</span>', '<div class="apropos">' + LOGO + '<div><b>' + esc(N.appli) + '</b><span>Version 1.1</span></div></div><p class="texte">' + esc(N.appli) + ' est une solution <b>SoluGis</b> — Solutions numériques &amp; IA, Abidjan.<br>' + esc(N.conseiller) + ' calcule tout sur le téléphone : aucune donnée n’est envoyée à un service d’intelligence artificielle.</p><p class="texte doux">Assistance SoluGis : WhatsApp +225 01 72 76 77 91</p>');
+    html += repli('r-apropos', '<span>' + ico('info') + ' À propos</span>', '<div class="apropos">' + LOGO + '<div><b>' + esc(N.appli) + '</b><span>Version 1.2</span></div></div><p class="texte">' + esc(N.appli) + ' est une solution <b>SoluGis</b> — Solutions numériques &amp; IA, Abidjan.<br>' + esc(N.conseiller) + ' calcule tout sur le téléphone : aucune donnée n’est envoyée à un service d’intelligence artificielle.</p><p class="texte doux">Assistance SoluGis : WhatsApp +225 01 72 76 77 91</p>');
     var r = ouvrirModale('Réglages', html, { plein: true }); activerReplis(r);
     var fp = $('#f-profil', r);
     fp.onsubmit = async function (e) {

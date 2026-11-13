@@ -17,9 +17,12 @@
 :root[data-theme="sombre"] { --fond: #0a1322; --carte: #13203a; --carte-2: #182844; --encre: #edf2fb; --doux: #93a2bb; --ligne: #233453; --ombre: 0 1px 2px rgba(0, 0, 0, .3); --nuit: #050c18; color-scheme: dark; }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { overflow-x: hidden; max-width: 100%; overscroll-behavior: none; }
+/* Seule la page (html) défile. Le corps ne doit pas devenir une zone de défilement : avec overscroll-behavior,
+   il bloquait la molette et le doigt (défilement impossible, constaté le 13/11/2026). */
+html { overflow-x: hidden; max-width: 100%; overscroll-behavior: none; }
+body { max-width: 100%; overflow-x: hidden; overflow-x: clip; }
 body { margin: 0; background: var(--fond); color: var(--encre); font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; -webkit-text-size-adjust: 100%; }
-body.modale-ouverte { overflow: hidden; }
+html.modale-ouverte, html.modale-ouverte body { overflow: hidden; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
 input, select, textarea { font: inherit; font-size: 16px; color: var(--encre); }
 h1, h2, h3, h4, p { margin: 0; }
@@ -352,6 +355,35 @@ button.etat { min-width: 92px; }
 .ajout-q { margin-top: 12px; }
 
 /* ---------------------------------------------------------------- impression d'une fiche */
+/* ---------------------------------------------------------------- tablette et ordinateur */
+/* Tablette (et téléphone couché) : colonne plus large, en-tête aligné sur elle, onglets regroupés au centre. */
+@media (min-width: 700px) {
+  .cadre .barre { padding-left: max(16px, calc((100% - 760px) / 2 + 16px)); padding-right: max(16px, calc((100% - 760px) / 2 + 16px)); }
+  .cadre main { max-width: 760px; padding-left: 16px; padding-right: 16px; }
+  .cadre .onglets { justify-content: center; }
+  .cadre .onglets button { flex: 0 1 130px; }
+  .saisie-koro > * { max-width: 760px; }
+  /* Accueil sur deux colonnes : bandeau, premiers pas et conseil sur toute la largeur. */
+  body[data-vue="accueil"] .cadre main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; align-items: start; }
+  body[data-vue="accueil"] .cadre main > .hero, body[data-vue="accueil"] .cadre main > .premiers, body[data-vue="accueil"] .cadre main > .koro-carte, body[data-vue="accueil"] .cadre main > .note-demo { grid-column: 1 / -1; }
+}
+/* Ordinateur et grande tablette couchée : onglets en colonne à gauche, contenu centré à droite. */
+@media (min-width: 1024px) {
+  .cadre { padding-left: 232px; }
+  .cadre .barre { padding-left: max(24px, calc((100% - 820px) / 2 + 24px)); padding-right: max(24px, calc((100% - 820px) / 2 + 24px)); }
+  .cadre main { max-width: 820px; padding: 8px 24px 48px; }
+  body[data-vue="accueil"] .cadre main { max-width: 1080px; column-gap: 20px; }
+  body[data-vue="accueil"] .cadre .barre { padding-left: max(24px, calc((100% - 1080px) / 2 + 24px)); padding-right: max(24px, calc((100% - 1080px) / 2 + 24px)); }
+  body[data-vue="koro"] .cadre main { padding-bottom: 140px; }
+  .cadre .onglets { top: 0; right: auto; width: 232px; flex-direction: column; justify-content: flex-start; gap: 4px; padding: 22px 14px 24px; border-top: 0; border-right: 1px solid var(--ligne); box-shadow: none; }
+  .cadre .onglets button { flex: none; flex-direction: row; gap: 12px; padding: 8px 10px; font-size: 15.5px; }
+  .cadre .onglets button .ico { padding: 6px; border-radius: 11px; }
+  .cadre .onglets button:hover { background: var(--carte-2); }
+  .saisie-koro { left: 232px; bottom: 0; padding-bottom: 16px; }
+  .saisie-koro > * { max-width: 772px; padding-left: 0; padding-right: 0; }
+  .toast { left: calc(50% + 116px); bottom: 28px; }
+}
+
 @media print {
   body.impression > *:not(.modale), body.impression .modale:not(:last-of-type), body.impression .voile, body.impression .feuille-tete .fermer, body.impression .rang-btn { display: none !important; }
   body.impression .modale, body.impression .feuille { position: static; height: auto; max-height: none; overflow: visible; transform: none; opacity: 1; background: #fff; color: #000; }
