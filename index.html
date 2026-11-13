@@ -203,6 +203,13 @@
   .ecran video { display: block; width: 100%; height: auto; border-radius: 18px; background: var(--nuit-2); }
   .ecran-note { text-align: center; color: var(--doux); font-size: 15px; margin-top: 18px; }
   .ecran-note a { display: inline-flex; align-items: center; min-height: 44px; color: var(--cuivre); }
+  .film { scroll-margin-top: 110px; }
+  .film + .film { margin-top: 72px; }
+  .film-entete { max-width: 980px; margin: 0 auto 22px; }
+  .film-entete h3 { margin: 0 0 8px; font: 600 clamp(24px, 3.2vw, 32px)/1.25 var(--titre); }
+  .film-entete p { margin: 0; color: var(--doux); font-size: 17px; }
+  .film .ecran-note { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 12px; }
+  @media (max-width: 560px) { .film + .film { margin-top: 52px; } .film-entete p { font-size: 16px; } }
 
   /* ---------- Méthode ---------- */
   .etapes { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
@@ -250,6 +257,7 @@
     <nav aria-label="Navigation principale">
       <a href="#offre">Notre offre</a>
       <a href="#solutions">Solutions</a>
+      <a href="#video">Vidéos</a>
       <a href="#methode">Méthode</a>
       <a class="bouton or" href="#contact">Nous contacter</a>
     </nav>
@@ -398,6 +406,7 @@
             <p class="edition"><b>À votre nom :</b> MonEmpire est livrée aux couleurs de votre entreprise. L’application porte le nom et le logo de votre société.</p>
             <div class="liens">
               <a class="principal" href="https://wa.me/2250172767791?text=Bonjour%20SoluGis%2C%20je%20souhaite%20une%20d%C3%A9monstration%20priv%C3%A9e%20de%20MonEmpire." target="_blank" rel="noopener">Démonstration privée <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <a class="second" href="#video-monempire">Voir la vidéo</a>
             </div>
           </div>
         </article>
@@ -504,15 +513,35 @@
       <div class="entete revele">
         <span class="etiquette">En vidéo</span>
         <h2>Nos applications à l’œuvre.</h2>
-        <p>Premier épisode : une journée avec Adya, sur le téléphone, la tablette et l’ordinateur. Les vidéos des autres applications arrivent.</p>
+        <p>Découvrez nos applications en situation : le pilotage d’un groupe avec MonEmpire et la vie d’une famille avec Adya.</p>
       </div>
-      <div class="ecran revele">
-        <video controls playsinline preload="none" poster="adya/adya-video.jpg" width="1280" height="720">
-          <source src="adya/adya-video.mp4" type="video/mp4">
-          Votre navigateur ne lit pas cette vidéo. <a href="adya/adya-video.mp4">Télécharger la vidéo</a>.
-        </video>
-      </div>
-      <p class="ecran-note revele">1 min 27, avec musique · <a href="adya/">Découvrir Adya</a></p>
+      <article class="film" id="video-monempire" aria-labelledby="titre-video-monempire">
+        <div class="film-entete revele">
+          <h3 id="titre-video-monempire">MonEmpire — le bureau privé des dirigeants</h3>
+          <p>Vos sociétés, vos finances, vos projets et vos équipes : gardez la vue d’ensemble.</p>
+        </div>
+        <div class="ecran revele">
+          <video controls playsinline preload="none" poster="monempire-v2.jpg" width="1280" height="720" aria-label="Présentation de MonEmpire, 45 secondes">
+            <source src="monempire-v2.mp4" type="video/mp4">
+            <track kind="captions" src="monempire-v2-fr.vtt" srclang="fr" label="Français">
+            Votre navigateur ne lit pas cette vidéo. <a href="monempire-v2.mp4">Télécharger la vidéo MonEmpire</a>.
+          </video>
+        </div>
+        <p class="ecran-note revele"><span>45 s · Voix française et musique</span><span aria-hidden="true">·</span><a href="https://wa.me/2250172767791?text=Bonjour%20SoluGis%2C%20je%20souhaite%20une%20d%C3%A9monstration%20priv%C3%A9e%20de%20MonEmpire." target="_blank" rel="noopener">Demander une démonstration de MonEmpire</a></p>
+      </article>
+      <article class="film" id="video-adya" aria-labelledby="titre-video-adya">
+        <div class="film-entete revele">
+          <h3 id="titre-video-adya">Adya — une journée en famille</h3>
+          <p>La vie du groupe, sur le téléphone, la tablette et l’ordinateur.</p>
+        </div>
+        <div class="ecran revele">
+          <video controls playsinline preload="none" poster="adya/adya-video.jpg" width="1280" height="720" aria-label="Présentation d’Adya, 1 minute 27">
+            <source src="adya/adya-video.mp4" type="video/mp4">
+            Votre navigateur ne lit pas cette vidéo. <a href="adya/adya-video.mp4">Télécharger la vidéo</a>.
+          </video>
+        </div>
+        <p class="ecran-note revele"><span>1 min 27, avec musique</span><span aria-hidden="true">·</span><a href="adya/">Découvrir Adya</a></p>
+      </article>
     </div>
   </section>
 
