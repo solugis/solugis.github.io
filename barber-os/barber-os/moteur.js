@@ -36,15 +36,31 @@ window.BM = (function () {
   /* ---------- stock : somme des mouvements ---------- */
   M.stocks = function (mouvements) { var s = {}; mouvements.forEach(function (m) { s[m.produit] = (s[m.produit] || 0) + m.q; }); return s; };
   M.etatStock = function (p, q) { return q <= 0 ? 'rupture' : q <= (p.seuil || 0) ? 'bas' : 'ok'; };
-  /* mouvements créés par une vente : produits vendus + consommables standards des prestations */
-  M.mouvementsVente = function (tx, prestations, uid) {
-    var parId = {}; prestations.forEach(function (p) { parId[p.id] = p; });
+  /* mouvements créés par une vente : produits vendus + consommables standards des prestations.
+     Les produits comptés en FLACONS (remarque n° 6) ne bougent pas à la vente : on les retire avec « Flacon terminé » ;
+     leur consommation standard (en ml) sert seulement à estimer le flacon en cours et le coût. */
+  M.mouvementsVente = function (tx, prestations, uid, produits) {
+    var parId = {}, A = {}; prestations.forEach(function (p) { parId[p.id] = p; }); (produits || []).forEach(function (a) { A[a.id] = a; });
     var out = [];
     tx.lignes.forEach(function (l) {
       if (l.type === 'A') out.push({ id: uid(), produit: l.ref, type: 'vente', q: -l.q, tx: tx.id, ts: tx.ts, par: tx.caissier });
-      else if (parId[l.ref] && parId[l.ref].conso) parId[l.ref].conso.forEach(function (c) { out.push({ id: uid(), produit: c.produit, type: 'conso', q: -c.q * l.q, tx: tx.id, ts: tx.ts, par: tx.caissier }); });
+      else if (parId[l.ref] && parId[l.ref].conso) parId[l.ref].conso.forEach(function (c) { if (A[c.produit] && A[c.produit].unite === 'flacon') return; out.push({ id: uid(), produit: c.produit, type: 'conso', q: -c.q * l.q, tx: tx.id, ts: tx.ts, par: tx.caissier }); });
     });
     return out;
+  };
+  /* coût d'une unité de consommation : pour un flacon, prix du flacon ÷ contenance (coût d'un ml) */
+  M.coutConsoUnitaire = function (a) { return a.unite === 'flacon' ? (a.achat || 0) / (a.contenance || 1) : (a.achat || 0); };
+  /* flacon en cours : ml utilisés (d'après les prestations vendues) depuis le dernier « Flacon terminé » */
+  M.flaconEnCours = function (a, txs, prestations, mouvements) {
+    var t0 = 0, parId = {}; prestations.forEach(function (p) { parId[p.id] = p; });
+    mouvements.forEach(function (m) { if (m.produit === a.id && m.type === 'termine' && m.ts > t0) t0 = m.ts; });
+    var utilise = 0;
+    txs.forEach(function (x) {
+      if (x.statut !== 'validee' || x.ts <= t0) return;
+      x.lignes.forEach(function (l) { var p = l.type === 'P' && parId[l.ref]; if (p && p.conso) p.conso.forEach(function (c) { if (c.produit === a.id) utilise += c.q * l.q; }); });
+    });
+    var c = a.contenance || 1, reste = Math.max(0, c - utilise);
+    return { utilise: utilise, reste: reste, pct: Math.round(reste * 100 / c), depuis: t0 };
   };
   /* annulation : chaque mouvement de la vente est compensé (jamais supprimé) */
   M.mouvementsAnnulation = function (tx, mouvements, uid, par) {
@@ -97,7 +113,7 @@ window.BM = (function () {
         if (l.type === 'P') {
           r.caPrest += net; r.nbPrest += l.q; e.nbPrest += l.q;
           var tp = r.topPrest[l.ref] || (r.topPrest[l.ref] = { ref: l.ref, nom: l.nom, q: 0, ca: 0 }); tp.q += l.q; tp.ca += net;
-          var pr = P[l.ref]; if (pr && pr.conso) pr.conso.forEach(function (c) { var a = A[c.produit]; if (a) r.coutConso += Math.round(c.q * l.q * (a.achat || 0)); });
+          var pr = P[l.ref]; if (pr && pr.conso) pr.conso.forEach(function (c) { var a = A[c.produit]; if (a) r.coutConso += Math.round(c.q * l.q * M.coutConsoUnitaire(a)); });
         } else {
           var a = A[l.ref], cout = a ? a.achat * l.q : 0;
           r.caProd += net; r.nbProd += l.q; e.nbProd += l.q; r.coutProduits += cout;
@@ -117,6 +133,27 @@ window.BM = (function () {
     r.topProd = Object.keys(r.topProd).map(function (k) { return r.topProd[k]; }).sort(function (a, b) { return b.ca - a.ca; });
     return r;
   };
+
+  /* ---------- file d'attente (module facultatif, remarque n° 8) ----------
+     passage : { arrivee, debut, fin (ms), statut attente | encours | fini | parti, par (coiffeur), tx }
+     Donne les VRAIES heures d'arrivée, l'attente et la durée réelle des prestations. */
+  M.file = function (passages, deb, fin) {
+    var r = { arrives: 0, servis: 0, partis: 0, attenteTot: 0, nAttente: 0, dureeTot: 0, nDuree: 0, carte: [] };
+    for (var j = 0; j < 7; j++) { r.carte.push([]); for (var h = 0; h < 24; h++) r.carte[j].push(0); }
+    passages.forEach(function (p) {
+      if (p.date < deb || p.date > fin) return;
+      r.arrives++; var d = new Date(p.arrivee); r.carte[(d.getDay() + 6) % 7][d.getHours()]++;
+      if (p.statut === 'parti') r.partis++;
+      if (p.statut === 'fini') r.servis++;
+      if (p.debut) { r.attenteTot += p.debut - p.arrivee; r.nAttente++; }
+      if (p.debut && p.fin && p.statut === 'fini') { r.dureeTot += p.fin - p.debut; r.nDuree++; }
+    });
+    r.attenteMoy = r.nAttente ? Math.round(r.attenteTot / r.nAttente / 60000) : 0;
+    r.dureeMoy = r.nDuree ? Math.round(r.dureeTot / r.nDuree / 60000) : 0;
+    r.pctPartis = M.pct(r.partis, r.arrives);
+    return r;
+  };
+  M.minutes = function (ms) { return Math.max(0, Math.round(ms / 60000)); };
 
   /* ---------- dépenses et résultat ----------
      Les achats de stock et les commissions versées sortent de la trésorerie mais pas du résultat :

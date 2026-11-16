@@ -3,7 +3,7 @@
 (function () {
   'use strict';
   var M = window.BM, IC = window.BIC, I18N = window.BI18N, VERSION = '0.1 · prototype';
-  var CLE = 'barberos.demo.v1', CLE_PREF = 'barberos.prefs', CLE_SERVEUR = 'barberos.serveur.v1', APPAREIL = 'A' + Math.random().toString(36).slice(2, 5);
+  var CLE = 'barberos.demo.v2', CLE_PREF = 'barberos.prefs', CLE_SERVEUR = 'barberos.serveur.v1', APPAREIL = 'A' + Math.random().toString(36).slice(2, 5);
   var PARAMS = new URLSearchParams(location.search);
   var DB, PR, U = null, VUE = 'accueil', CART, ST = {}, PILE = [];
 
@@ -46,8 +46,9 @@
   var COULEURS = ['#8a6a4a', '#4f6d7a', '#6b5b8a', '#8a4f5e', '#5b7a5a'];
   function avatar(u, cls) { return '<span class="avatar ' + (cls || '') + '" style="background:' + COULEURS[(u.couleur || 0) % COULEURS.length] + '">' + esc((u.prenom || '?').slice(0, 1)) + '</span>'; }
   function logoMoyen(id) {
-    var img = { wave: 'moyen-wave.png', om: 'moyen-om.svg', mtn: 'moyen-mtn.svg', moov: 'moyen-moov.png' }[id];
-    return img ? '<img class="logo-moyen" src="' + img + '" alt="">' : '<span class="logo-moyen trait">' + ic(id === 'especes' ? 'especes' : id === 'carte' ? 'carte' : 'autre') + '</span>';
+    /* remarque n° 9 : une vraie icône pour chaque moyen (espèces, carte et autre dessinées pour BARBER OS) */
+    var img = { especes: 'moyen-especes.svg', wave: 'moyen-wave.png', om: 'moyen-om.svg', mtn: 'moyen-mtn.svg', moov: 'moyen-moov.png', carte: 'moyen-carte.svg', autre: 'moyen-autre.svg' }[id];
+    return img ? '<img class="logo-moyen" src="' + img + '" alt="">' : '<span class="logo-moyen trait">' + ic('autre') + '</span>';
   }
   function estMM(id) { return id === 'wave' || id === 'om' || id === 'mtn' || id === 'moov'; }
   function segTag(s) { return mixte() && s ? '<span class="seg seg-' + s + '">' + t('seg.' + s) + '</span>' : ''; }
@@ -105,6 +106,7 @@
     DB = raz ? null : lire(CLE, null);
     if (!DB || !DB.salon) { DB = window.BDEMO.construire(aujourdhui(), new Date()); DB.file = []; sauver(); try { localStorage.removeItem(CLE_SERVEUR); } catch (e) { } }
     if (!DB.file) DB.file = [];
+    if (!DB.passages) DB.passages = [];
     U = PR.user ? user(PR.user) : null;
   }
   function sauverPrefs() { ecrire(CLE_PREF, PR); }
@@ -115,10 +117,11 @@
     gerant: [['accueil', 'accueil'], ['stocks', 'stock'], ['vendre', 'vente'], ['stats', 'stats'], ['plus', 'plusMenu']],
     express: [['accueil', 'accueil'], ['produits', 'flacon'], ['vendre', 'vente'], ['historique', 'historique'], ['moi', 'client']]
   };
-  var LATERAL_GERANT = [['accueil', 'accueil'], ['vendre', 'vente'], ['stocks', 'stock'], ['stats', 'stats'], ['depenses', 'depense'], ['equipe', 'equipe'], ['clients', 'client'], ['historique', 'historique'], ['parametres', 'reglages']];
+  var LATERAL_GERANT = [['accueil', 'accueil'], ['vendre', 'vente'], ['file', 'file'], ['stocks', 'stock'], ['stats', 'stats'], ['depenses', 'depense'], ['equipe', 'equipe'], ['clients', 'client'], ['historique', 'historique'], ['parametres', 'reglages']];
   var ROUTES_GERANT = { stocks: 1, stats: 1, plus: 1, depenses: 1, equipe: 1, clients: 1, parametres: 1 };
   function onglets() { return estGerant() ? ONGLETS.gerant : ONGLETS.express; }
-  function lateral() { return estGerant() ? LATERAL_GERANT : ONGLETS.express; }
+  function lateral() { var L = estGerant() ? LATERAL_GERANT : ONGLETS.express.concat([['file', 'file']]); return fileActive() ? L : L.filter(function (o) { return o[0] !== 'file'; }); }
+  function fileActive() { return !!(DB && DB.salon.modules.file); }
   function aller(v, garderDefil) { VUE = v; if (!garderDefil) window.scrollTo(0, 0); dessiner(); }
 
   function dessiner() {
@@ -127,6 +130,7 @@
     if (!PR.langue) { app.innerHTML = ecranLangue(); return; }
     if (!U) { app.innerHTML = ecranQui(); return; }
     var actif = VUE === 'plus' || ['depenses', 'equipe', 'clients', 'parametres'].indexOf(VUE) >= 0 && !large() ? 'plus' : VUE;
+    if (VUE === 'file' && !large()) actif = estGerant() ? 'plus' : 'accueil';
     if (!estGerant() && VUE === 'parametres') actif = 'moi';
     app.innerHTML =
       '<div class="cadre">' +
@@ -146,7 +150,7 @@
     var el = $('#vue');
     if (ROUTES_GERANT[VUE] && !estGerant()) { el.innerHTML = vide('cadenas', t('acces.reserve'), t('acces.reserveTxt')); return; }
     var f = { accueil: estGerant() ? vueAccueilGerant : vueAccueilExpress, vendre: vueVendre, stocks: vueStocks, stats: vueStats, plus: vuePlus, depenses: vueDepenses, equipe: vueEquipe,
-      clients: vueClients, historique: vueHistorique, parametres: vueParametres, produits: vueProduits, moi: vueMoi }[VUE] || vueAccueilExpress;
+      clients: vueClients, historique: vueHistorique, parametres: vueParametres, produits: vueProduits, moi: vueMoi, file: vueFile }[VUE] || vueAccueilExpress;
     f(el);
   }
   function marque() { return '<img class="marque-logo" src="logo-mini.png" alt=""><span class="marque-nom">BARBER OS</span>'; }
@@ -205,7 +209,12 @@
       esc((user(x.lignes[0] && x.lignes[0].par) || {}).prenom || '') + (x.client ? ' · ' + esc((client(x.client) || {}).prenom || '') : '') + (x.statut !== 'validee' ? ' · ' + esc(t('tx.annulee')) : '') + (x.sync === false ? ' · ' + esc(t('sync.nonEnvoye')) : '') + '</span></span>' +
       '<span class="tx-m">' + moyensTx(x) + '<b>' + F(x.total) + '</b></span></button>';
   }
-  function kpi(lib, val, sous, cls) { return '<div class="kpi ' + (cls || '') + '"><span class="kpi-lib">' + esc(lib) + '</span><b class="kpi-val">' + val + '</b>' + (sous ? '<span class="kpi-sous">' + sous + '</span>' : '') + '</div>'; }
+  /* case chiffrée ; avec `det`, un toucher ouvre son détail (remarque n° 3 du 16/11/2026) */
+  function kpi(lib, val, sous, cls, det) {
+    var dedans = (det ? ic('droite', 'kpi-plus') : '') + '<span class="kpi-lib">' + esc(lib) + '</span><b class="kpi-val">' + val + '</b>' + (sous ? '<span class="kpi-sous">' + sous + '</span>' : '');
+    return det ? '<button class="kpi ' + (cls || '') + '" data-a="kpi" data-k="' + esc(det) + '">' + dedans + '</button>' : '<div class="kpi ' + (cls || '') + '">' + dedans + '</div>';
+  }
+  function K() { return Array.prototype.slice.call(arguments).map(function (x) { return x == null ? '' : x; }).join('|'); }
 
   /* ---------------------------------------------------------------- ACCUEIL EXPRESS (coiffeur, caissier) */
   function salut() { var h = new Date().getHours(); return t(h < 12 ? 'salut.matin' : h < 18 ? 'salut.aprem' : 'salut.soir', { p: U.prenom }); }
@@ -215,13 +224,13 @@
     var recents = mesTx(auj).filter(function (x) { return x.statut === 'validee'; }).slice(-4).reverse();
     el.innerHTML =
       '<section class="bloc-salut"><h1>' + esc(salut()) + '</h1><p>' + esc(dateLongue(auj)) + '</p></section>' +
-      '<button class="btn-vente-geant" data-a="aller" data-v="vendre">' + ic('plus') + '<span>' + esc(t('vente.nouvelle')) + '</span></button>' +
+      '<button class="btn-vente-geant" data-a="aller" data-v="vendre">' + ic('plus') + '<span>' + esc(t('vente.nouvelle')) + '</span></button>' + carteFile() +
       '<section class="section"><div class="section-tete"><h2>' + esc(t('fav.titre')) + '</h2><span class="section-aide">' + esc(t('fav.aide')) + '</span></div>' +
         (favs.length ? '<div class="tuiles tuiles-fav">' + favs.map(function (x) { var estP = x.prix != null; return '<button class="tuile" data-a="vendreFav" data-k="' + (estP ? 'P:' : 'A:') + x.id + '">' + ic(estP ? catIc(x.cat) : 'flacon', 'tuile-ic') + '<b>' + esc(nm(x.nom)) + '</b><span class="tuile-prix">' + prixTxt(x) + '</span></button>'; }).join('') + '</div>' : vide('etoile', t('fav.vide'), t('fav.videTxt'))) + '</section>' +
       '<section class="section"><div class="section-tete"><h2>' + esc(t('accueil.maJournee')) + '</h2></div><div class="kpis kpis-3">' +
-        kpi(t('kpi.prestations'), M.nombre(U.role === 'caissier' ? st.nbPrest : moi.nbPrest)) +
-        kpi(U.role === 'caissier' ? t('kpi.ventesJour') : t('kpi.monCA'), F(U.role === 'caissier' ? st.ca : moi.ca)) +
-        (U.role !== 'caissier' && DB.salon.modules.commissionsVisibles ? kpi(t('kpi.maCommission'), F(moi.commission), esc(t('kpi.commissionCalc'))) : '') +
+        kpi(t('kpi.prestations'), M.nombre(U.role === 'caissier' ? st.nbPrest : moi.nbPrest), '', '', K('prest', auj, auj, '', U.role === 'caissier' ? '' : U.id)) +
+        kpi(U.role === 'caissier' ? t('kpi.ventesJour') : t('kpi.monCA'), F(U.role === 'caissier' ? st.ca : moi.ca), '', '', K('ventes', auj, auj, '', U.role === 'caissier' ? '' : U.id)) +
+        (U.role !== 'caissier' && DB.salon.modules.commissionsVisibles ? kpi(t('kpi.maCommission'), F(moi.commission), esc(t('kpi.commissionCalc')), '', K('com', auj, auj, '', U.id)) : '') +
       '</div></section>' +
       '<section class="section"><div class="section-tete"><h2>' + esc(t('accueil.refaire')) + '</h2></div>' +
         (recents.length ? '<div class="liste">' + recents.map(function (x) { return '<div class="ligne-refaire"><span class="tx-h">' + M.heure(x.ts) + '</span><span class="tx-txt"><b>' + esc(resumeLignes(x)) + '</b><span>' + F(x.total) + '</span></span><button class="btn petit" data-a="refaire" data-id="' + x.id + '">' + ic('refaire') + esc(t('refaire')) + '</button></div>'; }).join('') + '</div>' : vide('historique', t('accueil.aucuneVente'), t('accueil.aucuneVenteTxt'))) + '</section>';
@@ -243,11 +252,12 @@
     el.innerHTML =
       '<section class="bloc-salut"><h1>' + esc(salut()) + '</h1><p>' + esc(dateLongue(auj)) + ' · ' + esc(t('accueil.aHeure', { h: M.heure(Date.now()) })) + '</p></section>' +
       '<div class="grille-dash">' +
-      '<section class="carte carte-ca large2"><span class="kpi-lib">' + esc(t('kpi.caJour')) + '</span><b class="ca-geant">' + F(st.ca) + '</b>' +
-        (comp ? '<span class="tendance ' + (ecart >= 0 ? 'haut' : 'bas') + '">' + (ecart >= 0 ? '▲ +' : '▼ ') + ecart + ' % ' + esc(t('accueil.vsHabitude')) + '</span>' : '') +
-        '<div class="kpis kpis-3">' + kpi(t('kpi.transactions'), M.nombre(st.nbTx)) + kpi(t('kpi.panier'), F(st.panier)) + kpi(t('kpi.prestations'), M.nombre(st.nbPrest)) + '</div></section>' +
-      '<section class="carte"><h2>' + esc(t('kpi.encaisse')) + ' · ' + F(st.encaisse) + '</h2>' + parMoyen(st) +
-        '<div class="ligne-info">' + ic('especes') + '<span>' + esc(t('accueil.especesAttendues')) + '</span><b>' + F(especesCaisse) + '</b></div><small class="aide">' + esc(t('accueil.especesAide')) + '</small></section>' +
+      '<section class="carte carte-ca large2"><button class="ca-bouton" data-a="kpi" data-k="' + K('ca', auj, auj) + '">' + ic('droite', 'kpi-plus') + '<span class="kpi-lib">' + esc(t('kpi.caJour')) + '</span><b class="ca-geant">' + F(st.ca) + '</b>' +
+        (comp ? '<span class="tendance ' + (ecart >= 0 ? 'haut' : 'bas') + '">' + (ecart >= 0 ? '▲ +' : '▼ ') + ecart + ' % ' + esc(t('accueil.vsHabitude')) + '</span>' : '') + '</button>' +
+        '<div class="kpis kpis-3">' + kpi(t('kpi.transactions'), M.nombre(st.nbTx), '', '', K('ventes', auj, auj)) + kpi(t('kpi.panier'), F(st.panier), '', '', K('panier', auj, auj)) + kpi(t('kpi.prestations'), M.nombre(st.nbPrest), '', '', K('prest', auj, auj)) + '</div></section>' +
+      '<section class="carte"><h2>' + esc(t('kpi.encaisse')) + ' · ' + F(st.encaisse) + '</h2>' + parMoyen(st, auj, auj) +
+        '<button class="ligne-info" data-a="kpi" data-k="' + K('especes', auj, auj) + '">' + ic('especes') + '<span>' + esc(t('accueil.especesAttendues')) + '</span><b>' + F(especesCaisse) + '</b>' + ic('droite', 'chev-mini') + '</button><small class="aide">' + esc(t('accueil.especesAide')) + '</small></section>' +
+      (fileActive() ? '<section class="carte">' + carteFile(true) + '</section>' : '') +
       '<section class="carte"><h2>' + esc(t('accueil.actions')) + '</h2><div class="actions-rapides">' +
         '<button class="action-r primaire" data-a="aller" data-v="vendre">' + ic('plus') + '<span>' + esc(t('vente.nouvelle')) + '</span></button>' +
         '<button class="action-r" data-a="formDepense">' + ic('depense') + '<span>' + esc(t('dep.ajouter')) + '</span></button>' +
@@ -261,10 +271,10 @@
         (der.length ? '<div class="liste">' + der.map(ligneTx).join('') + '</div>' : vide('historique', t('accueil.aucuneVente'), t('accueil.aucuneVenteTxt'))) + '</section>' +
       '</div>';
   }
-  function parMoyen(st) {
+  function parMoyen(st, deb, fin) {
     var tot = st.encaisse || 1, ids = DB.salon.moyens.filter(function (m) { return st.parMoyen[m]; });
     if (!ids.length) return '<p class="aide">' + esc(t('accueil.rienEncaisse')) + '</p>';
-    return '<div class="barres-moyens">' + ids.map(function (m) { return '<div class="bm">' + logoMoyen(m) + '<span class="bm-lib">' + esc(t('moyen.' + m)) + '</span><span class="bm-barre"><i style="width:' + Math.max(3, Math.round(st.parMoyen[m] * 100 / tot)) + '%"></i></span><b>' + F(st.parMoyen[m]) + '</b></div>'; }).join('') + '</div>';
+    return '<div class="barres-moyens">' + ids.map(function (m) { return (deb ? '<button class="bm" data-a="kpi" data-k="' + K('moyen', deb, fin, m) + '">' : '<div class="bm">') + logoMoyen(m) + '<span class="bm-lib">' + esc(t('moyen.' + m)) + '</span><span class="bm-barre"><i style="width:' + Math.max(3, Math.round(st.parMoyen[m] * 100 / tot)) + '%"></i></span><b>' + F(st.parMoyen[m]) + '</b>' + (deb ? '</button>' : '</div>'); }).join('') + '</div>';
   }
   function obsTxt(o) {
     var p = {}; for (var k in o.p) p[k] = o.p[k];
@@ -313,6 +323,7 @@
         '<div class="recherche">' + ic('recherche') + '<input id="q" type="search" enterkeyhint="search" autocomplete="off" placeholder="' + esc(t('vente.rechercher')) + '" value="' + esc(ST.caisse.q) + '"></div>' +
         (mixte() ? '<div class="segs">' + ['', 'H', 'F', 'U'].map(function (s) { return '<button class="chip' + (ST.caisse.seg === s ? ' actif' : '') + '" data-a="seg" data-s="' + s + '">' + esc(s ? t('seg.' + s) : t('seg.tous')) + '</button>'; }).join('') + '</div>' : '') +
         '<div class="onglets-cat">' + cats.map(function (c) { return '<button class="ong' + (ST.caisse.cat === c[0] ? ' actif' : '') + '" data-a="cat" data-c="' + c[0] + '">' + ic(c[1]) + '<span>' + esc(c[2]) + '</span></button>'; }).join('') + '</div>' +
+        (CART.passage && passage(CART.passage) ? '<p class="bandeau-info">' + ic('file') + esc(t('file.encaissement', { n: nomPassage(passage(CART.passage)) })) + '</p>' : '') +
         '<div id="bandeau-fav"></div><div class="tuiles" id="tuiles"></div>' +
         '<button class="lien centre" data-a="editFav">' + ic('etoile') + esc(ST.caisse.editFav ? t('fav.terminer') : t('fav.modifier')) + '</button>' +
       '</section>' +
@@ -338,9 +349,13 @@
     $('#bandeau-fav').innerHTML = ST.caisse.editFav ? '<p class="bandeau-info">' + ic('etoile') + esc(t('fav.modeEdit')) + '</p>' : '';
     g.innerHTML = liste.length ? liste.map(function (o) {
       var x = o.x, fav = favs.indexOf(x.id) >= 0;
-      return '<button class="tuile' + (dans[o.k] ? ' choisie' : '') + (ST.caisse.editFav ? ' edit' : '') + '" data-a="tuile" data-k="' + o.k + '">' +
-        (dans[o.k] ? '<span class="qte">' + dans[o.k] + '</span>' : '') + (ST.caisse.editFav ? '<span class="fav-et' + (fav ? ' on' : '') + '">' + ic('etoile') + '</span>' : '') +
-        '<b>' + esc(nm(x.nom)) + '</b><span class="tuile-pied"><span class="tuile-prix">' + prixTxt(x) + '</span>' + (o.P ? segTag(x.seg) : '<span class="tuile-stock' + (o.st <= x.seuil ? ' bas' : '') + '">' + esc(t('stock.reste', { n: M.nombre(o.st) })) + '</span>') + '</span></button>';
+      /* remarque n° 4 : sur une tuile choisie, un bouton « − » retire un article sans ouvrir l'encaissement (bouton frère de la tuile : pas de bouton dans un bouton) */
+      var n = ST.caisse.editFav ? 0 : dans[o.k] || 0, stockTxt = o.P ? '' : '<span class="tuile-stock' + (o.st <= x.seuil ? ' bas' : '') + '">' + esc(t('stock.reste', { n: M.nombre(o.st) })) + '</span>';
+      return '<div class="tuile-env"><button class="tuile' + (dans[o.k] ? ' choisie' : '') + (ST.caisse.editFav ? ' edit' : '') + '" data-a="tuile" data-k="' + o.k + '">' +
+        (n ? '<span class="qte">' + n + '</span>' : '') + (ST.caisse.editFav ? '<span class="fav-et' + (fav ? ' on' : '') + '">' + ic('etoile') + '</span>' : '') +
+        '<b>' + esc(nm(x.nom)) + '</b>' + (n && stockTxt ? stockTxt : '') +
+        '<span class="tuile-pied' + (n ? ' avec-moins' : '') + '"><span class="tuile-prix">' + prixTxt(x) + '</span>' + (o.P ? segTag(x.seg) : n ? '' : stockTxt) + '</span></button>' +
+        (n ? '<button class="tuile-moins" data-a="moinsTuile" data-k="' + o.k + '" aria-label="' + esc(t('vente.retirerUn')) + '">' + ic('moins') + '</button>' : '') + '</div>';
     }).join('') : vide('recherche', t('vente.rien'), '');
   }
   function majCaisse() {
@@ -427,9 +442,10 @@
       remise: tot.remiseGlobale, motifRemise: CART.motifRemise || '', total: tot.total, paiements: pays, refMM: CART.refMM || '', opId: uid(), sync: false };
     if (pays.length && CART.refMM) pays.forEach(function (x) { if (estMM(x.moyen)) x.ref = CART.refMM; });
     DB.transactions.push(tx);
-    M.mouvementsVente(tx, DB.prestations, uid).forEach(function (m) { DB.mouvements.push(m); });
+    M.mouvementsVente(tx, DB.prestations, uid, DB.produits).forEach(function (m) { DB.mouvements.push(m); });
     if (tx.remise) DB.audit.push({ id: uid(), ts: tx.ts, par: U.id, action: 'remise', ref: tx.id, motif: tx.motifRemise, montant: tx.remise });
     if (tx.lignes.some(function (l) { return l.offert; })) DB.audit.push({ id: uid(), ts: tx.ts, par: U.id, action: 'fidelite', ref: tx.id, motif: '', montant: 0 });
+    if (CART.passage) { var pq = DB.passages.filter(function (q) { return q.id === CART.passage; })[0]; if (pq) { pq.statut = 'fini'; pq.fin = tx.ts; pq.tx = tx.id; if (!pq.debut) pq.debut = pq.arrivee; if (!pq.par) pq.par = CART.par; empiler('passage', pq.id); } }
     PR.dernierPar = CART.par; sauverPrefs();
     empiler('vente', tx.id, tx.opId);
     CART = panierVide(); sauverPanier();
@@ -565,12 +581,161 @@
     sauverPanier(); aller('vendre'); if (!caisseLarge()) ouvrirEncaissement();
   }
 
+  /* ---------------------------------------------------------------- DÉTAIL D'UNE CASE CHIFFRÉE (remarque n° 3) */
+  function periodeTxt(deb, fin) { return !deb ? '' : deb === fin ? dateLongue(deb) : dateCourte(deb) + ' → ' + dateCourte(fin); }
+  function detailKpi(k) {
+    var p = k.split('|'), type = p[0], deb = p[1], fin = p[2], seg = p[3] || '', emp = p[4] || '';
+    var gerantSeul = { file: 1, ca: 1, panier: 1, especes: 1, moyen: 1, remises: 1, annul: 1, prod: 1, valeur: 1, alertes: 1, refs: 1, dep: 1 };
+    if (!estGerant()) { if (gerantSeul[type]) return; if (U.role !== 'caissier') emp = U.id; }
+    var auMoins = function (x) { return (!seg || type === 'moyen' || x.lignes.some(function (l) { return l.type === 'P' && l.seg === seg; })) && (!emp || x.lignes.some(function (l) { return l.par === emp; })); };
+    var txs = DB.transactions.filter(function (x) { return x.date >= deb && x.date <= fin && auMoins(x); });
+    var val = txs.filter(function (x) { return x.statut === 'validee'; });
+    var titre = '', h = '<p class="resume">' + esc(periodeTxt(deb, fin)) + (emp ? ' · ' + esc((user(emp) || {}).prenom || '') : '') + (seg && type !== 'moyen' && type !== 'dep' && type !== 'file' ? ' · ' + esc(t('seg.' + seg)) : '') + '</p>';
+    function listeTx(L) { var lim = 150, tri = L.slice().reverse(); return tri.length ? '<div class="liste">' + tri.slice(0, lim).map(ligneTx).join('') + '</div>' + (tri.length > lim ? '<p class="aide">' + esc(t('det.limite', { n: lim })) + '</p>' : '') : vide('historique', t('det.aucune'), ''); }
+    function agreger(typeL) {
+      var o = {};
+      val.forEach(function (x) { var tot = M.totaux(x.lignes, x.remise); x.lignes.forEach(function (l) { if (l.type !== typeL || (emp && l.par !== emp) || (seg && typeL === 'P' && l.seg !== seg)) return; var r = o[l.ref] || (o[l.ref] = { nom: l.nom, q: 0, ca: 0 }); r.q += l.q; r.ca += Math.round(M.ligneNet(l) * tot.coef); }); });
+      return Object.keys(o).map(function (x) { return o[x]; }).sort(function (a, b) { return b.ca - a.ca; });
+    }
+    function tableau(L, colQ) { if (!L.length) return vide('stats', t('det.aucune'), ''); var max = L[0].ca || 1; return '<ol class="top">' + L.map(function (x) { return '<li><span class="top-nom">' + esc(nm(x.nom)) + '<small>' + esc(t(colQ, { n: x.q, m: F(x.marge || 0) })) + '</small></span><span class="top-barre"><i style="width:' + Math.max(2, Math.round(x.ca * 100 / max)) + '%"></i></span><b>' + F(x.ca) + '</b></li>'; }).join('') + '</ol>'; }
+    if (type === 'ca') {
+      var st = stPeriode(deb, fin, seg); titre = t('kpi.ca') + ' · ' + F(st.ca);
+      h += '<div class="kpis">' + kpi(t('kpi.caPrest'), F(st.caPrest), '', '', K('prest', deb, fin, seg)) + kpi(t('kpi.caProd'), F(st.caProd), esc(t('kpi.nbProd', { n: st.nbProd })), '', seg ? '' : K('prod', deb, fin)) + '</div>' +
+        '<h3 class="jour-tete">' + esc(t('det.parEmploye')) + '</h3>' + tableEmployes(st);
+      if (deb !== fin) h += '<h3 class="jour-tete">' + esc(t('det.parJour')) + '</h3><div class="table-fin">' + Object.keys(st.parJour).sort().reverse().map(function (d) { return '<div class="tf"><span>' + esc(dateLongue(d)) + '</span><b>' + F(st.parJour[d]) + '</b></div>'; }).join('') + '</div>';
+      h += '<button class="btn plein" data-a="kpi" data-k="' + K('ventes', deb, fin, seg) + '">' + ic('historique') + esc(t('det.voirVentes')) + '</button>';
+    } else if (type === 'ventes') {
+      titre = emp ? t('histo.mien') : t('kpi.transactions'); h += '<p class="resume">' + esc(t('histo.resume', { n: txs.length, m: F(val.reduce(function (s, x) { return s + x.total; }, 0)) })) + '</p>' + listeTx(txs);
+    } else if (type === 'panier') {
+      var ca = val.reduce(function (s, x) { return s + x.total; }, 0), n = val.length, bornes = [0, 2000, 5000, 10000], cpt = [0, 0, 0, 0];
+      val.forEach(function (x) { for (var i = 3; i >= 0; i--) if (x.total >= bornes[i]) { cpt[i]++; break; } });
+      var mx = Math.max.apply(null, cpt.concat([1]));
+      titre = t('kpi.panier') + ' · ' + F(n ? Math.round(ca / n) : 0);
+      h += '<p class="texte">' + esc(t('det.panierCalc', { ca: F(ca), n: n, p: F(n ? Math.round(ca / n) : 0) })) + '</p><h3 class="jour-tete">' + esc(t('det.tranches')) + '</h3>' +
+        '<ol class="top">' + cpt.map(function (c, i) { return '<li><span class="top-nom">' + esc(t('det.tranche.' + i)) + '</span><span class="top-barre"><i style="width:' + Math.max(2, Math.round(c * 100 / mx)) + '%"></i></span><b>' + c + '</b></li>'; }).join('') + '</ol>' +
+        '<button class="btn plein" data-a="kpi" data-k="' + K('ventes', deb, fin, seg) + '">' + ic('historique') + esc(t('det.voirVentes')) + '</button>';
+    } else if (type === 'prest') {
+      var LP = agreger('P'); titre = t('kpi.prestations') + ' · ' + LP.reduce(function (s, x) { return s + x.q; }, 0); h += tableau(LP, 'stats.qte');
+    } else if (type === 'prod') {
+      var LA = agreger('A'); LA.forEach(function (x) { var a = DB.produits.filter(function (y) { return nm(y.nom) === nm(x.nom); })[0]; x.marge = a ? x.ca - a.achat * x.q : 0; });
+      titre = t('cat.produits') + ' · ' + LA.reduce(function (s, x) { return s + x.q; }, 0); h += tableau(LA, 'stats.qteMarge');
+    } else if (type === 'remises') {
+      var LR = val.filter(function (x) { return x.remise || x.lignes.some(function (l) { return l.offert; }); }); titre = t('kpi.remises'); h += listeTx(LR);
+    } else if (type === 'annul') {
+      var LN = DB.transactions.filter(function (x) { return x.date >= deb && x.date <= fin && x.statut !== 'validee'; }); titre = t('kpi.annulees') + ' · ' + LN.length;
+      h += LN.length ? '<div class="liste">' + LN.slice().reverse().map(function (x) { return ligneTx(x) + '<p class="aide">' + esc(t('tx.annuleePar', { p: (user(x.annul.par) || {}).prenom || '', m: x.annul.motif })) + '</p>'; }).join('') + '</div>' : vide('coche', t('det.aucune'), '');
+    } else if (type === 'moyen') {
+      var LM = val.filter(function (x) { return x.paiements.some(function (q) { return q.moyen === seg; }); }), tm = 0;
+      LM.forEach(function (x) { x.paiements.forEach(function (q) { if (q.moyen === seg) tm += q.montant - (q.rendu || 0); }); });
+      titre = t('moyen.' + seg) + ' · ' + F(tm); h += (estMM(seg) ? '<div class="note-mm">' + ic('info') + '<span>' + esc(t('det.mmManuel')) + '</span></div>' : '') + listeTx(LM);
+    } else if (type === 'especes') {
+      var recu = 0, rendu = 0; val.forEach(function (x) { x.paiements.forEach(function (q) { if (q.moyen === 'especes') { recu += q.montant; rendu += q.rendu || 0; } }); });
+      var depE = M.depenses(DB.depenses, deb, fin).especes; titre = t('accueil.especesAttendues');
+      h += tableFin([[t('det.especesRecu'), recu], [t('det.especesRendu'), -rendu], [t('det.especesDep'), -depE], [t('det.especesAttendu'), recu - rendu - depE, t('det.especesFond'), 'total']]) +
+        '<button class="btn plein" data-a="kpi" data-k="' + K('moyen', deb, fin, 'especes') + '">' + ic('historique') + esc(t('det.voirVentes')) + '</button>';
+    } else if (type === 'com') {
+      var tc = 0, lignesC = val.map(function (x) { var tot = M.totaux(x.lignes, x.remise), c = 0; x.lignes.forEach(function (l) { if (l.par === emp) c += M.commissionLigne(l, tot.coef, user(emp)); }); tc += c; return { x: x, c: c }; }).filter(function (o) { return o.c; });
+      titre = t('kpi.maCommission') + ' · ' + F(tc);
+      h += '<p class="texte">' + esc(t('det.comCalc')) + ' ' + esc(t('moi.regle', { p: (user(emp).commission || {}).prest || 0, a: (user(emp).commission || {}).prod || 0 })) + '</p>' +
+        (lignesC.length ? '<div class="liste">' + lignesC.reverse().slice(0, 150).map(function (o) { return '<button class="ligne-tx" data-a="detailTx" data-id="' + o.x.id + '"><span class="tx-h">' + M.heure(o.x.ts) + '</span><span class="tx-txt"><b>' + esc(resumeLignes(o.x)) + '</b><span>' + esc(dateCourte(o.x.date)) + ' · ' + F(o.x.total) + '</span></span><span class="tx-m"><b>' + F(o.c) + '</b></span></button>'; }).join('') + '</div>' : vide('depense', t('det.aucune'), ''));
+    } else if (type === 'file') {
+      var LQ = DB.passages.filter(function (q) { return q.date >= deb && q.date <= fin && (seg !== 'parti' || q.statut === 'parti') && (seg !== 'duree' || (q.statut === 'fini' && q.debut)) && (seg !== 'attente' || q.debut); });
+      if (seg === 'attente') LQ.sort(function (a, b) { return (b.debut - b.arrivee) - (a.debut - a.arrivee); }); else if (seg === 'duree') LQ.sort(function (a, b) { return (b.fin - b.debut) - (a.fin - a.debut); }); else LQ.sort(function (a, b) { return b.arrivee - a.arrivee; });
+      titre = t(seg === 'parti' ? 'file.partis' : seg === 'attente' ? 'file.attenteMoy' : seg === 'duree' ? 'file.dureeMoy' : 'file.arrives') + ' · ' + LQ.length;
+      h += LQ.length ? '<div class="liste">' + LQ.slice(0, 150).map(function (q) {
+        var att = q.debut ? M.minutes(q.debut - q.arrivee) : M.minutes((q.fin || Date.now()) - q.arrivee), du = q.debut && q.fin ? M.minutes(q.fin - q.debut) : 0;
+        return '<' + (q.tx ? 'button data-a="detailTx" data-id="' + q.tx + '"' : 'div') + ' class="ligne-tx"><span class="tx-h">' + M.heure(q.arrivee) + '</span><span class="tx-txt"><b>' + esc(nomPassage(q)) + '</b><span>' + esc(t('file.st.' + q.statut)) + (q.par ? ' · ' + esc((user(q.par) || {}).prenom || '') : '') + (deb !== fin ? ' · ' + esc(dateCourte(q.date)) : '') + '</span></span><span class="tx-m"><b>' + esc(seg === 'duree' ? t('file.min', { m: du }) : t('file.min', { m: att })) + '</b></span></' + (q.tx ? 'button' : 'div') + '>';
+      }).join('') + '</div>' : vide('file', t('det.aucune'), '');
+    } else if (type === 'valeur' || type === 'alertes' || type === 'refs') {
+      var s = stocks(), LS = DB.produits.filter(prodVisible).filter(function (a) { return type !== 'alertes' || M.etatStock(a, s[a.id] || 0) !== 'ok'; });
+      if (type === 'valeur') LS.sort(function (a, b) { return Math.max(0, s[b.id] || 0) * b.achat - Math.max(0, s[a.id] || 0) * a.achat; });
+      titre = t(type === 'valeur' ? 'stock.valeur' : type === 'alertes' ? 'stock.alertes' : 'stock.references') + ' · ' + LS.length;
+      h = (type === 'valeur' ? '<p class="aide">' + esc(t('det.valeurCalc')) + '</p>' : '') + (LS.length ? '<div class="liste">' + LS.map(function (a) { var q = s[a.id] || 0, e = M.etatStock(a, q); return '<button class="ligne-stock" data-a="ficheProduit" data-id="' + a.id + '"><span class="tx-txt"><b>' + esc(nm(a.nom)) + '</b><span class="etat-' + e + '">' + esc(uniteTxt(a, q)) + (e !== 'ok' ? ' · ' + esc(t('stock.' + e)) : '') + '</span></span><b>' + F(Math.max(0, q) * a.achat) + '</b>' + ic('droite') + '</button>'; }).join('') + '</div>' : vide('coche', t('det.aucune'), ''));
+    } else if (type === 'dep') {
+      var D = DB.depenses.filter(function (x) { return !x.annulee && x.date >= deb && x.date <= fin && (!seg || (seg === 'hors') === !!M.HORS_RESULTAT[x.cat]); }), parC = {}, tot = 0;
+      D.forEach(function (x) { parC[x.cat] = (parC[x.cat] || 0) + x.montant; tot += x.montant; });
+      titre = t(seg === 'exploit' ? 'dep.exploitation' : seg === 'hors' ? 'dep.horsResultat' : 'dep.total') + ' · ' + F(tot);
+      var LC = Object.keys(parC).sort(function (a, b) { return parC[b] - parC[a]; }), mxc = LC.length ? parC[LC[0]] : 1;
+      h += '<h3 class="jour-tete">' + esc(t('det.parCat')) + '</h3>' + (LC.length ? '<ol class="top">' + LC.map(function (c) { return '<li><span class="top-nom avec-ic">' + icDep(c) + esc(t('dep.' + c)) + '</span><span class="top-barre"><i style="width:' + Math.max(2, Math.round(parC[c] * 100 / mxc)) + '%"></i></span><b>' + F(parC[c]) + '</b></li>'; }).join('') + '</ol>' : vide('depense', t('det.aucune'), ''));
+    } else return;
+    ouvrir(titre, h);
+  }
+
+  /* ---------------------------------------------------------------- FILE D'ATTENTE (module facultatif, remarque n° 8) */
+  function passagesJour() { var d = aujourdhui(); return DB.passages.filter(function (p) { return p.date === d; }); }
+  function nomPassage(p) { var k = client(p.client); return t('file.numero', { n: p.num }) + (k ? ' · ' + k.prenom : p.prenom ? ' · ' + p.prenom : ''); }
+  function depuis(ts) { return M.minutes(Date.now() - ts); }
+  function carteFile(dansCarte) {
+    if (!fileActive()) return '';
+    var J = passagesJour(), att = J.filter(function (p) { return p.statut === 'attente'; }), enc = J.filter(function (p) { return p.statut === 'encours'; });
+    var plusLongue = att.length ? Math.max.apply(null, att.map(function (p) { return depuis(p.arrivee); })) : 0;
+    return (dansCarte ? '<h2>' + esc(t('nav.file')) + '</h2>' : '<section class="carte carte-file">') +
+      '<button class="resume-file" data-a="aller" data-v="file"><span class="rf-n">' + att.length + '</span><span class="tx-txt"><b>' + esc(t('file.enAttente', { n: att.length })) + '</b><span>' + esc(t('file.resume', { e: enc.length, m: plusLongue })) + '</span></span>' + ic('droite') + '</button>' +
+      '<div class="actions-file"><button class="btn primaire" data-a="clientArrive">' + ic('plus') + esc(t('file.arrive')) + '</button><button class="btn" data-a="aller" data-v="file">' + ic('file') + esc(t('file.voir')) + '</button></div>' +
+      (dansCarte ? '' : '</section>');
+  }
+  function vueFile(el) {
+    if (!fileActive()) { el.innerHTML = vide('file', t('file.inactive'), estGerant() ? t('file.inactiveTxt') : ''); return; }
+    var J = passagesJour().sort(function (a, b) { return a.arrivee - b.arrivee; }), att = J.filter(function (p) { return p.statut === 'attente'; }), enc = J.filter(function (p) { return p.statut === 'encours'; });
+    var st = M.file(DB.passages, aujourdhui(), aujourdhui());
+    el.innerHTML = '<div class="page-tete"><h1>' + esc(t('nav.file')) + '</h1><button class="btn petit primaire" data-a="clientArrive">' + ic('plus') + esc(t('file.arrive')) + '</button></div>' +
+      '<p class="bandeau-info">' + ic('info') + esc(t('file.facultatif')) + '</p>' +
+      '<h3 class="jour-tete">' + esc(t('file.enCoursTitre', { n: enc.length })) + '</h3>' +
+      (enc.length ? '<div class="liste">' + enc.map(function (p) { var u = user(p.par) || {}; return '<div class="passage encours"><span class="pas-n">' + p.num + '</span><span class="tx-txt"><b>' + esc(nomPassage(p)) + '</b><span>' + esc(t('file.avec', { p: u.prenom || '', m: depuis(p.debut) })) + '</span></span><button class="btn petit primaire" data-a="terminerPassage" data-id="' + p.id + '">' + esc(t('file.terminer')) + '</button></div>'; }).join('') + '</div>' : '<p class="aide">' + esc(t('file.aucunEnCours')) + '</p>') +
+      '<h3 class="jour-tete">' + esc(t('file.attenteTitre', { n: att.length })) + '</h3>' +
+      (att.length ? '<div class="liste">' + att.map(function (p, i) { var su = user(p.souhait); return '<div class="passage' + (depuis(p.arrivee) >= 20 ? ' long' : '') + '"><span class="pas-n">' + p.num + '</span><span class="tx-txt"><b>' + esc(nomPassage(p)) + '</b><span>' + esc(t('file.attend', { m: depuis(p.arrivee) })) + ' · ' + esc(su ? t('file.souhaite', { p: su.prenom }) : t('file.premierLibre')) + (i === 0 ? ' · ' + esc(t('file.suivant')) : '') + '</span></span>' +
+        '<span class="pas-actions"><button class="btn petit primaire" data-a="prendrePassage" data-id="' + p.id + '">' + esc(t('file.prendre')) + '</button><button class="btn petit" data-a="partiPassage" data-id="' + p.id + '">' + esc(t('file.parti')) + '</button></span></div>'; }).join('') + '</div>' : vide('file', t('file.vide'), t('file.videTxt'))) +
+      '<h3 class="jour-tete">' + esc(t('file.journee')) + '</h3><div class="kpis kpis-3">' +
+        kpi(t('file.arrives'), M.nombre(st.arrives), '', '', estGerant() ? K('file', aujourdhui(), aujourdhui()) : '') + kpi(t('file.attenteMoy'), t('file.min', { m: st.attenteMoy }), '', '', estGerant() ? K('file', aujourdhui(), aujourdhui(), 'attente') : '') + kpi(t('file.partis'), M.nombre(st.partis), '', st.partis ? 'alerte' : '', estGerant() ? K('file', aujourdhui(), aujourdhui(), 'parti') : '') + '</div>';
+  }
+  function clientArrive() {
+    var f = ouvrir(t('file.arrive'), champ(t('file.prenom'), '<input name="prenom" autocomplete="off" maxlength="40" placeholder="' + esc(t('facultatif')) + '">', t('file.prenomAide')) +
+      '<div class="pan-lib">' + esc(t('file.coiffeur')) + '</div><div class="chips"><button class="chip actif" data-s="">' + esc(t('file.premierLibre')) + '</button>' + coiffeurs().map(function (u) { return '<button class="chip" data-s="' + u.id + '">' + esc(u.prenom) + '</button>'; }).join('') + '</div>' +
+      '<div class="actions"><button class="btn" data-a="fermer">' + esc(t('annuler')) + '</button><button class="btn primaire" data-x="ok">' + ic('plus') + esc(t('file.ajouter')) + '</button></div>');
+    var souhait = '';
+    f.addEventListener('click', function (e) {
+      var c = e.target.closest('[data-s]'); if (c) { souhait = c.dataset.s; $$('[data-s]', f).forEach(function (b) { b.classList.toggle('actif', b === c); }); return; }
+      if (!e.target.closest('[data-x=ok]')) return;
+      var prenom = $('input[name=prenom]', f).value.trim(), k = prenom ? DB.clients.filter(function (x) { return x.prenom.toLowerCase() === prenom.toLowerCase(); })[0] : null;
+      var J = passagesJour(), p = { id: uid(), date: aujourdhui(), num: J.reduce(function (m, x) { return Math.max(m, x.num || 0); }, 0) + 1, arrivee: Date.now(), debut: 0, fin: 0, statut: 'attente', par: '', souhait: souhait, client: k ? k.id : '', prenom: k ? '' : prenom, tx: '' };
+      DB.passages.push(p); empiler('passage', p.id); fermer(); toast(t('file.ajoute', { n: p.num })); son('ajout'); dessiner();
+    });
+  }
+  function passage(id) { return DB.passages.filter(function (p) { return p.id === id; })[0]; }
+  function prendrePassage(id) {
+    var p = passage(id); if (!p || p.statut !== 'attente') return;
+    function prendre(par) { p.statut = 'encours'; p.par = par; p.debut = Date.now(); empiler('passage', p.id); toast(t('file.pris', { n: p.num, p: (user(par) || {}).prenom || '' })); son('onglet'); dessiner(); }
+    if (U.role === 'coiffeur') { prendre(U.id); return; }
+    var f = ouvrir(t('file.quiPrend', { n: p.num }), '<div class="liste">' + coiffeurs().map(function (u) { return '<button class="rang" data-u="' + u.id + '">' + avatar(u) + '<span>' + esc(u.prenom) + (p.souhait === u.id ? '<small>' + esc(t('file.demande')) + '</small>' : '') + '</span>' + ic('droite') + '</button>'; }).join('') + '</div>');
+    f.addEventListener('click', function (e) { var b = e.target.closest('[data-u]'); if (!b) return; fermer(); prendre(b.dataset.u); });
+  }
+  function terminerPassage(id) {
+    var p = passage(id); if (!p) return;
+    if (!CART) chargerPanier();
+    CART = panierVide(); CART.par = p.par || CART.par; CART.client = p.client || ''; CART.passage = p.id; sauverPanier();
+    ST.caisse.cat = (U.favoris || []).length ? 'fav' : 'coiffure'; aller('vendre');
+  }
+  function partiPassage(id) {
+    var p = passage(id); if (!p) return;
+    confirmer(t('file.partiTxt', { n: p.num, m: depuis(p.arrivee) }), t('file.parti')).then(function (ok) { if (!ok) return; p.statut = 'parti'; p.fin = Date.now(); empiler('passage', p.id); toast(t('file.partiOk')); dessiner(); });
+  }
+  /* rafraîchir les minutes d'attente sans jamais effacer une saisie ni fermer une fenêtre */
+  setInterval(function () { if (U && (VUE === 'file' || VUE === 'accueil') && fileActive() && !PILE.length && !(document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))) { var y = window.scrollY; dessiner(); window.scrollTo(0, y); } }, 30000);
+
   /* ---------------------------------------------------------------- PRODUITS (consultation, mode express) */
   function vueProduits(el) {
     var s = stocks();
     el.innerHTML = '<div class="page-tete"><h1>' + esc(t('nav.produits')) + '</h1></div><div class="liste">' + DB.produits.filter(function (a) { return prodVisible(a) && a.usage === 'revente'; }).map(function (a) {
       var q = s[a.id] || 0, e = M.etatStock(a, q);
       return '<div class="ligne-prod"><span class="tx-txt"><b>' + esc(nm(a.nom)) + '</b><span class="etat-' + e + '">' + esc(t('stock.reste', { n: M.nombre(q) })) + (e !== 'ok' ? ' · ' + esc(t('stock.' + e)) : '') + '</span></span><b>' + F(a.vente) + '</b><button class="btn petit primaire" data-a="vendreFav" data-k="A:' + a.id + '">' + esc(t('vendre')) + '</button></div>';
+    }).join('') + '</div>' + flaconsDuPoste();
+  }
+  function flaconsDuPoste() {
+    var s = stocks(), L = DB.produits.filter(function (a) { return prodVisible(a) && flacon(a); });
+    if (!L.length) return '';
+    return '<div class="section-tete section"><h2>' + esc(t('produits.flacons')) + '</h2></div><p class="aide">' + esc(t('produits.flaconsAide')) + '</p><div class="liste">' + L.map(function (a) {
+      var e = flaconCours(a), q = s[a.id] || 0;
+      return '<div class="ligne-prod"><span class="tx-txt"><b>' + esc(nm(a.nom)) + '</b>' + jauge(a) + '<span>' + esc(t('stock.enCoursCourt', { p: e.pct })) + ' · ' + esc(uniteTxt(a, q)) + '</span></span><button class="btn petit primaire" data-a="flaconTermine" data-id="' + a.id + '">' + esc(t('stock.flaconTermine')) + '</button></div>';
     }).join('') + '</div>';
   }
 
@@ -579,7 +744,7 @@
     var auj = aujourdhui(), deb = M.debutMois(auj), st = stPeriode(deb, auj), moi = st.employes[U.id] || { ca: 0, nbPrest: 0, nbProd: 0, commission: 0 };
     el.innerHTML = '<div class="page-tete"><h1>' + esc(t('profil.titre')) + '</h1></div>' +
       '<section class="carte profil-carte">' + avatar(U, 'grand') + '<div><b>' + esc(U.prenom) + '</b><span>' + esc(t('role.' + U.role)) + '</span></div></section>' +
-      (U.role !== 'caissier' && DB.salon.modules.commissionsVisibles ? '<section class="section"><div class="section-tete"><h2>' + esc(t('moi.ceMois')) + '</h2></div><div class="kpis kpis-3">' + kpi(t('kpi.prestations'), M.nombre(moi.nbPrest)) + kpi(t('kpi.monCA'), F(moi.ca)) + kpi(t('kpi.maCommission'), F(moi.commission), esc(t('kpi.commissionCalc'))) + '</div><small class="aide">' + esc(t('moi.regle', { p: U.commission.prest, a: U.commission.prod })) + '</small></section>' : '') +
+      (U.role !== 'caissier' && DB.salon.modules.commissionsVisibles ? '<section class="section"><div class="section-tete"><h2>' + esc(t('moi.ceMois')) + '</h2></div><div class="kpis kpis-3">' + kpi(t('kpi.prestations'), M.nombre(moi.nbPrest), '', '', K('prest', deb, auj, '', U.id)) + kpi(t('kpi.monCA'), F(moi.ca), '', '', K('ventes', deb, auj, '', U.id)) + kpi(t('kpi.maCommission'), F(moi.commission), esc(t('kpi.commissionCalc')), '', K('com', deb, auj, '', U.id)) + '</div><small class="aide">' + esc(t('moi.regle', { p: U.commission.prest, a: U.commission.prod })) + '</small></section>' : '') +
       reglagesPerso();
   }
   function reglagesPerso() {
@@ -599,7 +764,7 @@
     var s = stocks(), al = alertesStock(), valeur = 0;
     DB.produits.forEach(function (a) { if (prodVisible(a)) valeur += Math.max(0, s[a.id] || 0) * a.achat; });
     el.innerHTML = '<div class="page-tete"><h1>' + esc(t('nav.stocks')) + '</h1><button class="btn petit primaire" data-a="formProduit">' + ic('plus') + esc(t('stock.nouveau')) + '</button></div>' +
-      '<div class="kpis kpis-3">' + kpi(t('stock.valeur'), F(valeur), esc(t('stock.valeurAide'))) + kpi(t('stock.alertes'), M.nombre(al.length), '', al.length ? 'alerte' : '') + kpi(t('stock.references'), M.nombre(DB.produits.filter(prodVisible).length)) + '</div>' +
+      '<div class="kpis kpis-3">' + kpi(t('stock.valeur'), F(valeur), esc(t('stock.valeurAide')), '', K('valeur')) + kpi(t('stock.alertes'), M.nombre(al.length), '', al.length ? 'alerte' : '', K('alertes')) + kpi(t('stock.references'), M.nombre(DB.produits.filter(prodVisible).length), '', '', K('refs')) + '</div>' +
       '<div class="segmente">' + ['revente', 'conso'].map(function (u) { return '<button class="' + (ST.stock.usage === u ? 'actif' : '') + '" data-a="stockUsage" data-u="' + u + '">' + esc(t('stock.usage.' + u)) + '</button>'; }).join('') + '</div>' +
       '<small class="aide">' + esc(t('stock.usageAide.' + ST.stock.usage)) + '</small>' +
       '<div class="recherche">' + ic('recherche') + '<input id="qs" type="search" autocomplete="off" placeholder="' + esc(t('stock.rechercher')) + '" value="' + esc(ST.stock.q) + '"></div>' +
@@ -607,25 +772,63 @@
     var q = $('#qs'); q.addEventListener('input', function () { ST.stock.q = q.value; listeStock(); });
     listeStock();
   }
-  function uniteTxt(a, q) { return M.nombre(q) + ' ' + t('unite.' + a.unite); }
+  function uniteTxt(a, q) { return M.nombre(q) + ' ' + t((Math.abs(q) <= 1 ? 'unite1.' : 'uniteN.') + a.unite); }
   function listeStock() {
     var s = stocks(), q = ST.stock.q.toLowerCase();
     var L = DB.produits.filter(function (a) { return prodVisible(a) && a.usage === ST.stock.usage && (!q || (a.nom.fr + ' ' + a.nom.en + ' ' + a.ref).toLowerCase().indexOf(q) >= 0); })
       .sort(function (a, b) { var o = { rupture: 0, bas: 1, ok: 2 }; return o[M.etatStock(a, s[a.id] || 0)] - o[M.etatStock(b, s[b.id] || 0)]; });
     $('#liste-stock').innerHTML = L.length ? L.map(function (a) {
       var n = s[a.id] || 0, e = M.etatStock(a, n);
-      return '<button class="ligne-stock" data-a="ficheProduit" data-id="' + a.id + '"><span class="tx-txt"><b>' + esc(nm(a.nom)) + '</b><span>' + esc(a.ref) + ' · ' + esc(t('stock.seuil', { n: uniteTxt(a, a.seuil) })) + '</span></span><span class="qte-stock etat-' + e + '"><b>' + esc(uniteTxt(a, n)) + '</b>' + (e !== 'ok' ? '<em>' + esc(t('stock.' + e)) + '</em>' : '') + '</span>' + ic('droite') + '</button>';
+      return '<button class="ligne-stock" data-a="ficheProduit" data-id="' + a.id + '"><span class="tx-txt"><b>' + esc(nm(a.nom)) + '</b><span>' + (flacon(a) ? esc(t('stock.enCoursCourt', { p: flaconCours(a).pct })) : esc(a.ref)) + ' · ' + esc(t('stock.seuil', { n: uniteTxt(a, a.seuil) })) + '</span></span><span class="qte-stock etat-' + e + '"><b>' + esc(uniteTxt(a, n)) + '</b>' + (e !== 'ok' ? '<em>' + esc(t('stock.' + e)) + '</em>' : '') + '</span>' + ic('droite') + '</button>';
     }).join('') : vide('stock', t('stock.vide'), '');
   }
+  function flacon(a) { return a.unite === 'flacon'; }
+  function flaconCours(a) { return M.flaconEnCours(a, DB.transactions, DB.prestations, DB.mouvements); }
+  function jauge(a) { var e = flaconCours(a); return '<span class="jauge' + (e.pct <= 15 ? ' bas' : '') + '"><i style="width:' + Math.max(2, e.pct) + '%"></i></span>'; }
   function ficheProduit(id) {
-    var a = produit(id), n = stocks()[id] || 0, mv = DB.mouvements.filter(function (m) { return m.produit === id; }).slice(-12).reverse();
+    var a = produit(id), n = stocks()[id] || 0, mv = DB.mouvements.filter(function (m) { return m.produit === id; }).slice(-12).reverse(), fl = flacon(a), ec = fl ? flaconCours(a) : null;
+    var kp = fl ? kpi(t('stock.enStock'), esc(uniteTxt(a, n)), '', M.etatStock(a, n) !== 'ok' ? 'alerte' : '') + kpi(t('stock.flaconEnCours'), '≈ ' + M.nombre(ec.reste) + ' ml', jauge(a) + esc(ec.pct + ' %'), ec.pct <= 15 ? 'alerte' : '') + kpi(t('stock.seuilLib'), esc(uniteTxt(a, a.seuil)))
+      : kpi(t('stock.enStock'), esc(uniteTxt(a, n)), '', M.etatStock(a, n) !== 'ok' ? 'alerte' : '') + (a.usage === 'revente' ? kpi(t('stock.prixVente'), F(a.vente)) + kpi(t('stock.margeUnit'), F(a.vente - a.achat)) : kpi(t('stock.coutUnit'), F(a.achat)) + kpi(t('stock.seuilLib'), esc(uniteTxt(a, a.seuil))));
+    var actions = (fl ? [['termine', 'coche']] : []).concat([['entree', 'entree'], ['perte', 'perte'], ['inventaire', 'inventaire']]);
     var f = ouvrir(nm(a.nom),
-      '<div class="kpis kpis-3">' + kpi(t('stock.enStock'), esc(uniteTxt(a, n)), '', M.etatStock(a, n) !== 'ok' ? 'alerte' : '') + (a.usage === 'revente' ? kpi(t('stock.prixVente'), F(a.vente)) + kpi(t('stock.margeUnit'), F(a.vente - a.achat)) : kpi(t('stock.coutUnit'), F(a.achat)) + kpi(t('stock.seuilLib'), esc(uniteTxt(a, a.seuil)))) + '</div>' +
-      '<div class="actions-rapides">' + [['entree', 'entree'], ['perte', 'perte'], ['inventaire', 'inventaire']].map(function (x) { return '<button class="action-r" data-x="' + x[0] + '">' + ic(x[1]) + '<span>' + esc(t('stock.' + x[0])) + '</span></button>'; }).join('') + '</div>' +
-      '<dl class="meta"><dt>' + esc(t('stock.ref')) + '</dt><dd>' + esc(a.ref) + '</dd><dt>' + esc(t('stock.prixAchat')) + '</dt><dd>' + F(a.achat) + (a.unite !== 'piece' ? ' / ' + esc(t('unite.' + a.unite)) : '') + '</dd><dt>' + esc(t('stock.fournisseur')) + '</dt><dd>' + esc(a.fournisseur || '—') + '</dd></dl>' +
+      '<div class="kpis kpis-3">' + kp + '</div>' +
+      (fl ? '<p class="aide">' + esc(t('stock.flaconEstim', { u: M.nombre(ec.utilise), c: M.nombre(a.contenance) })) + '</p>' + (ec.pct <= 15 ? '<p class="bandeau-info">' + ic('info') + esc(t('stock.flaconVide')) + '</p>' : '') : '') +
+      '<div class="actions-rapides' + (actions.length === 4 ? ' quatre' : '') + '">' + actions.map(function (x) { return '<button class="action-r' + (x[0] === 'termine' ? ' primaire' : '') + '" data-x="' + x[0] + '">' + ic(x[1]) + '<span>' + esc(t(x[0] === 'termine' ? 'stock.flaconTermine' : 'stock.' + x[0])) + '</span></button>'; }).join('') + '</div>' +
+      '<dl class="meta"><dt>' + esc(t('stock.ref')) + '</dt><dd>' + esc(a.ref) + '</dd><dt>' + esc(t('stock.prixAchat')) + '</dt><dd>' + F(a.achat) + (a.unite !== 'piece' ? ' / ' + esc(t('unite1.' + a.unite)) : '') + '</dd>' +
+        (fl ? '<dt>' + esc(t('stock.contenance')) + '</dt><dd>' + M.nombre(a.contenance) + ' ml</dd>' : '') + '<dt>' + esc(t('stock.fournisseur')) + '</dt><dd>' + esc(a.fournisseur || '—') + '</dd></dl>' +
+      (a.usage === 'conso' ? utilisePar(a) : '') +
       '<h3 class="jour-tete">' + esc(t('stock.mouvements')) + '</h3><div class="liste">' + mv.map(function (m) { return '<div class="ligne-mv"><span class="tx-txt"><b>' + esc(t('mv.' + m.type)) + '</b><span>' + esc(dateCourte(M.iso(m.ts))) + ' ' + M.heure(m.ts) + (m.motif ? ' · ' + esc(m.motif) : '') + '</span></span><b class="' + (m.q < 0 ? 'neg' : 'pos') + '">' + (m.q > 0 ? '+' : '') + esc(uniteTxt(a, m.q)) + '</b></div>'; }).join('') + '</div>' +
-      '<small class="aide">' + esc(t('stock.calculAide')) + '</small>');
-    f.addEventListener('click', function (e) { var b = e.target.closest('[data-x]'); if (!b) return; formMouvement(a, b.dataset.x); });
+      '<small class="aide">' + esc(t(fl ? 'stock.calculAideFlacon' : 'stock.calculAide')) + '</small>');
+    f.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-x]'); if (b) { if (b.dataset.x === 'termine') flaconTermine(a); else formMouvement(a, b.dataset.x); return; }
+      var r = e.target.closest('[data-retirer-conso]'); if (r) { modifierConso(a, r.dataset.retirerConso, 0); fermer(); ficheProduit(id); return; }
+      if (e.target.closest('[data-ajout-conso]')) { var sel = $('select[name=ajoutPrest]', f), q = M.lireMontant($('input[name=ajoutQ]', f).value); if (!sel.value || q <= 0) { toast(t('err.quantite'), 'alerte'); return; } modifierConso(a, sel.value, q); fermer(); ficheProduit(id); }
+    });
+    $$('input[data-conso]', f).forEach(function (i) { i.addEventListener('change', function () { var q = M.lireMontant(i.value); if (q <= 0) { toast(t('err.quantite'), 'alerte'); return; } modifierConso(a, i.dataset.conso, q); toast(t('stock.consoEnregistree')); }); });
+  }
+  /* remarque n° 5 : prestations qui utilisent ce produit, quantité modifiable par le gérant (vaut pour les ventes suivantes) */
+  function utilisePar(a) {
+    var lies = DB.prestations.filter(function (p) { return (p.conso || []).some(function (c) { return c.produit === a.id; }); });
+    var u = flacon(a) ? 'ml' : t('unite.' + a.unite), autres = DB.prestations.filter(function (p) { return prestVisible(p) && lies.indexOf(p) < 0; });
+    return '<h3 class="jour-tete">' + esc(t('stock.utilisePar')) + '</h3><p class="aide">' + esc(t(flacon(a) ? 'stock.utiliseParAideFlacon' : 'stock.utiliseParAide')) + '</p>' +
+      (lies.length ? '<div class="liste">' + lies.map(function (p) { var c = p.conso.filter(function (x) { return x.produit === a.id; })[0]; return '<div class="ligne-conso"><span class="tx-txt"><b>' + esc(nm(p.nom)) + '</b><span>' + esc(t('stock.parPrest', { u: u })) + '</span></span><input class="conso-q" data-conso="' + p.id + '" inputmode="numeric" autocomplete="off" value="' + M.nombre(c.q) + '" aria-label="' + esc(t('stock.quantite')) + '"><button class="mini" data-retirer-conso="' + p.id + '" aria-label="' + esc(t('retirer')) + '">' + ic('croix') + '</button></div>'; }).join('') + '</div>' : '<p class="aide">' + esc(t('stock.aucunePrest')) + '</p>') +
+      (autres.length ? '<div class="ajout-conso"><select name="ajoutPrest" aria-label="' + esc(t('stock.ajouterPrest')) + '"><option value="">' + esc(t('stock.ajouterPrest')) + '…</option>' + autres.map(function (p) { return '<option value="' + p.id + '">' + esc(nm(p.nom)) + '</option>'; }).join('') + '</select><input name="ajoutQ" class="conso-q" inputmode="numeric" autocomplete="off" placeholder="' + esc(u) + '"><button class="btn petit" data-ajout-conso="1">' + esc(t('ajouter')) + '</button></div>' : '');
+  }
+  function modifierConso(a, prestId, q) {
+    var p = prestation(prestId); if (!p) return; p.conso = (p.conso || []).filter(function (c) { return c.produit !== a.id; }); var avant = q;
+    if (q > 0) p.conso.push({ produit: a.id, q: q });
+    DB.audit.push({ id: uid(), ts: Date.now(), par: U.id, action: 'conso', ref: p.id + '→' + a.id, motif: '', montant: avant });
+    sauver(); empiler('prestation', p.id);
+  }
+  /* remarque n° 6 : « Flacon terminé » retire un flacon du stock et remet la jauge du flacon en cours à plein */
+  function flaconTermine(a) {
+    var n = stocks()[a.id] || 0;
+    if (n <= 0) { toast(t('stock.flaconAucun'), 'alerte'); return; }
+    confirmer(t('stock.flaconConfirmer', { nom: nm(a.nom), a: M.nombre(n), b: M.nombre(n - 1) }), t('stock.flaconTermine')).then(function (ok) {
+      if (!ok) return;
+      var m = { id: uid(), produit: a.id, type: 'termine', q: -1, ts: Date.now(), par: U.id, motif: '' };
+      DB.mouvements.push(m); empiler('mouvement', m.id); fermerTout(); toast(t('stock.flaconOk')); son('ajout'); dessiner();
+    });
   }
   function formMouvement(a, type) {
     var n = stocks()[a.id] || 0, h = '';
@@ -656,7 +859,8 @@
       '<div class="deux">' + champ(t('prod.usage'), '<select name="usage"><option value="revente">' + esc(t('stock.usage.revente')) + '</option><option value="conso">' + esc(t('stock.usage.conso')) + '</option></select>') +
       champ(t('prod.categorie'), '<select name="cat">' + cats.map(function (c) { return '<option value="' + c + '">' + esc(t('pcat.' + c)) + '</option>'; }).join('') + '</select>') + '</div>' +
       '<div class="deux">' + champ(t('stock.prixAchat'), inputMontant('achat')) + champ(t('stock.prixVente'), inputMontant('vente')) + '</div>' +
-      '<div class="deux">' + champ(t('prod.unite'), '<select name="unite"><option value="piece">' + esc(t('unite.piece')) + '</option><option value="ml">ml</option><option value="g">g</option></select>') + champ(t('stock.seuilLib'), '<input name="seuil" class="montant" inputmode="numeric" value="5">') + '</div>' +
+      '<div class="deux">' + champ(t('prod.unite'), '<select name="unite"><option value="piece">' + esc(t('unite.piece')) + '</option><option value="flacon">' + esc(t('unite.flacon')) + '</option><option value="ml">ml</option><option value="g">g</option></select>') + champ(t('stock.seuilLib'), '<input name="seuil" class="montant" inputmode="numeric" value="5">') + '</div>' +
+      '<div id="champ-contenance" hidden>' + champ(t('prod.contenance'), '<input name="contenance" class="montant" inputmode="numeric" placeholder="500">', t('prod.contenanceAide')) + '</div>' +
       champ(t('prod.stockInitial'), '<input name="init" class="montant" inputmode="numeric" placeholder="0">') +
       '<div class="actions"><button class="btn" data-a="fermer">' + esc(t('annuler')) + '</button><button class="btn primaire" data-x="ok">' + esc(t('enregistrer')) + '</button></div>');
     f.addEventListener('click', function (e) {
@@ -664,10 +868,12 @@
       if (!v('fr')) { toast(t('prod.nomManque'), 'alerte'); return; }
       var a = { id: uid(), usage: v('usage'), cat: v('cat'), nom: { fr: v('fr'), en: v('en') || v('fr') }, achat: M.lireMontant(v('achat')), vente: M.lireMontant(v('vente')), unite: v('unite'), seuil: M.lireMontant(v('seuil')), ref: v('fr').slice(0, 3).toUpperCase() + '-' + (DB.produits.length + 1), fournisseur: '', actif: true };
       if (a.usage === 'revente' && !a.vente) { toast(t('prod.prixManque'), 'alerte'); return; }
+      if (a.unite === 'flacon') { a.contenance = M.lireMontant(v('contenance')); if (!a.contenance) { toast(t('prod.contenanceManque'), 'alerte'); return; } }
       DB.produits.push(a); empiler('produit', a.id);
       var init = M.lireMontant(v('init')); if (init) DB.mouvements.push({ id: uid(), produit: a.id, type: 'initial', q: init, cout: a.achat, ts: Date.now(), par: U.id, motif: '' });
       fermer(); toast(t('prod.ajoute')); ST.stock.usage = a.usage; dessiner();
     });
+    $('select[name=unite]', f).addEventListener('change', function () { $('#champ-contenance', f).hidden = this.value !== 'flacon'; });
   }
 
   /* ---------------------------------------------------------------- STATISTIQUES */
@@ -688,15 +894,23 @@
       '<p class="resume">' + esc(dateCourte(b[0])) + (b[0] !== b[1] ? ' → ' + esc(dateCourte(b[1])) : '') + ' · ' + esc(t('stats.compare')) + '</p>' +
       '<div class="grille-dash">' +
       '<section class="carte large2"><div class="kpis kpis-4">' +
-        kpi(t('kpi.ca'), F(st.ca), comp(st.ca, prec.ca), 'fort') + kpi(t('kpi.transactions'), M.nombre(st.nbTx), comp(st.nbTx, prec.nbTx)) + kpi(t('kpi.panier'), F(st.panier), comp(st.panier, prec.panier)) + kpi(t('kpi.prestations'), M.nombre(st.nbPrest), comp(st.nbPrest, prec.nbPrest)) +
-        kpi(t('kpi.caPrest'), F(st.caPrest)) + kpi(t('kpi.caProd'), F(st.caProd), esc(t('kpi.nbProd', { n: st.nbProd }))) + kpi(t('kpi.remises'), F(st.remises)) + kpi(t('kpi.annulees'), M.nombre(st.annulees), st.montantAnnule ? F(st.montantAnnule) : '') +
+        kpi(t('kpi.ca'), F(st.ca), comp(st.ca, prec.ca), 'fort', K('ca', b[0], b[1], seg)) + kpi(t('kpi.transactions'), M.nombre(st.nbTx), comp(st.nbTx, prec.nbTx), '', K('ventes', b[0], b[1], seg)) + kpi(t('kpi.panier'), F(st.panier), comp(st.panier, prec.panier), '', K('panier', b[0], b[1], seg)) + kpi(t('kpi.prestations'), M.nombre(st.nbPrest), comp(st.nbPrest, prec.nbPrest), '', K('prest', b[0], b[1], seg)) +
+        kpi(t('kpi.caPrest'), F(st.caPrest), '', '', K('prest', b[0], b[1], seg)) + kpi(t('kpi.caProd'), F(st.caProd), esc(t('kpi.nbProd', { n: st.nbProd })), '', seg ? '' : K('prod', b[0], b[1])) + kpi(t('kpi.remises'), F(st.remises), '', '', K('remises', b[0], b[1], seg)) + kpi(t('kpi.annulees'), M.nombre(st.annulees), st.montantAnnule ? F(st.montantAnnule) : '', '', K('annul', b[0], b[1])) +
       '</div></section>' +
       '<section class="carte large2"><h2>' + esc(t('stats.evolution')) + '</h2>' + graphe(st, b) + '</section>' +
       (seg ? '' : '<section class="carte"><h2>' + esc(t('stats.resultat')) + '</h2>' + tableFin([
         [t('fin.ca'), st.ca], [t('fin.cout'), -st.cout, t('fin.coutAide')], [t('fin.marge'), st.marge, '', 'sous'], [t('fin.commissions'), -st.commissions, t('fin.commissionsAide')], [t('fin.depenses'), -dep.exploitation, t('fin.depensesAide')], [t('fin.resultat'), res, t('fin.resultatAide'), 'total']
       ]) + '<h3 class="jour-tete">' + esc(t('fin.tresorerie')) + '</h3>' + tableFin([[t('fin.encaisse'), st.encaisse], [t('fin.toutesDep'), -dep.total, t('fin.toutesDepAide')], [t('fin.mouvement'), M.tresorerie(st, dep), '', 'total']]) + '</section>' +
-      '<section class="carte"><h2>' + esc(t('kpi.encaisse')) + '</h2>' + parMoyen(st) + '<small class="aide">' + esc(t('stats.encaisseAide')) + '</small></section>') +
-      '<section class="carte large2"><h2>' + esc(t('stats.affluence')) + '</h2>' + carteChaleur(st) + '<p class="bandeau-info">' + ic('info') + esc(t('stats.affluenceAide')) + '</p></section>' +
+      '<section class="carte"><h2>' + esc(t('kpi.encaisse')) + '</h2>' + parMoyen(st, b[0], b[1]) + '<small class="aide">' + esc(t('stats.encaisseAide')) + '</small></section>') +
+      (function () {
+        var fq = fileActive() || DB.passages.length ? M.file(DB.passages, b[0], b[1]) : null, arr = fq && fq.arrives && ST.stats.carte === 'arr';
+        return (fq && fq.arrives ? '<section class="carte large2"><h2>' + esc(t('nav.file')) + '</h2><div class="kpis kpis-4">' +
+            kpi(t('file.arrives'), M.nombre(fq.arrives), '', '', K('file', b[0], b[1])) + kpi(t('file.attenteMoy'), t('file.min', { m: fq.attenteMoy }), '', '', K('file', b[0], b[1], 'attente')) +
+            kpi(t('file.dureeMoy'), t('file.min', { m: fq.dureeMoy }), '', '', K('file', b[0], b[1], 'duree')) + kpi(t('file.partis'), M.nombre(fq.partis), fq.pctPartis + ' %', fq.partis ? 'alerte' : '', K('file', b[0], b[1], 'parti')) + '</div></section>' : '') +
+          '<section class="carte large2"><h2>' + esc(t('stats.affluence')) + '</h2>' +
+          (fq && fq.arrives ? '<div class="segmente">' + [['enc', 'stats.carteEnc'], ['arr', 'stats.carteArr']].map(function (o) { return '<button class="' + ((arr ? 'arr' : 'enc') === o[0] ? 'actif' : '') + '" data-a="statsCarte" data-c="' + o[0] + '">' + esc(t(o[1])) + '</button>'; }).join('') + '</div>' : '') +
+          carteChaleur(arr ? fq : st) + '<p class="bandeau-info">' + ic('info') + esc(t(arr ? 'stats.affluenceArr' : 'stats.affluenceAide')) + '</p></section>';
+      })() +
       '<section class="carte"><h2>' + esc(t('stats.topPrest')) + '</h2>' + top(st.topPrest, st.caPrest) + '</section>' +
       (seg ? '' : '<section class="carte"><h2>' + esc(t('stats.topProd')) + '</h2>' + top(st.topProd, st.caProd, true) + '</section>') +
       '<section class="carte large2"><h2>' + esc(t('stats.employes')) + '</h2>' + tableEmployes(st) + '</section>' +
@@ -749,21 +963,24 @@
 
   /* ---------------------------------------------------------------- PLUS (téléphone, gérant) */
   function vuePlus(el) {
-    el.innerHTML = '<div class="page-tete"><h1>' + esc(t('nav.plus')) + '</h1></div><div class="liste">' + [['depenses', 'depense'], ['equipe', 'equipe'], ['clients', 'client'], ['historique', 'historique'], ['parametres', 'reglages']].map(function (o) {
+    el.innerHTML = '<div class="page-tete"><h1>' + esc(t('nav.plus')) + '</h1></div><div class="liste">' + (fileActive() ? [['file', 'file']] : []).concat([['depenses', 'depense'], ['equipe', 'equipe'], ['clients', 'client'], ['historique', 'historique'], ['parametres', 'reglages']]).map(function (o) {
       return '<button class="rang grand" data-a="aller" data-v="' + o[0] + '">' + ic(o[1]) + '<span>' + esc(t('nav.' + o[0])) + '<small>' + esc(t('plus.' + o[0])) + '</small></span>' + ic('droite') + '</button>';
     }).join('') + '</div>';
   }
 
   /* ---------------------------------------------------------------- DÉPENSES */
+  /* une icône par catégorie de dépense (remarque n° 7) */
+  var IC_DEP = { loyer: 'loyer', electricite: 'eclair', eau: 'goutte', internet: 'wifi', salaires: 'paie', commissions: 'pourcent', stock: 'stock', consommables: 'peigne', maintenance: 'cle', marketing: 'megaphone', nettoyage: 'balai', autre: 'autre' };
+  function icDep(c) { return ic(IC_DEP[c] || 'depense'); }
   var CAT_DEP = ['loyer', 'electricite', 'eau', 'internet', 'salaires', 'commissions', 'stock', 'consommables', 'maintenance', 'marketing', 'nettoyage', 'autre'];
   function vueDepenses(el) {
     var auj = aujourdhui(), deb = M.debutMois(auj), dep = M.depenses(DB.depenses, deb, auj), L = DB.depenses.filter(function (x) { return x.date >= deb && x.date <= auj && !x.annulee; }).sort(function (a, b) { return b.ts - a.ts; });
     el.innerHTML = '<div class="page-tete"><h1>' + esc(t('nav.depenses')) + '</h1><button class="btn petit primaire" data-a="formDepense">' + ic('plus') + esc(t('dep.ajouter')) + '</button></div>' +
-      '<p class="resume">' + esc(t('dep.ceMois')) + '</p><div class="kpis kpis-3">' + kpi(t('dep.exploitation'), F(dep.exploitation), esc(t('dep.exploitationAide'))) + kpi(t('dep.horsResultat'), F(dep.horsResultat), esc(t('dep.horsResultatAide'))) + kpi(t('dep.total'), F(dep.total)) + '</div>' +
-      '<div class="liste">' + (L.length ? L.map(function (x) { return '<div class="ligne-dep"><span class="dep-ic">' + ic(x.cat === 'stock' ? 'stock' : 'depense') + '</span><span class="tx-txt"><b>' + esc(t('dep.' + x.cat)) + '</b><span>' + esc(dateCourte(x.date)) + (x.note ? ' · ' + esc(x.note) : '') + (M.HORS_RESULTAT[x.cat] ? ' · ' + esc(t('dep.horsRes')) : '') + '</span></span><span class="tx-m">' + logoMoyen(x.moyen) + '<b>' + F(x.montant) + '</b></span></div>'; }).join('') : vide('depense', t('dep.vide'), '')) + '</div>';
+      '<p class="resume">' + esc(t('dep.ceMois')) + '</p><div class="kpis kpis-3">' + kpi(t('dep.exploitation'), F(dep.exploitation), esc(t('dep.exploitationAide')), '', K('dep', deb, auj, 'exploit')) + kpi(t('dep.horsResultat'), F(dep.horsResultat), esc(t('dep.horsResultatAide')), '', K('dep', deb, auj, 'hors')) + kpi(t('dep.total'), F(dep.total), '', '', K('dep', deb, auj, '')) + '</div>' +
+      '<div class="liste">' + (L.length ? L.map(function (x) { return '<div class="ligne-dep"><span class="dep-ic">' + icDep(x.cat) + '</span><span class="tx-txt"><b>' + esc(t('dep.' + x.cat)) + '</b><span>' + esc(dateCourte(x.date)) + (x.note ? ' · ' + esc(x.note) : '') + (M.HORS_RESULTAT[x.cat] ? ' · ' + esc(t('dep.horsRes')) : '') + '</span></span><span class="tx-m">' + logoMoyen(x.moyen) + '<b>' + F(x.montant) + '</b></span></div>'; }).join('') : vide('depense', t('dep.vide'), '')) + '</div>';
   }
   function formDepense() {
-    var f = ouvrir(t('dep.ajouter'), '<div class="pan-lib">' + esc(t('dep.categorie')) + '</div><div class="chips chips-cat">' + CAT_DEP.map(function (c, i) { return '<button class="chip' + (i === 1 ? ' actif' : '') + '" data-c="' + c + '">' + esc(t('dep.' + c)) + '</button>'; }).join('') + '</div><p class="bandeau-info" id="dep-note" hidden></p>' +
+    var f = ouvrir(t('dep.ajouter'), '<div class="pan-lib">' + esc(t('dep.categorie')) + '</div><div class="chips chips-cat">' + CAT_DEP.map(function (c, i) { return '<button class="chip chip-ic' + (i === 1 ? ' actif' : '') + '" data-c="' + c + '">' + icDep(c) + esc(t('dep.' + c)) + '</button>'; }).join('') + '</div><p class="bandeau-info" id="dep-note" hidden></p>' +
       champ(t('dep.montant'), inputMontant('m')) + champ(t('dep.moyen'), '<select name="moyen">' + DB.salon.moyensActifs.map(function (m) { return '<option value="' + m + '">' + esc(t('moyen.' + m)) + '</option>'; }).join('') + '</select>') +
       champ(t('dep.date'), '<input name="date" type="date" value="' + aujourdhui() + '" max="' + aujourdhui() + '">') + champ(t('dep.note'), '<input name="note" autocomplete="off" placeholder="' + esc(t('facultatif')) + '">') +
       '<p class="aide">' + esc(t('dep.pasCA')) + '</p><div class="actions"><button class="btn" data-a="fermer">' + esc(t('annuler')) + '</button><button class="btn primaire" data-x="ok">' + esc(t('enregistrer')) + '</button></div>');
@@ -815,7 +1032,7 @@
         interrupteur('fidelite', t('mod.fidelite'), s.modules.fidelite, t('mod.fideliteAide')) + (s.modules.fidelite ? champ(t('mod.seuil'), '<input name="seuil" class="montant" inputmode="numeric" value="' + s.fidelite.seuil + '">') : '') +
         interrupteur('commissionsVisibles', t('mod.commissions'), s.modules.commissionsVisibles, t('mod.commissionsAide')) +
         interrupteur('remiseCoiffeur', t('mod.remise'), s.remiseCoiffeur, t('mod.remiseAide')) +
-        '<label class="interrupteur desactive"><span>' + esc(t('mod.file')) + '<small>' + esc(t('mod.fileAide')) + '</small></span><input type="checkbox" disabled><i></i></label>') +
+        interrupteur('file', t('mod.file'), s.modules.file, t('mod.fileAide'))) +
       bloc('moyens', t('par.moyens'), s.moyens.map(function (m) { return '<label class="interrupteur"><span class="avec-logo">' + logoMoyen(m) + esc(t('moyen.' + m)) + '</span><input type="checkbox" data-a="moyenActif" data-m="' + m + '"' + (s.moyensActifs.indexOf(m) >= 0 ? ' checked' : '') + '><i></i></label>'; }).join('') + '<small class="aide">' + esc(t('par.moyensAide')) + '</small>') +
       bloc('perso', t('par.perso'), reglagesPerso()) +
       bloc('sync', t('par.sync'), '<div class="ligne-info">' + ic('nuage') + '<span>' + esc(t('sync.enAttente')) + '</span><b>' + DB.file.length + '</b></div><div class="ligne-info">' + ic('coche') + '<span>' + esc(t('sync.recues')) + '</span><b>' + (serveur.recus || 0) + '</b></div><div class="ligne-info">' + ic('refaire') + '<span>' + esc(t('sync.doublons')) + '</span><b>' + (serveur.doublons || 0) + '</b></div>' +
@@ -844,6 +1061,14 @@
     seg: function (b) { ST.caisse.seg = b.dataset.s; $$('[data-a=seg]').forEach(function (x) { x.classList.toggle('actif', x === b); }); dessinerTuiles(); },
     cat: function (b) { ST.caisse.cat = b.dataset.c; ST.caisse.q = ''; var q = $('#q'); if (q) q.value = ''; $$('[data-a=cat]').forEach(function (x) { x.classList.toggle('actif', x === b); }); dessinerTuiles(); son('onglet'); },
     editFav: function () { ST.caisse.editFav = !ST.caisse.editFav; if (!ST.caisse.editFav && !(U.favoris || []).length) ST.caisse.cat = 'coiffure'; dessiner(); },
+    moinsTuile: function (b) {
+      var k = b.dataset.k, L = CART.lignes, i;
+      for (i = L.length - 1; i >= 0; i--) if (L[i].k === k && !L[i].offert) break;
+      if (i < 0) for (i = L.length - 1; i >= 0; i--) if (L[i].k === k) break;
+      if (i < 0) return;
+      L[i].q--; if (L[i].q <= 0) L.splice(i, 1);
+      sauverPanier(); son('onglet'); majCaisse();
+    },
     tuile: function (b) {
       if (ST.caisse.editFav) { var id = b.dataset.k.slice(2), f = U.favoris = U.favoris || [], i = f.indexOf(id); if (i >= 0) f.splice(i, 1); else f.push(id); sauver(); empiler('utilisateur', U.id); dessinerTuiles(); return; }
       ajouterArticle(b.dataset.k); majCaisse();
@@ -862,12 +1087,19 @@
     valider: valider,
     viderPanier: function () { confirmer(t('vente.viderTxt'), t('vente.vider'), true).then(function (ok) { if (!ok) return; CART = panierVide(); sauverPanier(); fermerTout(); majCaisse(); }); },
     detailTx: function (b) { detailTx(b.dataset.id); },
+    clientArrive: function () { clientArrive(); },
+    prendrePassage: function (b) { prendrePassage(b.dataset.id); },
+    terminerPassage: function (b) { terminerPassage(b.dataset.id); },
+    partiPassage: function (b) { partiPassage(b.dataset.id); },
+    kpi: function (b) { detailKpi(b.dataset.k); },
     histoPer: function (b) { ST.histo.per = b.dataset.p; dessiner(); },
     stockUsage: function (b) { ST.stock.usage = b.dataset.u; dessiner(); },
     ficheProduit: function (b) { ficheProduit(b.dataset.id); },
+    flaconTermine: function (b) { flaconTermine(produit(b.dataset.id)); },
     formProduit: formProduit,
     choisirEntree: choisirEntree,
     statsPer: function (b) { ST.stats.per = b.dataset.p; aller('stats', true); },
+    statsCarte: function (b) { ST.stats.carte = b.dataset.c; aller('stats', true); },
     statsSeg: function (b) { ST.stats.seg = b.dataset.s; aller('stats', true); },
     exporter: exporter,
     formDepense: formDepense,
@@ -920,5 +1152,5 @@
 
   /* accès pour le banc d'essai et les contrôles (test/) */
   window.BARBER = { DB: function () { return DB; }, U: function () { return U; }, CART: function () { return CART; }, aller: aller, dessiner: dessiner, fermerTout: fermerTout, ajouterArticle: function (k, p) { if (!CART) chargerPanier(); ajouterArticle(k, p); majCaisse(); }, valider: valider, annulerTx: annulerTx,
-    stocks: stocks, stPeriode: stPeriode, choisir: function (id) { U = user(id); PR.user = id; sauverPrefs(); CART = null; chargerPanier(); }, A: A, t: t, synchroniser: synchroniser, ouvrir: { detailTx: detailTx, ficheProduit: ficheProduit, formMouvement: formMouvement, formDepense: formDepense, formProduit: formProduit, choisirClient: choisirClient, formRemise: formRemise, ouvrirEncaissement: ouvrirEncaissement, formClient: formClient, feuilleProfil: feuilleProfil, formPrixVariable: formPrixVariable, afficherRecu: afficherRecu } };
+    stocks: stocks, stPeriode: stPeriode, choisir: function (id) { U = user(id); PR.user = id; sauverPrefs(); CART = null; chargerPanier(); }, A: A, t: t, synchroniser: synchroniser, ouvrir: { detailTx: detailTx, ficheProduit: ficheProduit, formMouvement: formMouvement, formDepense: formDepense, formProduit: formProduit, choisirClient: choisirClient, formRemise: formRemise, ouvrirEncaissement: ouvrirEncaissement, formClient: formClient, feuilleProfil: feuilleProfil, formPrixVariable: formPrixVariable, afficherRecu: afficherRecu, detailKpi: detailKpi, flaconTermine: flaconTermine }, enCours: function (id) { return flaconCours(produit(id)); } };
 })();

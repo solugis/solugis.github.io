@@ -5,7 +5,7 @@ window.BDEMO = (function () {
   var M = window.BM;
 
   var SALON = { id: 'demo', nom: 'Le Cercle Barbershop', ville: 'Abidjan · Riviera 3', type: 'masculin', devise: 'FCFA',
-    modules: { fidelite: true, commissionsVisibles: true, file: false },
+    modules: { fidelite: true, commissionsVisibles: true, file: true },
     fidelite: { seuil: 10 }, remiseCoiffeur: false,
     moyens: ['especes', 'wave', 'om', 'mtn', 'moov', 'carte', 'autre'], moyensActifs: ['especes', 'wave', 'om', 'mtn', 'moov'] };
 
@@ -73,9 +73,9 @@ window.BDEMO = (function () {
     A('a9', 'revente', 'meches', 'Mèches (paquet)', 'Braiding hair (pack)', 1800, 3000, 'piece', 6, 'MEC-01', { f: true }),
     A('c1', 'conso', 'divers', 'Lames de rasoir', 'Razor blades', 50, 0, 'piece', 40, 'LAM-01'),
     A('c2', 'conso', 'divers', 'Serviettes jetables', 'Disposable towels', 25, 0, 'piece', 60, 'SER-01'),
-    A('c3', 'conso', 'shampoings', 'Shampoing professionnel', 'Pro shampoo', 4, 0, 'ml', 1000, 'SHP-05'),
-    A('c4', 'conso', 'divers', 'Désinfectant tondeuse', 'Clipper disinfectant', 3, 0, 'ml', 500, 'DES-01'),
-    A('c5', 'conso', 'huiles', 'Huile de soin pro', 'Pro care oil', 6, 0, 'ml', 200, 'HUP-01')
+    A('c3', 'conso', 'shampoings', 'Shampoing professionnel', 'Pro shampoo', 4000, 0, 'flacon', 1, 'SHP-05', { contenance: 1000 }),
+    A('c4', 'conso', 'divers', 'Désinfectant tondeuse', 'Clipper disinfectant', 1500, 0, 'flacon', 2, 'DES-01', { contenance: 500 }),
+    A('c5', 'conso', 'huiles', 'Huile de soin pro', 'Pro care oil', 600, 0, 'flacon', 1, 'HUP-01', { contenance: 100 })
   ];
 
   var CLIENTS = ['Ibrahim', 'Kevin', 'Junior', 'Arsène', 'Didier', 'Hervé', 'Cédric', 'Ismaël', 'Wilfried', 'Patrick', 'Yannick', 'Samuel'].map(function (n, i) {
@@ -91,7 +91,7 @@ window.BDEMO = (function () {
     var R = rng(20261116), seq = 0;
     function uid(p) { seq++; return (p || 'D') + '-' + seq.toString(36); }
     var B = { salon: JSON.parse(JSON.stringify(SALON)), utilisateurs: JSON.parse(JSON.stringify(UTILISATEURS)), categories: CATEGORIES, prestations: JSON.parse(JSON.stringify(PRESTATIONS)),
-      produits: JSON.parse(JSON.stringify(PRODUITS)), clients: JSON.parse(JSON.stringify(CLIENTS)), transactions: [], mouvements: [], depenses: [], audit: [], numero: 0 };
+      produits: JSON.parse(JSON.stringify(PRODUITS)), clients: JSON.parse(JSON.stringify(CLIENTS)), transactions: [], mouvements: [], depenses: [], audit: [], passages: [], numero: 0 };
     B.utilisateurs[1].favoris = ['p2', 'p1', 'b6', 'b1', 'b2', 'a1'];
     B.utilisateurs[2].favoris = ['p2', 'p1', 'b6', 'p4', 'b1', 'a3'];
     B.utilisateurs[3].favoris = ['e4', 'e5', 'e1', 'f1', 'f5', 'f10'];
@@ -101,19 +101,19 @@ window.BDEMO = (function () {
     var P_ = {}; B.prestations.forEach(function (p) { P_[p.id] = p; });
     var A_ = {}; B.produits.forEach(function (a) { A_[a.id] = a; });
     /* stock de départ, puis réassorts hebdomadaires (avec la dépense « achat de stock » correspondante) */
-    var depart = { a1: 30, a2: 14, a3: 18, a4: 24, a5: 12, a6: 40, a7: 12, a8: 16, a9: 20, c1: 400, c2: 900, c3: 10000, c4: 6000, c5: 1500 };
+    var depart = { a1: 30, a2: 14, a3: 18, a4: 24, a5: 12, a6: 40, a7: 12, a8: 16, a9: 20, c1: 400, c2: 900, c3: 4, c4: 6, c5: 3 };
     Object.keys(depart).forEach(function (k) { B.mouvements.push({ id: uid('M'), produit: k, type: 'initial', q: depart[k], cout: A_[k].achat, ts: tsJour(M.ajouter(debut, -1), 9, 0), par: 'u1', motif: '' }); });
     function reassort(iso, liste) {
       var tot = 0; Object.keys(liste).forEach(function (k) { tot += liste[k] * A_[k].achat; B.mouvements.push({ id: uid('M'), produit: k, type: 'entree', q: liste[k], cout: A_[k].achat, ts: tsJour(iso, 9, 30), par: 'u1', motif: '' }); });
       B.depenses.push({ id: uid('E'), date: iso, cat: 'stock', montant: tot, moyen: 'especes', note: 'Réassort (fictif)', par: 'u1', ts: tsJour(iso, 9, 35) });
     }
     var MOY = { especes: 52, wave: 26, om: 11, mtn: 7, moov: 4 };
-    var PRINC = { p2: 30, p1: 20, b6: 16, p3: 8, p5: 5, b1: 8, b3: 4, b4: 3, e1: 2, e4: 2, e5: 1, p8: 1 };
+    var PRINC = { p2: 30, p1: 20, b6: 16, p3: 8, p5: 5, b1: 8, b3: 4, b4: 3, b5: 3, e1: 2, e4: 2, e5: 1, p8: 1 };
     var JOUR = [0.75, 0.8, 0.85, 0.9, 1.15, 1.6, 0.55], HEURE = { 8: .3, 9: .6, 10: .8, 11: .9, 12: .7, 13: .6, 14: .7, 15: .85, 16: 1, 17: 1.3, 18: 1.55, 19: 1.35, 20: .8 };
     var hMax = maintenant.getHours();
     for (var d = debut; d <= aujourdhui; d = M.ajouter(d, 1)) {
       var js = M.jourSemaine(d), n = Math.round(26 * JOUR[js] * (0.85 + R() * 0.3));
-      if (js === 0 && d !== aujourdhui) reassort(d, { a1: 6, a3: 4, a4: 6, a8: 4, c1: 60, c2: 150, c3: 2000, c4: 1000 });
+      if (js === 0 && d !== aujourdhui) reassort(d, { a1: 6, a3: 4, a4: 6, a8: 4, c1: 60, c2: 150, c4: 1 });
       for (var i = 0; i < n; i++) {
         var h = +tirer(R, HEURE), mn = Math.floor(R() * 60);
         if (d === aujourdhui && h >= hMax) continue;
@@ -123,6 +123,7 @@ window.BDEMO = (function () {
         ajouterP(pr);
         if (!awa && pr !== 'b6' && R() < 0.22) ajouterP(R() < 0.6 ? 'b2' : 'b1');
         if (!awa && R() < 0.06) ajouterP('p4');
+        if (!awa && R() < 0.1) ajouterP(R() < 0.7 ? 'p6' : 'p7');
         if (R() < 0.16) { var a = A_[tirer(R, { a1: 5, a3: 3, a4: 3, a8: 2, a2: 2, a6: 2, a7: 1, a5: 1 })]; lignes.push({ type: 'A', ref: a.id, nom: a.nom, q: 1, pu: a.vente, par: par }); }
         var client = R() < 0.4 ? 'k' + (1 + Math.floor(R() * 12)) : '';
         var tot = M.totaux(lignes, 0), moyen = tirer(R, MOY), pay = { moyen: moyen, montant: tot.total };
@@ -130,7 +131,7 @@ window.BDEMO = (function () {
         B.numero++;
         var ts = tsJour(d, h, mn), tx = { id: uid('T'), num: B.numero, ts: ts, date: d, caissier: R() < 0.3 ? 'u5' : par, client: client, statut: 'validee', lignes: lignes, remise: 0, total: tot.total, paiements: [pay], opId: uid('O'), sync: true };
         B.transactions.push(tx);
-        M.mouvementsVente(tx, B.prestations, function () { return uid('M'); }).forEach(function (m) { B.mouvements.push(m); });
+        M.mouvementsVente(tx, B.prestations, function () { return uid('M'); }, B.produits).forEach(function (m) { B.mouvements.push(m); });
       }
     }
     B.transactions.sort(function (a, b) { return a.ts - b.ts; }); B.transactions.forEach(function (t, i) { t.num = i + 1; }); B.numero = B.transactions.length;
@@ -139,6 +140,33 @@ window.BDEMO = (function () {
       if (!t) return; t.statut = 'annulee'; t.annul = { par: 'u1', motif: 'Erreur de saisie (exemple fictif)', ts: t.ts + 600000 };
       M.mouvementsAnnulation(t, B.mouvements, function () { return uid('M'); }, 'u1').forEach(function (m) { m.ts = t.ts + 600000; B.mouvements.push(m); });
       B.audit.push({ id: uid('J'), ts: t.ts + 600000, par: 'u1', action: 'annulation', ref: t.id, motif: t.annul.motif, montant: t.total });
+    });
+    /* flacons : un « Flacon terminé » chaque fois que les prestations vendues ont vidé un flacon (estimation fictive, saisie par le coiffeur) */
+    B.produits.filter(function (a) { return a.unite === 'flacon'; }).forEach(function (a) {
+      var acc = 0;
+      B.transactions.forEach(function (x) {
+        if (x.statut !== 'validee') return;
+        x.lignes.forEach(function (l) { var p = l.type === 'P' && P_[l.ref]; if (p && p.conso) p.conso.forEach(function (c) { if (c.produit === a.id) acc += c.q * l.q; }); });
+        if (acc >= a.contenance) { acc -= a.contenance; B.mouvements.push({ id: uid('M'), produit: a.id, type: 'termine', q: -1, ts: x.ts + 300000, par: x.lignes[0].par, motif: '' }); }
+      });
+    });
+    /* file d'attente fictive : un passage par vente (arrivée, attente, début, fin = encaissement), des clients partis aux heures chargées,
+       et, pour aujourd'hui, une file en cours (2 clients servis, 3 qui attendent) */
+    var numJour = {}, Kn = {}; B.clients.forEach(function (k) { Kn[k.id] = k.prenom; });
+    function num(d) { numJour[d] = (numJour[d] || 0) + 1; return numJour[d]; }
+    B.transactions.forEach(function (x) {
+      if (x.statut !== 'validee') return;
+      var dur = 0; x.lignes.forEach(function (l) { if (l.type === 'P' && P_[l.ref]) dur += P_[l.ref].duree * l.q; }); dur = Math.max(10, Math.round(dur * (0.8 + R() * 0.4)));
+      var h = new Date(x.ts).getHours(), charge = h >= 17 && h <= 19 ? 2.2 : h >= 11 && h <= 13 ? 1.3 : 0.7, att = Math.round(R() * 18 * charge);
+      var par = (x.lignes.filter(function (l) { return l.type === 'P'; })[0] || x.lignes[0]).par;
+      B.passages.push({ id: uid('Q'), date: x.date, arrivee: x.ts - (att + dur) * 60000, debut: x.ts - dur * 60000, fin: x.ts, statut: 'fini', par: par, souhait: R() < 0.25 ? par : '', client: x.client, prenom: x.client ? Kn[x.client] : '', tx: x.id });
+      if (charge > 2 && R() < 0.12) { var arr = x.ts - Math.round(20 + R() * 30) * 60000; B.passages.push({ id: uid('Q'), date: x.date, arrivee: arr, debut: 0, fin: arr + Math.round(15 + R() * 25) * 60000, statut: 'parti', par: '', souhait: '', client: '', prenom: '', tx: '' }); }
+    });
+    B.passages.sort(function (a, b) { return a.arrivee - b.arrivee; }); B.passages.forEach(function (p) { p.num = num(p.date); });
+    var now = maintenant.getTime();
+    [[22, 'encours', 'u2', 'k3'], [9, 'encours', 'u3', ''], [15, 'attente', '', 'k5', 'u3'], [8, 'attente', '', ''], [3, 'attente', '', 'k9']].forEach(function (q) {
+      var arr = now - q[0] * 60000 - (q[1] === 'encours' ? 6 * 60000 : 0);
+      B.passages.push({ id: uid('Q'), date: aujourdhui, arrivee: arr, debut: q[1] === 'encours' ? now - q[0] * 60000 : 0, fin: 0, statut: q[1], par: q[2], souhait: q[4] || '', client: q[3], prenom: q[3] ? Kn[q[3]] : '', tx: '', num: num(aujourdhui) });
     });
     /* dépenses d'exploitation fictives */
     var mois = [M.debutMois(debut), M.debutMois(aujourdhui)].filter(function (x, i, a) { return a.indexOf(x) === i; });

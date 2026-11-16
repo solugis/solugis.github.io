@@ -49,7 +49,18 @@ window.BIC = (function () {
     son: 'M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12',
     info: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v6M12 7.5h.01',
     file: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
-    vente: 'M12 4v16M4 12h16'
+    vente: 'M12 4v16M4 12h16',
+    /* catégories de dépenses (remarque n° 7) */
+    loyer: 'M3 21h18M5 21V10l7-6 7 6v11M10 21v-5h4v5',
+    eclair: 'M13 2 4 14h7l-1 8 9-12h-7z',
+    goutte: 'M12 3c-4 5-6.5 8.2-6.5 11.5a6.5 6.5 0 0 0 13 0C18.5 11.2 16 8 12 3zM9 15a3 3 0 0 0 3 3',
+    wifi: 'M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5h.01',
+    paie: 'M6 2h9l4 4v16H6zM15 2v4h4M9 11h7M9 15h7M9 19h4',
+    pourcent: 'M19 5 5 19M7 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z',
+    peigne: 'M3 9h18v3H3zM5 12v7M8 12v7M11 12v7M14 12v7M17 12v7M20 12v7',
+    cle: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.6-.7-.7-2.6z',
+    megaphone: 'M3 10v4h3l7 4V6L6 10zM16 9a3 3 0 0 1 0 6M19 6.5a7 7 0 0 1 0 11',
+    balai: 'M15 2l-3 9M8 11h8l2 10H6zM9.5 15v6M12 15v6M14.5 15v6'
   };
   return function (nom, cls) { return '<svg class="ic ' + (cls || '') + '" viewBox="0 0 24 24" aria-hidden="true"><path d="' + (P[nom] || P.info) + '"/></svg>'; };
 })();
